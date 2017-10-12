@@ -10,6 +10,7 @@ target 'V2EX' do
 
   # Networking
   pod 'Alamofire'
+  pod 'Kingfisher'
 
   # Rx
   pod 'RxSwift', git: 'https://github.com/ReactiveX/RxSwift.git', branch: 'rxswift4.0-swift4.0'

@@ -1,8 +1,12 @@
 import Foundation
 
 struct TopicModel {
-    var title: String?
-    var content: String?
-    var href: String?
+    var user: UserModel
+    var node: NodeModel
     
+    var title: String
+    var content: String
+    var href: String
+    var lastReplyTime: String?
+    var replyCount: Int
 }

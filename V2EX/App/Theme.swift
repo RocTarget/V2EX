@@ -3,7 +3,7 @@ import UIKit
 struct Theme {
     
     struct Color {
-        static let globalColor = #colorLiteral(red: 1, green: 0.1803921569, blue: 0.537254902, alpha: 1) // 全局色
+        static let globalColor = #colorLiteral(red: 0.2007454634, green: 0.2006202042, blue: 0.2684206069, alpha: 1) // 全局色
         static let navColor = #colorLiteral(red: 0.1450980392, green: 0.1450980392, blue: 0.1764705882, alpha: 1)
         static let borderColor = #colorLiteral(red: 0.8980392157, green: 0.8980392157, blue: 0.8980392157, alpha: 1)
         static let bgColor = #colorLiteral(red: 0.9411764706, green: 0.9411764706, blue: 0.9647058824, alpha: 1) // 背景颜色
