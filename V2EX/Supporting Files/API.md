@@ -1,0 +1,312 @@
+API: https://github.com/stackia/test2doc.js/blob/master/example/v2ex/v2ex.apib
+        https://github.com/djyde/V2EX-API
+
+FORMAT: 1A9
+
+HOST: https://www.v2ex.com/api
+
+# V2EX 非官方 API 列表 1.0.0
+
+V2EX非官方 API 列表，仅供参考，欢迎补充。
+
+接口来源：https://github.com/djyde/V2EX-API
+
+# Site [/site]
+
+网站相关接口
+
+## 获取网站信息 [GET /site/info.json]
+
++ Response 200 (application/json)
+
++ Attributes
++ title: V2EX - 站名
++ slogan: way to explore - 口号
++ `description`: 创意工作者们的社区 - 网站描述
++ domain: www.v2ex.com - 网站域名
+
+## 获取网站状态 [GET /site/stats.json]
+
++ Response 200 (application/json)
+
++ Attributes
++ `topic_max`: 339105 (number) - 主题数量
++ `member_max`: 218658 (number) - 用户数量
+
+## 获取 Livid 个人资料 [GET /site/livid.json]
+
+这是一个不存在的接口，用来测试 404。
+
++ Response 404 (application/json)
+
+# Node [/nodes]
+
+节点相关接口
+
+## 获取所有节点列表 [GET /nodes/all.json]
+
++ Response 200 (application/json)
+
++ Attributes (array)
++ (object)
++ id: 1 (number)
++ name: babel - 节点名称
++ url: `http://www.v2ex.com/go/babel`
++ title: Project Babel
++ `title_alternative`: Project Babel
++ topics: 1119 (number)
++ header: `Project Babel - 帮助你在云平台上搭建自己的社区`
++ footer: `V2EX 基于 Project Babel 驱动。Project Babel 是用 Python 语言写成的，运行于 Google App Engine 云计算平台上的社区软件。Project Babel 当前开发分支 2.5。最新版本可以从 <a href="http://github.com/livid/v2ex" target="_blank">GitHub</a> 获取。`
++ created: 1272206882 (number)
++ (object)
++ id: 2 (number)
++ name: v2ex
++ url: `http://www.v2ex.com/go/v2ex`
++ title: V2EX
++ `title_alternative`: V2EX
++ topics: 2784 (number)
++ header: 这里讨论和发布关于 V2EX 站点的发展。
++ footer (object, nullable)
++ created: 1272207021 (number)
+
+## 获取指定节点信息 [GET /nodes/show.json{?id,name}]
+
+节点 ID 和节点名两个参数二选一。
+
++ Parameters
++ id: `2` (number) - 节点 ID
+
++ Response 200 (application/json)
+
++ Attributes
++ id: 2 (number)
++ name: v2ex
++ url: `http://www.v2ex.com/go/v2ex`
++ title: V2EX
++ `title_alternative`: V2EX
++ topics: 2784 (number)
++ stars: 653 (number)
++ header: 这里讨论和发布关于 V2EX 站点的发展。
++ footer (object, nullable)
++ created: 1272207021 (number)
++ `avatar_mini`: `//v2ex.assets.uxengine.net/navatar/c81e/728d/2_mini.png?m=1452035333`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/navatar/c81e/728d/2_normal.png?m=1452035333`
++ `avatar_large`: `//v2ex.assets.uxengine.net/navatar/c81e/728d/2_large.png?m=1452035333`
+
++ Request (application/json)
+
++ Parameters
++ name: `stackia` - 节点名
+
++ Response 200 (application/json)
+
++ Attributes
++ status: error
++ message: Object Not Found
++ `rate_limit` - API 访问次数限制相关信息
++ used: 8 (number)
++ `hourly_quota`: 120 (number)
++ `hourly_remaining`: 112 (number)
+
+# Topic [/topics]
+
+主题相关接口
+
+## 获取最新主题列表 [GET /topics/latest.json]
+
++ Response 200 (application/json)
+
++ Attributes (array)
++ (object)
++ id: 346017 (number)
++ title: 第一次发布 app 的开发商名称在哪里设置
++ url: `http://www.v2ex.com/t/346017`
++ content: 听说第一次上架 app 有机会设置开发商名称，但我都没找到。那个开发商名称是在哪里写的。
++ `content_rendered`: `<p>听说第一次上架 app 有机会设置开发商名称，但我都没找到。那个开发商名称是在哪里写的。</p> ...`
++ replies: 0 (number)
++ `member` - 发帖人信息
++ id: 143545 (number)
++ username: JohnLou
++ tagline
++ `avatar_mini`: `//v2ex.assets.uxengine.net/avatar/4d92/d574/143545_mini.png?m=1449123307`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/avatar/4d92/d574/143545_normal.png?m=1449123307`
++ `avatar_large`: `//v2ex.assets.uxengine.net/avatar/4d92/d574/143545_large.png?m=1449123307`
++ node
++ id: 12 (number)
++ name: qna
++ title: 问与答
++ `title_alternative`: Questions and Answers
++ url: `http://www.v2ex.com/go/qna`
++ topics: 84315 (number)
++ `avatar_mini`: `//v2ex.assets.uxengine.net/navatar/c20a/d4d7/12_mini.png?m=1488428101`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/navatar/c20a/d4d7/12_normal.png?m=1488428101`
++ `avatar_large`: `//v2ex.assets.uxengine.net/navatar/c20a/d4d7/12_large.png?m=1488428101`
++ created: 1489002216 (number)
++ `last_modified`: 1489002234 (number)
++ `last_touched`: 1489002036 (number)
+
+## 获取热门主题列表 [GET /topics/hot.json]
+
++ Response 200 (application/json)
+
++ Attributes (array)
++ (object)
++ id: 345806 (number)
++ title: 那个上课睡觉的女孩
++ url: `http://www.v2ex.com/t/345806`
++ content: . ...
++ `content_rendered`: . ...
++ replies: 111 (number)
++ `member`
++ id: 207315 (number)
++ username: Libby520
++ tagline
++ `avatar_mini`: `//v2ex.assets.uxengine.net/avatar/0f77/eb90/207315_mini.png?m=1482898014`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/avatar/0f77/eb90/207315_normal.png?m=1482898014`
++ `avatar_large`: `//v2ex.assets.uxengine.net/avatar/0f77/eb90/207315_large.png?m=1482898014`
++ node
++ id: 26 (number)
++ name: hangzhou
++ title: 杭州
++ `title_alternative`: Hangzhou
++ url: `http://www.v2ex.com/go/hangzhou`
++ topics: 473 (number)
++ `avatar_mini`: `/static/img/node_mini.png`
++ `avatar_normal`: `/static/img/node_normal.png`
++ `avatar_large`: `/static/img/node_large.png`
++ created: 1488942621 (number)
++ `last_modified`: 1488951001 (number)
++ `last_touched`: 1488988387 (number)
+
+## 获取指定主题信息 [GET /topics/show.json{?id,username,node_id,node_name}]
+
+参数四选一。
+
++ Parameters
++ id: `1000` (number)
+
++ Response 200 (application/json)
+
++ Attributes (array)
++ (object)
++ id: 1000 (number)
++ title: Google App Engine x MobileMe
++ url: `http://www.v2ex.com/t/1000`
++ content: 从现在开始，新上传到 V2EX 的头像将存储在 MobileMe iDisk 中。这是 V2EX 到目前为之所用到的第三个云。 ...
++ `content_rendered`: 从现在开始，新上传到 V2EX 的头像将存储在 MobileMe iDisk 中。这是 V2EX 到目前为之所用到的第三个云。 ...
++ replies: 14 (number)
++ `member`
++ id: 1 (number)
++ username: Livid
++ tagline: Gravitated and spellbound
++ `avatar_mini`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_mini.png?m=1466415272`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_normal.png?m=1466415272`
++ `avatar_large`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_large.png?m=1466415272`
++ node
++ id: 1 (number)
++ name: babel
++ title: Project Babel
++ url: `http://www.v2ex.com/go/babel`
++ topics: 1119 (number)
++ `avatar_mini`: `//v2ex.assets.uxengine.net/navatar/c4ca/4238/1_mini.png?m=1419840368`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/navatar/c4ca/4238/1_normal.png?m=1419840368`
++ `avatar_large`: `//v2ex.assets.uxengine.net/navatar/c4ca/4238/1_large.png?m=1419840368`
++ created: 1280192329 (number) - 主题创建时间戳
++ `last_modified`: 1335004238 (number)
++ `last_touched`: 1280285385 (number)
+
++ Request (application/json)
+
++ Parameters
++ username: `Livid` - 根据用户名取该用户所发表主题
++ node_id (object) - 根据节点 ID 取该节点下所有主题
++ node_name (object) - 根据节点名取该节点下所有主题
+
++ Response 200 (application/json)
+
++ Attributes (array)
++ (object)
++ id: 344513 (number)
++ title: `Nintendo Switch 今晚会在 Best Buy 和其他一些零售商门店（比如 GameStop 和 Walmart）零点发售，有同在北美的同学打算去排队么？ :doge:`
++ url: `http://www.v2ex.com/t/344513`
++ content: `https://i.v2ex.co/CLtJ4lt6.jpeg`
++ `content_rendered`: `<a target="_blank" href="/i/CLtJ4lt6.jpeg" target="_blank" title="在新窗口打开图片 CLtJ4lt6.jpeg"><img src="//i.v2ex.co/CLtJ4lt6.jpeg" class="embedded_image" /></a>`
++ replies: 26 (number)
++ `member`
++ id: 1 (number)
++ username: Livid
++ tagline: Gravitated and spellbound
++ `avatar_mini`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_mini.png?m=1466415272`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_normal.png?m=1466415272`
++ `avatar_large`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_large.png?m=1466415272`
++ node
++ id: 959 (number)
++ name: switch
++ title: Nintendo Switch
++ `title_alternative`
++ url: `http://www.v2ex.com/go/switch`
++ topics: 5 (number)
++ `avatar_mini`: `//v2ex.assets.uxengine.net/navatar/0f84/0be9/959_mini.png?m=1484301992`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/navatar/0f84/0be9/959_normal.png?m=1484301992`
++ `avatar_large`: `//v2ex.assets.uxengine.net/navatar/0f84/0be9/959_large.png?m=1484301992`
++ created: 1488504390 (number)
++ `last_modified`: 1488540532 (number)
++ `last_touched`: 1488629655 (number)
+
+# Replies [/replies]
+
+主题回复相关接口
+
+## 获取指定主题的所有回复列表 [GET /replies/show.json{?topic_id,page,page_size}]
+
++ Parameters
++ topic_id: `1` (number)
++ page: `1` (number) - 当前页数
++ page_size: `20` (number) - 每页条数
+
++ Response 200 (application/json)
+
++ Attributes (array)
++ (object)
++ id: 1 (number)
++ thanks: 5 (number) - 获得感谢数
++ content: 很高兴看到 v2ex 又回来了，等了你半天发第一贴了，憋死我了。 ...
++ `content_rendered`: 很高兴看到 v2ex 又回来了，等了你半天发第一贴了，憋死我了。 ...
++ `member`
++ id: 4 (number)
++ username: Jay
++ tagline: Engineer. Make things.
++ `avatar_mini`: `//v2ex.assets.uxengine.net/avatar/a87f/f679/4_mini.png?m=1424948183`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/avatar/a87f/f679/4_normal.png?m=1424948183`
++ `avatar_large`: `//v2ex.assets.uxengine.net/avatar/a87f/f679/4_large.png?m=1424948183`
++ created: 1272207477 (number)
++ `last_modified`: 1335092176 (number)
+
+# Members [/members]
+
+用户相关接口
+
+## 获取指定主题的所有回复列表 [GET /members/show.json{?username}]
+
++ Parameters
++ username: `Livid`
+
++ Response 200 (application/json)
+
++ Attributes
++ status: found
++ id: 1 (number)
++ url: `http://www.v2ex.com/member/Livid`
++ username: Livid
++ website
++ twitter
++ psn
++ github
++ btc
++ location: 91789
++ tagline: Gravitated and spellbound
++ bio: I’ve managed to make something I could call my own world, over time, little by little. And when I’m inside it, I feel kind of relieved.
++ `avatar_mini`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_mini.png?m=1466415272`
++ `avatar_normal`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_normal.png?m=1466415272` - 头像 URL
++ `avatar_large`: `//v2ex.assets.uxengine.net/avatar/c4ca/4238/1_large.png?m=1466415272`
++ created: 1272203146 (number)

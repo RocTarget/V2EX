@@ -1,0 +1,49 @@
+PODS:
+  - Alamofire (4.5.1)
+  - Kanna (2.1.1)
+  - RxCocoa (4.0.0-rc.0):
+    - RxSwift (~> 4.0.0-rc.0)
+  - RxOptional (3.2.0):
+    - RxCocoa
+    - RxSwift
+  - RxSwift (4.0.0-rc.0)
+  - SnapKit (4.0.0)
+  - UIView+Positioning (1.5)
+
+DEPENDENCIES:
+  - Alamofire
+  - Kanna (~> 2.1.0)
+  - RxCocoa (from `https://github.com/ReactiveX/RxSwift.git`, branch `rxswift4.0-swift4.0`)
+  - RxOptional
+  - RxSwift (from `https://github.com/ReactiveX/RxSwift.git`, branch `rxswift4.0-swift4.0`)
+  - SnapKit
+  - UIView+Positioning
+
+EXTERNAL SOURCES:
+  RxCocoa:
+    :branch: rxswift4.0-swift4.0
+    :git: https://github.com/ReactiveX/RxSwift.git
+  RxSwift:
+    :branch: rxswift4.0-swift4.0
+    :git: https://github.com/ReactiveX/RxSwift.git
+
+CHECKOUT OPTIONS:
+  RxCocoa:
+    :commit: f20c35ab166a94e8049e48d9ed82c8cf65dba900
+    :git: https://github.com/ReactiveX/RxSwift.git
+  RxSwift:
+    :commit: f20c35ab166a94e8049e48d9ed82c8cf65dba900
+    :git: https://github.com/ReactiveX/RxSwift.git
+
+SPEC CHECKSUMS:
+  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
+  RxCocoa: 58841348f4c6e6f6cd244522c16a6b7df5008956
+  RxOptional: d2d6a68064bc16b4801332c40663967f481b0234
+  RxSwift: f0ff3c78e1f71a7d3506defde0b79c72fe39bac3
+  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
+
+PODFILE CHECKSUM: f292d2f74859e025b98815ca362e18af22263f66
+
+COCOAPODS: 1.3.1
