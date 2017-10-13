@@ -3,46 +3,45 @@ import UIKit
 class TopicCell: BaseTableViewCell {
 
     private lazy var avatarView: UIImageView = {
-        let view = UIImageView()
-        return view
+        return UIImageView()
     }()
     
     private lazy var usernameLabel: UILabel = {
         let view = UILabel()
-        return view
-    }()
-    
-    private lazy var nodeLabel: UILabel = {
-        let view = UILabel()
+        view.font = UIFont.systemFont(ofSize: 15)
         return view
     }()
     
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
+        view.font = UIFont.systemFont(ofSize: 17)
         view.numberOfLines = 0
-        view.fontSize = 16
-        view.textColor = UIColor.hex(0x778087)
         return view
     }()
     
-    private lazy var lastReplyTimeLabel: UILabel = {
+    private lazy var nodeLabel: UILabel = {
         let view = UILabel()
+        view.font = UIFont.systemFont(ofSize: 14)
+        view.textColor = UIColor.hex(0x999999)
         return view
     }()
-
-    private lazy var replyCountLabel: UILabel = {
+    
+    private lazy var lastReplyLabel: UILabel = {
         let view = UILabel()
+        view.font = UIFont.systemFont(ofSize: 14)
+        view.textColor = UIColor.hex(0x999999)
         return view
     }()
     
     override func initialize() {
+        selectionStyle = .none
+
         contentView.addSubviews(
             avatarView,
             usernameLabel,
             nodeLabel,
             titleLabel,
-            lastReplyTimeLabel,
-            replyCountLabel)
+            lastReplyLabel)
     }
     
     override func setupConstraints() {
@@ -54,7 +53,7 @@ class TopicCell: BaseTableViewCell {
         
         usernameLabel.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
-            $0.top.equalTo(avatarView).offset(5)
+            $0.centerY.equalTo(avatarView)
         }
         
         titleLabel.snp.makeConstraints {
@@ -67,27 +66,30 @@ class TopicCell: BaseTableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(15)
         }
         
-        lastReplyTimeLabel.snp.makeConstraints {
-            $0.left.equalTo(nodeLabel.snp.right).offset(10)
-            $0.bottom.equalTo(nodeLabel)
-        }
-        
-        replyCountLabel.snp.makeConstraints {
-            $0.left.equalTo(lastReplyTimeLabel.snp.right).offset(10)
-            $0.bottom.equalTo(nodeLabel)
+        lastReplyLabel.snp.makeConstraints {
+            $0.left.equalTo(nodeLabel.snp.right)
+            $0.centerY.equalTo(nodeLabel)
         }
     }
     
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
-            avatarView.setImage(urlString: topic.user.avatarSrc)
+            avatarView.setRoundImage(urlString: topic.user.avatarSrc)
             usernameLabel.text = topic.user.name
             titleLabel.text = topic.title
             nodeLabel.text = topic.node.name
-            lastReplyTimeLabel.text = topic.lastReplyTime
-            replyCountLabel.text = topic.replyCount.description
-            replyCountLabel.isHidden = topic.replyCount == 0
+            let lastReplyTime = (topic.lastReplyTime != nil) ? "  •  " + topic.lastReplyTime! : ""
+            lastReplyLabel.text = lastReplyTime + "  •  \(topic.replyCount) 回复"
+        }
+    }
+
+    override var frame: CGRect {
+        didSet {
+            var newFrame = frame
+            newFrame.origin.y += 15
+            newFrame.size.height -= 15
+            super.frame = newFrame
         }
     }
 }

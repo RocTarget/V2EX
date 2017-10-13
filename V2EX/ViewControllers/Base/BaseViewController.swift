@@ -18,7 +18,7 @@ class BaseViewController: UIViewController {
     
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        return .default
     }
     
     // MARK: Layout Constraints

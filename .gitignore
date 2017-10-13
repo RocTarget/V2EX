@@ -21,6 +21,7 @@ xcuserdata/
 *.moved-aside
 *.xccheckout
 *.xcscmblueprint
+*.generated.swift
 
 ## Obj-C/Swift specific
 *.hmap
@@ -31,6 +32,7 @@ xcuserdata/
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace
+
 
 # Swift Package Manager
 #

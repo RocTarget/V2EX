@@ -3,8 +3,16 @@ import UIKit
 
 struct Config {
 
-    static let ScreenWidth                    = UIScreen.main.bounds.width
-    static let ScreenHeight                   = UIScreen.main.bounds.height
-
     static var baseURL = "https://www.v2ex.com"
+}
+
+
+extension UIScreen {
+    class var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+
+    class var screenHeight: CGFloat {
+        return UIScreen.main.bounds.height
+    }
 }

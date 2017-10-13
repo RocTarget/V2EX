@@ -3,26 +3,12 @@ import ObjectiveC
 
 extension UILabel {
 
-    /// Create an UILabel with the given parameters.
-    public convenience init(frame: CGRect = .zero,
-                            text: String = "",
-                            fontSize: CGFloat = 17,
-                            color: UIColor, lines: Int = 1,
-                            shadowColor: UIColor = UIColor.clear) {
-        self.init(frame: frame)
-        self.fontSize = fontSize
-        self.text = text
-        self.textColor = color
-        self.numberOfLines = lines
-        self.shadowColor = shadowColor
-    }
-
     var fontSize: CGFloat {
         get {
             return self.font.pointSize
         }
         set {
-            self.font = UIFont.systemFont(ofSize: fontSize)
+            font = UIFont.systemFont(ofSize: fontSize)
         }
     }
 

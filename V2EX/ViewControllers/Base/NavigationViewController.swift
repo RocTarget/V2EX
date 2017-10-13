@@ -12,9 +12,6 @@ class NavigationViewController: UINavigationController {
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         if childViewControllers.count > 0 {
             viewController.hidesBottomBarWhenPushed = true
-//            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: R.image.content_icon_back(), action: {
-//                self.pop()
-//            })
         }
         super.pushViewController(viewController, animated: true)
     }
@@ -26,8 +23,8 @@ extension NavigationViewController {
     fileprivate func setAppearance() {
         navigationBar.isTranslucent = false
         navigationBar.barTintColor = Theme.Color.navColor
-        navigationBar.tintColor = .white
-        navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        navigationBar.tintColor = Theme.Color.globalColor
+        navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: Theme.Color.globalColor]
         
     }
     

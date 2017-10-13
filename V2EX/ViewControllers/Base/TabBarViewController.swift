@@ -26,12 +26,12 @@ extension TabBarViewController {
                                title: "首页",
                                normalImage: nil,
                                selectedImageName: nil)
+
+        addChildViewController(childController: NodesViewController(),
+                               title: "节点",
+                               normalImage: nil,
+                               selectedImageName: nil)
 //
-//        addChildViewController(childController: R.storyboard.contact.contactViewController()!,
-//                               title: R.string.localizable.systemMainLongdistance(),
-//                               normalImage: R.image.content_icon_longdistance_normal(),
-//                               selectedImageName: R.image.content_icon_longdistance_selected())
-//        
 //        addChildViewController(childController: PatternsViewController(),
 //                               title: R.string.localizable.systemMainPatterns(),
 //                               normalImage: R.image.content_icon_pattern_normal(),
@@ -42,7 +42,6 @@ extension TabBarViewController {
         childController.tabBarItem.image = normalImage?.withRenderingMode(.alwaysOriginal)
         childController.tabBarItem.selectedImage = selectedImageName?.withRenderingMode(.alwaysOriginal)
         childController.title = title
-        childController.navigationItem.title = nil
         let nav = NavigationViewController(rootViewController: childController)
         addChildViewController(nav)
     }
@@ -57,7 +56,7 @@ extension TabBarViewController {
             .map { state in state.1 }
             .filterNil()
             .subscribe(onNext: { [weak self] viewController in
-                self?.scrollToTop(viewController) // scroll to top
+                self?.scrollToTop(viewController)
             })
             .disposed(by: rx.disposeBag)
     }

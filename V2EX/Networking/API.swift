@@ -16,19 +16,14 @@ extension API: TargetType {
 
     var route: Route {
         switch self {
-        default:
-            return .get("")
+        case .topics(let href):
+            return .get(href ?? "")
         }
     }
 
     /// The parameters to be encoded in the request.
     var parameters: [String : Any]? {
         var param: [String: Any] = [:]
-        switch self {
-        case .topics(let href):
-            guard let `href` = href else { return nil }
-            param["tab"] = href
-        }
         return param
     }
 

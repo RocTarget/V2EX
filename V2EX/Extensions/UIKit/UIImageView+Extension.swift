@@ -94,7 +94,7 @@ public extension UIImageView {
     /**
      设置 cornerRadiusRatio
      */
-    func setCornerRadiusImage(urlString URLString: String?, placeholder: UIImage? = nil, cornerRadiusRatio: CGFloat? = nil) {
+    func setCornerRadiusImage(urlString URLString: String?, placeholder: UIImage? = nil, cornerRadiusRatio: CGFloat = 0.5) {
         self.setRoundImage(
             urlString: URLString,
             placeholder: placeholder,
@@ -102,7 +102,7 @@ public extension UIImageView {
         )
     }
     
-    func setRoundImage(urlString URLString: String?, placeholder: UIImage? = nil , cornerRadiusRatio: CGFloat? = nil, progressBlock: ImageDownloaderProgressBlock? = nil) {
+    func setRoundImage(urlString URLString: String?, placeholder: UIImage? = nil , cornerRadiusRatio: CGFloat = 0.5, progressBlock: ImageDownloaderProgressBlock? = nil) {
         guard let URLString = URLString, let URL = URL(string: URLString) else {
             print("URL wrong")
             return
@@ -115,7 +115,7 @@ public extension UIImageView {
             KingfisherManager.shared.downloader.downloadImage(with: URL, options: optionInfo, progressBlock: progressBlock) { (image, error, imageURL, originalData) -> () in
                 if let image = image, let originalData = originalData {
                     DispatchQueue.global(qos: .default).async {
-                        let roundedImage = image.roundWithCornerRadius(image.size.width * (cornerRadiusRatio ?? 0.5))
+                        let roundedImage = image.roundWithCornerRadius(image.size.width * cornerRadiusRatio)
                         KingfisherManager.shared.cache.store(roundedImage, original: originalData, forKey: URLString, toDisk: true, completionHandler: {
                             self.setImage(urlString: URLString)
                         })

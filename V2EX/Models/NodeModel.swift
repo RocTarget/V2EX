@@ -1,6 +1,6 @@
 import Foundation
 
-struct NodeModel {
+public struct NodeModel {
     var name: String
     var href: String
     var isCurrent: Bool = false
