@@ -98,7 +98,7 @@ public struct Logger {
 
         aStr.addAttributes([NSAttributedStringKey.paragraphStyle: paragraphStyle,
                             NSAttributedStringKey.foregroundColor: type.color],
-                           range: NSRange(location: 0, length: message.characters.count))
+                           range: NSRange(location: 0, length: message.count))
         return aStr
     }
 

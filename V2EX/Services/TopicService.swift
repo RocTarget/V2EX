@@ -26,7 +26,7 @@ protocol TopicService {
 
     func topicDetail(
         topic: TopicModel,
-        success: ((_ topic: TopicModel) -> Void)?,
+        success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
         failure: Failure?)
 }
 
@@ -44,6 +44,7 @@ extension TopicService {
                         return nil
                 }
                 let isCurrent = ele.className == "tab_current"
+
                 return NodeModel(name: name, href: href, isCurrent: isCurrent)
             })
 
@@ -68,13 +69,18 @@ extension TopicService {
 
     func topicDetail(
         topic: TopicModel,
-        success: ((_ topic: TopicModel) -> Void)?,
+        success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
         failure: Failure?) {
 
         Network.htmlRequest(target: .topics(href: topic.href), success: { html in
             var `topic` = topic
 
             guard let publicTimeAndClickCountString = html.xpath("//*[@id='Main']//div[@class='header']/small/text()").first?.content else {
+                // 需要登录
+                if let error = html.xpath("//*[@id='Main']/div[2]/div[2]").first?.content {
+                    failure?(error)
+                    return
+                }
                 failure?("数据解析失败")
                 return
             }
@@ -91,7 +97,23 @@ extension TopicService {
 
             topic.content = content
 
-            success?(topic)
+            let commentPath = html.xpath("//*[@id='Main']/div[@class='box'][2]/div[contains(@id, 'r_')]")
+            let comments = commentPath.flatMap({ ele -> CommentModel? in
+                guard let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
+                    let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
+                    let userHref = userPath["href"],
+                    let username = userPath.content,
+                    let publicTime = ele.xpath("./table/tr/td[3]/span[@class='ago']").first?.content,
+                    let content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.content,
+                    let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
+                        return nil
+                }
+
+                let id = ele["id"]?.replacingOccurrences(of: "r_", with: "") ?? "0"
+                let user = UserModel(name: username, href: userHref, avatar: userAvatar)
+                return CommentModel(id: id, user: user, content: content, publicTime: publicTime, floor: floor)
+            })
+            success?(topic, comments)
         }, failure: failure)
     }
 
@@ -127,7 +149,31 @@ extension TopicService {
     }
 
     private func parseNodeNav(html: HTMLDocument) {
+        let nodesPath = html.xpath("//*[@id='Main']//div[@class='box'][last()]/div/table/tr")
 
+//        var nodeCategorys: [NodeCategoryModel] = []
+        for (index, ele) in nodesPath.enumerated() {
+            guard let sectionName = ele.xpath("./td[1]/span").first?.content else { continue }
+
+            let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
+                guard let name = ele.content, let href = ele["href"] else { return nil }
+                return NodeModel(name: name, href: href)
+            })
+            let category = NodeCategoryModel(id: index, name: sectionName, nodes: nodes)
+            NodeCategoryStore.shared.insert(category)
+//            nodeCategorys.append(category)
+        }
+
+//        let nodeCategorys = nodesPath.flatMap { (ele) -> NodeCategoryModel? in
+//
+//            guard let sectionName = ele.xpath("./td[1]/span").first?.content else { return nil }
+//
+//            let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
+//                guard let name = ele.content, let href = ele["href"] else { return nil }
+//
+//                return NodeModel(name: name, href: href)
+//            })
+//            return NodeCategoryModel(name: sectionName, nodes: nodes, id: 0)
+//        }
     }
-
 }

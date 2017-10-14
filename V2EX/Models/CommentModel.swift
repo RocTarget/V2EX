@@ -5,5 +5,6 @@ struct CommentModel {
     var user: UserModel
     var content: String
     var publicTime: String
-    var thanks: String
+//    var thanks: String
+    var floor: String
 }

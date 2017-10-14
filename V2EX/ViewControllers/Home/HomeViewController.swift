@@ -16,6 +16,11 @@ class HomeViewController: BaseViewController, TopicService {
         return view
     }()
 
+    private lazy var refreshControl: UIRefreshControl = {
+        let view = UIRefreshControl()
+        return view
+    }()
+
     private lazy var tabView: NodeTabView = {
         let view = NodeTabView(
             frame: CGRect(x: 0,
@@ -41,26 +46,45 @@ class HomeViewController: BaseViewController, TopicService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        ProgressHUD.show()
+
         index(success: { [weak self] nodes, topics in
             guard let `self` = self else { return }
             
             self.nodes = nodes
             self.topics = topics
+            ProgressHUD.dismiss()
 
-            }, failure: nil)
+            }, failure: { error in
+                ProgressHUD.dismiss()
+                ProgressHUD.showText(error)
+        })
 
         navigationItem.titleView = tabView
         tabView.valueChange = { [weak self] index in
             guard let `self` = self else { return }
-            let node = self.nodes[index]
-            self.fetchTopic(node.href)
+
+            self.tableView.setContentOffset(CGPoint(x: -self.tableView.contentInset.left, y: -self.tableView.contentInset.top), animated: true)
+            self.fetchTopic()
         }
+        tableView.addSubview(refreshControl)
+
+        refreshControl.rx
+            .controlEvent(.valueChanged)
+            .subscribeNext { [weak self] in
+                self?.fetchTopic()
+        }.disposed(by: rx.disposeBag)
     }
 
-    func fetchTopic(_ href: String) {
+    func fetchTopic() {
+        let href = nodes[self.tabView.selectIndex].href
         topics(href: href, success: { [weak self] topic in
             self?.topics = topic
-        }, failure: nil)
+            self?.refreshControl.endRefreshing()
+            }, failure: { error in
+                self.refreshControl.endRefreshing()
+                ProgressHUD.showText(error)
+        })
     }
 
     override func setupConstraints() {

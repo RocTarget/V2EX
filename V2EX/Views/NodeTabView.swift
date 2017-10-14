@@ -85,34 +85,25 @@ public class NodeTabView: UIControl {
 //MARK: - public helper
 extension NodeTabView {
 
-    public func setSelectIndex(index: Int,animated: Bool = true) {
-
+    public func setSelectIndex(index: Int, animated: Bool = true) {
+        log.info("------", index)
         guard index != selectIndex, index >= 0 , index < titleLabels.count else { return }
 
         let currentLabel = titleLabels[index]
         let offSetX = min(max(0, currentLabel.center.x - bounds.width / 2),
                           max(0, scrollView.contentSize.width - bounds.width))
-        scrollView.setContentOffset(CGPoint(x:offSetX, y: 0), animated: true)
-
-        if animated {
-
-            UIView.animate(withDuration: 0.2, animations: {
-                var rect = self.indicator.frame
-                rect.origin.x = currentLabel.frame.origin.x
-                rect.size.width = currentLabel.frame.size.width
-                self.setIndicatorFrame(rect)
-            })
-
-        } else {
-            var rect = indicator.frame
+        scrollView.setContentOffset(CGPoint(x:offSetX, y: 0), animated: animated)
+        
+        UIView.animate(withDuration: animated ? 0.2 : 0, animations: {
+            var rect = self.indicator.frame
             rect.origin.x = currentLabel.frame.origin.x
             rect.size.width = currentLabel.frame.size.width
-            setIndicatorFrame(rect)
-        }
-        
+            self.setIndicatorFrame(rect)
+        })
+
         selectIndex = index
         valueChange?(index)
-        sendActions(for: UIControlEvents.valueChanged)
+        sendActions(for: .valueChanged)
     }
 }
 
@@ -178,10 +169,6 @@ extension NodeTabView {
                 scrollView.contentSize.width = rect.maxX + style.titleMargin
                 selectContent.frame.size.width = rect.maxX + style.titleMargin
             }
-
-            if node.isCurrent {
-                setSelectIndex(index: index)
-            }
         }
 
         // Set Cover
@@ -200,5 +187,8 @@ extension NodeTabView {
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(NodeTabView.handleTapGesture(_:)))
         addGestureRecognizer(tapGesture)
+
+        let selecteIndex = nodes.index(where: ({ $0.isCurrent }))
+        setSelectIndex(index: selecteIndex ?? 0, animated: false)
     }
 }

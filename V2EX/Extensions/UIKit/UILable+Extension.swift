@@ -24,7 +24,7 @@ extension UILabel {
             textAttributes.addAttribute(
                 NSAttributedStringKey.underlineStyle,
                 value: value.rawValue,
-                range: NSRange(location: 0, length: text.characters.count)
+                range: NSRange(location: 0, length: text.count)
             )
             self.attributedText = textAttributes
         }

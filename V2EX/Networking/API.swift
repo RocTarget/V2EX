@@ -23,7 +23,7 @@ extension API: TargetType {
 
     /// The parameters to be encoded in the request.
     var parameters: [String : Any]? {
-        var param: [String: Any] = [:]
+        let param: [String: Any] = [:]
         return param
     }
 

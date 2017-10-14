@@ -8,7 +8,7 @@ class TopicCell: BaseTableViewCell {
     
     private lazy var usernameLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 15)
+        view.font = UIFont.systemFont(ofSize: 16)
         return view
     }()
     
@@ -41,7 +41,8 @@ class TopicCell: BaseTableViewCell {
             usernameLabel,
             nodeLabel,
             titleLabel,
-            lastReplyLabel)
+            lastReplyLabel
+        )
     }
     
     override func setupConstraints() {
@@ -87,8 +88,8 @@ class TopicCell: BaseTableViewCell {
     override var frame: CGRect {
         didSet {
             var newFrame = frame
-            newFrame.origin.y += 15
-            newFrame.size.height -= 15
+            newFrame.size.height -= 10
+            newFrame.origin.y += 10
             super.frame = newFrame
         }
     }

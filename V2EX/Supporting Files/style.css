@@ -109,8 +109,9 @@ ol {
 .topic_content {
     font-size: 15px;
     line-height: 1.6;
-    color: #646464;
+    color: #000000;
     word-wrap: break-word;
+    padding-left: 7px;
 }
 
 .embedded_image {

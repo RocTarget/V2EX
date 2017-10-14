@@ -23,6 +23,10 @@ target 'V2EX' do
     # UI
     pod 'SnapKit'
     pod 'UIView+Positioning'
+    pod 'PKHUD'
+
+    # DB
+    pod 'SQLite.swift'
 
     # Misc
     pod 'R.swift'

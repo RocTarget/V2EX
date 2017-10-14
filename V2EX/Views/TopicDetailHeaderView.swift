@@ -1,5 +1,6 @@
 import UIKit
 import WebKit
+import SnapKit
 
 class TopicDetailHeaderView: UIView{
     
@@ -10,22 +11,30 @@ class TopicDetailHeaderView: UIView{
     
     private lazy var usernameLabel: UILabel = {
         let view = UILabel()
+        view.font = UIFont.systemFont(ofSize: 16)
         return view
     }()
     
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
+        view.font = UIFont.systemFont(ofSize: 12)
+        view.textColor = UIColor.hex(0xA3A3A3)
         return view
     }()
     
-    private lazy var nodeLabel: UILabel = {
-        let view = UILabel()
+    private lazy var nodeLabel: UIInsetLabel = {
+        let view = UIInsetLabel()
+        view.font = UIFont.systemFont(ofSize: 13)
+        view.textColor = UIColor.hex(0x999999)
+        view.backgroundColor = Theme.Color.bgColor
+        view.contentInsets = UIEdgeInsets(top: 2, left: 3, bottom: 2, right: 3)
         return view
     }()
     
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.numberOfLines = 0
+        view.font = UIFont.boldSystemFont(ofSize: 17)
         return view
     }()
     
@@ -38,21 +47,14 @@ class TopicDetailHeaderView: UIView{
         return view
     }()
 
-//    private lazy var webView: UIWebView = {
-//        let view = UIWebView()
-////        view.scrollView.isScrollEnabled = false
-////        view.scrollView.delaysContentTouches = false
-////        view.translatesAutoresizingMaskIntoConstraints = false
-////        view.navigationDelegate = self
-//        view.delegate = self
-//        return view
-//    }()
+    private var webViewConstraint: Constraint?
 
     public var webLoadComplete: Action?
     
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.screenWidth, height: 130))
-        
+        backgroundColor = .white
+
         addSubviews(
             avatarView,
             usernameLabel,
@@ -63,10 +65,6 @@ class TopicDetailHeaderView: UIView{
         )
         
         setupConstraints()
-
-        webView.scrollView.rx.observe(CGSize.self, "contentSize").subscribeNext { size in
-            log.info(size)
-        }.disposed(by: rx.disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -99,6 +97,12 @@ class TopicDetailHeaderView: UIView{
             $0.left.equalTo(avatarView)
             $0.top.equalTo(avatarView.snp.bottom).offset(15)
         }
+
+        webView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(15)
+            $0.left.right.equalToSuperview()
+            webViewConstraint = $0.height.equalTo(0).constraint
+        }
     }
     
     var topic: TopicModel? {
@@ -110,13 +114,14 @@ class TopicDetailHeaderView: UIView{
             nodeLabel.text = topic.node.name
             titleLabel.text = topic.title
             timeLabel.text = [topic.publicTime, topic.clickCount].joined(separator: " · ")
+            timeLabel.isHidden = topic.publicTime.isEmpty
             
             do {
                 let cssString = try String(contentsOf: R.file.styleCss()!)
                 let head = "<head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><style>\(cssString)</style></head>"
                 let body = "<body><div id=\"Wrapper\">\(topic.content)</div></body>"
                 let html = "<html>\(head)\(body)</html>"
-                webView.loadHTMLString(html, baseURL: URL(string: Config.baseURL))
+                webView.loadHTMLString(html, baseURL: URL(string: "https://"))
             } catch {
                 log.error("CSS 加载失败")
             }
@@ -124,16 +129,15 @@ class TopicDetailHeaderView: UIView{
     }
 }
 
-
 extension TopicDetailHeaderView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         webView.evaluateJavaScript("document.body.scrollHeight") { result, error in
             guard let htmlHeight = result as? CGFloat else { return }
-            
-            log.info("web height = ", htmlHeight, "view height =", self.height, webView.scrollView.contentSize)
-            
-            webView.frame = CGRect(x: 0, y: self.titleLabel.bottom, width: self.width, height: htmlHeight)
-            self.height += webView.height
+
+//            webView.frame = CGRect(x: 0, y: self.titleLabel.bottom, width: self.width, height: htmlHeight)
+            log.debug(htmlHeight)
+            self.webViewConstraint?.update(offset: htmlHeight)
+            self.height = self.titleLabel.bottom + htmlHeight + 15
             self.webLoadComplete?()
         }
     }

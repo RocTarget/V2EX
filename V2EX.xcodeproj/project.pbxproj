@@ -27,6 +27,10 @@
 		BF65BDC21F8E12C80010B4C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF65BDC01F8E12C80010B4C9 /* LaunchScreen.storyboard */; };
 		BF65BDCD1F8E12C80010B4C9 /* V2EXTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF65BDCC1F8E12C80010B4C9 /* V2EXTests.swift */; };
 		BF65BDD81F8E12C80010B4C9 /* V2EXUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF65BDD71F8E12C80010B4C9 /* V2EXUITests.swift */; };
+		BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11171F91E473003815C1 /* UIInsetLabel.swift */; };
+		BF7B111A1F91E5A3003815C1 /* ProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11191F91E5A3003815C1 /* ProgressHUD.swift */; };
+		BF7B111E1F91F960003815C1 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B111D1F91F960003815C1 /* DB.swift */; };
+		BF7B11201F91F9EA003815C1 /* NodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B111F1F91F9EA003815C1 /* NodeStore.swift */; };
 		BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A21F90BB9E000106D6 /* HelperFunctions.swift */; };
 		BFBCE5AE1F90C14B000106D6 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A51F90C14B000106D6 /* ActivityIndicator.swift */; };
 		BFBCE5AF1F90C14B000106D6 /* Observable+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A61F90C14B000106D6 /* Observable+Operators.swift */; };
@@ -34,7 +38,6 @@
 		BFBCE5B11F90C14B000106D6 /* Scheduler+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A81F90C14B000106D6 /* Scheduler+Rx.swift */; };
 		BFBCE5B21F90C14B000106D6 /* Swift+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A91F90C14B000106D6 /* Swift+Extension.swift */; };
 		BFBCE5B31F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */; };
-		BFBCE5B41F90C14B000106D6 /* UIBindingObserver+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AB1F90C14B000106D6 /* UIBindingObserver+Extension.swift */; };
 		BFBCE5B61F90C14B000106D6 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */; };
 		BFBCE5B81F90C4FC000106D6 /* NodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5B71F90C4FC000106D6 /* NodesViewController.swift */; };
 		BFCB67431F8F48AA00D05A90 /* NSObject+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCB67421F8F489E00D05A90 /* NSObject+Rx.swift */; };
@@ -110,6 +113,10 @@
 		BF65BDD31F8E12C80010B4C9 /* V2EXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = V2EXUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF65BDD71F8E12C80010B4C9 /* V2EXUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2EXUITests.swift; sourceTree = "<group>"; };
 		BF65BDD91F8E12C80010B4C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BF7B11171F91E473003815C1 /* UIInsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInsetLabel.swift; sourceTree = "<group>"; };
+		BF7B11191F91E5A3003815C1 /* ProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressHUD.swift; sourceTree = "<group>"; };
+		BF7B111D1F91F960003815C1 /* DB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
+		BF7B111F1F91F9EA003815C1 /* NodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeStore.swift; sourceTree = "<group>"; };
 		BFBCE5A21F90BB9E000106D6 /* HelperFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperFunctions.swift; sourceTree = "<group>"; };
 		BFBCE5A51F90C14B000106D6 /* ActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		BFBCE5A61F90C14B000106D6 /* Observable+Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Operators.swift"; sourceTree = "<group>"; };
@@ -117,7 +124,6 @@
 		BFBCE5A81F90C14B000106D6 /* Scheduler+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Scheduler+Rx.swift"; sourceTree = "<group>"; };
 		BFBCE5A91F90C14B000106D6 /* Swift+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Swift+Extension.swift"; sourceTree = "<group>"; };
 		BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+ClosureAction.swift"; sourceTree = "<group>"; };
-		BFBCE5AB1F90C14B000106D6 /* UIBindingObserver+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBindingObserver+Extension.swift"; sourceTree = "<group>"; };
 		BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
 		BFBCE5B71F90C4FC000106D6 /* NodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodesViewController.swift; sourceTree = "<group>"; };
 		BFCB67421F8F489E00D05A90 /* NSObject+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Rx.swift"; sourceTree = "<group>"; };
@@ -223,11 +229,13 @@
 		BF02A2C41F8F3E5900BEF85E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BF7B11171F91E473003815C1 /* UIInsetLabel.swift */,
 				BFCE8E071F904CA80026F100 /* NodeTabView.swift */,
 				779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */,
 				779B17011F8FA8A900E912E7 /* TopicCell.swift */,
 				BFE3947A1F90822E00D3ED1D /* TopicDetailHeaderView.swift */,
 				BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */,
+				BF7B11191F91E5A3003815C1 /* ProgressHUD.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -268,11 +276,13 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		BF02A2C91F8F3E8900BEF85E /* DAO */ = {
+		BF02A2C91F8F3E8900BEF85E /* DB */ = {
 			isa = PBXGroup;
 			children = (
+				BF7B111D1F91F960003815C1 /* DB.swift */,
+				BF7B111F1F91F9EA003815C1 /* NodeStore.swift */,
 			);
-			path = DAO;
+			path = DB;
 			sourceTree = "<group>";
 		};
 		BF02A2CA1F8F3E9200BEF85E /* Models */ = {
@@ -338,7 +348,7 @@
 				BF02A2C31F8F3E4800BEF85E /* ViewControllers */,
 				BF02A2C41F8F3E5900BEF85E /* Views */,
 				BF02A2CA1F8F3E9200BEF85E /* Models */,
-				BF02A2C91F8F3E8900BEF85E /* DAO */,
+				BF02A2C91F8F3E8900BEF85E /* DB */,
 				BF02A2C81F8F3E7600BEF85E /* Services */,
 				BF02A2C71F8F3E6F00BEF85E /* Managers */,
 				BFCB67561F8F50D600D05A90 /* Networking */,
@@ -377,7 +387,6 @@
 				BFBCE5A81F90C14B000106D6 /* Scheduler+Rx.swift */,
 				BFBCE5A91F90C14B000106D6 /* Swift+Extension.swift */,
 				BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */,
-				BFBCE5AB1F90C14B000106D6 /* UIBindingObserver+Extension.swift */,
 				BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */,
 			);
 			name = Rx;
@@ -642,11 +651,13 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Kanna/Kanna.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/R.swift.Library/Rswift.framework",
 				"${PODS_ROOT}/Reveal-SDK/RevealServer-4/iOS/RevealServer.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/UIView+Positioning/UIView_Positioning.framework",
 			);
@@ -655,11 +666,13 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kanna.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Rswift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIView_Positioning.framework",
 			);
@@ -780,6 +793,7 @@
 				BFE394801F909BDB00D3ED1D /* HTMLStyle.swift in Sources */,
 				779B17061F8FAF5A00E912E7 /* UILable+Extension.swift in Sources */,
 				BFCB674D1F8F4A2C00D05A90 /* Foundation+Extension.swift in Sources */,
+				BF7B11201F91F9EA003815C1 /* NodeStore.swift in Sources */,
 				BFCB67601F8F52B800D05A90 /* GCD.swift in Sources */,
 				BFE394831F909C6100D3ED1D /* R.generated.swift in Sources */,
 				BFCB675E1F8F521D00D05A90 /* Config.swift in Sources */,
@@ -787,14 +801,15 @@
 				779B16FE1F8FA5DE00E912E7 /* UserModel.swift in Sources */,
 				BFCB674A1F8F49EA00D05A90 /* Logger.swift in Sources */,
 				BFCB67431F8F48AA00D05A90 /* NSObject+Rx.swift in Sources */,
+				BF7B111E1F91F960003815C1 /* DB.swift in Sources */,
 				BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */,
 				BFCB674F1F8F4A4000D05A90 /* String+Extension.swift in Sources */,
 				BFBCE5AF1F90C14B000106D6 /* Observable+Operators.swift in Sources */,
+				BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */,
 				BF45FCCF1F906E74006B2C2F /* CommentModel.swift in Sources */,
 				779B17021F8FA8A900E912E7 /* TopicCell.swift in Sources */,
 				BFBCE5B31F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift in Sources */,
 				BFCB67681F8F716600D05A90 /* NodeModel.swift in Sources */,
-				BFBCE5B41F90C14B000106D6 /* UIBindingObserver+Extension.swift in Sources */,
 				BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */,
 				BFCB67461F8F498900D05A90 /* HomeViewController.swift in Sources */,
 				BFCB67641F8F666100D05A90 /* API.swift in Sources */,
@@ -804,6 +819,7 @@
 				BFCB67481F8F499600D05A90 /* BaseViewController.swift in Sources */,
 				BF02A2CE1F8F3FE400BEF85E /* Theme.swift in Sources */,
 				BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */,
+				BF7B111A1F91E5A3003815C1 /* ProgressHUD.swift in Sources */,
 				BFCB67661F8F709F00D05A90 /* TopicService.swift in Sources */,
 				BFCE8E081F904CA80026F100 /* NodeTabView.swift in Sources */,
 				BF65BDB81F8E12C80010B4C9 /* AppDelegate.swift in Sources */,

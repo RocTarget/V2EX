@@ -42,7 +42,7 @@ extension String {
 
     /// 获取字符串长度
     var length: Int {
-        return characters.count
+        return count
     }
 
     /// 转为 NSString
@@ -51,15 +51,11 @@ extension String {
     }
 
     func hash() -> Int {
-        let sum =  self.characters
+        let sum =  self
             .map { String($0).unicodeScalars.first?.value }
             .flatMap { $0 }
             .reduce(0, +)
         return Int(sum)
-    }
-
-    func localized() -> String {
-        return NSLocalizedString(self, comment: "")
     }
 
     /// 返回一个删除掉所有出现target字符串的地方的字符串

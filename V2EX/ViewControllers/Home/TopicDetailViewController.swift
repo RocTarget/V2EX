@@ -8,8 +8,8 @@ class TopicDetailViewController: BaseViewController, TopicService {
         view.delegate = self
         view.dataSource = self
         view.separatorStyle = .none
-        view.rowHeight = 1000
         view.estimatedRowHeight = 80
+        view.backgroundColor = .clear
         view.rowHeight = UITableViewAutomaticDimension
         view.register(cellWithClass: TopicCommentCell.self)
         self.view.addSubview(view)
@@ -26,17 +26,15 @@ class TopicDetailViewController: BaseViewController, TopicService {
         }
     }
 
+    var comments: [CommentModel] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         fetchTopicDetail()
 
+        headerView.isHidden = true
         tableView.tableHeaderView = headerView
-
-        headerView.webLoadComplete = { [weak self] in
-            self?.tableView.beginUpdates()
-            self?.tableView.endUpdates()
-        }
     }
 
     override func setupConstraints() {
@@ -52,11 +50,13 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return comments.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
+        cell.comment = comments[indexPath.row]
+        return cell
     }
 }
 
@@ -64,11 +64,22 @@ extension TopicDetailViewController {
     func fetchTopicDetail() {
         guard let `topic` = topic else { return }
 
-        title = topic.title
-        topicDetail(topic: topic, success: { [weak self] topic in
+        ProgressHUD.show()
 
+        title = topic.title
+        topicDetail(topic: topic, success: { [weak self] topic, comments in
             self?.topic = topic
+            self?.comments = comments
+
+            ProgressHUD.dismiss()
+            }, failure: { error in
+                ProgressHUD.dismiss()
+                ProgressHUD.showText(error)
+        })
+
+        headerView.webLoadComplete = { [weak self] in
+            self?.headerView.isHidden = false
             self?.tableView.reloadData()
-            }, failure: nil)
+        }
     }
 }

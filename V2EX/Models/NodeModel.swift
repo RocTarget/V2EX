@@ -1,5 +1,11 @@
 import Foundation
 
+public struct NodeCategoryModel {
+    var id: Int
+    var name: String
+    var nodes: [NodeModel]
+}
+
 public struct NodeModel {
     var name: String
     var href: String
