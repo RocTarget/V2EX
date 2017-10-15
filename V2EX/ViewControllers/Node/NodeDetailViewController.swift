@@ -1,8 +1,7 @@
 import UIKit
-import SnapKit
 
-class HomeViewController: BaseViewController, TopicService {
-
+class NodeDetailViewController: BaseViewController, NodeService {
+    
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -15,78 +14,63 @@ class HomeViewController: BaseViewController, TopicService {
         self.view.addSubview(view)
         return view
     }()
-
+    
+    
     private lazy var refreshControl: UIRefreshControl = {
         let view = UIRefreshControl()
         return view
     }()
-
-    private lazy var tabView: NodeTabView = {
-        let view = NodeTabView(
-            frame: CGRect(x: 0,
-                          y: 0,
-                          width: UIScreen.screenWidth,
-                          height: self.navigationController!.navigationBar.height),
-            nodes: nodes)
-        return view
-    }()
     
-    var nodes: [NodeModel] = [] {
-        didSet {
-            tabView.nodes = nodes
-        }
-    }
-
+    public var node: NodeModel
+    
     var topics: [TopicModel] = [] {
         didSet {
             tableView.reloadData()
         }
     }
     
+    init(node: NodeModel) {
+        self.node = node
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        HUD.show()
-
-        index(success: { [weak self] nodes, topics in
-            guard let `self` = self else { return }
-            
-            self.nodes = nodes
-            self.topics = topics
-            HUD.dismiss()
-
-            }, failure: { error in
-                HUD.dismiss()
-                HUD.showText(error)
-        })
-
-        navigationItem.titleView = tabView
-        tabView.valueChange = { [weak self] index in
-            guard let `self` = self else { return }
-
-            self.tableView.setContentOffset(CGPoint(x: -self.tableView.contentInset.left, y: -self.tableView.contentInset.top), animated: true)
-            self.fetchTopic()
-        }
+        
+        title = node.name
+        
         tableView.addSubview(refreshControl)
-
+        
+        fetchNodeDetail()
+        
         refreshControl.rx
             .controlEvent(.valueChanged)
             .subscribeNext { [weak self] in
-                self?.fetchTopic()
-        }.disposed(by: rx.disposeBag)
+                self?.fetchNodeDetail()
+            }.disposed(by: rx.disposeBag)
     }
-
-    func fetchTopic() {
-        let href = nodes[self.tabView.selectIndex].href
-        topics(href: href, success: { [weak self] topic in
-            self?.topics = topic
+    
+    func fetchNodeDetail() {
+        
+        HUD.show()
+        nodeDetail(
+            node: node,
+            success: { [weak self] node, topics in
+                self?.node = node
+                self?.topics = topics
+                HUD.dismiss()
+                self?.refreshControl.endRefreshing()
+        }) { [weak self] error in
             self?.refreshControl.endRefreshing()
-            }, failure: { error in
-                self.refreshControl.endRefreshing()
-                HUD.showText(error)
-        })
+            HUD.dismiss()
+            HUD.showText(error)
+        }
     }
-
+    
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -94,7 +78,8 @@ class HomeViewController: BaseViewController, TopicService {
     }
 }
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+extension NodeDetailViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return topics.count
     }
@@ -105,11 +90,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         cell.topic = topic
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let topicDetailVC = TopicDetailViewController()
         topicDetailVC.topic = topics[indexPath.row]
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
     }
-
+    
 }

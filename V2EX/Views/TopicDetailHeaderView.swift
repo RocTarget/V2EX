@@ -111,7 +111,6 @@ class TopicDetailHeaderView: UIView{
             
             avatarView.setRoundImage(urlString: topic.user.avatarSrc)
             usernameLabel.text = topic.user.name
-            nodeLabel.text = topic.node.name
             titleLabel.text = topic.title
             timeLabel.text = [topic.publicTime, topic.clickCount].joined(separator: " · ")
             timeLabel.isHidden = topic.publicTime.isEmpty
@@ -125,6 +124,9 @@ class TopicDetailHeaderView: UIView{
             } catch {
                 log.error("CSS 加载失败")
             }
+            
+            guard let node = topic.node else { return }
+            nodeLabel.text = node.name
         }
     }
 }

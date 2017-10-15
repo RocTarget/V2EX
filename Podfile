@@ -24,13 +24,15 @@ target 'V2EX' do
     pod 'SnapKit'
     pod 'UIView+Positioning'
     pod 'PKHUD'
+    pod 'Toaster'
 
     # DB
     pod 'SQLite.swift'
 
     # Misc
     pod 'R.swift'
-
+    pod 'IQKeyboardManagerSwift'
+    
     # Debug only
     pod 'Reveal-SDK', '~> 4', :configurations => ['Debug']
 

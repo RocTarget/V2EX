@@ -24,6 +24,7 @@ class NodeCategoryStore: DB {
     }
 
     func insert(_ nodeCate: NodeCategoryModel) {
+        log.info(nodeCate.name)
         let insert = table.insert(
             name <- nodeCate.name,
             id <- nodeCate.id
@@ -31,14 +32,35 @@ class NodeCategoryStore: DB {
         log.verbose(insert.asSQL())
         do {
             try db?.run(insert)
+            nodeCate.nodes.forEach { NodeStore.shared.insert($0, ncid: nodeCate.id) }
+        } catch {
+            log.error(error)
+        }
+    }
+    
+    func deleteAll() {
+        do {
+            try db?.run(table.delete())
         } catch {
             log.error(error)
         }
     }
 
     func cates() -> [NodeCategoryModel] {
-
-        return []
+        var cates: [NodeCategoryModel] = []
+        
+        do {
+            guard let result = try db?.prepare(table.select(id)) else { return [] }
+            for row in result {
+                let nodes = NodeStore.shared.nodes(by: row[id])
+                let model = NodeCategoryModel(id: row[id], name: row[name], nodes: nodes)
+                cates.append(model)
+            }
+        } catch {
+            log.error(error)
+        }
+        
+        return cates
     }
 }
 
@@ -51,7 +73,7 @@ class NodeStore: DB {
     private let id = Expression<Int>("id")
     private let name = Expression<String>("name")
     private let href = Expression<String>("href")
-    private let isCurrent = Expression<Bool?>("isCurrent")
+    private let isCurrent = Expression<Bool>("isCurrent")
     private let icon = Expression<String?>("icon")
     private let comments = Expression<Int?>("comments")
     private let ncid = Expression<Int>("ncid")
@@ -92,5 +114,31 @@ class NodeStore: DB {
         } catch {
             log.error(error)
         }
+    }
+    
+    
+    func deleteAll() {
+        do {
+            try db?.run(table.delete())
+        } catch {
+            log.error(error)
+        }
+    }
+    
+    func nodes(by ncid: Int) -> [NodeModel] {
+        var nodes: [NodeModel] = []
+        
+        let filter = table.filter(self.ncid == ncid)
+        do {
+            guard let result = try db?.prepare(filter) else { return [] }
+            for row in result {
+                let model = NodeModel(name: row[name], href: row[href], isCurrent: row[isCurrent], icon: row[icon], comments: row[comments])
+                nodes.append(model)
+            }
+        } catch {
+            log.error(error)
+        }
+        
+        return nodes
     }
 }

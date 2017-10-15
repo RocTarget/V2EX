@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (4.5.1)
+  - IQKeyboardManagerSwift (5.0.4)
   - Kanna (2.1.1)
   - Kingfisher (4.1.0)
   - PKHUD (5.0.0)
@@ -17,10 +18,12 @@ PODS:
   - SQLite.swift (0.11.4):
     - SQLite.swift/standard (= 0.11.4)
   - SQLite.swift/standard (0.11.4)
+  - Toaster (2.1.0)
   - UIView+Positioning (1.5)
 
 DEPENDENCIES:
   - Alamofire
+  - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
   - Kingfisher
   - PKHUD
@@ -31,6 +34,7 @@ DEPENDENCIES:
   - RxSwift (from `https://github.com/ReactiveX/RxSwift.git`, branch `rxswift4.0-swift4.0`)
   - SnapKit
   - SQLite.swift
+  - Toaster
   - UIView+Positioning
 
 EXTERNAL SOURCES:
@@ -43,14 +47,15 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   RxCocoa:
-    :commit: f20c35ab166a94e8049e48d9ed82c8cf65dba900
+    :commit: 05e26184d9699d360e6710121b245935d8cbe25a
     :git: https://github.com/ReactiveX/RxSwift.git
   RxSwift:
-    :commit: f20c35ab166a94e8049e48d9ed82c8cf65dba900
+    :commit: 05e26184d9699d360e6710121b245935d8cbe25a
     :git: https://github.com/ReactiveX/RxSwift.git
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
   Kingfisher: f14df8cbe576bf55f211fa589e9869bceb4ea87d
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
@@ -62,8 +67,9 @@ SPEC CHECKSUMS:
   RxSwift: f0ff3c78e1f71a7d3506defde0b79c72fe39bac3
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
+  Toaster: 8c3225dc465bef4aa57e147a288724576df8e439
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
 
-PODFILE CHECKSUM: 4f23f7200b1ee8590576382dfabfb54ef0de86aa
+PODFILE CHECKSUM: 9ba06f45a6cbd1f924001963b09782e186dc41fd
 
 COCOAPODS: 1.3.1

@@ -1,5 +1,6 @@
 import Foundation
 import PKHUD
+import Toaster
 
 private class CustomHUD: PKHUDRotatingImageView {
 
@@ -20,9 +21,16 @@ private class CustomHUD: PKHUDRotatingImageView {
     }
 }
 
-final class ProgressHUD {
+final class HUD {
+    
+    class func configureAppearance() {
+        let appearance = ToastView.appearance()
+        appearance.font = .boldSystemFont(ofSize: 16)
+        appearance.textInsets = UIEdgeInsets(top: 15, left: 20, bottom: 15, right: 20)
+    }
+    
     class func show() {
-        HUD.dimsBackground = true
+        PKHUD.sharedHUD.dimsBackground = true
         PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
         PKHUD.sharedHUD.contentView = CustomHUD(image: Asset.hud_progress())
         PKHUD.sharedHUD.show(onView: UIApplication.shared.windows.last)
@@ -33,13 +41,16 @@ final class ProgressHUD {
         PKHUD.sharedHUD.hide()
     }
 
-    class func showSuccess(_ text: String? = nil) {
-        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
-        HUD.flash(.labeledSuccess(title: nil, subtitle: text), onView: UIApplication.shared.windows.last, delay: 3)
-    }
+//    class func showSuccess(_ text: String? = nil) {
+//        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
+//        PKHUD.HUD.flash(.labeledSuccess(title: nil, subtitle: text), onView: UIApplication.shared.windows.last, delay: 3)
+//    }
 
     class func showText(_ text: String, delay: TimeInterval = 3) {
-        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
-        HUD.flash(.label(text), onView: UIApplication.shared.windows.last, delay: delay)
+        
+        Toast(text: text, delay: 0, duration: delay).show()
+        
+//        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
+//        PKHUD.HUD.flash(.label(text), onView: UIApplication.shared.windows.last, delay: delay)
     }
 }

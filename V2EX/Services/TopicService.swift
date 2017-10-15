@@ -1,7 +1,7 @@
 import Foundation
 import Kanna
 
-protocol TopicService {
+protocol TopicService: HTMLParseService {
     
     
     /// 获取 首页 数据
@@ -28,6 +28,7 @@ protocol TopicService {
         topic: TopicModel,
         success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
         failure: Failure?)
+
 }
 
 extension TopicService {
@@ -48,21 +49,19 @@ extension TopicService {
                 return NodeModel(name: name, href: href, isCurrent: isCurrent)
             })
 
-            let topics = self.parseTopic(html: html)
-
-            self.parseNodeNav(html: html)
+            let topics = self.parseTopicRootPath(html: html)
 
             success?(nodes, topics)
         }, failure: failure)
     }
-    
+
     func topics(
         href: String,
         success: ((_ topics: [TopicModel]) -> Void)?,
         failure: Failure?) {
 
         Network.htmlRequest(target: .topics(href: href), success: { html in
-            let topics = self.parseTopic(html: html)
+            let topics = self.parseTopicRootPath(html: html)
             success?(topics)
         }, failure: failure)
     }
@@ -117,63 +116,9 @@ extension TopicService {
         }, failure: failure)
     }
 
-    /// 解析主题列表
-    ///
-    /// - Parameter html: HTMLDoc
-    /// - Returns: topic model
-    private func parseTopic(html: HTMLDocument) -> [TopicModel] {
-        let itemPath = html.xpath("//*[@id='Main']/div[@class='box']/div[@class='cell item']")
-        let topics = itemPath.flatMap({ ele -> TopicModel? in
-            guard let userPage = ele.xpath(".//td/a").first?["href"],
-                let avatarSrc = ele.xpath(".//td/a/img").first?["src"],
-                let topicPath = ele.xpath(".//td/span[@class='item_title']/a").first,
-                let topicTitle = topicPath.content,
-                let topicHref = topicPath["href"],
-                let nodePath = ele.xpath(".//td/span[@class='small fade']/a[@class='node']").first,
-                let nodename = nodePath.content,
-                let nodeHref = nodePath["href"],
-                let username = ele.xpath(".//td/span[@class='small fade']/strong[1]").first?.content else {
-                    return nil
-            }
-            let replyCount = Int(ele.xpath(".//td/a[@class='count_livid']").first?.content ?? "0") ?? 0
-            var lastReplyTime: String?
-            if let subs = ele.xpath(".//td/span[@class='small fade']").first?.text?.components(separatedBy: "•"), subs.count > 2 {
-                lastReplyTime = subs[2].trimmed
-            }
-            let user = UserModel(name: username, href: userPage, avatar: avatarSrc)
-            let node = NodeModel(name: nodename, href: nodeHref)
-            return TopicModel(user: user, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyTime, replyCount: replyCount)
-        })
-
-        return topics
+    private func parseTopicRootPath(html: HTMLDocument) -> [TopicModel] {
+        let rootPath = html.xpath("//*[@id='Main']/div[@class='box']/div[@class='cell item']")
+        return self.parseTopic(rootPath: rootPath)
     }
-
-    private func parseNodeNav(html: HTMLDocument) {
-        let nodesPath = html.xpath("//*[@id='Main']//div[@class='box'][last()]/div/table/tr")
-
-//        var nodeCategorys: [NodeCategoryModel] = []
-        for (index, ele) in nodesPath.enumerated() {
-            guard let sectionName = ele.xpath("./td[1]/span").first?.content else { continue }
-
-            let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
-                guard let name = ele.content, let href = ele["href"] else { return nil }
-                return NodeModel(name: name, href: href)
-            })
-            let category = NodeCategoryModel(id: index, name: sectionName, nodes: nodes)
-            NodeCategoryStore.shared.insert(category)
-//            nodeCategorys.append(category)
-        }
-
-//        let nodeCategorys = nodesPath.flatMap { (ele) -> NodeCategoryModel? in
-//
-//            guard let sectionName = ele.xpath("./td[1]/span").first?.content else { return nil }
-//
-//            let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
-//                guard let name = ele.content, let href = ele["href"] else { return nil }
-//
-//                return NodeModel(name: name, href: href)
-//            })
-//            return NodeCategoryModel(name: sectionName, nodes: nodes, id: 0)
-//        }
-    }
+    
 }

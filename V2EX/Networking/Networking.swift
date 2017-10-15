@@ -153,6 +153,12 @@ extension Networking {
                 failure?("数据解析失败")
                 return
             }
+            
+            guard let content = html.content,
+                !content.contains("Access Denied") else {
+                failure?("Access Denied")
+                return
+            }
 
             success?(html)
         }, failure: failure)

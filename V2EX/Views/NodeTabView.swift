@@ -86,7 +86,6 @@ public class NodeTabView: UIControl {
 extension NodeTabView {
 
     public func setSelectIndex(index: Int, animated: Bool = true) {
-        log.info("------", index)
         guard index != selectIndex, index >= 0 , index < titleLabels.count else { return }
 
         let currentLabel = titleLabels[index]

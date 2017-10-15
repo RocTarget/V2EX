@@ -4,6 +4,12 @@ import Alamofire
 enum API {
 
     case topics(href: String?)
+    
+    case captcha
+    
+    case captchaImageData(once: String)
+    
+    case signin
 }
 
 
@@ -18,6 +24,12 @@ extension API: TargetType {
         switch self {
         case .topics(let href):
             return .get(href ?? "")
+        case .captcha:
+            return .get("/signin")
+        case .captchaImageData(let once):
+            return .get("/_captcha?once=\(once)")
+        case .signin:
+            return .get("/signin")
         }
     }
 

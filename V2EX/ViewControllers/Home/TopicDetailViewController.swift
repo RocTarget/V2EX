@@ -64,17 +64,17 @@ extension TopicDetailViewController {
     func fetchTopicDetail() {
         guard let `topic` = topic else { return }
 
-        ProgressHUD.show()
+        HUD.show()
 
         title = topic.title
         topicDetail(topic: topic, success: { [weak self] topic, comments in
             self?.topic = topic
             self?.comments = comments
 
-            ProgressHUD.dismiss()
+            HUD.dismiss()
             }, failure: { error in
-                ProgressHUD.dismiss()
-                ProgressHUD.showText(error)
+                HUD.dismiss()
+                HUD.showText(error)
         })
 
         headerView.webLoadComplete = { [weak self] in

@@ -79,9 +79,11 @@ class TopicCell: BaseTableViewCell {
             avatarView.setRoundImage(urlString: topic.user.avatarSrc)
             usernameLabel.text = topic.user.name
             titleLabel.text = topic.title
-            nodeLabel.text = topic.node.name
             let lastReplyTime = (topic.lastReplyTime != nil) ? "  •  " + topic.lastReplyTime! : ""
             lastReplyLabel.text = lastReplyTime + "  •  \(topic.replyCount) 回复"
+            
+            guard let node = topic.node else { return }
+            nodeLabel.text = node.name
         }
     }
 

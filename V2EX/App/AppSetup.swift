@@ -1,11 +1,15 @@
 import Foundation
 import UIKit
+import IQKeyboardManagerSwift
 
 
 struct AppSetup {
 
     static func setup() {
         setupWindow()
+        setupKeyboardManager()
+
+        HUD.configureAppearance()
     }
 }
 
@@ -21,6 +25,15 @@ extension AppSetup {
         window.makeKeyAndVisible()
         AppDelegate.shared.window = window
 
-        window.rootViewController = TabBarViewController()
+        window.rootViewController = LoginViewController()//TabBarViewController()
+    }
+    
+    /// 键盘自处理
+    private static func setupKeyboardManager() {
+        IQKeyboardManager.sharedManager().enable = true
+        IQKeyboardManager.sharedManager().keyboardDistanceFromTextField = 70
+//        IQKeyboardManager.sharedManager().disabledToolbarClasses = [
+//        ]
+//        IQKeyboardManager.sharedManager().toolbarPreviousNextAllowedClasses.append(AutoPreviousNextView.self)
     }
 }

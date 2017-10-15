@@ -2,7 +2,7 @@ import Foundation
 
 public struct TopicModel {
     var user: UserModel
-    var node: NodeModel
+    var node: NodeModel?
 
     var title: String
     var content: String = ""
@@ -13,7 +13,7 @@ public struct TopicModel {
     var publicTime: String = ""
     var clickCount: String = ""
 
-    init(user: UserModel, node: NodeModel, title: String, href: String, lastReplyTime: String?, replyCount: Int) {
+    init(user: UserModel, node: NodeModel?, title: String, href: String, lastReplyTime: String?, replyCount: Int) {
         self.user = user
         self.node = node
         self.title = title
