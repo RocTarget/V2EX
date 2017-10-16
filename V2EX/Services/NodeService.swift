@@ -33,7 +33,6 @@ extension NodeService {
         failure: Failure?) {
         Network.htmlRequest(target: .topics(href: nil), success: { html in
             let cates = self.parseNodeNavigation(html: html)
-            
             success?(cates)
         }, failure: failure)
     }
@@ -45,18 +44,16 @@ extension NodeService {
         failure: Failure?) {
         Network.htmlRequest(target: .topics(href: node.href), success: { html in
 
-            let nodeIcon = html.xpath("//*[@id='Main']//div[@class='header']/div/img").first?["src"]
-            let nodeIntro = html.xpath("//*[@id='Main']//div[@class='header']/span[last()]").first?.content
-            let topicNumber = html.xpath("//*[@id='Main']//div[@class='header']/div[2]/strong").first?.content
+//            let nodeIcon = html.xpath("//*[@id='Main']//div[@class='header']/div/img").first?["src"]
+//            let nodeIntro = html.xpath("//*[@id='Main']//div[@class='header']/span[last()]").first?.content
+//            let topicNumber = html.xpath("//*[@id='Main']//div[@class='header']/div[2]/strong").first?.content
+//            var `node` = node
+//            node.icon = nodeIcon
+//            node.intro = nodeIntro
+//            node.topicNumber = topicNumber
 
-            let rootPath = html.xpath("//*[@id='TopicsNode']/div[contains(@class, 'cell')]")
+            let rootPath = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[contains(@class, 'cell')]")
             let topics = self.parseTopic(rootPath: rootPath)
-            
-            var `node` = node
-            node.icon = nodeIcon
-            node.intro = nodeIntro
-            node.topicNumber = topicNumber
-            
             success?(node, topics)
         }, failure: failure)
     }

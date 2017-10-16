@@ -46,9 +46,11 @@ final class HUD {
 //        PKHUD.HUD.flash(.labeledSuccess(title: nil, subtitle: text), onView: UIApplication.shared.windows.last, delay: 3)
 //    }
 
-    class func showText(_ text: String, delay: TimeInterval = 3) {
-        
+    class func showText(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
         Toast(text: text, delay: 0, duration: delay).show()
+        GCD.delay(delay) {
+            completionBlock?()
+        }
         
 //        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
 //        PKHUD.HUD.flash(.label(text), onView: UIApplication.shared.windows.last, delay: delay)

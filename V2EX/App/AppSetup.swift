@@ -25,7 +25,8 @@ extension AppSetup {
         window.makeKeyAndVisible()
         AppDelegate.shared.window = window
 
-        window.rootViewController = LoginViewController()//TabBarViewController()
+        window.rootViewController = TabBarViewController()
+//        window.rootViewController = LoginViewController()
     }
     
     /// 键盘自处理

@@ -76,8 +76,8 @@ class TopicCell: BaseTableViewCell {
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
-            avatarView.setRoundImage(urlString: topic.user.avatarSrc)
-            usernameLabel.text = topic.user.name
+            avatarView.setRoundImage(urlString: topic.user.avatarNormalSrc)
+            usernameLabel.text = topic.user.username
             titleLabel.text = topic.title
             let lastReplyTime = (topic.lastReplyTime != nil) ? "  •  " + topic.lastReplyTime! : ""
             lastReplyLabel.text = lastReplyTime + "  •  \(topic.replyCount) 回复"

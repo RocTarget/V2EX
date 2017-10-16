@@ -109,8 +109,8 @@ class TopicDetailHeaderView: UIView{
         didSet {
             guard let `topic` = topic else { return }
             
-            avatarView.setRoundImage(urlString: topic.user.avatarSrc)
-            usernameLabel.text = topic.user.name
+            avatarView.setRoundImage(urlString: topic.user.avatarNormalSrc)
+            usernameLabel.text = topic.user.username
             titleLabel.text = topic.title
             timeLabel.text = [topic.publicTime, topic.clickCount].joined(separator: " · ")
             timeLabel.isHidden = topic.publicTime.isEmpty

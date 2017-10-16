@@ -15,8 +15,8 @@ extension HTMLParseService {
     /// - Returns: topic model
     func parseTopic(rootPath: XPathObject) -> [TopicModel] {
         
-//        let itemPath = html.xpath("//*[@id='Main']/div[@class='box']/div[@class='cell item']")
-        
+        //        let itemPath = html.xpath("//*[@id='Wrapper']/div[@class='box']/div[@class='cell item']")
+
         let topics = rootPath.flatMap({ ele -> TopicModel? in
             guard let userPage = ele.xpath(".//td/a").first?["href"],
                 let avatarSrc = ele.xpath(".//td/a/img").first?["src"],
@@ -33,7 +33,9 @@ extension HTMLParseService {
             if let subs = ele.xpath(".//td/span[@class='small fade']").first?.text?.components(separatedBy: "•"), subs.count > 2 {
                 lastReplyTime = subs[2].trimmed
             }
-            let user = UserModel(name: username, href: userPage, avatar: avatarSrc)
+
+
+            let user = UserModel(username: username, url: userPage, avatar: avatarSrc)
             
             var node: NodeModel?
             
@@ -50,7 +52,7 @@ extension HTMLParseService {
     }
     
     func parseNodeNavigation(html: HTMLDocument) -> [NodeCategoryModel] {
-        let nodesPath = html.xpath("//*[@id='Main']//div[@class='box'][last()]/div/table/tr")
+        let nodesPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][last()]/div/table/tr")
         
         ////        var nodeCategorys: [NodeCategoryModel] = []
         //        for (index, ele) in nodesPath.enumerated() {

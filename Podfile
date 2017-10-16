@@ -50,9 +50,9 @@ end
 
 post_install do |installer|
     # 需要指定编译版本的第三方库名称
-    myTargets = ['Kanna']
+    swift3_targets = ['Kanna']
     installer.pods_project.targets.each do |target|
-        if myTargets.include? target.name
+        if swift3_targets.include? target.name
             target.build_configurations.each do |config|
                 config.build_settings['SWIFT_VERSION'] = '3.0'
             end

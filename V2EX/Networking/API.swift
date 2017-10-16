@@ -1,41 +1,60 @@
 import Foundation
 import Alamofire
 
+enum CaptchaType: String {
+    case signin = "/signin"
+    case forgot = "/forgot"
+}
+
+
 enum API {
 
     case topics(href: String?)
     
-    case captcha
-    
+    case captcha(type: CaptchaType)
+
     case captchaImageData(once: String)
     
-    case signin
-}
+    case signin(dict: [String: String])
 
+    case forgot(dict: [String: String])
+
+    case signup(dict: [String: String])
+}
 
 extension API: TargetType {
 
     /// The target's base `URL`.
     var baseURL: String {
-        return Config.baseURL
+        return Constants.Config.baseURL
     }
 
     var route: Route {
         switch self {
         case .topics(let href):
             return .get(href ?? "")
-        case .captcha:
-            return .get("/signin")
+        case .captcha(let type):
+            return .get(type.rawValue)
         case .captchaImageData(let once):
             return .get("/_captcha?once=\(once)")
         case .signin:
-            return .get("/signin")
+            return .post("/signin")
+        case .forgot:
+            return .post("/forgot")
+        case .signup:
+            return .post("/signup")
         }
     }
 
     /// The parameters to be encoded in the request.
     var parameters: [String : Any]? {
-        let param: [String: Any] = [:]
+        var param: [String: Any] = [:]
+        switch self {
+        case .signin(let dict), .forgot(let dict), .signup(let dict):
+            param = dict
+        default:
+            return nil
+        }
         return param
     }
 
@@ -44,9 +63,17 @@ extension API: TargetType {
         return Alamofire.URLEncoding()
     }
 
-    /// Returns HTTP header values.
+    // Returns HTTP header values.
     var httpHeaderFields: [String: String]? {
-        return ["Accept": "application/json"]
+        var headers: [String: String] = [:]
+        headers["User-Agent"] = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Version/10.0 Mobile/14D27 Safari/602.1"
+        switch self {
+        case .signin, .forgot:
+            headers["Referer"] = defaultURLString
+        default:
+            break
+        }
+        return headers
     }
 
     /// The type of HTTP task to be performed.

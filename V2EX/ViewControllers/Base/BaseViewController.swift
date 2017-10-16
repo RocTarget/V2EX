@@ -56,7 +56,7 @@ class BaseViewController: UIViewController {
     }
 
     // MARK: Action
-    func cancelButtonDidTap() {
+    func dismiss() {
         dismiss(animated: true, completion: nil)
     }
 }

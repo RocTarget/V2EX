@@ -1,9 +1,17 @@
 import Foundation
 import UIKit
 
-struct Config {
+struct Constants {
 
-    static var baseURL = "https://www.v2ex.com"
+    struct Config {
+        // App
+        static var baseURL = "https://www.v2ex.com"
+    }
+
+    struct Keys {
+        // User 登录用户名
+        static let username = "username"
+    }
 }
 
 
