@@ -75,7 +75,7 @@ class NodeStore: DB {
     private let href = Expression<String>("href")
     private let isCurrent = Expression<Bool>("isCurrent")
     private let icon = Expression<String?>("icon")
-    private let comments = Expression<Int?>("comments")
+    private let comments = Expression<String?>("comments")
     private let ncid = Expression<Int>("ncid")
 
     override func setupTable() {

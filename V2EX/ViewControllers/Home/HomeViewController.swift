@@ -77,7 +77,7 @@ class HomeViewController: BaseViewController, TopicService {
     }
 
     func fetchTopic() {
-        let href = nodes[self.tabView.selectIndex].href
+        let href = nodes[tabView.selectIndex].href
         topics(href: href, success: { [weak self] topic in
             self?.topics = topic
             self?.refreshControl.endRefreshing()

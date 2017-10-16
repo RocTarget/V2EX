@@ -20,6 +20,8 @@
 		779B17041F8FA8C100E912E7 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */; };
 		779B17061F8FAF5A00E912E7 /* UILable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779B17051F8FAF5A00E912E7 /* UILable+Extension.swift */; };
 		779B17081F8FB0AF00E912E7 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779B17071F8FB0AF00E912E7 /* UIImageView+Extension.swift */; };
+		77B75DAC1F94EA8F00B7312B /* MemberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B75DAB1F94EA8F00B7312B /* MemberModel.swift */; };
+		77B75DAE1F94FB8C00B7312B /* NodeCollectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B75DAD1F94FB8C00B7312B /* NodeCollectViewController.swift */; };
 		77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF6A1F92FD8F009DE52C /* MoreViewController.swift */; };
 		77C8DF6E1F92FDE2009DE52C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF6D1F92FDE2009DE52C /* LoginViewController.swift */; };
 		77C8DF701F9305F8009DE52C /* AccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF6F1F9305F8009DE52C /* AccountService.swift */; };
@@ -115,6 +117,8 @@
 		779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
 		779B17051F8FAF5A00E912E7 /* UILable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILable+Extension.swift"; sourceTree = "<group>"; };
 		779B17071F8FB0AF00E912E7 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
+		77B75DAB1F94EA8F00B7312B /* MemberModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberModel.swift; sourceTree = "<group>"; };
+		77B75DAD1F94FB8C00B7312B /* NodeCollectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectViewController.swift; sourceTree = "<group>"; };
 		77C8DF6A1F92FD8F009DE52C /* MoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreViewController.swift; sourceTree = "<group>"; };
 		77C8DF6D1F92FDE2009DE52C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		77C8DF6F1F9305F8009DE52C /* AccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountService.swift; sourceTree = "<group>"; };
@@ -243,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				77C8DF6A1F92FD8F009DE52C /* MoreViewController.swift */,
+				77B75DAD1F94FB8C00B7312B /* NodeCollectViewController.swift */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -342,6 +347,7 @@
 				BFCB67671F8F716600D05A90 /* NodeModel.swift */,
 				BFCB67691F8F721700D05A90 /* TopicModel.swift */,
 				779B16FD1F8FA5DE00E912E7 /* UserModel.swift */,
+				77B75DAB1F94EA8F00B7312B /* MemberModel.swift */,
 				BF45FCCE1F906E74006B2C2F /* CommentModel.swift */,
 				77C8DF711F930B0E009DE52C /* LoginForm.swift */,
 			);
@@ -863,6 +869,7 @@
 				BFBCE5B61F90C14B000106D6 /* UIViewController+Rx.swift in Sources */,
 				BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */,
 				7756CCCC1F92475F00EF47B8 /* NodeDetailViewController.swift in Sources */,
+				77B75DAE1F94FB8C00B7312B /* NodeCollectViewController.swift in Sources */,
 				BFCB675B1F8F51DD00D05A90 /* Networking.swift in Sources */,
 				BFCB675C1F8F51DD00D05A90 /* TargetType.swift in Sources */,
 				BFBCE5B11F90C14B000106D6 /* Scheduler+Rx.swift in Sources */,
@@ -894,6 +901,7 @@
 				779B17021F8FA8A900E912E7 /* TopicCell.swift in Sources */,
 				BFBCE5B31F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift in Sources */,
 				BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */,
+				77B75DAC1F94EA8F00B7312B /* MemberModel.swift in Sources */,
 				BFCB67681F8F716600D05A90 /* NodeModel.swift in Sources */,
 				BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */,
 				BFCB67461F8F498900D05A90 /* HomeViewController.swift in Sources */,

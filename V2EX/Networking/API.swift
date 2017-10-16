@@ -20,6 +20,12 @@ enum API {
     case forgot(dict: [String: String])
 
     case signup(dict: [String: String])
+    
+    case myNodes
+    
+    case following
+    
+    case topicCollect
 }
 
 extension API: TargetType {
@@ -43,6 +49,12 @@ extension API: TargetType {
             return .post("/forgot")
         case .signup:
             return .post("/signup")
+        case .myNodes:
+            return .get("/my/nodes")
+        case .following:
+            return .get("/my/following")
+        case .topicCollect:
+            return .get("/my/topics")
         }
     }
 

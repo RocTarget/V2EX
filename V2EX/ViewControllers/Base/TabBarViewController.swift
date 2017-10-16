@@ -17,7 +17,7 @@ class TabBarViewController: UITabBarController {
 extension TabBarViewController {
     
     fileprivate func setAppearance() {
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor : Theme.Color.navColor], for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor : UIColor.hex(0x8a8a8a)], for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor : Theme.Color.globalColor], for: .selected)
     }
     
@@ -42,8 +42,7 @@ extension TabBarViewController {
         childController.tabBarItem.image = normalImage?.withRenderingMode(.alwaysOriginal)
         childController.tabBarItem.selectedImage = selectedImageName?.withRenderingMode(.alwaysOriginal)
         childController.title = title
-        let nav = NavigationViewController(rootViewController: childController)
-        addChildViewController(nav)
+        addChildViewController(NavigationViewController(rootViewController: childController))
     }
     
     fileprivate func clickBackTop() {

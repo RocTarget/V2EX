@@ -9,8 +9,11 @@ struct Constants {
     }
 
     struct Keys {
-        // User 登录用户名
-        static let username = "username"
+        // User 登录时的用户名
+        static let loginAccount = "loginAccount"
+        
+        // User 持久化
+        static let userInfo = "UserInfo"
     }
 }
 

@@ -39,8 +39,30 @@ extension TopicService {
         Networking.shared.htmlRequest(target: .topics(href: nil), success: { html in
 
 //            let nodePath = html.xpath("//*[@id='Wrapper']/div/div[3]/div[2]/a")
-//            let nodePath = html.xpath("//*[@id='Wrapper']/div[@class='content']/div/div[2]/a")
-            let nodePath = html.xpath("//*[@id='Wrapper']/div[@class='content']/div/div[1]/a")
+            
+            // 有通知 代表登录成功
+            var isLogin = false
+            if let innerHTML = html.innerHTML {
+                isLogin = innerHTML.contains("notifications")
+                if  isLogin {
+                    // 领取今日登录奖励
+                    if let dailyHref = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='inner']/a").first?["href"],
+                        dailyHref == "/mission/daily" {
+                    }
+                    
+                    //
+                    if let avatarNode = html.xpath("//*[@id='Top']/div/div/table/tr/td[3]/a[1]/img[1]").first,
+                        let avatarPath = avatarNode["src"]?.replacingOccurrences(of: "s=24", with: "s=55"), // 修改图片尺寸
+                        let href = avatarNode.parent?["href"] {
+                        let username = href.lastPathComponent
+
+                        UserModel(username: username, url: href, avatar: avatarPath).save()
+                    }
+                }
+            }
+            
+            //  已登录 div[2] / 没登录 div[1]
+            let nodePath = html.xpath("//*[@id='Wrapper']/div[@class='content']/div/div[\(isLogin ? 2 : 1)]/a")
 
             let nodes = nodePath.flatMap({ ele -> NodeModel? in
                 guard let href = ele["href"],

@@ -1,6 +1,6 @@
 import Foundation
 
-final class UserModel: NSCoding {
+final class UserModel: NSObject, NSCoding {
 
     private struct SerializationKeys {
         static let avatarNormal = "avatar_normal"
@@ -39,23 +39,49 @@ final class UserModel: NSCoding {
     public var avatarNormal: String
     public var avatarLarge: String?
 
-//    var name: String
-//    var href: String
-//    var avatar: String
-
     var avatarNormalSrc: String {
         return "https:" + avatarNormal
     }
 
+    class var isLogin: Bool {
+        if let username = UserModel.current()?.username,
+            username.isNotEmpty {
+            return true
+        }
+        return false
+    }
+    
     init(username: String, url: String, avatar: String) {
         self.username = username
         self.url = url
         self.avatarNormal = avatar
     }
-
-    /// Generates description of the object in the form of a NSDictionary.
-    ///
-    /// - returns: A Key value pair containing all valid values in the object.
+    
+    public static func current() -> UserModel? {
+        guard let value = UserDefaults.standard.value(forKey: Constants.Keys.userInfo) as? Data else {
+            return nil
+        }
+        
+        return NSKeyedUnarchiver.unarchiveObject(with: value) as? UserModel
+    }
+    
+    public static func store(_ user: UserModel?) {
+        guard let `user` = user else { return }
+        
+        let userData = NSKeyedArchiver.archivedData(withRootObject: user)
+        UserDefaults.standard.set(userData, forKey: Constants.Keys.userInfo)
+        UserDefaults.standard.synchronize()
+    }
+    
+    public func save() {
+        UserModel.store(self)
+    }
+    
+    public static func delete() {
+        UserDefaults.standard.removeObject(forKey: Constants.Keys.userInfo)
+        UserDefaults.standard.synchronize()
+    }
+    
     public func dictionaryRepresentation() -> [String: Any] {
         var dictionary: [String: Any] = [:]
         dictionary[SerializationKeys.avatarNormal] = avatarNormal
@@ -76,7 +102,7 @@ final class UserModel: NSCoding {
         if let value = avatarLarge { dictionary[SerializationKeys.avatarLarge] = value }
         return dictionary
     }
-
+    
     // MARK: NSCoding Protocol
     required public init(coder aDecoder: NSCoder) {
         self.avatarNormal = aDecoder.decodeObject(forKey: SerializationKeys.avatarNormal) as? String ?? "//v2ex.assets.uxengine.net/gravatar/831f422d3ac06300f8076b3e4b518c43?s=48&d=retro"
@@ -96,7 +122,7 @@ final class UserModel: NSCoding {
         self.avatarLarge = aDecoder.decodeObject(forKey: SerializationKeys.avatarLarge) as? String
         self.url = aDecoder.decodeObject(forKey: SerializationKeys.url) as? String ?? ""
     }
-
+    
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(avatarNormal, forKey: SerializationKeys.avatarNormal)
         aCoder.encode(twitter, forKey: SerializationKeys.twitter)
@@ -115,4 +141,5 @@ final class UserModel: NSCoding {
         aCoder.encode(avatarLarge, forKey: SerializationKeys.avatarLarge)
         aCoder.encode(url, forKey: SerializationKeys.url)
     }
+
 }

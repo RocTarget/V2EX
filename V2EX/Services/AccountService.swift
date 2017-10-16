@@ -42,7 +42,7 @@ extension AccountService {
                     dailyHref == "/mission/daily" {
                 }
 
-                UserDefaults.save(at: loginForm.username, forKey: Constants.Keys.username)
+                UserDefaults.save(at: loginForm.username, forKey: Constants.Keys.loginAccount)
 
                 success?()
                 return
@@ -87,7 +87,7 @@ extension AccountService {
 
             // 成功
             if let successTip = html.xpath("//*[@id='Main']/div[2]/div[2]").first?.content?.trimmed  {
-                UserDefaults.save(at: forgotForm.username, forKey: Constants.Keys.username)
+                UserDefaults.save(at: forgotForm.username, forKey: Constants.Keys.loginAccount)
                 success?(successTip)
                 return
             }

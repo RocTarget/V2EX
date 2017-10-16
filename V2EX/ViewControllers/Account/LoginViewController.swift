@@ -122,7 +122,7 @@ class LoginViewController: BaseViewController, AccountService {
             passwordTextField,
             captchaTextField,
             loginBtn,
-//            registerBtn,
+            registerBtn,
             forgetBtn,
             closeBtn
         )
@@ -166,10 +166,10 @@ class LoginViewController: BaseViewController, AccountService {
             $0.top.equalTo(loginBtn.snp.bottom).offset(15)
         }
 
-//        registerBtn.snp.makeConstraints {
-//            $0.centerX.equalToSuperview()
-//            $0.top.equalTo(forgetBtn.snp.bottom).offset(10)
-//        }
+        registerBtn.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(forgetBtn.snp.bottom).offset(10)
+        }
 
         closeBtn.snp.makeConstraints {
             $0.leftMargin.equalToSuperview().offset(10)
@@ -186,7 +186,7 @@ class LoginViewController: BaseViewController, AccountService {
             }.disposed(by: rx.disposeBag)
 
         // 获得焦点
-        Observable.just(UserDefaults.get(forKey: Constants.Keys.username))
+        Observable.just(UserDefaults.get(forKey: Constants.Keys.loginAccount))
             .map { $0 as? String}
             .doOnNext({ [weak self] text in
                 _ = text.isNilOrEmpty ?
@@ -197,7 +197,7 @@ class LoginViewController: BaseViewController, AccountService {
             .disposed(by: rx.disposeBag)
 
         // 上次登录成功的账号名
-        if let loginName = UserDefaults.get(forKey: Constants.Keys.username) as? String {
+        if let loginName = UserDefaults.get(forKey: Constants.Keys.loginAccount) as? String {
             accountTextField.text = loginName
             accountTextField.rx.value.onNext(loginName)
         }
@@ -258,11 +258,11 @@ class LoginViewController: BaseViewController, AccountService {
                 self?.navigationController?.pushViewController(ForgotPasswordViewController(), animated: true)
             }.disposed(by: rx.disposeBag)
 
-//        registerBtn.rx
-//            .tap
-//            .subscribeNext { [weak self] in
-//                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
-//            }.disposed(by: rx.disposeBag)
+        registerBtn.rx
+            .tap
+            .subscribeNext { [weak self] in
+                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
+            }.disposed(by: rx.disposeBag)
     }
     
     @objc func fetchCode() {

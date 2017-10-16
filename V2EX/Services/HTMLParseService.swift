@@ -35,7 +35,7 @@ extension HTMLParseService {
             }
 
 
-            let user = UserModel(username: username, url: userPage, avatar: avatarSrc)
+            let user = MemberModel(username: username, url: userPage, avatar: avatarSrc)
             
             var node: NodeModel?
             

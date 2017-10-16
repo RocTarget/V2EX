@@ -11,7 +11,7 @@ public struct NodeModel {
     var href: String
     var isCurrent: Bool = false
     var icon: String?
-    var comments: Int?
+    var comments: String?
     var intro: String?
     var topicNumber: String?
 
@@ -21,7 +21,7 @@ public struct NodeModel {
         self.isCurrent = isCurrent
     }
 
-    init(name: String, href: String, isCurrent: Bool = false, icon: String?, comments: Int?) {
+    init(name: String, href: String, isCurrent: Bool = false, icon: String?, comments: String?) {
         self.name = name
         self.href = href
         self.isCurrent = isCurrent
