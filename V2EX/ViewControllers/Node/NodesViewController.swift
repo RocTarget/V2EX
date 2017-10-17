@@ -1,4 +1,5 @@
 import UIKit
+import StatefulViewController
 
 class NodesViewController: BaseViewController, NodeService {
     
@@ -26,20 +27,28 @@ class NodesViewController: BaseViewController, NodeService {
         super.viewDidLoad()
         //        collectionView.indicatorStyle
         navigationItem.title = "节点导航"
-        
-        view.addSubview(collectionView)
-        
+
         fetchNodeCategory()
     }
-    
+
+    override func setupSubviews() {
+
+        view.addSubview(collectionView)
+
+        startLoading()
+        setupStateFul()
+    }
+
     func fetchNodeCategory() {
-        HUD.show()
         nodeNavigation(success: { [weak self] cates in
             self?.nodeCategorys = cates
+            self?.endLoading()
+        }) { [weak self] error in
             HUD.dismiss()
-        }) { error in
-            HUD.dismiss()
-            HUD.showText(error)
+            if let `emptyView` = self?.emptyView as? EmptyView {
+                emptyView.title = error
+            }
+            self?.endLoading()
         }
     }
     
@@ -86,3 +95,17 @@ extension NodesViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension NodesViewController: StatefulViewController {
+
+    func hasContent() -> Bool {
+        return nodeCategorys.count.boolValue
+    }
+
+    func setupStateFul() {
+        loadingView = LoadingView(frame: collectionView.frame)
+        emptyView = EmptyView(frame: collectionView.frame,
+                              title: "加载失败")
+
+        setupInitialViewState()
+    }
+}

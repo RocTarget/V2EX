@@ -2,10 +2,19 @@ import UIKit
 import WebKit
 import SnapKit
 
+enum TapType {
+    case user(MemberModel)
+    case node(NodeModel)
+    case image(String)
+    case webpage(URL)
+    case topic(String)
+}
+
 class TopicDetailHeaderView: UIView{
     
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -28,6 +37,7 @@ class TopicDetailHeaderView: UIView{
         view.textColor = UIColor.hex(0x999999)
         view.backgroundColor = Theme.Color.bgColor
         view.contentInsets = UIEdgeInsets(top: 2, left: 3, bottom: 2, right: 3)
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -41,8 +51,8 @@ class TopicDetailHeaderView: UIView{
     private lazy var webView: WKWebView = {
         let view = WKWebView()
         view.scrollView.isScrollEnabled = false
-//        view.scrollView.delaysContentTouches = false
-//        view.translatesAutoresizingMaskIntoConstraints = false
+        //        view.scrollView.delaysContentTouches = false
+        //        view.translatesAutoresizingMaskIntoConstraints = false
         view.navigationDelegate = self
         return view
     }()
@@ -50,6 +60,8 @@ class TopicDetailHeaderView: UIView{
     private var webViewConstraint: Constraint?
 
     public var webLoadComplete: Action?
+
+    public var tapHandle: ((_ type: TapType) -> Void)?
     
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.screenWidth, height: 130))
@@ -65,6 +77,33 @@ class TopicDetailHeaderView: UIView{
         )
         
         setupConstraints()
+        setupAction()
+    }
+
+    func setupAction() {
+        let avatarTapGesture = UITapGestureRecognizer()
+        avatarView.addGestureRecognizer(avatarTapGesture)
+
+        let nodeTapGesture = UITapGestureRecognizer()
+        nodeLabel.addGestureRecognizer(nodeTapGesture)
+
+        avatarTapGesture.rx
+            .event
+            .subscribeNext { [weak self] _ in
+                guard let user = self?.topic?.user else {
+                    return
+                }
+                self?.tapHandle?(.user(user))
+            }.disposed(by: rx.disposeBag)
+
+        nodeTapGesture.rx
+            .event
+            .subscribeNext { [weak self] _ in
+                guard let node = self?.topic?.node else {
+                    return
+                }
+                self?.tapHandle?(.node(node))
+            }.disposed(by: rx.disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -104,7 +143,7 @@ class TopicDetailHeaderView: UIView{
             webViewConstraint = $0.height.equalTo(0).constraint
         }
     }
-    
+
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
@@ -112,15 +151,17 @@ class TopicDetailHeaderView: UIView{
             avatarView.setRoundImage(urlString: topic.user.avatarSrc)
             usernameLabel.text = topic.user.username
             titleLabel.text = topic.title
-            timeLabel.text = [topic.publicTime, topic.clickCount].joined(separator: " · ")
+            timeLabel.text = topic.publicTime
             timeLabel.isHidden = topic.publicTime.isEmpty
             
             do {
-                let cssString = try String(contentsOf: R.file.styleCss()!)
-                let head = "<head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><style>\(cssString)</style></head>"
-                let body = "<body><div id=\"Wrapper\">\(topic.content)</div></body>"
-                let html = "<html>\(head)\(body)</html>"
-                webView.loadHTMLString(html, baseURL: URL(string: "https://"))
+                if let filePath = Bundle.main.path(forResource: "style", ofType: "css") {
+                    let cssString = try String(contentsOfFile: filePath)
+                    let head = "<head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><style>\(cssString)</style></head>"
+                    let body = "<body><div id=\"Wrapper\">\(topic.content)</div></body>"
+                    let html = "<html>\(head)\(body)</html>"
+                    webView.loadHTMLString(html, baseURL: URL(string: "https://"))
+                }
             } catch {
                 log.error("CSS 加载失败")
             }
@@ -136,11 +177,38 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
         webView.evaluateJavaScript("document.body.scrollHeight") { result, error in
             guard let htmlHeight = result as? CGFloat else { return }
 
-//            webView.frame = CGRect(x: 0, y: self.titleLabel.bottom, width: self.width, height: htmlHeight)
-            log.debug(htmlHeight)
             self.webViewConstraint?.update(offset: htmlHeight)
             self.height = self.titleLabel.bottom + htmlHeight + 15
             self.webLoadComplete?()
         }
+    }
+
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url {
+            let urlString = url.absoluteString
+            if url.scheme == "v2ex-image" {
+                let src = urlString.replacingOccurrences(of: "v2ex-image:", with: "")
+                tapHandle?(.image(src))
+                decisionHandler(.cancel)
+                return
+            }else if urlString.hasPrefix("https://") || urlString.hasPrefix("http://") {
+                if navigationAction.navigationType == .linkActivated {
+                    let memberStr = "/member/"
+                    let isTopic = url.deletingLastPathComponent().absoluteString == Constants.Config.baseURL + "/t/"
+                    if url.path.hasPrefix(memberStr) {
+                        let href = url.path
+                        let name = href.replacingOccurrences(of: memberStr, with: "")
+                        tapHandle?(.user(MemberModel(username: name, url: href, avatar: "")))
+                    } else if isTopic {
+                        tapHandle?(.topic(url.lastPathComponent))
+                    } else {
+                        tapHandle?(.webpage(url))
+                    }
+                    decisionHandler(.cancel)
+                    return
+                }
+            }
+        }
+        decisionHandler(.allow)
     }
 }

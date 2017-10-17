@@ -84,7 +84,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
 
     private lazy var backBtn: UIButton = {
         let view = UIButton()
-        view.setImage(Asset.back(), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "back"), for: .normal)
         return view
     }()
 
@@ -98,7 +98,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
     }
 
     override func setupSubviews() {
-        view.backgroundColor = UIColor(patternImage: Asset.bj()!)
+        view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
 
         let blurEffect = UIBlurEffect(style: .light)
         let blurView = UIVisualEffectView(effect: blurEffect)

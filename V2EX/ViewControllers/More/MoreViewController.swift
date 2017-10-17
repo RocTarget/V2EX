@@ -1,9 +1,10 @@
 import UIKit
+import Carte
 
 enum MoreItemType {
     case user
     case nodeCollect, topicCollect, follow, myTopic, myReply
-    case nightMode, grade, sourceCode, feedback, about
+    case nightMode, grade, sourceCode, feedback, about, libs
     case logout
 }
 struct MoreItem {
@@ -36,9 +37,10 @@ class MoreViewController: BaseViewController {
         [
             MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
             MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
+            MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "意见反馈", type: .feedback),
             MoreItem(icon: #imageLiteral(resourceName: "sourceCode"), title: "项目源码", type: .sourceCode),
-            MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "问题反馈", type: .feedback),
-            MoreItem(icon: #imageLiteral(resourceName: "about"), title: "关于", type: .about)
+            MoreItem(icon: #imageLiteral(resourceName: "libs"), title: "开源库", type: .libs),
+            MoreItem(icon: #imageLiteral(resourceName: "about"), title: "关于 V2EX", type: .about)
         ],
         [
             MoreItem(icon: #imageLiteral(resourceName: "logout"), title: "退出登录", type: .logout)
@@ -47,13 +49,16 @@ class MoreViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+
     }
-    
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+
+        view.animateRandom()
     }
 }
 
@@ -102,6 +107,15 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             break
         case .nodeCollect:
             viewController = NodeCollectViewController()
+        case .sourceCode:
+            let webView = SweetWebViewController(url: "https://github.com/Joe0708/V2EX")
+            self.navigationController?.pushViewController(webView, animated: true)
+        case .libs:
+            let carteViewController = CarteViewController()
+            self.navigationController?.pushViewController(carteViewController, animated: true)
+        case .about:
+            let webView = SweetWebViewController(url: "https://www.v2ex.com/about")
+            self.navigationController?.pushViewController(webView, animated: true)
         default:
             break
         }

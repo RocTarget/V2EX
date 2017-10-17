@@ -40,7 +40,7 @@ final class UserModel: NSObject, NSCoding {
     public var avatarLarge: String?
 
     var avatarNormalSrc: String {
-        return "https:" + avatarNormal
+        return Constants.Config.URIScheme + avatarNormal
     }
 
     class var isLogin: Bool {

@@ -32,7 +32,7 @@ final class HUD {
     class func show() {
         PKHUD.sharedHUD.dimsBackground = true
         PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
-        PKHUD.sharedHUD.contentView = CustomHUD(image: Asset.hud_progress())
+        PKHUD.sharedHUD.contentView = CustomHUD(image: #imageLiteral(resourceName: "hud_progress"))
         PKHUD.sharedHUD.show(onView: UIApplication.shared.windows.last)
     }
 

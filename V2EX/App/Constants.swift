@@ -6,6 +6,8 @@ struct Constants {
     struct Config {
         // App
         static var baseURL = "https://www.v2ex.com"
+
+        static var URIScheme = "https:"
     }
 
     struct Keys {

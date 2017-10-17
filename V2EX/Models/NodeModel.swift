@@ -15,6 +15,13 @@ public struct NodeModel {
     var intro: String?
     var topicNumber: String?
 
+    var iconFullURL: String? {
+        if let `icon` = icon {
+            return Constants.Config.URIScheme + icon
+        }
+        return nil
+    }
+
     init(name: String, href: String, isCurrent: Bool = false) {
         self.name = name
         self.href = href

@@ -1,12 +1,10 @@
 PODS:
   - Alamofire (4.5.1)
+  - Carte (2.1.4)
   - IQKeyboardManagerSwift (5.0.4)
   - Kanna (2.1.1)
   - Kingfisher (4.1.0)
   - PKHUD (5.0.0)
-  - R.swift (4.0.0):
-    - R.swift.Library (~> 4.0.0)
-  - R.swift.Library (4.0.0)
   - Reveal-SDK (4)
   - RxCocoa (4.0.0-rc.0):
     - RxSwift (~> 4.0.0-rc.0)
@@ -18,24 +16,30 @@ PODS:
   - SQLite.swift (0.11.4):
     - SQLite.swift/standard (= 0.11.4)
   - SQLite.swift/standard (0.11.4)
+  - StatefulViewController (3.0)
+  - Themes (1.1.0)
   - Toaster (2.1.0)
   - UIView+Positioning (1.5)
+  - ViewAnimator (1.0.0)
 
 DEPENDENCIES:
   - Alamofire
+  - Carte
   - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
   - Kingfisher
   - PKHUD
-  - R.swift
   - Reveal-SDK (~> 4)
   - RxCocoa (from `https://github.com/ReactiveX/RxSwift.git`, branch `rxswift4.0-swift4.0`)
   - RxOptional
   - RxSwift (from `https://github.com/ReactiveX/RxSwift.git`, branch `rxswift4.0-swift4.0`)
   - SnapKit
   - SQLite.swift
+  - StatefulViewController
+  - Themes
   - Toaster
   - UIView+Positioning
+  - ViewAnimator
 
 EXTERNAL SOURCES:
   RxCocoa:
@@ -55,21 +59,23 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  Carte: a19a62db8478426c406f40048d0c67e98a021c39
   IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
   Kingfisher: f14df8cbe576bf55f211fa589e9869bceb4ea87d
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
-  R.swift: d6a5ec2f55a8441dc0ed9f1f8b37d7d11ae85c66
-  R.swift.Library: c3af34921024333546e23b70e70d0b4e0cffca75
   Reveal-SDK: 178c927f1a3230648d3a92b96f6e730a35b2750a
   RxCocoa: 58841348f4c6e6f6cd244522c16a6b7df5008956
   RxOptional: d2d6a68064bc16b4801332c40663967f481b0234
   RxSwift: f0ff3c78e1f71a7d3506defde0b79c72fe39bac3
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
+  StatefulViewController: 4803bf900d44de26074344998e10e041113b5931
+  Themes: 9c5626e1b9d0a5683e5179c00c38077bd0281148
   Toaster: 8c3225dc465bef4aa57e147a288724576df8e439
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
+  ViewAnimator: ae94bb7d19728ecc061465b00f491bfd855053cd
 
-PODFILE CHECKSUM: 87c8394445d26f3a5b3a9577484bd99868f7c332
+PODFILE CHECKSUM: 222fc69e8a497f11a682d4bb3fc29cfd2fce3fe6
 
 COCOAPODS: 1.3.1

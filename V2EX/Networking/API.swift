@@ -10,7 +10,9 @@ enum CaptchaType: String {
 enum API {
 
     case topics(href: String?)
-    
+
+    case topicDetail(topicID: String)
+
     case captcha(type: CaptchaType)
 
     case captchaImageData(once: String)
@@ -26,6 +28,8 @@ enum API {
     case following
     
     case topicCollect
+
+    case about
 }
 
 extension API: TargetType {
@@ -39,6 +43,8 @@ extension API: TargetType {
         switch self {
         case .topics(let href):
             return .get(href ?? "")
+        case .topicDetail(let topicID):
+            return .get("/t/\(topicID)")
         case .captcha(let type):
             return .get(type.rawValue)
         case .captchaImageData(let once):
@@ -55,6 +61,8 @@ extension API: TargetType {
             return .get("/my/following")
         case .topicCollect:
             return .get("/my/topics")
+        case .about:
+            return .get("/about")
         }
     }
 

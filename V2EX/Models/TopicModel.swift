@@ -11,7 +11,16 @@ public struct TopicModel {
     var replyCount: Int
 
     var publicTime: String = ""
-    var clickCount: String = ""
+
+    /// 主题 ID
+    var topicId: String? {
+        let isTopic = href.hasPrefix("/t/")
+        guard isTopic,
+            let topicId = href.replacingOccurrences(of: "/t/", with: "").components(separatedBy: "#").first else {
+            return nil
+        }
+       return topicId
+    }
 
     init(user: MemberModel, node: NodeModel?, title: String, href: String, lastReplyTime: String?, replyCount: Int) {
         self.user = user

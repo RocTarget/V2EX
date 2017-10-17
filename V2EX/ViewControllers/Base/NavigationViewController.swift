@@ -12,6 +12,9 @@ class NavigationViewController: UINavigationController {
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         if childViewControllers.count > 0 {
             viewController.hidesBottomBarWhenPushed = true
+//            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "back"), action: {
+//                self.popViewController(animated: true)
+//            })
         }
         super.pushViewController(viewController, animated: true)
     }
@@ -67,12 +70,13 @@ extension NavigationViewController: UIGestureRecognizerDelegate {
         if childViewControllers.count <= 1 {
             return false
         }
-        
+
         // 手势响应区域
         let panGestureRecognizer = gestureRecognizer as! UIPanGestureRecognizer
         let location = panGestureRecognizer.location(in: view)
         let offset = panGestureRecognizer.translation(in: panGestureRecognizer.view)
-        let ret = 0 < offset.x && location.x <= 40
+//        let ret = 0 < offset.x && location.x <= 40 // x < 40 可以响应返回手势
+        let ret =  0 < offset.x && location.x < view.width // 全屏返回手势
         return ret
     }
     

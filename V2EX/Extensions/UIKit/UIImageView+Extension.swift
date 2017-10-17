@@ -117,7 +117,7 @@ public extension UIImageView {
                     DispatchQueue.global(qos: .default).async {
                         let roundedImage = image.roundWithCornerRadius(image.size.width * cornerRadiusRatio)
                         KingfisherManager.shared.cache.store(roundedImage, original: originalData, forKey: URLString, toDisk: true, completionHandler: {
-                            self.setImage(urlString: URLString)
+                            self.setImage(urlString: URLString, placeholder: placeholder)
                         })
                     }
                 }

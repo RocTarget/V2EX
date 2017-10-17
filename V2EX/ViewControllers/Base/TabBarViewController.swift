@@ -24,18 +24,18 @@ extension TabBarViewController {
     fileprivate func setupTabBar() {
         addChildViewController(childController: HomeViewController(),
                                title: "首页",
-                               normalImage: Asset.list(),
-                               selectedImageName: Asset.list_selected())
+                               normalImage: #imageLiteral(resourceName: "list"),
+                               selectedImageName: #imageLiteral(resourceName: "list_selected"))
 
         addChildViewController(childController: NodesViewController(),
                                title: "节点",
-                               normalImage: Asset.navigation(),
-                               selectedImageName: Asset.navigation_selected())
+                               normalImage: #imageLiteral(resourceName: "navigation"),
+                               selectedImageName: #imageLiteral(resourceName: "navigation_selected"))
 
         addChildViewController(childController: MoreViewController(),
                                title: "更多",
-                               normalImage: Asset.more(),
-                               selectedImageName: Asset.more_selected())
+                               normalImage: #imageLiteral(resourceName: "more"),
+                               selectedImageName: #imageLiteral(resourceName: "more_selected"))
     }
     
     fileprivate func addChildViewController(childController: UIViewController, title: String, normalImage: UIImage?, selectedImageName: UIImage?) {

@@ -1,4 +1,5 @@
 import UIKit
+import StatefulViewController
 
 class NodeDetailViewController: BaseViewController, NodeService {
     
@@ -53,21 +54,30 @@ class NodeDetailViewController: BaseViewController, NodeService {
                 self?.fetchNodeDetail()
             }.disposed(by: rx.disposeBag)
     }
+
+    override func setupSubviews() {
+
+        startLoading()
+        fetchNodeDetail()
+        setupStateFul()
+    }
     
     func fetchNodeDetail() {
-        
-        HUD.show()
+
         nodeDetail(
             node: node,
             success: { [weak self] node, topics in
                 self?.node = node
                 self?.topics = topics
-                HUD.dismiss()
                 self?.refreshControl.endRefreshing()
+                self?.endLoading()
         }) { [weak self] error in
             self?.refreshControl.endRefreshing()
-            HUD.dismiss()
-            HUD.showText(error)
+
+            if let `emptyView` = self?.emptyView as? EmptyView {
+                emptyView.title = error
+            }
+            self?.endLoading()
         }
     }
     
@@ -92,9 +102,29 @@ extension NodeDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let topicDetailVC = TopicDetailViewController()
-        topicDetailVC.topic = topics[indexPath.row]
+        let topic = topics[indexPath.row]
+        guard let topicId = topic.topicId else {
+            HUD.showText("操作失败，无法解析主题 ID")
+            return
+        }
+        let topicDetailVC = TopicDetailViewController(topicID: topicId)
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
     }
     
 }
+
+extension NodeDetailViewController: StatefulViewController {
+
+    func hasContent() -> Bool {
+        return topics.count.boolValue
+    }
+
+    func setupStateFul() {
+        loadingView = LoadingView(frame: tableView.frame)
+        emptyView = EmptyView(frame: tableView.frame,
+                              title: "加载失败")
+
+        setupInitialViewState()
+    }
+}
+

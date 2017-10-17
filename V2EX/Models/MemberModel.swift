@@ -15,7 +15,7 @@ struct MemberModel {
     public var avatar: String
     
     public var avatarSrc: String {
-        return "https:" + avatar
+        return Constants.Config.URIScheme + avatar
     }
     
     init(username: String, url: String, avatar: String) {

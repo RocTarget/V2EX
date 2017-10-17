@@ -25,13 +25,17 @@ target 'V2EX' do
     pod 'UIView+Positioning'
     pod 'PKHUD'
     pod 'Toaster'
+    pod 'ViewAnimator'
+    pod 'Themes'
+    pod 'StatefulViewController'
 
     # DB
     pod 'SQLite.swift'
 
     # Misc
-    pod 'R.swift'
+#    pod 'R.swift'
     pod 'IQKeyboardManagerSwift'
+    pod 'Carte'
     
     # Debug only
     pod 'Reveal-SDK', '~> 4', :configurations => ['Debug']
@@ -49,6 +53,10 @@ target 'V2EX' do
 end
 
 post_install do |installer|
+
+    pods_dir = File.dirname(installer.pods_project.path)
+    at_exit { `ruby #{pods_dir}/Carte/Sources/Carte/carte.rb configure` }
+
     # 需要指定编译版本的第三方库名称
     swift3_targets = ['Kanna']
     installer.pods_project.targets.each do |target|

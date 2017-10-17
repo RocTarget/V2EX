@@ -5,7 +5,7 @@ import RxCocoa
 class LoginViewController: BaseViewController, AccountService {
     
     private lazy var logoView: UIImageView = {
-        let view = UIImageView(image: Asset.site_logo())
+        let view = UIImageView(image: #imageLiteral(resourceName: "logo"))
         return view
     }()
     
@@ -95,7 +95,7 @@ class LoginViewController: BaseViewController, AccountService {
 
     private lazy var closeBtn: UIButton = {
         let view = UIButton()
-        view.setImage(Asset.close(), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "close"), for: .normal)
         return view
     }()
     
@@ -108,7 +108,7 @@ class LoginViewController: BaseViewController, AccountService {
     }
     
     override func setupSubviews() {
-        view.backgroundColor = UIColor(patternImage: Asset.bj()!)
+        view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
 
         let blurEffect = UIBlurEffect(style: .light)
         let blurView = UIVisualEffectView(effect: blurEffect)
