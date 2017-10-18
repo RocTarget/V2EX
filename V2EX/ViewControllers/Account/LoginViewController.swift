@@ -5,7 +5,7 @@ import RxCocoa
 class LoginViewController: BaseViewController, AccountService {
     
     private lazy var logoView: UIImageView = {
-        let view = UIImageView(image: #imageLiteral(resourceName: "logo"))
+        let view = UIImageView(image: #imageLiteral(resourceName: "site_logo"))
         return view
     }()
     
@@ -93,21 +93,28 @@ class LoginViewController: BaseViewController, AccountService {
         return view
     }()
 
-    private lazy var closeBtn: UIButton = {
-        let view = UIButton()
-        view.setImage(#imageLiteral(resourceName: "close"), for: .normal)
-        return view
-    }()
-    
     private var loginForm: LoginForm?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         fetchCode()
     }
-    
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+
     override func setupSubviews() {
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "close"), style: .plain) { [weak self] in
+            self?.dismiss()
+        }
+
         view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
 
         let blurEffect = UIBlurEffect(style: .light)
@@ -123,8 +130,7 @@ class LoginViewController: BaseViewController, AccountService {
             captchaTextField,
             loginBtn,
             registerBtn,
-            forgetBtn,
-            closeBtn
+            forgetBtn
         )
     }
     
@@ -170,20 +176,9 @@ class LoginViewController: BaseViewController, AccountService {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(forgetBtn.snp.bottom).offset(10)
         }
-
-        closeBtn.snp.makeConstraints {
-            $0.leftMargin.equalToSuperview().offset(10)
-            $0.topMargin.equalToSuperview().offset(40)
-        }
     }
     
     override func setupRx() {
-
-        // 隐藏导航栏
-        rx.viewWillAppear
-            .subscribeNext { [weak self] _ in
-                self?.navigationController?.setNavigationBarHidden(true, animated: false)
-            }.disposed(by: rx.disposeBag)
 
         // 获得焦点
         Observable.just(UserDefaults.get(forKey: Constants.Keys.loginAccount))
@@ -244,12 +239,6 @@ class LoginViewController: BaseViewController, AccountService {
             .tap
             .subscribeNext { [weak self] in
                 self?.fetchCode()
-            }.disposed(by: rx.disposeBag)
-
-        closeBtn.rx
-            .tap
-            .subscribeNext { [weak self] in
-                self?.dismiss()
             }.disposed(by: rx.disposeBag)
 
         forgetBtn.rx

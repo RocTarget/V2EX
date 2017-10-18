@@ -27,10 +27,15 @@ class TopicCommentCell: BaseTableViewCell {
         return view
     }()
 
-    private lazy var contentLabel: UILabel = {
-        let view = UILabel()
+    private lazy var contentTextView: UITextView = {
+        let view = UITextView()
         view.font = UIFont.systemFont(ofSize: 15)
-        view.numberOfLines = 0
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: -20, right: 0)
+        view.textContainer.lineFragmentPadding = 0
+        view.linkTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue : UIColor.hex(0x778087)]
+        view.delegate = self
         return view
     }()
 
@@ -40,6 +45,8 @@ class TopicCommentCell: BaseTableViewCell {
         return view
     }()
 
+    public var tapHandle: ((_ type: TapType) -> Void)?
+
     public var comment: CommentModel? {
         didSet {
             guard let `comment` = comment else { return }
@@ -48,9 +55,27 @@ class TopicCommentCell: BaseTableViewCell {
             usernameLaebl.text = comment.user.username
             floorLabel.text = comment.floor + " 楼"
             timeLabel.text =  comment.publicTime
-            contentLabel.text = comment.content
+            //            contentTextView.text = comment.content
+
+            let html = "<style>\(cssStyle)</style>" + comment.content
+            contentTextView.attributedText = html.html2AttributedString
         }
     }
+
+    private var cssStyle =
+    """
+        a:link, a:visited, a:active {
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .reply_content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #000;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+    """
 
     override func initialize() {
         selectionStyle = .none
@@ -60,7 +85,7 @@ class TopicCommentCell: BaseTableViewCell {
             usernameLaebl,
             timeLabel,
             floorLabel,
-            contentLabel,
+            contentTextView,
             lineView
         )
     }
@@ -86,7 +111,7 @@ class TopicCommentCell: BaseTableViewCell {
             $0.centerY.equalTo(floorLabel)
         }
 
-        contentLabel.snp.makeConstraints {
+        contentTextView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview().inset(15)
             $0.top.equalTo(avatarView.snp.bottom).offset(10)
         }
@@ -96,5 +121,59 @@ class TopicCommentCell: BaseTableViewCell {
             $0.height.equalTo(0.5)
         }
     }
+}
 
+extension TopicCommentCell: UITextViewDelegate {
+
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
+        return interactHook(URL)
+    }
+
+    func interactHook(_ URL: URL) -> Bool {
+        let link = URL.absoluteString
+        if link.hasPrefix("https://") || link.hasPrefix("http://"){
+            tapHandle?(.webpage(URL))
+        } else if URL.path.contains("/member/") {
+            let href = URL.path
+            let name = href.lastPathComponent
+            let user = MemberModel(username: name, url: href, avatar: "")
+            tapHandle?(.user(user))
+        } else if URL.path.contains("/t/") {
+            let href = URL.path
+            tapHandle?(.topic(href))
+        } else if URL.path.contains("/go/") {
+            tapHandle?(.node(NodeModel(name: "", href: URL.path)))
+        }
+        return false
+    }
+
+    //    @available(iOS 10.0, *)
+    //    func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    //        if textAttachment is ImageAttachment {
+    //            let attachment = textAttachment as! ImageAttachment
+    //            if let src = attachment.src, attachment.imageSize.width > 50 {
+    //                linkTap?(TapLink.image(src: src))
+    //            }
+    //            return false
+    //        }
+    //        return true
+    //    }
+}
+
+extension String {
+    var html2AttributedString: NSAttributedString? {
+        do {
+            return try NSAttributedString(data: Data(utf8),
+                                          options: [.documentType: NSAttributedString.DocumentType.html,
+                                                    .characterEncoding: String.Encoding.utf8.rawValue],
+                                          documentAttributes: nil)
+        } catch {
+            log.error("error:", error)
+            return nil
+        }
+    }
+
+    var html2String: String {
+        return html2AttributedString?.string ?? ""
+    }
 }

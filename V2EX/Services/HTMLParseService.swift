@@ -4,6 +4,7 @@ import Kanna
 protocol HTMLParseService {
     func parseTopic(rootPath: XPathObject) -> [TopicModel]
     func parseNodeNavigation(html: HTMLDocument) -> [NodeCategoryModel]
+    func replacingIframe(text: String) -> String
 }
 
 extension HTMLParseService {
@@ -80,5 +81,32 @@ extension HTMLParseService {
             return NodeCategoryModel(id: 0, name: sectionName, nodes: nodes)
         }
         return nodeCategorys
+    }
+
+
+    // MARK: - 评论里面的视频替换成链接地址
+    func replacingIframe(text: String) -> String {
+        guard text.contains("</iframe>") else { return text }
+        let pattern = "<iframe(.*?)</iframe>"
+        let regx = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
+        guard let results = regx?.matches(in: text, options: .reportProgress, range: NSRange(location: 0, length: text.count)) else {
+            return text
+        }
+
+        var content = text
+        results.forEach {result in
+            if let range = result.range.range(for: text) {
+                let iframe = text[range]
+                let arr = iframe.components(separatedBy: " ")
+                if let srcIndex = arr.index(where: {$0.contains("src")}) {
+                    let srcText = arr[srcIndex]
+                    let href = srcText.replacingOccurrences(of: "src", with: "href")
+                    let urlString = srcText.replacingOccurrences(of: "src=", with: "").replacingOccurrences(of: "\"", with: "")
+                    let a = "<a \(href)>\(urlString)</a>"
+                    content = text.replacingOccurrences(of: iframe, with: a)
+                }
+            }
+        }
+        return content
     }
 }

@@ -94,6 +94,10 @@ public extension TargetType {
         return baseURL.appending(route.path)
     }
 
+    var path: String {
+        return route.path
+    }
+
     public var httpHeaderFields: [String: String]? {
         return nil
     }

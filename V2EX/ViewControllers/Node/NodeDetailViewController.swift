@@ -22,7 +22,11 @@ class NodeDetailViewController: BaseViewController, NodeService {
         return view
     }()
     
-    public var node: NodeModel
+    public var node: NodeModel {
+        didSet {
+            title = node.name
+        }
+    }
     
     var topics: [TopicModel] = [] {
         didSet {
@@ -41,9 +45,7 @@ class NodeDetailViewController: BaseViewController, NodeService {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = node.name
-        
+
         tableView.addSubview(refreshControl)
         
         fetchNodeDetail()

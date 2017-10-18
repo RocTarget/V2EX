@@ -1,9 +1,7 @@
 import UIKit
-import SnapKit
-import ViewAnimator
 import StatefulViewController
 
-class HomeViewController: BaseViewController, TopicService {
+class TopicsViewController: BaseViewController, TopicService {
 
     private lazy var tableView: UITableView = {
         let view = UITableView()
@@ -23,48 +21,34 @@ class HomeViewController: BaseViewController, TopicService {
         return view
     }()
 
-    private lazy var tabView: NodeTabView = {
-        let view = NodeTabView(
-            frame: CGRect(x: 0,
-                          y: 0,
-                          width: UIScreen.screenWidth,
-                          height: self.navigationController!.navigationBar.height),
-            nodes: nodes)
-        return view
-    }()
-    
-    var nodes: [NodeModel] = [] {
-        didSet {
-            tabView.nodes = nodes
-        }
-    }
-
     var topics: [TopicModel] = [] {
         didSet {
             tableView.reloadData()
         }
     }
-    
+
+    public var href: String
+
+    init(href: String) {
+        self.href = href
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     override func setupSubviews() {
-        navigationItem.titleView = tabView
-        
-        tabView.valueChange = { [weak self] index in
-            guard let `self` = self else { return }
-
-            self.tableView.setContentOffset(CGPoint(x: -self.tableView.contentInset.left, y: -self.tableView.contentInset.top), animated: true)
-            self.fetchTopic()
-        }
         tableView.addSubview(refreshControl)
 
         startLoading()
-        fetchIndexData()
+        fetchTopic()
         setupStateFul()
     }
-
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
@@ -81,17 +65,14 @@ class HomeViewController: BaseViewController, TopicService {
             }.disposed(by: rx.disposeBag)
     }
 
-    func fetchIndexData() {
+    func fetchTopic() {
 
-        index(success: { [weak self] nodes, topics in
-            guard let `self` = self else { return }
-
-            self.nodes = nodes
-            self.topics = topics
-            self.endLoading()
-            
+        topics(href: href, success: { [weak self] topic in
+            self?.topics = topic
+            self?.refreshControl.endRefreshing()
+            self?.endLoading()
             }, failure: { [weak self] error in
-                HUD.dismiss()
+                self?.refreshControl.endRefreshing()
                 HUD.showText(error)
                 self?.endLoading()
                 if let `emptyView` = self?.emptyView as? EmptyView {
@@ -99,29 +80,13 @@ class HomeViewController: BaseViewController, TopicService {
                 }
         })
     }
-
-    func fetchTopic() {
-        let href = nodes[tabView.selectIndex].href
-        topics(href: href, success: { [weak self] topic in
-            self?.topics = topic
-            self?.refreshControl.endRefreshing()
-            }, failure: { [weak self] error in
-                self?.refreshControl.endRefreshing()
-                HUD.showText(error)
-
-                if let `emptyView` = self?.emptyView as? EmptyView {
-                    emptyView.title = error
-                }
-        })
-    }
-
 }
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+extension TopicsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return topics.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: TopicCell.self)!
         let topic = topics[indexPath.row]
@@ -140,10 +105,10 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension HomeViewController: StatefulViewController {
+extension TopicsViewController: StatefulViewController {
 
     func hasContent() -> Bool {
-        return nodes.count.boolValue
+        return topics.count.boolValue
     }
 
     func setupStateFul() {

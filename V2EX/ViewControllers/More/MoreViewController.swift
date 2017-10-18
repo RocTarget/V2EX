@@ -93,20 +93,23 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+
         if indexPath.section == 0 || indexPath.section == 1,  !UserModel.isLogin {
             presentLoginVC()
             return
         }
-        
-        var viewController: BaseViewController?
+
         let item = sections[indexPath.section][indexPath.row]
         let type = item.type
+        var viewController: BaseViewController?
         switch type {
         case .user:
             break
         case .nodeCollect:
             viewController = NodeCollectViewController()
+        case .topicCollect, .follow:
+            let href = type == .topicCollect ? API.topicCollect.path : API.following.path
+            viewController = TopicsViewController(href: href)
         case .sourceCode:
             let webView = SweetWebViewController(url: "https://github.com/Joe0708/V2EX")
             self.navigationController?.pushViewController(webView, animated: true)

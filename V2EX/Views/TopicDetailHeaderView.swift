@@ -193,13 +193,8 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
                 return
             }else if urlString.hasPrefix("https://") || urlString.hasPrefix("http://") {
                 if navigationAction.navigationType == .linkActivated {
-                    let memberStr = "/member/"
                     let isTopic = url.deletingLastPathComponent().absoluteString == Constants.Config.baseURL + "/t/"
-                    if url.path.hasPrefix(memberStr) {
-                        let href = url.path
-                        let name = href.replacingOccurrences(of: memberStr, with: "")
-                        tapHandle?(.user(MemberModel(username: name, url: href, avatar: "")))
-                    } else if isTopic {
+                    if isTopic {
                         tapHandle?(.topic(url.lastPathComponent))
                     } else {
                         tapHandle?(.webpage(url))
@@ -207,6 +202,14 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
                     decisionHandler(.cancel)
                     return
                 }
+            } else if urlString.hasPrefix("/member/") {
+                let href = url.path
+                let name = href.lastPathComponent
+                tapHandle?(.user(MemberModel(username: name, url: href, avatar: "")))
+            } else if urlString.hasPrefix("/t/") {
+                tapHandle?(.topic(url.lastPathComponent))
+            } else if urlString.hasPrefix("/go/") {
+                tapHandle?(.node(NodeModel(name: "", href: urlString)))
             }
         }
         decisionHandler(.allow)

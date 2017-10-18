@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 
 class BaseViewController: UIViewController {
-    
+
     var interactivePopDisabled: Bool = false
 
     // MARK: Properties

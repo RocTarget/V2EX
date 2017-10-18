@@ -130,6 +130,11 @@ extension Networking {
         switch dataResponse.result {
         case .success(let data):
             log.verbose("✅ SUCCESS: " + message, file: file, function: function, line: line)
+
+            if let statusCode = dataResponse.response?.statusCode, statusCode == 502 {
+                failure?("502 Bad Gateway")
+                return
+            }
             success?(data)
         case .failure(let error):
             log.error("❌ FAILURE: \(message) \n \(error)", file: file, function: function, line: line)

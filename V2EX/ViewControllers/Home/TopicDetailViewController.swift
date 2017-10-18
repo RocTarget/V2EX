@@ -9,9 +9,10 @@ class TopicDetailViewController: BaseViewController, TopicService {
         view.delegate = self
         view.dataSource = self
         view.separatorStyle = .none
+        view.rowHeight = UITableViewAutomaticDimension
         view.estimatedRowHeight = 80
         view.backgroundColor = .clear
-        view.rowHeight = UITableViewAutomaticDimension
+        view.keyboardDismissMode = .onDrag
         view.register(cellWithClass: TopicCommentCell.self)
         self.view.addSubview(view)
         return view
@@ -20,6 +21,12 @@ class TopicDetailViewController: BaseViewController, TopicService {
     private lazy var headerView: TopicDetailHeaderView = {
         let view = TopicDetailHeaderView()
         view.isHidden = true
+        return view
+    }()
+
+    private lazy var commentInputView: CommentInputView = {
+        let view = CommentInputView(frame: .zero)
+        self.view.addSubview(view)
         return view
     }()
 
@@ -66,7 +73,13 @@ class TopicDetailViewController: BaseViewController, TopicService {
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.left.top.right.equalToSuperview()
+            $0.bottom.equalTo(commentInputView.snp.top)
+        }
+
+        commentInputView.snp.makeConstraints {
+            $0.left.bottom.right.equalToSuperview()
+            $0.height.equalTo(55)
         }
     }
 
@@ -95,9 +108,6 @@ class TopicDetailViewController: BaseViewController, TopicService {
 }
 
 extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return comments.count
@@ -106,6 +116,9 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
         cell.comment = comments[indexPath.row]
+        cell.tapHandle = { [weak self] type in
+            self?.tapHandle(type)
+        }
         return cell
     }
 }
@@ -116,7 +129,7 @@ extension TopicDetailViewController {
         topicDetail(topicID: topicID, success: { [weak self] topic, comments in
             self?.topic = topic
             self?.comments = comments
-            self?.endLoading()
+
             }, failure: { [weak self] error in
 
                 HUD.showText(error)
@@ -128,6 +141,7 @@ extension TopicDetailViewController {
         })
 
         headerView.webLoadComplete = { [weak self] in
+            self?.endLoading()
             self?.headerView.isHidden = false
             self?.tableView.reloadData()
         }
@@ -149,3 +163,4 @@ extension TopicDetailViewController: StatefulViewController {
         setupInitialViewState()
     }
 }
+

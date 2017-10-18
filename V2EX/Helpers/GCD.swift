@@ -3,16 +3,18 @@ import Foundation
 public struct GCD {
 
     public static let mainQueue: DispatchQueue = {
-        return DispatchQueue.main
+        return .main
     }()
 
     public static let backgroundQueue: DispatchQueue = {
-        return DispatchQueue.global(qos: DispatchQoS.QoSClass.background)
+        return .global(qos: .background)
     }()
 
     public static func delay(_ delay: Double, block: @escaping () -> Void) {
         GCD.mainQueue.asyncAfter(
-            deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: block)
+            deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC),
+            execute: block
+        )
     }
 
     public static func runOnMainThread(_ block: @escaping () -> Void) {

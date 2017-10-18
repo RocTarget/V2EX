@@ -13,8 +13,8 @@ target 'V2EX' do
     pod 'Kingfisher'
 
     # Rx
-    pod 'RxSwift', git: 'https://github.com/ReactiveX/RxSwift.git', branch: 'rxswift4.0-swift4.0'
-    pod 'RxCocoa', git: 'https://github.com/ReactiveX/RxSwift.git', branch: 'rxswift4.0-swift4.0'
+    pod 'RxSwift', '~> 4.0' #, git: 'https://github.com/ReactiveX/RxSwift.git', branch: 'rxswift4.0-swift4.0'
+    pod 'RxCocoa', '~> 4.0'
     #  pod 'NSObject+Rx', git: 'https://github.com/RxSwiftCommunity/NSObject-Rx.git'
     pod 'RxOptional'
 
@@ -36,7 +36,11 @@ target 'V2EX' do
 #    pod 'R.swift'
     pod 'IQKeyboardManagerSwift'
     pod 'Carte'
-    
+
+    # Bug
+#    pod 'Fabric'
+#    pod 'Crashlytics'
+
     # Debug only
     pod 'Reveal-SDK', '~> 4', :configurations => ['Debug']
 

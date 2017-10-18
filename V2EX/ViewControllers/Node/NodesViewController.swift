@@ -25,7 +25,6 @@ class NodesViewController: BaseViewController, NodeService {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //        collectionView.indicatorStyle
         navigationItem.title = "节点导航"
 
         fetchNodeCategory()
@@ -109,3 +108,4 @@ extension NodesViewController: StatefulViewController {
         setupInitialViewState()
     }
 }
+

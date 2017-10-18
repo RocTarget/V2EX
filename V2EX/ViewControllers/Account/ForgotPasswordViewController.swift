@@ -82,14 +82,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
         return view
     }()
 
-    private lazy var backBtn: UIButton = {
-        let view = UIButton()
-        view.setImage(#imageLiteral(resourceName: "back"), for: .normal)
-        return view
-    }()
-
     private var forgotForm: LoginForm?
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,8 +104,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
             accountTextField,
             emailTextField,
             captchaTextField,
-            nextBtn,
-            backBtn
+            nextBtn
         )
     }
 
@@ -148,20 +140,9 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
             $0.left.right.height.equalTo(accountTextField)
             $0.top.equalTo(captchaTextField.snp.bottom).offset(30)
         }
-
-        backBtn.snp.makeConstraints {
-            $0.leftMargin.equalToSuperview().offset(10)
-            $0.topMargin.equalToSuperview().offset(40)
-        }
     }
 
     override func setupRx() {
-
-        backBtn.rx
-            .tap
-            .subscribeNext { [weak self] in
-                self?.navigationController?.popViewController(animated: true)
-            }.disposed(by: rx.disposeBag)
 
         captchaBtn.rx
             .tap

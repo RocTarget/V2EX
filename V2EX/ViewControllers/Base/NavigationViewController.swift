@@ -12,9 +12,9 @@ class NavigationViewController: UINavigationController {
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         if childViewControllers.count > 0 {
             viewController.hidesBottomBarWhenPushed = true
-//            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "back"), action: {
-//                self.popViewController(animated: true)
-//            })
+            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "back"), action: {
+                self.popViewController(animated: true)
+            })
         }
         super.pushViewController(viewController, animated: true)
     }

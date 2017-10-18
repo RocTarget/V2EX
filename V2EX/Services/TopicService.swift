@@ -33,6 +33,7 @@ protocol TopicService: HTMLParseService {
         topicID: String,
         success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
         failure: Failure?)
+
 }
 
 extension TopicService {
@@ -182,10 +183,11 @@ extension TopicService {
                     let userHref = userPath["href"],
                     let username = userPath.content,
                     let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
-                    let content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.content,
+                    var content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.toHTML,
                     let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
                         return nil
                 }
+                content = self.replacingIframe(text: content)
 
                 let id = ele["id"]?.replacingOccurrences(of: "r_", with: "") ?? "0"
                 let user = UserModel(username: username, url: userHref, avatar: userAvatar)
@@ -215,5 +217,4 @@ extension TopicService {
         let rootPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
         return self.parseTopic(rootPath: rootPath)
     }
-    
 }
