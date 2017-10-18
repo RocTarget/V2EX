@@ -3,7 +3,7 @@ import Carte
 
 enum MoreItemType {
     case user
-    case nodeCollect, topicCollect, follow, myTopic, myReply
+    case createTopic, nodeCollect, topicCollect, follow, myTopic, myReply
     case nightMode, grade, sourceCode, feedback, about, libs
     case logout
 }
@@ -28,6 +28,7 @@ class MoreViewController: BaseViewController {
     var sections: [[MoreItem]] = [
         [MoreItem(icon: #imageLiteral(resourceName: "avatar"), title: "请先登录", type: .user)],
         [
+            MoreItem(icon: #imageLiteral(resourceName: "createTopic"), title: "创作新主题", type: .createTopic),
             MoreItem(icon: #imageLiteral(resourceName: "nodeCollect"), title: "节点收藏", type: .nodeCollect),
             MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .topicCollect),
             MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
@@ -101,24 +102,23 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
 
         let item = sections[indexPath.section][indexPath.row]
         let type = item.type
-        var viewController: BaseViewController?
+        var viewController: UIViewController?
         switch type {
         case .user:
             break
+        case .createTopic:
+            viewController = CreateTopicViewController()
         case .nodeCollect:
             viewController = NodeCollectViewController()
         case .topicCollect, .follow:
             let href = type == .topicCollect ? API.topicCollect.path : API.following.path
             viewController = TopicsViewController(href: href)
         case .sourceCode:
-            let webView = SweetWebViewController(url: "https://github.com/Joe0708/V2EX")
-            self.navigationController?.pushViewController(webView, animated: true)
+            viewController = SweetWebViewController(url: "https://github.com/Joe0708/V2EX")
         case .libs:
-            let carteViewController = CarteViewController()
-            self.navigationController?.pushViewController(carteViewController, animated: true)
+            viewController = CarteViewController()
         case .about:
-            let webView = SweetWebViewController(url: "https://www.v2ex.com/about")
-            self.navigationController?.pushViewController(webView, animated: true)
+            viewController = SweetWebViewController(url: "https://www.v2ex.com/about")
         default:
             break
         }

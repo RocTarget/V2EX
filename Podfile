@@ -18,7 +18,9 @@ target 'V2EX' do
     #  pod 'NSObject+Rx', git: 'https://github.com/RxSwiftCommunity/NSObject-Rx.git'
     pod 'RxOptional'
 
+    # Parse
     pod 'Kanna', '~> 2.1.0'
+    pod 'SwiftyMarkdown'
 
     # UI
     pod 'SnapKit'

@@ -22,6 +22,7 @@ extension TabBarViewController {
     }
     
     fileprivate func setupTabBar() {
+        
         addChildViewController(childController: HomeViewController(),
                                title: "首页",
                                normalImage: #imageLiteral(resourceName: "list"),
