@@ -14,7 +14,7 @@
 
 ## 截图
 
-<img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/home.png" width="250">   <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/node.png" width="250"> <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/more.png" width="250"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/login.png" width="250">
+<img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/home.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/node.png" width="210"> <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/more.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/login.png" width="210">
 
 ## 要求
 
