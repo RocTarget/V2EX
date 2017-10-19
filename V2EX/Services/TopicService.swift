@@ -76,7 +76,7 @@ extension TopicService {
             //  已登录 div[2] / 没登录 div[1]
             let nodePath = html.xpath("//*[@id='Wrapper']/div[@class='content']/div/div[\(isLogin ? 2 : 1)]/a")
 
-            let nodes = nodePath.flatMap({ ele -> NodeModel? in
+            var nodes = nodePath.flatMap({ ele -> NodeModel? in
                 guard let href = ele["href"],
                     let name = ele.content else {
                         return nil
@@ -86,7 +86,10 @@ extension TopicService {
                 return NodeModel(name: name, href: href, isCurrent: isCurrent)
             })//.filter { $0.href != "/?tab=nodes" } // 过滤导航上的 ‘节点’ 节点
 
-            let topics = self.parseTopicRootPath(html: html)
+            let recent = NodeModel(name: "最近", href: "/recent")
+            nodes.insert(recent, at: 0)
+            
+            let topics = self.parseTopic(html: html, type: .index)
 
             guard topics.count > 0 else {
                 failure?("获取节点信息失败")
@@ -102,7 +105,7 @@ extension TopicService {
         failure: Failure?) {
 
         Network.htmlRequest(target: .topics(href: href), success: { html in
-            let topics = self.parseTopicRootPath(html: html)
+            let topics = self.parseTopic(html: html, type: .index)
 
             guard topics.count > 0 else {
                 failure?("获取节点信息失败")
@@ -214,7 +217,7 @@ extension TopicService {
 
             let user = MemberModel(username: userhref.lastPathComponent, url: userhref, avatar: userAvatar)
             let node = NodeModel(name: nodename, href: nodeHref)
-            var topic = TopicModel(user: user, node: node, title: title, href: "", lastReplyTime: "", replyCount: 0)
+            var topic = TopicModel(user: user, node: node, title: title, href: "")
             topic.once = self.parseOnce(html: html)
             topic.content = content
             topic.publicTime = html.xpath("//*[@id='Wrapper']/div/div[1]/div[1]/small/text()[2]").first?.content ?? ""
@@ -241,10 +244,5 @@ extension TopicService {
 
             failure?(problem)
         }, failure: failure)
-    }
-
-    private func parseTopicRootPath(html: HTMLDocument) -> [TopicModel] {
-        let rootPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
-        return self.parseTopic(rootPath: rootPath)
     }
 }

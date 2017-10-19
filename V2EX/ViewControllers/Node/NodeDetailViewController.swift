@@ -7,10 +7,8 @@ class NodeDetailViewController: BaseViewController, NodeService {
         let view = UITableView()
         view.delegate = self
         view.dataSource = self
-        view.estimatedRowHeight = 80
         view.backgroundColor = .clear
         view.separatorStyle = .none
-        view.rowHeight = UITableViewAutomaticDimension
         view.register(cellWithClass: TopicCell.self)
         self.view.addSubview(view)
         return view
@@ -113,6 +111,9 @@ extension NodeDetailViewController: UITableViewDelegate, UITableViewDataSource {
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return topics[indexPath.row].cellHeight
+    }
 }
 
 extension NodeDetailViewController: StatefulViewController {

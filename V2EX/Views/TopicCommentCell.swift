@@ -51,7 +51,7 @@ class TopicCommentCell: BaseTableViewCell {
         didSet {
             guard let `comment` = comment else { return }
 
-            avatarView.setRoundImage(urlString: comment.user.avatarNormalSrc)
+            avatarView.setImage(urlString: comment.user.avatarNormalSrc)
             usernameLaebl.text = comment.user.username
             floorLabel.text = comment.floor + " 楼"
             timeLabel.text =  comment.publicTime

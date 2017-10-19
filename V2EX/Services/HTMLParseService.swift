@@ -1,8 +1,18 @@
 import Foundation
 import Kanna
 
+/// 解析类型
+///
+/// - index: 首页主题解析
+/// - topicCollect:
+/// - nodeDetail: 节点详情 (节点主页)
+enum HTMLParserType {
+    
+    case index, topicCollect, nodeDetail
+}
+
 protocol HTMLParseService {
-    func parseTopic(rootPath: XPathObject) -> [TopicModel]
+    func parseTopic(html: HTMLDocument, type: HTMLParserType) -> [TopicModel]
     func parseNodeNavigation(html: HTMLDocument) -> [NodeCategoryModel]
     func replacingIframe(text: String) -> String
     func parseOnce(html: HTMLDocument) -> String?
@@ -15,10 +25,20 @@ extension HTMLParseService {
     ///
     /// - Parameter html: HTMLDoc
     /// - Returns: topic model
-    func parseTopic(rootPath: XPathObject) -> [TopicModel] {
+    func parseTopic(html: HTMLDocument, type: HTMLParserType) -> [TopicModel] {
         
         //        let itemPath = html.xpath("//*[@id='Wrapper']/div[@class='box']/div[@class='cell item']")
+        
+        let rootPathOp: XPathObject?
+        switch type {
+        case .index:
+            rootPathOp = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
+        default://.nodeDetail:
+            rootPathOp = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[contains(@class, 'cell')]")
+        }
 
+        guard let rootPath = rootPathOp else { return [] }
+        
         let topics = rootPath.flatMap({ ele -> TopicModel? in
             guard let userPage = ele.xpath(".//td/a").first?["href"],
                 let avatarSrc = ele.xpath(".//td/a/img").first?["src"],
@@ -30,13 +50,21 @@ extension HTMLParseService {
             }
 
             
-            let replyCount = Int(ele.xpath(".//td/a[@class='count_livid']").first?.content ?? "0") ?? 0
-            var lastReplyTime: String?
-            if let subs = ele.xpath(".//td/span[@class='small fade']").first?.text?.components(separatedBy: "•"), subs.count > 2 {
-                lastReplyTime = subs[2].trimmed
+            let replyCount = ele.xpath(".//td/a[@class='count_livid']").first?.content ?? "0"
+            
+            let homeXPath = ele.xpath(".//td/span[3]/text()").first
+            let nodeDetailXPath = ele.xpath(".//td/span[2]/text()").first
+            let textNode = homeXPath ?? nodeDetailXPath
+            let timeString = textNode?.content ?? ""
+            let replyUsername = textNode?.parent?.xpath("./strong").first?.content ?? ""
+            
+            var lastReplyAndTime: String = ""
+            if homeXPath != nil { // 首页的布局
+                lastReplyAndTime = timeString + replyUsername
+            } else if nodeDetailXPath != nil {
+                lastReplyAndTime = replyUsername + timeString
             }
-
-
+            
             let user = MemberModel(username: username, url: userPage, avatar: avatarSrc)
             
             var node: NodeModel?
@@ -47,7 +75,7 @@ extension HTMLParseService {
                 node = NodeModel(name: nodename, href: nodeHref)
             }
 
-            return TopicModel(user: user, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyTime, replyCount: replyCount)
+            return TopicModel(user: user, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)
         })
         
         return topics

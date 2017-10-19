@@ -9,10 +9,10 @@ class HomeViewController: BaseViewController, TopicService {
         let view = UITableView()
         view.delegate = self
         view.dataSource = self
-        view.estimatedRowHeight = 80
         view.backgroundColor = .clear
         view.separatorStyle = .none
-        view.rowHeight = UITableViewAutomaticDimension
+//        view.estimatedRowHeight = 80
+//        view.rowHeight = UITableViewAutomaticDimension
         view.register(cellWithClass: TopicCell.self)
         self.view.addSubview(view)
         return view
@@ -137,6 +137,10 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         }
         let topicDetailVC = TopicDetailViewController(topicID: topicId)
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return topics[indexPath.row].cellHeight
     }
 }
 

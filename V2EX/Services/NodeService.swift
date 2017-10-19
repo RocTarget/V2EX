@@ -66,8 +66,7 @@ extension NodeService {
             if let nodename = html.xpath("//*[@id='Wrapper']//div[@class='header']/text()[2]").first?.text?.trimmed {
                 node.name = nodename
             }
-            let rootPath = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[contains(@class, 'cell')]")
-            let topics = self.parseTopic(rootPath: rootPath)
+            let topics = self.parseTopic(html: html, type: .nodeDetail)
             success?(node, topics)
         }, failure: failure)
     }

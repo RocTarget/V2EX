@@ -24,7 +24,11 @@ class CommentInputView: UIView {
     }()
 
     public var text: String {
-        return textView.text
+        set {
+            textView.text = newValue
+        } get {
+            return textView.text
+        }
     }
 
     public func beFirstResponder() {

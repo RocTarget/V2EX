@@ -46,6 +46,8 @@ class TopicDetailViewController: BaseViewController, TopicService {
     var topicID: String
 
     var comments: [CommentModel] = []
+    
+    var commentText: String = ""
 
     init(topicID: String) {
         self.topicID = topicID
@@ -158,17 +160,23 @@ class TopicDetailViewController: BaseViewController, TopicService {
             return
         }
 
+        commentText = commentInputView.text
+        commentInputView.text = ""
+        
         HUD.show()
         comment(
             once: once,
             topicID: topicID,
-            content: commentInputView.text, success: { [weak self] in
+            content: commentText, success: { [weak self] in
                 self?.fetchTopicDetail()
                 HUD.showText("回复成功")
                 HUD.dismiss()
         }) { [weak self] error in
+            guard let `self` = self else { return }
             HUD.dismiss()
             HUD.showText(error)
+            self.commentInputView.text = self.commentText
+            self.commentInputView.beFirstResponder()
         }
     }
 }
