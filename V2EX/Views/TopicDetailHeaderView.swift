@@ -193,9 +193,14 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
                 return
             }else if urlString.hasPrefix("https://") || urlString.hasPrefix("http://") {
                 if navigationAction.navigationType == .linkActivated {
-                    let isTopic = url.deletingLastPathComponent().absoluteString == Constants.Config.baseURL + "/t/"
-                    if isTopic {
-                        tapHandle?(.topic(url.lastPathComponent))
+                    if url.path.hasPrefix("/t/") {
+                        let comps = url.path.components(separatedBy: "/")
+                        if [3, 4].contains(comps.count) {
+                            let id = comps[2]
+                            tapHandle?(.topic(id))
+                        } else {
+                            tapHandle?(.webpage(url))
+                        }
                     } else {
                         tapHandle?(.webpage(url))
                     }

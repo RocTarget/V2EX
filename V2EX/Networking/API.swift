@@ -30,6 +30,8 @@ enum API {
     case topicCollect
 
     case about
+
+    case comment(topicID: String, dict: [String: String])
 }
 
 extension API: TargetType {
@@ -63,6 +65,8 @@ extension API: TargetType {
             return .get("/my/topics")
         case .about:
             return .get("/about")
+        case .comment(let topicID, _):
+            return .post("/t/\(topicID)")
         }
     }
 
@@ -70,7 +74,10 @@ extension API: TargetType {
     var parameters: [String : Any]? {
         var param: [String: Any] = [:]
         switch self {
-        case .signin(let dict), .forgot(let dict), .signup(let dict):
+        case .signin(let dict),
+             .forgot(let dict),
+             .signup(let dict),
+             .comment(_, let dict):
             param = dict
         default:
             return nil

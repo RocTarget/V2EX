@@ -5,6 +5,7 @@ protocol HTMLParseService {
     func parseTopic(rootPath: XPathObject) -> [TopicModel]
     func parseNodeNavigation(html: HTMLDocument) -> [NodeCategoryModel]
     func replacingIframe(text: String) -> String
+    func parseOnce(html: HTMLDocument) -> String?
 }
 
 extension HTMLParseService {
@@ -108,5 +109,9 @@ extension HTMLParseService {
             }
         }
         return content
+    }
+
+    func parseOnce(html: HTMLDocument) -> String? {
+        return html.xpath("//input[@name='once']").first?["value"]
     }
 }

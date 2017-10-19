@@ -34,10 +34,10 @@ extension AppSetup {
         IQKeyboardManager.sharedManager().keyboardDistanceFromTextField = 70
         IQKeyboardManager.sharedManager().shouldResignOnTouchOutside = true
         
-        IQKeyboardManager.sharedManager().disabledDistanceHandlingClasses = [
-            TopicDetailViewController.self,
-            CreateTopicViewController.self
-        ]
+//        IQKeyboardManager.sharedManager().disabledDistanceHandlingClasses = [
+//            TopicDetailViewController.self,
+//            CreateTopicViewController.self
+//        ]
         IQKeyboardManager.sharedManager().disabledToolbarClasses = [
             TopicDetailViewController.self
         ]

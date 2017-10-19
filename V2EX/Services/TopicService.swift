@@ -34,6 +34,13 @@ protocol TopicService: HTMLParseService {
         success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
         failure: Failure?)
 
+    func comment(
+        once: String,
+        topicID: String,
+        content: String,
+        success: Action?,
+        failure: Failure?)
+
 }
 
 extension TopicService {
@@ -124,6 +131,7 @@ extension TopicService {
                 return
             }
             topic.publicTime = publicTimeAndClickCountString
+            topic.once = self.parseOnce(html: html)
 
 //            let publicTimeAndClickCountList = publicTimeAndClickCountString.trimmed.components(separatedBy: "·").map { $0.trimmed }.filter { $0.isNotEmpty }
 //            if publicTimeAndClickCountList.count >= 2 {
@@ -207,9 +215,31 @@ extension TopicService {
             let user = MemberModel(username: userhref.lastPathComponent, url: userhref, avatar: userAvatar)
             let node = NodeModel(name: nodename, href: nodeHref)
             var topic = TopicModel(user: user, node: node, title: title, href: "", lastReplyTime: "", replyCount: 0)
+            topic.once = self.parseOnce(html: html)
             topic.content = content
             topic.publicTime = html.xpath("//*[@id='Wrapper']/div/div[1]/div[1]/small/text()[2]").first?.content ?? ""
             success?(topic, comments)
+        }, failure: failure)
+    }
+
+    func comment(
+        once: String,
+        topicID: String,
+        content: String,
+        success: Action?,
+        failure: Failure?) {
+
+        let param = [
+            "content": content,
+            "once": once
+        ]
+        Network.htmlRequest(target: .comment(topicID: topicID, dict: param), success: { html in
+            guard let problem =  html.xpath("//*[@id='Wrapper']/div//div[@class='problem']/ul").first?.content else {
+                success?()
+                return
+            }
+
+            failure?(problem)
         }, failure: failure)
     }
 

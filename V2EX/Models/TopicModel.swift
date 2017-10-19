@@ -12,6 +12,8 @@ public struct TopicModel {
 
     var publicTime: String = ""
 
+    var once: String?
+
     /// 主题 ID
     var topicId: String? {
         let isTopic = href.hasPrefix("/t/")

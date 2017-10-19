@@ -18,6 +18,11 @@ class TopicDetailViewController: BaseViewController, TopicService {
         return view
     }()
 
+    private lazy var refreshControl: UIRefreshControl = {
+        let view = UIRefreshControl()
+        return view
+    }()
+
     private lazy var headerView: TopicDetailHeaderView = {
         let view = TopicDetailHeaderView()
         view.isHidden = true
@@ -65,10 +70,16 @@ class TopicDetailViewController: BaseViewController, TopicService {
     }
 
     override func setupSubviews() {
+
+        tableView.addSubview(refreshControl)
         tableView.tableHeaderView = headerView
 
         headerView.tapHandle = { [weak self] type in
             self?.tapHandle(type)
+        }
+
+        commentInputView.sendHandle = { [weak self] in
+            self?.replyComment()
         }
 
         title = "加载中..."
@@ -87,6 +98,14 @@ class TopicDetailViewController: BaseViewController, TopicService {
             $0.left.bottom.right.equalToSuperview()
             $0.height.equalTo(55)
         }
+    }
+
+    override func setupRx() {
+        refreshControl.rx
+            .controlEvent(.valueChanged)
+            .subscribeNext { [weak self] in
+                self?.fetchTopicDetail()
+            }.disposed(by: rx.disposeBag)
     }
 
     func tapHandle(_ type: TapType) {
@@ -109,7 +128,48 @@ class TopicDetailViewController: BaseViewController, TopicService {
             self.navigationController?.pushViewController(topicDetailVC, animated: true)
             log.info()
         }
+    }
 
+    func replyComment() {
+
+        guard let `topic` = self.topic else {
+            HUD.showText("回复失败")
+            return
+        }
+
+        guard UserModel.isLogin else {
+            HUD.showText("请先登录", completionBlock: {
+                presentLoginVC()
+            })
+            return
+        }
+
+        guard commentInputView.text.trimmed.isNotEmpty else {
+            HUD.showText("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
+                self?.commentInputView.beFirstResponder()
+            })
+            return
+        }
+
+        guard let once = topic.once else {
+            HUD.showText("无法获取 once，请尝试重新登录", completionBlock: {
+                presentLoginVC()
+            })
+            return
+        }
+
+        HUD.show()
+        comment(
+            once: once,
+            topicID: topicID,
+            content: commentInputView.text, success: { [weak self] in
+                self?.fetchTopicDetail()
+                HUD.showText("回复成功")
+                HUD.dismiss()
+        }) { [weak self] error in
+            HUD.dismiss()
+            HUD.showText(error)
+        }
     }
 }
 
@@ -130,11 +190,13 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 }
 
 extension TopicDetailViewController {
+
     func fetchTopicDetail() {
 
         topicDetail(topicID: topicID, success: { [weak self] topic, comments in
             self?.topic = topic
             self?.comments = comments
+            self?.refreshControl.endRefreshing()
 
             }, failure: { [weak self] error in
 
@@ -144,6 +206,7 @@ extension TopicDetailViewController {
                     emptyView.title = error
                 }
                 self?.endLoading()
+                self?.refreshControl.endRefreshing()
         })
 
         headerView.webLoadComplete = { [weak self] in
@@ -165,7 +228,6 @@ extension TopicDetailViewController: StatefulViewController {
         loadingView = LoadingView(frame: tableView.frame)
         emptyView = EmptyView(frame: tableView.frame,
                               title: "加载失败")
-
         setupInitialViewState()
     }
 }
