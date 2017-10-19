@@ -5,16 +5,15 @@
 
 一款针对 iOS 设备的 V2EX 客户端，苦于在 iPhone 上一直没有一款撑得上 **好用的** V2EX 客户端，于是有了这个项目，如果你有任何意见欢迎打开 Issue 或 PR，感谢 😊
 
-## 预览
-
-
-## 功能
-
-开发中, 晚些补充...
 
 ## 截图
 
 <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/home.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/node.png" width="210"> <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/more.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/login.png" width="210">
+
+
+## 功能
+
+持续开发中, 晚些补充...
 
 ## 要求
 
