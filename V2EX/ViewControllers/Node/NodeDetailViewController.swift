@@ -75,7 +75,7 @@ class NodeDetailViewController: BaseViewController, NodeService {
             self?.refreshControl.endRefreshing()
 
             if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.title = error
+                emptyView.message = error
             }
             self?.endLoading()
         }
@@ -124,8 +124,7 @@ extension NodeDetailViewController: StatefulViewController {
 
     func setupStateFul() {
         loadingView = LoadingView(frame: tableView.frame)
-        emptyView = EmptyView(frame: tableView.frame,
-                              title: "加载失败")
+        emptyView = EmptyView(frame: tableView.frame)
 
         setupInitialViewState()
     }

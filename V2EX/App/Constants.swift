@@ -15,7 +15,8 @@ struct Constants {
         static let loginAccount = "loginAccount"
         
         // User 持久化
-        static let userInfo = "UserInfo"
+        static let username = "usernameKey"
+        static let avatarSrc = "avatarSrcKey"
     }
 }
 

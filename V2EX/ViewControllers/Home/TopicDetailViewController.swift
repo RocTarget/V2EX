@@ -84,6 +84,10 @@ class TopicDetailViewController: BaseViewController, TopicService {
             self?.replyComment()
         }
 
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "moreNav"), style: .plain, action: {
+            log.info("plain")
+        })
+
         title = "加载中..."
         startLoading()
         fetchTopicDetail()
@@ -189,11 +193,19 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
-        cell.comment = comments[indexPath.row]
+        let comment = comments[indexPath.row]
+        cell.comment = comment
+        cell.hostUsername = topic?.user?.username ?? ""
         cell.tapHandle = { [weak self] type in
             self?.tapHandle(type)
         }
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let comment = comments[indexPath.row]
+        commentInputView.text = "@\(comment.user.username) "
+        commentInputView.beFirstResponder()
     }
 }
 
@@ -211,7 +223,7 @@ extension TopicDetailViewController {
                 HUD.showText(error)
 
                 if let `emptyView` = self?.emptyView as? EmptyView {
-                    emptyView.title = error
+                    emptyView.message = error
                 }
                 self?.endLoading()
                 self?.refreshControl.endRefreshing()
@@ -234,8 +246,7 @@ extension TopicDetailViewController: StatefulViewController {
 
     func setupStateFul() {
         loadingView = LoadingView(frame: tableView.frame)
-        emptyView = EmptyView(frame: tableView.frame,
-                              title: "加载失败")
+        emptyView = EmptyView(frame: tableView.frame)
         setupInitialViewState()
     }
 }

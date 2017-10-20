@@ -27,6 +27,15 @@ class TopicCommentCell: BaseTableViewCell {
         return view
     }()
 
+    private lazy var hostLabel: UILabel = {
+        let view = UILabel()
+        view.text = "楼主"
+        view.font = UIFont.systemFont(ofSize: 12)
+        view.textColor = UIColor.hex(0x969696)
+        view.isHidden = true
+        return view
+    }()
+
     private lazy var contentTextView: UITextView = {
         let view = UITextView()
         view.font = UIFont.systemFont(ofSize: 15)
@@ -47,6 +56,8 @@ class TopicCommentCell: BaseTableViewCell {
 
     public var tapHandle: ((_ type: TapType) -> Void)?
 
+    public var hostUsername: String?
+
     public var comment: CommentModel? {
         didSet {
             guard let `comment` = comment else { return }
@@ -59,6 +70,8 @@ class TopicCommentCell: BaseTableViewCell {
 
             let html = "<style>\(cssStyle)</style>" + comment.content
             contentTextView.attributedText = html.html2AttributedString
+
+            hostLabel.isHidden = hostUsername ?? ""  != comment.user.username
         }
     }
 
@@ -85,6 +98,7 @@ class TopicCommentCell: BaseTableViewCell {
             usernameLaebl,
             timeLabel,
             floorLabel,
+            hostLabel,
             contentTextView,
             lineView
         )
@@ -99,6 +113,11 @@ class TopicCommentCell: BaseTableViewCell {
         usernameLaebl.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
             $0.top.equalTo(avatarView).offset(3)
+        }
+
+        hostLabel.snp.makeConstraints {
+            $0.left.equalTo(usernameLaebl.snp.right).offset(10)
+            $0.centerY.equalTo(usernameLaebl)
         }
 
         floorLabel.snp.makeConstraints {

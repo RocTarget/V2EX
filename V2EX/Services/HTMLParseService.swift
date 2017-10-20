@@ -8,7 +8,7 @@ import Kanna
 /// - nodeDetail: 节点详情 (节点主页)
 enum HTMLParserType {
     
-    case index, topicCollect, nodeDetail
+    case index, topicCollect, nodeDetail, member
 }
 
 protocol HTMLParseService {
@@ -31,7 +31,7 @@ extension HTMLParseService {
         
         let rootPathOp: XPathObject?
         switch type {
-        case .index:
+        case .index, .member:
             rootPathOp = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
         default://.nodeDetail:
             rootPathOp = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[contains(@class, 'cell')]")
@@ -83,28 +83,10 @@ extension HTMLParseService {
     
     func parseNodeNavigation(html: HTMLDocument) -> [NodeCategoryModel] {
         let nodesPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][last()]/div/table/tr")
-        
-        ////        var nodeCategorys: [NodeCategoryModel] = []
-        //        for (index, ele) in nodesPath.enumerated() {
-        //            guard let sectionName = ele.xpath("./td[1]/span").first?.content else { continue }
-        //
-        //            let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
-        //                guard let name = ele.content, let href = ele["href"] else { return nil }
-        //                return NodeModel(name: name, href: href)
-        //            })
-        //            NodeCategoryStore.shared.deleteAll()
-        //            NodeStore.shared.deleteAll()
-        //            let category = NodeCategoryModel(id: index, name: sectionName, nodes: nodes)
-        //            NodeCategoryStore.shared.insert(category)
-        ////            nodeCategorys.append(category)
-        //        }
         let nodeCategorys = nodesPath.flatMap { (ele) -> NodeCategoryModel? in
-            
             guard let sectionName = ele.xpath("./td[1]/span").first?.content else { return nil }
-            
             let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
                 guard let name = ele.content, let href = ele["href"] else { return nil }
-                
                 return NodeModel(name: name, href: href)
             })
             return NodeCategoryModel(id: 0, name: sectionName, nodes: nodes)

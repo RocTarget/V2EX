@@ -4,6 +4,7 @@ class TopicCell: BaseTableViewCell {
 
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -23,9 +24,10 @@ class TopicCell: BaseTableViewCell {
     private lazy var nodeLabel: UIInsetLabel = {
         let view = UIInsetLabel()
         view.font = UIFont.systemFont(ofSize: 13)
-        view.textColor = UIColor.hex(0xD1D1D1)
-        view.backgroundColor = UIColor.hex(0xF1F1F1)
-        view.contentInsets = UIEdgeInsets(top: 2, left: 5, bottom: 2, right: 5)
+        view.textColor = UIColor.hex(0x999999)
+        view.backgroundColor = Theme.Color.bgColor
+        view.contentInsets = UIEdgeInsets(top: 2, left: 3, bottom: 2, right: 3)
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -43,7 +45,9 @@ class TopicCell: BaseTableViewCell {
         view.setTitleColor(UIColor.hex(0xBCB8BD), for: .normal)
         return view
     }()
-    
+
+    public var tapHandle: ((_ type: TapType) -> Void)?
+
     override func initialize() {
         selectionStyle = .none
 
@@ -55,6 +59,26 @@ class TopicCell: BaseTableViewCell {
             nodeLabel,
             replayCountLabel
         )
+
+        let avatarTapGesture = UITapGestureRecognizer()
+        avatarView.addGestureRecognizer(avatarTapGesture)
+
+        let nodeTapGesture = UITapGestureRecognizer()
+        nodeLabel.addGestureRecognizer(nodeTapGesture)
+
+        avatarTapGesture.rx
+            .event
+            .subscribeNext { [weak self] _ in
+                guard let user = self?.topic?.user else { return }
+                self?.tapHandle?(.user(user))
+            }.disposed(by: rx.disposeBag)
+
+        nodeTapGesture.rx
+            .event
+            .subscribeNext { [weak self] _ in
+                guard let node = self?.topic?.node else { return }
+                self?.tapHandle?(.node(node))
+            }.disposed(by: rx.disposeBag)
     }
     
     override func setupConstraints() {
@@ -94,8 +118,9 @@ class TopicCell: BaseTableViewCell {
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
-            avatarView.setImage(urlString: topic.user.avatarSrc)
-            usernameLabel.text = topic.user.username
+            guard let user = topic.user else { return }
+            avatarView.setImage(urlString: user.avatarSrc)
+            usernameLabel.text = user.username
             titleLabel.text = topic.title
             lastReplyLabel.text = topic.lastReplyTime
             replayCountLabel.setTitle(topic.replyCount, for: .normal)

@@ -41,6 +41,8 @@ extension AppSetup {
         IQKeyboardManager.sharedManager().disabledToolbarClasses = [
             TopicDetailViewController.self
         ]
-//        IQKeyboardManager.sharedManager().toolbarPreviousNextAllowedClasses.append(AutoPreviousNextView.self)
+        IQKeyboardManager.sharedManager().disabledTouchResignedClasses = [
+            TopicDetailViewController.self
+        ]
     }
 }

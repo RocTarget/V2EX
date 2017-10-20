@@ -32,6 +32,8 @@ class CommentInputView: UIView {
     }
 
     public func beFirstResponder() {
+        guard !textView.isFirstResponder else { return }
+        
         textView.becomeFirstResponder()
     }
 

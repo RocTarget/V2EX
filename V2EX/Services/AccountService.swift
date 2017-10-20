@@ -16,6 +16,10 @@ protocol AccountService {
         forgotForm: LoginForm,
         success: ((_ info: String) -> ())?,
         failure: ((_ error: String, _ forgotForm: LoginForm?) -> Void)?)
+
+    func notifications(
+        success: ((_ messages: [MessageModel]) -> ())?,
+        failure: Failure?)
 }
 
 extension AccountService {
@@ -153,5 +157,35 @@ extension AccountService {
 //        let loginForm = LoginForm(usernameKey: usernameKey, passwordKey: passwordKey, captchaKey: captchaKey, captchaImageData: data, once: once, username: "", password: "", captcha: "")
 //        success?(loginForm)
 //        }, failure: failure)
+    }
+
+    func notifications(
+        success: ((_ messages: [MessageModel]) -> ())?,
+        failure: Failure?) {
+
+        Network.htmlRequest(target: .notifications, success: { html in
+            let cellPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell']/table/tr")
+            let messages = cellPath.flatMap({ ele -> MessageModel? in
+                guard let userNode = ele.xpath("td[1]/a/img").first,
+                    let userPageHref = userNode.parent?["href"],
+                    let avatarSrc = userNode["src"],
+                    let topicNode = ele.xpath("td[2]/span/a[2]").first,
+                    let topicHref = topicNode["href"],
+                    let topicTitle = topicNode.content,
+                    let time = ele.xpath("td[2]/span[2]").first?.content?.trimmed,
+                    let content = ele.xpath("td[2]/div[@class='payload']").first?.text,
+                    let replyTypeStr = ele.xpath("td[2]/span[1]").first?.text else {
+                    return nil
+                }
+//                ele.xpath("td[2]/a").map {$0["onclick"]}
+                let username = userPageHref.lastPathComponent
+
+                let user = UserModel(username: username, url: userPageHref, avatar: avatarSrc)
+                let topic = TopicModel(user: nil, node: nil, title: topicTitle, href: topicHref)
+                return MessageModel(user: user, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr)
+            })
+            success?(messages)
+        }, failure: failure)
+
     }
 }

@@ -82,14 +82,14 @@ class LoginViewController: BaseViewController, AccountService {
     private lazy var forgetBtn: UIButton = {
         let view = UIButton()
         view.setTitle("忘记密码?", for: .normal)
-        view.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         return view
     }()
 
     private lazy var registerBtn: UIButton = {
         let view = UIButton()
         view.setTitle("还没有账号? 点击立即注册", for: .normal)
-        view.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         return view
     }()
 
@@ -250,7 +250,10 @@ class LoginViewController: BaseViewController, AccountService {
         registerBtn.rx
             .tap
             .subscribeNext { [weak self] in
-                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
+                // 暂时用网页代替
+                let webView = SweetWebViewController(url: "https://www.v2ex.com/signup")
+                self?.navigationController?.pushViewController(webView, animated: true)
+//                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
             }.disposed(by: rx.disposeBag)
     }
     
@@ -302,7 +305,7 @@ class LoginViewController: BaseViewController, AccountService {
         }) { [weak self] error, form in
             HUD.dismiss()
             HUD.showText(error)
-
+            self?.captchaTextField.text = ""
             if let `form` = form {
                 self?.captchaBtn.setImage(UIImage(data: form.captchaImageData), for: .normal)
                 self?.loginForm = form

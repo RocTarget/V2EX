@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 public struct TopicModel {
-    var user: MemberModel
+    var user: MemberModel?
     var node: NodeModel?
 
     var title: String
@@ -25,7 +25,7 @@ public struct TopicModel {
        return topicId
     }
 
-    init(user: MemberModel, node: NodeModel?, title: String, href: String, lastReplyTime: String? = "", replyCount: String = "") {
+    init(user: MemberModel?, node: NodeModel?, title: String, href: String, lastReplyTime: String? = "", replyCount: String = "0") {
         self.user = user
         self.node = node
         self.title = title

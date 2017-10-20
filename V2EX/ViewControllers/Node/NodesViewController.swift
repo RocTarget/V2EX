@@ -17,7 +17,7 @@ class NodesViewController: BaseViewController, NodeService {
         return view
     }()
     
-    var nodeCategorys: [NodeCategoryModel] = [] {
+    private var nodeCategorys: [NodeCategoryModel] = [] {
         didSet {
             collectionView.reloadData()
         }
@@ -25,27 +25,27 @@ class NodesViewController: BaseViewController, NodeService {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationItem.title = "节点导航"
-
-        fetchNodeCategory()
     }
 
     override func setupSubviews() {
 
         view.addSubview(collectionView)
 
-        startLoading()
+        fetchNodeCategory()
         setupStateFul()
     }
 
     func fetchNodeCategory() {
+        startLoading()
+
         nodeNavigation(success: { [weak self] cates in
             self?.nodeCategorys = cates
             self?.endLoading()
         }) { [weak self] error in
-            HUD.dismiss()
             if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.title = error
+                emptyView.message = error
             }
             self?.endLoading()
         }
@@ -102,9 +102,11 @@ extension NodesViewController: StatefulViewController {
 
     func setupStateFul() {
         loadingView = LoadingView(frame: collectionView.frame)
-        emptyView = EmptyView(frame: collectionView.frame,
-                              title: "加载失败")
-
+        let ev = EmptyView(frame: collectionView.frame)
+        ev.retryHandle = { [weak self] in
+            self?.fetchNodeCategory()
+        }
+        emptyView = ev
         setupInitialViewState()
     }
 }

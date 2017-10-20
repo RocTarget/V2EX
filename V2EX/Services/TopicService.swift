@@ -41,6 +41,15 @@ protocol TopicService: HTMLParseService {
         success: Action?,
         failure: Failure?)
 
+    func memberTopics(
+        username: String,
+        success: ((_ topics: [TopicModel]) -> Void)?,
+        failure: Failure?)
+
+    func memberReply(
+        username: String,
+        success: ((_ messages: [MessageModel]) -> ())?,
+        failure: Failure?)
 }
 
 extension TopicService {
@@ -95,6 +104,7 @@ extension TopicService {
                 failure?("获取节点信息失败")
                 return
             }
+
             success?(nodes, topics)
         }, failure: failure)
     }
@@ -136,9 +146,9 @@ extension TopicService {
             topic.publicTime = publicTimeAndClickCountString
             topic.once = self.parseOnce(html: html)
 
-//            let publicTimeAndClickCountList = publicTimeAndClickCountString.trimmed.components(separatedBy: "·").map { $0.trimmed }.filter { $0.isNotEmpty }
-//            if publicTimeAndClickCountList.count >= 2 {
-//            }
+            //            let publicTimeAndClickCountList = publicTimeAndClickCountString.trimmed.components(separatedBy: "·").map { $0.trimmed }.filter { $0.isNotEmpty }
+            //            if publicTimeAndClickCountList.count >= 2 {
+            //            }
 
             let contentHTML = html.xpath("//*[@id='Wrapper']//div[@class='topic_content']").first?.toHTML ?? ""
             let subtleHTML = html.xpath("//*[@id='Wrapper']//div[@class='subtle']").flatMap { $0.toHTML }.joined(separator: "")
@@ -205,7 +215,7 @@ extension TopicService {
                 return CommentModel(id: id, user: user, content: content, publicTime: publicTime, floor: floor)
             })
             guard let userPath = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/div/a").first,
-            let userAvatar = userPath.xpath("./img").first?["src"],
+                let userAvatar = userPath.xpath("./img").first?["src"],
                 let userhref = userPath["href"],
                 let nodeEle = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/a[2]").first,
                 let nodename = nodeEle.content,
@@ -243,6 +253,89 @@ extension TopicService {
             }
 
             failure?(problem)
+        }, failure: failure)
+    }
+
+    func memberTopics(
+        username: String,
+        success: ((_ topics: [TopicModel]) -> Void)?,
+        failure: Failure?) {
+
+        Network.htmlRequest(target: .memberTopics(username: username), success: { html in
+            let rootPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
+            let topics = rootPath.flatMap({ ele -> TopicModel? in
+                guard let userNode = ele.xpath(".//td//span/strong/a").first,
+                    let userPage = userNode["href"],
+                    let username = userNode.content,
+                    let topicPath = ele.xpath(".//td/span[@class='item_title']/a").first,
+                    let topicTitle = topicPath.content,
+                    //                    let avatarSrc = ele.xpath(".//td/a/img").first?["src"],
+                    let avatarSrc = UserDefaults.get(forKey: Constants.Keys.avatarSrc) as? String,
+                    let topicHref = topicPath["href"] else {
+                        return nil
+                }
+
+
+                let replyCount = ele.xpath(".//td[2]/a").first?.text ?? "0"
+
+                let homeXPath = ele.xpath(".//td/span[3]/text()").first
+                let nodeDetailXPath = ele.xpath(".//td/span[2]/text()").first
+                let textNode = homeXPath ?? nodeDetailXPath
+                let timeString = textNode?.content ?? ""
+                let replyUsername = textNode?.parent?.xpath("./strong").first?.content ?? ""
+
+                var lastReplyAndTime: String = ""
+                if homeXPath != nil { // 首页的布局
+                    lastReplyAndTime = timeString + replyUsername
+                } else if nodeDetailXPath != nil {
+                    lastReplyAndTime = replyUsername + timeString
+                }
+
+                let user = MemberModel(username: username, url: userPage, avatar: avatarSrc)
+
+                var node: NodeModel?
+
+                if let nodePath = ele.xpath(".//td/span[@class='small fade']/a[@class='node']").first,
+                    let nodename = nodePath.content,
+                    let nodeHref = nodePath["href"] {
+                    node = NodeModel(name: nodename, href: nodeHref)
+                }
+
+                return TopicModel(user: user, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)
+            })
+
+            guard topics.count > 0 else {
+                failure?("获取节点信息失败")
+                return
+            }
+
+            success?(topics)
+        }, failure: failure)
+    }
+
+    func memberReply(
+        username: String,
+        success: ((_ messages: [MessageModel]) -> ())?,
+        failure: Failure?) {
+        Network.htmlRequest(target: .memberReplys(username: username), success: { html in
+            let titlePath = html.xpath("//*[@id='Wrapper']//div[@class='dock_area']")
+            let contentPath = html.xpath("//*[@id='Wrapper']//div[@class='reply_content']")
+
+            let messages = titlePath.enumerated().flatMap({ index, ele -> MessageModel? in
+                guard let replyContent = contentPath[index].text,
+                    let replyNode = ele.xpath(".//tr[1]/td[1]/span").first,
+                    let replyDes = ele.content?.trimmed,
+                    let topicNode = replyNode.xpath("./a").first,
+                    let topicTitle = topicNode.content?.trimmed,
+                    let topicHref = topicNode["href"],
+                    let replyTime = ele.xpath(".//tr[1]/td/div/span").first?.content else {
+                        return nil
+                }
+
+                let topic = TopicModel(user: nil, node: nil, title: topicTitle, href: topicHref)
+                return MessageModel(user: nil, topic: topic, time: replyTime, content: replyContent, replyTypeStr: replyDes)
+            })
+            success?(messages)
         }, failure: failure)
     }
 }

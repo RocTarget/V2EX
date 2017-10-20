@@ -1,9 +1,9 @@
 import UIKit
 import StatefulViewController
 
-class TopicsViewController: BaseViewController, TopicService {
+class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewController {
 
-    private lazy var tableView: UITableView = {
+    internal lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
         view.dataSource = self
@@ -14,7 +14,7 @@ class TopicsViewController: BaseViewController, TopicService {
         return view
     }()
 
-    private lazy var refreshControl: UIRefreshControl = {
+    internal lazy var refreshControl: UIRefreshControl = {
         let view = UIRefreshControl()
         return view
     }()
@@ -32,6 +32,10 @@ class TopicsViewController: BaseViewController, TopicService {
         super.init(nibName: nil, bundle: nil)
     }
 
+    convenience init() {
+        self.init(href: "")
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -41,11 +45,17 @@ class TopicsViewController: BaseViewController, TopicService {
     }
 
     override func setupSubviews() {
+        registerForPreviewing(with: self, sourceView: tableView)
+
         tableView.addSubview(refreshControl)
 
         startLoading()
-        fetchTopic()
         setupStateFul()
+        fetchData()
+    }
+
+    internal func fetchData() {
+        fetchTopic()
     }
 
     override func setupConstraints() {
@@ -71,16 +81,31 @@ class TopicsViewController: BaseViewController, TopicService {
             self?.endLoading()
             }, failure: { [weak self] error in
                 self?.refreshControl.endRefreshing()
-                HUD.showText(error)
                 self?.endLoading()
                 if let `emptyView` = self?.emptyView as? EmptyView {
-                    emptyView.title = error
+                    emptyView.message = error
                 }
         })
     }
+
+    func hasContent() -> Bool {
+        return topics.count.boolValue
+    }
+
+    func setupStateFul() {
+        loadingView = LoadingView(frame: tableView.frame)
+        let ev = EmptyView(frame: tableView.frame)
+        ev.retryHandle = { [weak self] in
+            self?.startLoading()
+            self?.fetchTopic()
+        }
+        emptyView = ev
+        setupInitialViewState()
+    }
+    
 }
 
-extension TopicsViewController: UITableViewDelegate, UITableViewDataSource {
+extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return topics.count
     }
@@ -101,24 +126,27 @@ extension TopicsViewController: UITableViewDelegate, UITableViewDataSource {
         let topicDetailVC = TopicDetailViewController(topicID: topicId)
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return topics[indexPath.row].cellHeight
     }
 }
 
-extension TopicsViewController: StatefulViewController {
+extension BaseTopicsViewController: UIViewControllerPreviewingDelegate {
 
-    func hasContent() -> Bool {
-        return topics.count.boolValue
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        show(viewControllerToCommit, sender: self)
     }
 
-    func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        emptyView = EmptyView(frame: tableView.frame,
-                              title: "加载失败")
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
 
-        setupInitialViewState()
+        guard let indexPath = tableView.indexPathForRow(at: location),
+            let cell = tableView.cellForRow(at: indexPath) else { return nil }
+        guard let topicID = topics[indexPath.row].topicId else { return nil }
+
+        let viewController = TopicDetailViewController(topicID: topicID)
+//        viewController.preferredContentSize = CGSize(width: view.width, height: view.height * 0.7)
+        previewingContext.sourceRect = cell.frame
+        return viewController
     }
 }
-

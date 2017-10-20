@@ -32,7 +32,7 @@ class MoreViewController: BaseViewController {
             MoreItem(icon: #imageLiteral(resourceName: "nodeCollect"), title: "节点收藏", type: .nodeCollect),
             MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .topicCollect),
             MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
-            MoreItem(icon: #imageLiteral(resourceName: "topic"), title: "我的话题", type: .myTopic),
+            MoreItem(icon: #imageLiteral(resourceName: "topic"), title: "我的主题", type: .myTopic),
             MoreItem(icon: #imageLiteral(resourceName: "myReply"), title: "我的回复", type: .myReply)
         ],
         [
@@ -87,8 +87,9 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         
         let item = sections[indexPath.section][indexPath.row]
         if indexPath.section == 0 {
-            cell?.textLabel?.text = UserModel.current()?.username ?? item.title
-            cell?.imageView?.setRoundImage(urlString: UserModel.current()?.avatarNormalSrc, placeholder: item.icon)
+            cell?.textLabel?.text = UserModel.current?.username ?? item.title
+            cell?.imageView?.image = item.icon
+            cell?.imageView?.setRoundImage(urlString: UserModel.current?.avatarNormalSrc, placeholder: item.icon)
         } else {
             cell?.textLabel?.text = item.title
             cell?.imageView?.image = item.icon
@@ -115,15 +116,21 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             viewController = CreateTopicViewController()
         case .nodeCollect:
             viewController = NodeCollectViewController()
+        case .myTopic:
+            guard let username = UserModel.current?.username else { return }
+            viewController = MyTopicsViewController(username: username)
+        case .myReply:
+            guard let username = UserModel.current?.username else { return }
+            viewController = MyReplyViewController(username: username)
         case .topicCollect, .follow:
             let href = type == .topicCollect ? API.topicCollect.path : API.following.path
-            viewController = TopicsViewController(href: href)
+            viewController = BaseTopicsViewController(href: href)
         case .sourceCode:
-            viewController = SweetWebViewController(url: "https://github.com/Joe0708/V2EX")
+            viewController = SweetWebViewController(url: API.codeRepo.defaultURLString)
         case .libs:
             viewController = CarteViewController()
         case .about:
-            viewController = SweetWebViewController(url: "https://www.v2ex.com/about")
+            viewController = SweetWebViewController(url: API.about.defaultURLString)
         default:
             break
         }

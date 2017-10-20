@@ -90,18 +90,14 @@ class TopicDetailHeaderView: UIView{
         avatarTapGesture.rx
             .event
             .subscribeNext { [weak self] _ in
-                guard let user = self?.topic?.user else {
-                    return
-                }
+                guard let user = self?.topic?.user else { return }
                 self?.tapHandle?(.user(user))
             }.disposed(by: rx.disposeBag)
 
         nodeTapGesture.rx
             .event
             .subscribeNext { [weak self] _ in
-                guard let node = self?.topic?.node else {
-                    return
-                }
+                guard let node = self?.topic?.node else { return }
                 self?.tapHandle?(.node(node))
             }.disposed(by: rx.disposeBag)
     }
@@ -147,9 +143,9 @@ class TopicDetailHeaderView: UIView{
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
-            
-            avatarView.setImage(urlString: topic.user.avatarSrc)
-            usernameLabel.text = topic.user.username
+            guard let user = topic.user else { return }
+            avatarView.setImage(urlString: user.avatarSrc)
+            usernameLabel.text = user.username
             titleLabel.text = topic.title
             timeLabel.text = topic.publicTime
             timeLabel.isHidden = topic.publicTime.isEmpty

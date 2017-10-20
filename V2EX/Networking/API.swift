@@ -32,13 +32,25 @@ enum API {
     case about
 
     case comment(topicID: String, dict: [String: String])
+
+    case notifications
+
+    case memberTopics(username: String)
+    case memberReplys(username: String)
+
+    case codeRepo
 }
 
 extension API: TargetType {
 
     /// The target's base `URL`.
     var baseURL: String {
-        return Constants.Config.baseURL
+        switch self {
+        case .codeRepo:
+            return "https://github.com/Joe0708/V2EX"
+        default:
+            return Constants.Config.baseURL
+        }
     }
 
     var route: Route {
@@ -67,6 +79,14 @@ extension API: TargetType {
             return .get("/about")
         case .comment(let topicID, _):
             return .post("/t/\(topicID)")
+        case .notifications:
+            return .get("/notifications")
+        case .memberTopics(let username):
+            return .get("/member/\(username)/topics")
+        case .memberReplys(let username):
+            return .get("/member/\(username)/replies")
+        default:
+            return .get("")
         }
     }
 

@@ -33,6 +33,11 @@ extension TabBarViewController {
                                normalImage: #imageLiteral(resourceName: "navigation"),
                                selectedImageName: #imageLiteral(resourceName: "navigation_selected"))
 
+        addChildViewController(childController: MessageViewController(),
+                               title: "消息",
+                               normalImage: #imageLiteral(resourceName: "notifications"),
+                               selectedImageName: #imageLiteral(resourceName: "notifications_selected"))
+
         addChildViewController(childController: MoreViewController(),
                                title: "更多",
                                normalImage: #imageLiteral(resourceName: "more"),
