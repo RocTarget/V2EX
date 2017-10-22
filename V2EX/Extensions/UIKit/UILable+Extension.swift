@@ -60,14 +60,14 @@ extension UILabel {
     func makeSubstringColor(_ text: String, color: UIColor) {
         let attributedText = self.attributedText!.mutableCopy() as? NSMutableAttributedString
 
-        let range = ((self.text ?? "") as NSString).range(of: text)
+        let range = ((self.text?.lowercased() ?? "") as NSString).range(of: text.lowercased())
         if range.location != NSNotFound {
             attributedText?.setAttributes([NSAttributedStringKey.foregroundColor: color], range: range)
         }
 
         self.attributedText = attributedText
     }
-
+    
     /// 使指定文字添加删除线
     func strikethrough(text: String) {
         self.attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.strikethroughStyle: NSUnderlineStyle.styleSingle.rawValue])

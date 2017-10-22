@@ -10,7 +10,7 @@ class NodeCollectCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .center
-        view.textColor = UIColor.hex(0x778087)
+        view.textColor = Theme.Color.linkColor
         view.font = UIFont.systemFont(ofSize: 15)
         return view
     }()

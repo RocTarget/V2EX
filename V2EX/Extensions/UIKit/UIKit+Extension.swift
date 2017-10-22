@@ -134,7 +134,7 @@ public extension UIApplication {
 extension UIDevice {
     
     /// MARK: - 获取设备型号
-    public static func phoneModel() -> String {
+    public static var phoneModel: String {
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
@@ -176,25 +176,11 @@ extension UIDevice {
     
     /// 判断是不是模拟器
     public static var isSimulator: Bool {
-        return UIDevice.phoneModel() == "Simulator"
+        return UIDevice.phoneModel == "Simulator"
     }
     
     public static var isiPad: Bool {
         return UIDevice.current.userInterfaceIdiom == .pad
-    }
-    
-    /// 获取mac地址
-    static func getMacAddress() -> String! {
-        
-        if let cfa: NSArray = CNCopySupportedInterfaces() {
-            for x in cfa {
-                if let dic = CFBridgingRetain(CNCopyCurrentNetworkInfo(x as! CFString)) {
-                    let mac = dic["BSSID"]
-                    return mac as! String!
-                }
-            }
-        }
-        return nil
     }
     
     /// 返回当前屏幕的一个像素的点大小
@@ -211,6 +197,15 @@ extension UIDevice {
 
 
 
+extension UIScreen {
+    class var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+    
+    class var screenHeight: CGFloat {
+        return UIScreen.main.bounds.height
+    }
+}
 
 
 
@@ -222,5 +217,21 @@ extension NSRange {
         guard let fromIndex = String.Index(fromUTFIndex, within: str) else { return nil }
         guard let toIndex = String.Index(toUTFIndex, within: str) else { return nil }
         return fromIndex ..< toIndex
+    }
+}
+
+
+
+// MARK: - 切换调试器
+extension UIViewController {
+    
+    func toggleDebugger() {
+        
+        #if DEBUG
+            let overlayClass = NSClassFromString("UIDebuggingInformationOverlay") as? UIWindow.Type
+            _ = overlayClass?.perform(NSSelectorFromString("prepareDebuggingOverlay"))
+            let overlay = overlayClass?.perform(NSSelectorFromString("overlay")).takeUnretainedValue() as? UIWindow
+            _ = overlay?.perform(NSSelectorFromString("toggleVisibility"))
+        #endif
     }
 }

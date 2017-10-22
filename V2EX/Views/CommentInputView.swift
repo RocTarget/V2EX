@@ -20,6 +20,7 @@ class CommentInputView: UIView {
         view.returnKeyType = .send
         view.enablesReturnKeyAutomatically = true
         view.delegate = self
+        self.addSubview(view)
         return view
     }()
 
@@ -49,8 +50,7 @@ class CommentInputView: UIView {
     func setup() {
         borderTop = Border(size: 1,color: Theme.Color.borderColor)
         backgroundColor = .white
-        addSubview(textView)
-
+        
         textView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(10)
             $0.left.right.equalToSuperview().inset(15)

@@ -1,10 +1,12 @@
 import UIKit
 
 class NodeHeaderView: UICollectionReusableView {
-    private lazy var textLabel: UILabel = {
-        let view = UILabel()
+    private lazy var textLabel: UIInsetLabel = {
+        let view = UIInsetLabel()
         view.font = UIFont.systemFont(ofSize: 16)
-        view.textColor = .gray
+        view.textColor = Theme.Color.globalColor
+        view.borderLeft = Border(size: 3, color: Theme.Color.globalColor)
+        view.contentInsetsLeft = 9
         return view
     }()
     
@@ -18,7 +20,7 @@ class NodeHeaderView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = Theme.Color.bgColor
+        backgroundColor = .white
         
         addSubview(textLabel)
         

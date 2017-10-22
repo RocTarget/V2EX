@@ -24,7 +24,6 @@ class NavigationViewController: UINavigationController {
 extension NavigationViewController {
     
     fileprivate func setAppearance() {
-        navigationBar.isTranslucent = false
         navigationBar.barTintColor = Theme.Color.navColor
         navigationBar.tintColor = Theme.Color.globalColor
         navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: Theme.Color.globalColor]

@@ -30,6 +30,7 @@ target 'V2EX' do
     pod 'ViewAnimator'
     pod 'Themes'
     pod 'StatefulViewController'
+#    pod 'Highlighter'
 
     # DB
     pod 'SQLite.swift'
@@ -65,7 +66,7 @@ post_install do |installer|
     at_exit { `ruby #{pods_dir}/Carte/Sources/Carte/carte.rb configure` }
 
     # 需要指定编译版本的第三方库名称
-    swift3_targets = ['Kanna', 'Marklight']
+    swift3_targets = ['Kanna', 'Marklight', 'Highlighter']
     installer.pods_project.targets.each do |target|
         if swift3_targets.include? target.name
             target.build_configurations.each do |config|

@@ -1,4 +1,5 @@
 import UIKit
+import StatefulViewController
 
 class NodeCollectViewController: BaseViewController, NodeService {
 
@@ -22,6 +23,8 @@ class NodeCollectViewController: BaseViewController, NodeService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        startLoading()
+        setupStateFul()
         fetchNodes()
     }
 
@@ -32,15 +35,16 @@ class NodeCollectViewController: BaseViewController, NodeService {
     }
 
     func fetchNodes() {
-        HUD.show()
 
         myNodes(success: { [weak self] nodes in
             self?.nodes = nodes
-            HUD.dismiss()
             self?.collectionView.reloadData()
-        }) { error in
-            HUD.dismiss()
-            HUD.showText(error)
+            self?.endLoading()
+        }) { [weak self] error in
+            if let `emptyView` = self?.emptyView as? EmptyView {
+                emptyView.message = error
+            }
+            self?.endLoading()
         }
     }
 }
@@ -61,5 +65,24 @@ extension NodeCollectViewController: UICollectionViewDelegate, UICollectionViewD
         let node = nodes[indexPath.row]
         let nodeDetailVC = NodeDetailViewController(node: node)
         navigationController?.pushViewController(nodeDetailVC, animated: true)
+    }
+}
+
+
+// MARK: - StatefulViewController
+extension NodeCollectViewController: StatefulViewController {
+    
+    func hasContent() -> Bool {
+        return nodes.count.boolValue
+    }
+    
+    func setupStateFul() {
+        loadingView = LoadingView(frame: collectionView.frame)
+        let ev = EmptyView(frame: collectionView.frame)
+        ev.retryHandle = { [weak self] in
+            self?.fetchNodes()
+        }
+        emptyView = ev
+        setupInitialViewState()
     }
 }

@@ -8,6 +8,8 @@ struct Constants {
         static var baseURL = "https://www.v2ex.com"
 
         static var URIScheme = "https:"
+        
+        static var receiverEmail = "joesir7@foxmail.com"
     }
 
     struct Keys {
@@ -20,13 +22,11 @@ struct Constants {
     }
 }
 
-
-extension UIScreen {
-    class var screenWidth: CGFloat {
-        return UIScreen.main.bounds.width
-    }
-
-    class var screenHeight: CGFloat {
-        return UIScreen.main.bounds.height
-    }
+// MARK: - 通知
+extension Notification.Name {
+    /// 解析到 未读提醒 时的通知
+    static let UnreadNoticeName = Notification.Name("UnreadNoticeName")
+    
 }
+
+

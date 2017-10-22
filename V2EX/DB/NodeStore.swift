@@ -73,7 +73,6 @@ class NodeStore: DB {
     private let id = Expression<Int>("id")
     private let name = Expression<String>("name")
     private let href = Expression<String>("href")
-    private let isCurrent = Expression<Bool>("isCurrent")
     private let icon = Expression<String?>("icon")
     private let comments = Expression<String?>("comments")
     private let ncid = Expression<Int>("ncid")
@@ -85,7 +84,6 @@ class NodeStore: DB {
 //                t.column(id, primaryKey: true)
                 t.column(name)
                 t.column(href)
-                t.column(isCurrent, defaultValue: false)
                 t.column(icon)
                 t.column(comments)
                 t.column(ncid)
@@ -101,7 +99,6 @@ class NodeStore: DB {
         let insert = table.insert(
             name <- node.name,
             href <- node.href,
-            isCurrent <- node.isCurrent,
             icon <- node.icon,
             comments <- node.comments,
             self.ncid <- ncid
@@ -132,7 +129,7 @@ class NodeStore: DB {
         do {
             guard let result = try db?.prepare(filter) else { return [] }
             for row in result {
-                let model = NodeModel(name: row[name], href: row[href], isCurrent: row[isCurrent], icon: row[icon], comments: row[comments])
+                let model = NodeModel(name: row[name], href: row[href], icon: row[icon], comments: row[comments])
                 nodes.append(model)
             }
         } catch {

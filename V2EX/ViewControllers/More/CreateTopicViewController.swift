@@ -3,14 +3,14 @@ import Marklight
 import RxSwift
 import RxCocoa
 
-class CreateTopicViewController: BaseViewController {
+class CreateTopicViewController: BaseViewController, TopicService {
     
     // MARK: Constants
-//
-//    fileprivate struct Limit {
-//        static let maxCharacter = 20000
-//    }
-//
+    fileprivate struct Limit {
+        static let titleMaxCharacter = 120
+        static let bodyMaxCharacter = 20000
+    }
+
     private lazy var titleLabel: UILabel = {
         let view = UIInsetLabel()
         view.text = "主题标题"
@@ -40,8 +40,6 @@ class CreateTopicViewController: BaseViewController {
         return view
     }()
 
-    let textContainer = NSTextContainer()
-
 //    var bodyTextView : UIPlaceholderTextView?
 
     private lazy var bodyTextView: UIPlaceholderTextView = {
@@ -70,12 +68,20 @@ class CreateTopicViewController: BaseViewController {
         textStorage.marklightTextProcessor.syntaxColor = .blue
         textStorage.marklightTextProcessor.codeFontName = "Courier"
         textStorage.marklightTextProcessor.fontTextStyle = UIFontTextStyle.subheadline.rawValue
-        textStorage.marklightTextProcessor.hideSyntax = true
+//        textStorage.marklightTextProcessor.hideSyntax = true
         return textStorage
+    }()
+    
+    private lazy var postTopicBarButton: UIBarButtonItem = {
+        let view = UIBarButtonItem(title: "发布")
+        return view
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        edgesForExtendedLayout = []
+        titleFieldView.becomeFirstResponder()
     }
 
     override func setupSubviews() {
@@ -110,29 +116,24 @@ class CreateTopicViewController: BaseViewController {
             bodyLabel,
             bodyTextView
         )
-
-
-        navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(title: "发布", style: .plain) {
-                log.info("Public Topic")
-            },
-//            UIBarButtonItem(title: "预览", style: .plain) { [weak self] in
-//                guard let `self` = self else { return }
-//
-//
-//
-//                if self.bodyTextView.tag.boolValue { // plain text
-//                    self.bodyText = self.bodyTextView.text
-//                    let attributedString = NSAttributedString(string: self.bodyText)
-//                    self.bodyTextView.attributedText = attributedString
-//                } else { // attr text
-//                    self.bodyTextView.text = self.bodyText
-//                    self.bodyTextView.font = UIFont.systemFont(ofSize: 15)
-//                    self.bodyTextView.textColor = .black
-//                }
-//                self.bodyTextView.tag = (!self.bodyTextView.tag.boolValue).intValue
-//            }
-        ]
+        
+        //            UIBarButtonItem(title: "预览", style: .plain) { [weak self] in
+        //                guard let `self` = self else { return }
+        //
+        //
+        //
+        //                if self.bodyTextView.tag.boolValue { // plain text
+        //                    self.bodyText = self.bodyTextView.text
+        //                    let attributedString = NSAttributedString(string: self.bodyText)
+        //                    self.bodyTextView.attributedText = attributedString
+        //                } else { // attr text
+        //                    self.bodyTextView.text = self.bodyText
+        //                    self.bodyTextView.font = UIFont.systemFont(ofSize: 15)
+        //                    self.bodyTextView.textColor = .black
+        //                }
+        //                self.bodyTextView.tag = (!self.bodyTextView.tag.boolValue).intValue
+        //            }
+        navigationItem.rightBarButtonItems = [postTopicBarButton]
     }
 
     override func setupConstraints() {
@@ -159,7 +160,42 @@ class CreateTopicViewController: BaseViewController {
     }
 
     override func setupRx() {
-
+        
+        // 验证输入状态
+        titleFieldView.rx
+            .text
+            .orEmpty
+            .flatMapLatest {
+                return Observable.just( $0.trimmed.isNotEmpty && $0.trimmed.count <= Limit.titleMaxCharacter )
+            }.bind(to: postTopicBarButton.rx.isEnabled)
+            .disposed(by: rx.disposeBag)
+        
+        postTopicBarButton.rx
+            .tap
+            .subscribeNext { [weak self] in
+                self?.postTopicHandle()
+        }.disposed(by: rx.disposeBag)
+    }
+    
+    func postTopicHandle() {
+        // TODO:
+        // 1. 数据校验 ✅
+        // 2. 保存草稿 ❎
+        
+        guard bodyTextView.text.length <= Limit.bodyMaxCharacter else {
+            HUD.showText("正文内容不能超过 \(Limit.bodyMaxCharacter) 个字符")
+            return
+        }
+        guard let title = titleFieldView.text else {
+            HUD.showText("标题不能为空")
+            return
+        }
+        
+        createTopic(nodename: "sandbox", title: title, body: bodyTextView.text, success: {
+            HUD.showText("发布成功")
+        }) { error in
+            HUD.showText(error)
+        }
     }
 }
 
@@ -191,4 +227,3 @@ extension CreateTopicViewController: UITextViewDelegate {
         textView.scrollRectToVisible(rect, animated: animated)
     }
 }
-

@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (4.5.1)
+  - ARSegmentPager (1.1.3)
   - Carte (2.1.4)
   - IQKeyboardManagerSwift (5.0.4)
   - Kanna (2.1.1)
@@ -26,6 +27,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - ARSegmentPager (from `https://github.com/AugustRush/ARSegmentPager.git`)
   - Carte
   - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
@@ -45,8 +47,18 @@ DEPENDENCIES:
   - UIView+Positioning
   - ViewAnimator
 
+EXTERNAL SOURCES:
+  ARSegmentPager:
+    :git: https://github.com/AugustRush/ARSegmentPager.git
+
+CHECKOUT OPTIONS:
+  ARSegmentPager:
+    :commit: 50f90234c2347406724d51490a3935aac1b3cf58
+    :git: https://github.com/AugustRush/ARSegmentPager.git
+
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  ARSegmentPager: 10d9ded8105c6d78841f625a1a71db35e14b1c10
   Carte: a19a62db8478426c406f40048d0c67e98a021c39
   IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
@@ -66,6 +78,6 @@ SPEC CHECKSUMS:
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
   ViewAnimator: a094d13bc86e868e908d33e524fcb58a4ddcf98e
 
-PODFILE CHECKSUM: f4a2743cc9943a5cfb3add47a92fe4a3cde97081
+PODFILE CHECKSUM: 785d09f60f16978a815bb7f27031ef24af179d25
 
 COCOAPODS: 1.3.1

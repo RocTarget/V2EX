@@ -173,16 +173,16 @@ extension AccountService {
                     let topicHref = topicNode["href"],
                     let topicTitle = topicNode.content,
                     let time = ele.xpath("td[2]/span[2]").first?.content?.trimmed,
-                    let content = ele.xpath("td[2]/div[@class='payload']").first?.text,
                     let replyTypeStr = ele.xpath("td[2]/span[1]").first?.text else {
                     return nil
                 }
 //                ele.xpath("td[2]/a").map {$0["onclick"]}
                 let username = userPageHref.lastPathComponent
-
-                let user = UserModel(username: username, url: userPageHref, avatar: avatarSrc)
-                let topic = TopicModel(user: nil, node: nil, title: topicTitle, href: topicHref)
-                return MessageModel(user: user, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr)
+                let content = ele.xpath("td[2]/div[@class='payload']").first?.text ?? ""
+                
+                let member = MemberModel(username: username, url: userPageHref, avatar: avatarSrc)
+                let topic = TopicModel(member: nil, node: nil, title: topicTitle, href: topicHref)
+                return MessageModel(member: member, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr)
             })
             success?(messages)
         }, failure: failure)

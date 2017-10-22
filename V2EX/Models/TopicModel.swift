@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 public struct TopicModel {
-    var user: MemberModel?
+    var member: MemberModel?
     var node: NodeModel?
 
     var title: String
@@ -14,19 +14,21 @@ public struct TopicModel {
     var publicTime: String = ""
 
     var once: String?
-
+    var token: String?
+    var isFavorite: Bool = false
+    
     /// 主题 ID
-    var topicId: String? {
+    var topicID: String? {
         let isTopic = href.hasPrefix("/t/")
         guard isTopic,
-            let topicId = href.replacingOccurrences(of: "/t/", with: "").components(separatedBy: "#").first else {
-            return nil
+            let topicID = href.replacingOccurrences(of: "/t/", with: "").components(separatedBy: "#").first else {
+                return nil
         }
-       return topicId
+        return topicID
     }
 
-    init(user: MemberModel?, node: NodeModel?, title: String, href: String, lastReplyTime: String? = "", replyCount: String = "0") {
-        self.user = user
+    init(member: MemberModel?, node: NodeModel?, title: String, href: String, lastReplyTime: String? = "", replyCount: String = "0") {
+        self.member = member
         self.node = node
         self.title = title
         self.href = href

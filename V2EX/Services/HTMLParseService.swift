@@ -29,6 +29,11 @@ extension HTMLParseService {
         
         //        let itemPath = html.xpath("//*[@id='Wrapper']/div[@class='box']/div[@class='cell item']")
         
+        if let unreadNoticeString = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[@class='box']/div[1]//td[1]/input").first?["value"],
+            let unreadNoticeCount = unreadNoticeString.deleteOccurrences(target: "条未读提醒").trimmed.int {
+            NotificationCenter.default.post(name: .UnreadNoticeName, object: unreadNoticeCount)
+            // 发送通知
+        }
         let rootPathOp: XPathObject?
         switch type {
         case .index, .member:
@@ -65,7 +70,7 @@ extension HTMLParseService {
                 lastReplyAndTime = replyUsername + timeString
             }
             
-            let user = MemberModel(username: username, url: userPage, avatar: avatarSrc)
+            let member = MemberModel(username: username, url: userPage, avatar: avatarSrc)
             
             var node: NodeModel?
             
@@ -75,7 +80,7 @@ extension HTMLParseService {
                 node = NodeModel(name: nodename, href: nodeHref)
             }
 
-            return TopicModel(user: user, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)
+            return TopicModel(member: member, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)
         })
         
         return topics

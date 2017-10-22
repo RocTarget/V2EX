@@ -19,6 +19,7 @@ class MyTopicsViewController: BaseTopicsViewController {
             success: {[weak self] topics in
                 self?.topics = topics
                 self?.endLoading()
+                self?.refreshControl.endRefreshing()
         }) { [weak self] error in
             self?.refreshControl.endRefreshing()
             self?.endLoading()

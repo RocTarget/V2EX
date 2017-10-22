@@ -50,6 +50,7 @@ class TopicCell: BaseTableViewCell {
 
     override func initialize() {
         selectionStyle = .none
+        separatorInset = .zero
 
         contentView.addSubviews(
             avatarView,
@@ -69,8 +70,8 @@ class TopicCell: BaseTableViewCell {
         avatarTapGesture.rx
             .event
             .subscribeNext { [weak self] _ in
-                guard let user = self?.topic?.user else { return }
-                self?.tapHandle?(.user(user))
+                guard let member = self?.topic?.member else { return }
+                self?.tapHandle?(.member(member))
             }.disposed(by: rx.disposeBag)
 
         nodeTapGesture.rx
@@ -118,7 +119,7 @@ class TopicCell: BaseTableViewCell {
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
-            guard let user = topic.user else { return }
+            guard let user = topic.member else { return }
             avatarView.setImage(urlString: user.avatarSrc)
             usernameLabel.text = user.username
             titleLabel.text = topic.title
@@ -129,12 +130,12 @@ class TopicCell: BaseTableViewCell {
         }
     }
 
-    override var frame: CGRect {
-        didSet {
-            var newFrame = frame
-            newFrame.size.height -= 10
-            newFrame.origin.y += 10
-            super.frame = newFrame
-        }
-    }
+//    override var frame: CGRect {
+//        didSet {
+//            var newFrame = frame
+//            newFrame.size.height -= 10
+//            newFrame.origin.y += 10
+//            super.frame = newFrame
+//        }
+//    }
 }

@@ -3,7 +3,7 @@ import WebKit
 import SnapKit
 
 enum TapType {
-    case user(MemberModel)
+    case member(MemberModel)
     case node(NodeModel)
     case image(String)
     case webpage(URL)
@@ -45,6 +45,7 @@ class TopicDetailHeaderView: UIView{
         let view = UILabel()
         view.numberOfLines = 0
         view.font = UIFont.boldSystemFont(ofSize: 17)
+        view.copyable = true
         return view
     }()
     
@@ -62,6 +63,10 @@ class TopicDetailHeaderView: UIView{
     public var webLoadComplete: Action?
 
     public var tapHandle: ((_ type: TapType) -> Void)?
+    
+    public var userAvatar: UIImage? {
+        return avatarView.image
+    }
     
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.screenWidth, height: 130))
@@ -90,8 +95,8 @@ class TopicDetailHeaderView: UIView{
         avatarTapGesture.rx
             .event
             .subscribeNext { [weak self] _ in
-                guard let user = self?.topic?.user else { return }
-                self?.tapHandle?(.user(user))
+                guard let member = self?.topic?.member else { return }
+                self?.tapHandle?(.member(member))
             }.disposed(by: rx.disposeBag)
 
         nodeTapGesture.rx
@@ -143,7 +148,7 @@ class TopicDetailHeaderView: UIView{
     var topic: TopicModel? {
         didSet {
             guard let `topic` = topic else { return }
-            guard let user = topic.user else { return }
+            guard let user = topic.member else { return }
             avatarView.setImage(urlString: user.avatarSrc)
             usernameLabel.text = user.username
             titleLabel.text = topic.title
@@ -206,7 +211,7 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
             } else if urlString.hasPrefix("/member/") {
                 let href = url.path
                 let name = href.lastPathComponent
-                tapHandle?(.user(MemberModel(username: name, url: href, avatar: "")))
+                tapHandle?(.member(MemberModel(username: name, url: href, avatar: "")))
             } else if urlString.hasPrefix("/t/") {
                 tapHandle?(.topic(url.lastPathComponent))
             } else if urlString.hasPrefix("/go/") {

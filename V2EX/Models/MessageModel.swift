@@ -2,7 +2,7 @@ import Foundation
 
 struct MessageModel {
 
-    var user: UserModel?
+    var member: MemberModel?
     var topic: TopicModel
     var time: String
     var content: String

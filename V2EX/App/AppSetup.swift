@@ -35,7 +35,6 @@ extension AppSetup {
         IQKeyboardManager.sharedManager().shouldResignOnTouchOutside = true
         
 //        IQKeyboardManager.sharedManager().disabledDistanceHandlingClasses = [
-//            TopicDetailViewController.self,
 //            CreateTopicViewController.self
 //        ]
         IQKeyboardManager.sharedManager().disabledToolbarClasses = [

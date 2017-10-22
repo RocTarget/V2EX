@@ -8,14 +8,17 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
         view.delegate = self
         view.dataSource = self
         view.backgroundColor = .clear
-        view.separatorStyle = .none
+//        view.separatorStyle = .none
         view.register(cellWithClass: TopicCell.self)
+        view.keyboardDismissMode = .onDrag
+        view.hideEmptyCells()
         self.view.addSubview(view)
         return view
     }()
 
     internal lazy var refreshControl: UIRefreshControl = {
         let view = UIRefreshControl()
+        view.backgroundColor = .clear
         return view
     }()
 
@@ -49,12 +52,13 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
 
         tableView.addSubview(refreshControl)
 
-        startLoading()
+        
         setupStateFul()
         fetchData()
     }
 
     internal func fetchData() {
+        startLoading()
         fetchTopic()
     }
 
@@ -88,6 +92,23 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
         })
     }
 
+    
+    func tapHandle(_ type: TapType) {
+        switch type {
+        case .member(let member):
+            let memberPageVC = MemberPageViewController(member: member)
+            navigationController?.pushViewController(memberPageVC, animated: true)
+            log.info(member)
+        case .node(let node):
+            let nodeDetailVC = NodeDetailViewController(node: node)
+            navigationController?.pushViewController(nodeDetailVC, animated: true)
+        default:
+            break
+        }
+    }
+    
+    
+    
     func hasContent() -> Bool {
         return topics.count.boolValue
     }
@@ -96,8 +117,7 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
         loadingView = LoadingView(frame: tableView.frame)
         let ev = EmptyView(frame: tableView.frame)
         ev.retryHandle = { [weak self] in
-            self?.startLoading()
-            self?.fetchTopic()
+            self?.fetchData()
         }
         emptyView = ev
         setupInitialViewState()
@@ -106,20 +126,29 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
 }
 
 extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return topics.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: TopicCell.self)!
-        let topic = topics[indexPath.row]
+        let topic = topics[indexPath.section]
         cell.topic = topic
+        cell.tapHandle = { [weak self] type in
+            self?.tapHandle(type)
+        }
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let topic = topics[indexPath.row]
-        guard let topicId = topic.topicId else {
+        view.endEditing(true)
+        
+        let topic = topics[indexPath.section]
+        guard let topicId = topic.topicID else {
             HUD.showText("操作失败，无法解析主题 ID")
             return
         }
@@ -128,8 +157,24 @@ extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return topics[indexPath.row].cellHeight
+        return topics[indexPath.section].cellHeight
     }
+    
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return 0.01
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+//        return 10
+//    }
+//
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        return UIView()
+//    }
+//
+//    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+//        return UIView()
+//    }
 }
 
 extension BaseTopicsViewController: UIViewControllerPreviewingDelegate {
@@ -142,10 +187,9 @@ extension BaseTopicsViewController: UIViewControllerPreviewingDelegate {
 
         guard let indexPath = tableView.indexPathForRow(at: location),
             let cell = tableView.cellForRow(at: indexPath) else { return nil }
-        guard let topicID = topics[indexPath.row].topicId else { return nil }
+        guard let topicID = topics[indexPath.row].topicID else { return nil }
 
         let viewController = TopicDetailViewController(topicID: topicID)
-//        viewController.preferredContentSize = CGSize(width: view.width, height: view.height * 0.7)
         previewingContext.sourceRect = cell.frame
         return viewController
     }

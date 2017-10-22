@@ -4,6 +4,7 @@ class TopicCommentCell: BaseTableViewCell {
 
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
+        view.isUserInteractionEnabled = true
         return view
     }()
 
@@ -43,7 +44,7 @@ class TopicCommentCell: BaseTableViewCell {
         view.isScrollEnabled = false
         view.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: -20, right: 0)
         view.textContainer.lineFragmentPadding = 0
-        view.linkTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue : UIColor.hex(0x778087)]
+        view.linkTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue : Theme.Color.linkColor]
         view.delegate = self
         return view
     }()
@@ -62,8 +63,8 @@ class TopicCommentCell: BaseTableViewCell {
         didSet {
             guard let `comment` = comment else { return }
 
-            avatarView.setImage(urlString: comment.user.avatarNormalSrc)
-            usernameLaebl.text = comment.user.username
+            avatarView.setImage(urlString: comment.member.avatarSrc)
+            usernameLaebl.text = comment.member.username
             floorLabel.text = comment.floor + " 楼"
             timeLabel.text =  comment.publicTime
             //            contentTextView.text = comment.content
@@ -71,7 +72,7 @@ class TopicCommentCell: BaseTableViewCell {
             let html = "<style>\(cssStyle)</style>" + comment.content
             contentTextView.attributedText = html.html2AttributedString
 
-            hostLabel.isHidden = hostUsername ?? ""  != comment.user.username
+            hostLabel.isHidden = hostUsername ?? ""  != comment.member.username
         }
     }
 
@@ -92,6 +93,16 @@ class TopicCommentCell: BaseTableViewCell {
 
     override func initialize() {
         selectionStyle = .none
+        
+        let avatarTapGesture = UITapGestureRecognizer()
+        avatarView.addGestureRecognizer(avatarTapGesture)
+        
+        avatarTapGesture.rx
+            .event
+            .subscribeNext { [weak self] _ in
+                guard let member = self?.comment?.member else { return }
+                self?.tapHandle?(.member(member))
+            }.disposed(by: rx.disposeBag)
         
         contentView.addSubviews(
             avatarView,
@@ -155,8 +166,8 @@ extension TopicCommentCell: UITextViewDelegate {
         } else if URL.path.contains("/member/") {
             let href = URL.path
             let name = href.lastPathComponent
-            let user = MemberModel(username: name, url: href, avatar: "")
-            tapHandle?(.user(user))
+            let member = MemberModel(username: name, url: href, avatar: "")
+            tapHandle?(.member(member))
         } else if URL.path.contains("/t/") {
             let href = URL.path
             tapHandle?(.topic(href))

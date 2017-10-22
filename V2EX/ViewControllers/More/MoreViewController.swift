@@ -1,5 +1,6 @@
 import UIKit
 import Carte
+import MessageUI
 
 enum MoreItemType {
     case user
@@ -31,7 +32,7 @@ class MoreViewController: BaseViewController {
             MoreItem(icon: #imageLiteral(resourceName: "createTopic"), title: "创作新主题", type: .createTopic),
             MoreItem(icon: #imageLiteral(resourceName: "nodeCollect"), title: "节点收藏", type: .nodeCollect),
             MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .topicCollect),
-            MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
+//            MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
             MoreItem(icon: #imageLiteral(resourceName: "topic"), title: "我的主题", type: .myTopic),
             MoreItem(icon: #imageLiteral(resourceName: "myReply"), title: "我的回复", type: .myReply)
         ],
@@ -87,9 +88,9 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         
         let item = sections[indexPath.section][indexPath.row]
         if indexPath.section == 0 {
-            cell?.textLabel?.text = UserModel.current?.username ?? item.title
+            cell?.textLabel?.text = AccountModel.current?.username ?? item.title
             cell?.imageView?.image = item.icon
-            cell?.imageView?.setRoundImage(urlString: UserModel.current?.avatarNormalSrc, placeholder: item.icon)
+            cell?.imageView?.setRoundImage(urlString: AccountModel.current?.avatarNormalSrc, placeholder: item.icon)
         } else {
             cell?.textLabel?.text = item.title
             cell?.imageView?.image = item.icon
@@ -101,7 +102,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        if indexPath.section == 0 || indexPath.section == 1,  !UserModel.isLogin {
+        if indexPath.section == 0 || indexPath.section == 1,  !AccountModel.isLogin {
             presentLoginVC()
             return
         }
@@ -117,20 +118,25 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .nodeCollect:
             viewController = NodeCollectViewController()
         case .myTopic:
-            guard let username = UserModel.current?.username else { return }
+            guard let username = AccountModel.current?.username else { return }
             viewController = MyTopicsViewController(username: username)
         case .myReply:
-            guard let username = UserModel.current?.username else { return }
+            guard let username = AccountModel.current?.username else { return }
             viewController = MyReplyViewController(username: username)
         case .topicCollect, .follow:
             let href = type == .topicCollect ? API.topicCollect.path : API.following.path
             viewController = BaseTopicsViewController(href: href)
+        case .feedback:
+            sendEmail()
         case .sourceCode:
             viewController = SweetWebViewController(url: API.codeRepo.defaultURLString)
         case .libs:
             viewController = CarteViewController()
         case .about:
             viewController = SweetWebViewController(url: API.about.defaultURLString)
+        case .logout:
+            AccountModel.delete()
+            presentLoginVC()
         default:
             break
         }
@@ -161,14 +167,30 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+extension MoreViewController: MFMailComposeViewControllerDelegate {
+    
+    func sendEmail() {
+        
+        guard MFMailComposeViewController.canSendMail() else {
+            HUD.showText("操作失败，请先在系统邮件中设置个人邮箱账号。")
+            return
+        }
 
-extension URLComponents {
-    subscript(key: String) -> String? {
-        return queryItems?.filter { $0.name == key }.first?.value
+        let mailVC = MFMailComposeViewController()
+        mailVC.setSubject("V2EX iOS 反馈")
+        mailVC.setToRecipients([Constants.Config.receiverEmail])
+        mailVC.setMessageBody("\n\n\n\n[运行环境] \(UIDevice.phoneModel)-\(UIDevice.current.systemVersion)", isHTML: false)
+        mailVC.mailComposeDelegate = self
+        present(mailVC, animated: true, completion: nil)
     }
     
-    /// 不包含 '/'
-    var pathString: String {
-        return path.deleteOccurrences(target: "/")
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        dismiss(animated: true, completion: nil)
+        
+        if result == .sent {
+            HUD.showText("感谢您的反馈，我会尽量给您答复。")
+        }else if result == .failed {
+            HUD.showText("邮件发送失败: \(error?.localizedDescription ?? "Unkown")")
+        }
     }
 }

@@ -2,7 +2,7 @@ import Foundation
 
 struct CommentModel {
     var id: String
-    var user: UserModel
+    var member: MemberModel
     var content: String
     var publicTime: String
 //    var thanks: String

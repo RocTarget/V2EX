@@ -187,7 +187,7 @@ extension NodeTabView {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(NodeTabView.handleTapGesture(_:)))
         addGestureRecognizer(tapGesture)
 
-        let selecteIndex = nodes.index(where: ({ $0.isCurrent }))
+        let selecteIndex = nodes.index(where: ({ $0.isCurrent ?? false }))
         setSelectIndex(index: selecteIndex ?? 0, animated: false)
     }
 }

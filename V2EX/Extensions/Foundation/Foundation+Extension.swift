@@ -1,11 +1,16 @@
 import Foundation
 
-extension URL {
-    static func inDocumentsFolder(fileName: String) -> URL {
-        return NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0], isDirectory: true)
-            .appendingPathComponent(fileName)!
+extension URLComponents {
+    subscript(key: String) -> String? {
+        return queryItems?.filter { $0.name == key }.first?.value
+    }
+    
+    /// 不包含 '/'
+    var pathString: String {
+        return path.deleteOccurrences(target: "/")
     }
 }
+
 
 extension FileManager {
     /// 存文件到沙盒
@@ -97,3 +102,5 @@ extension FileManager {
         return NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
     }
 }
+
+

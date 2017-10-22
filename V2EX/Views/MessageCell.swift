@@ -10,7 +10,7 @@ class MessageCell: BaseTableViewCell {
 
     private lazy var replyLabel: UILabel = {
         let view = UILabel()
-        view.textColor = UIColor.hex(0xCCCCCC)
+        view.textColor = UIColor.hex(0xD4D4D4)
         view.font = UIFont.systemFont(ofSize: 14)
         view.numberOfLines = 0
         return view
@@ -65,7 +65,7 @@ class MessageCell: BaseTableViewCell {
         replyLabel.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
             $0.right.equalToSuperview().inset(15)
-            $0.top.equalTo(avatarView).offset(3)
+            $0.top.equalTo(avatarView).offset(2)
         }
 
         contentLabel.snp.makeConstraints {
@@ -84,17 +84,17 @@ class MessageCell: BaseTableViewCell {
     public var message: MessageModel? {
         didSet {
             guard let `message` = message else { return }
-            guard let user = message.user else { return }
+            guard let member = message.member else { return }
 
-            avatarView.setImage(urlString: user.avatarNormalSrc)
+            avatarView.setImage(urlString: member.avatarSrc)
             contentLabel.text = message.content
             timeLabel.text = message.time
             replyLabel.text = message.replyTypeStr
-            replyLabel.makeSubstringColor(user.username, color: .black)
-            replyLabel.makeSubstringColor(message.topic.title, color: UIColor.hex(0x778087))
+            replyLabel.makeSubstringColor(member.username, color: .black)
+            replyLabel.makeSubstringColor(message.topic.title, color: Theme.Color.linkColor)
 
-            if let username = UserModel.current?.username {
-                contentLabel.makeSubstringColor("@" + username, color: UIColor.hex(0x778087))
+            if let username = AccountModel.current?.username {
+                contentLabel.makeSubstringColor("@" + username, color: Theme.Color.linkColor)
             }
         }
     }

@@ -21,6 +21,9 @@ class NodeCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(textLabel)
+        
+        
+        backgroundColor = Theme.Color.bgColor
 
         textLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()

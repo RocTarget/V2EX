@@ -11,6 +11,28 @@ class TabBarViewController: UITabBarController {
         setAppearance()
         setupTabBar()
         clickBackTop()
+        listenNotification()
+    }
+    
+    func listenNotification() {
+        
+        NotificationCenter.default.rx
+            .notification(.UnreadNoticeName)
+            .subscribeNext { [weak self] notification in
+                guard let count = notification.object as? Int else {
+                    return
+                }
+                
+                // 消息控制器显示 badge
+                self?.childViewControllers.forEach({ viewController in
+                    if viewController.isKind(of: NavigationViewController.self),
+                        let nav = viewController as? NavigationViewController,
+                        let topVC = nav.topViewController,
+                        topVC.isKind(of: MessageViewController.self) {
+                        viewController.tabBarItem.badgeValue = count.description
+                    }
+                })
+            }.disposed(by: rx.disposeBag)
     }
 }
 
@@ -77,6 +99,6 @@ extension TabBarViewController {
             return
         }
         guard let scrollView = viewController.view.subviews.first as? UIScrollView else { return }
-        scrollView.setContentOffset(.zero, animated: true)
+        scrollView.scrollToTop()
     }
 }

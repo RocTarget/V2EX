@@ -74,7 +74,7 @@ extension String {
     }
 
     /// 删除两个或多个重复的空格
-    public func removeExtraSpaces() -> String {
+    public var removeExtraSpaces: String {
         let squashed = replacingOccurrences(of: "[ ]+", with: " ", options: .regularExpression, range: nil)
         return squashed.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }

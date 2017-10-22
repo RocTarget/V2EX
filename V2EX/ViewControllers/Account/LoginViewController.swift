@@ -26,6 +26,8 @@ class LoginViewController: BaseViewController, AccountService {
         view.clearButtonMode = .whileEditing
         view.keyboardType = .emailAddress
         view.delegate = self
+        view.autocapitalizationType = .none
+        view.autocorrectionType = .no
         return view
     }()
     
@@ -58,6 +60,7 @@ class LoginViewController: BaseViewController, AccountService {
         view.keyboardType = .asciiCapable
         view.delegate = self
         view.returnKeyType = .go
+        view.autocapitalizationType = .none
         return view
     }()
     
