@@ -16,6 +16,7 @@ public struct TopicModel {
     var once: String?
     var token: String?
     var isFavorite: Bool = false
+    var isThank: Bool = false
     
     /// 主题 ID
     var topicID: String? {

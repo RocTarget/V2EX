@@ -6,6 +6,8 @@ enum CaptchaType: String {
     case forgot = "/forgot"
 }
 
+// V2EX js
+// https://www.v2ex.com/static/js/v2ex.js?v=2658dbd9f54ebdeb51d27a0611b2ba96
 
 enum API {
     
@@ -45,18 +47,26 @@ enum API {
     case memberTopics(username: String)
     case memberReplys(username: String)
     
+    // 源码地址
     case codeRepo
     
+    // 搜索主题
     case search(query: String, offset: Int, size: Int, sortType: String)
     
-    // 忽略主题
-    case ignoreTopic(topicID: String, once: String)
     // 收藏主题
     case favoriteTopic(topicID: String, token: String)
     // 取消收藏主题
     case unfavoriteTopic(topicID: String, token: String)
     // 感谢主题
     case thankTopic(topicID: String, token: String)
+    // 忽略主题
+    case ignoreTopic(topicID: String, once: String)
+    // 感谢回复
+    case thankReply(replyID: String, token: String)
+    // 忽略回复
+    case ignoreReply(replyID: String, once: String)
+    // 预览 Markdown
+    case previewTopic(md: String)
 }
 
 extension API: TargetType {
@@ -112,14 +122,18 @@ extension API: TargetType {
             return .get("/member/\(username)/replies")
         case .createTopic(let nodename, _):
             return .post("/new/\(nodename)")
-        case let .ignoreTopic(topicID, once):
-            return .get("/ignore/topic\(topicID)?once=\(once)")
         case let .favoriteTopic(topicID, token):
             return .get("/favorite/topic/\(topicID)?t=\(token)")
         case let .unfavoriteTopic(topicID, token):
             return .get("/unfavorite/topic/\(topicID)?t=\(token)")
         case let .thankTopic(topicID, token):
-            return .get("/thank/topic/\(topicID)?t=\(token)")
+            return .post("/thank/topic/\(topicID)?t=\(token)")
+        case let .ignoreTopic(topicID, once):
+            return .get("/ignore/topic/\(topicID)?once=\(once)")
+        case let .thankReply(replyID, token):
+            return .post("/thank/reply/\(replyID)?t=\(token)")
+        case let .ignoreReply(replyID, once):
+            return .post("/ignore/reply/\(replyID)?once=\(once)")
         default:
             return .get("")
         }

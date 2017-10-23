@@ -140,26 +140,31 @@ class TopicDetailViewController: BaseViewController, TopicService {
         }
     }
     
+    /// 点击更多处理
     private func moreHandle() {
+        
+        /// 切换 是否显示楼主
         let floorItem = isShowOnlyFloor ? ShareItem(icon: #imageLiteral(resourceName: "unfloor"), title: "查看所有", type: .floor) : ShareItem(icon: #imageLiteral(resourceName: "floor"), title: "只看楼主", type: .floor)
         let favoriteItem = (topic?.isFavorite ?? false) ? ShareItem(icon: #imageLiteral(resourceName: "favorite"), title: "取消收藏", type: .favorite) : ShareItem(icon: #imageLiteral(resourceName: "unfavorite"), title: "收藏", type: .favorite)
-        let section1 = [
-            floorItem,
-            favoriteItem,
-            ShareItem(icon: #imageLiteral(resourceName: "thank"), title: "感谢", type: .thank),
-            ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore),
-            ]
         
+        var section1 = [floorItem, favoriteItem]
+        
+        // 如果已经登录 并且 是当前登录用户发表的主题, 则隐藏 感谢和忽略
+        if let username = AccountModel.current?.username, username != topic?.member?.username {
+            // TODO: 换图标
+            section1.append(ShareItem(icon: #imageLiteral(resourceName: "thank"), title: (topic?.isThank ?? false) ? "已感谢" : "感谢", type: .thank))
+            section1.append(ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore))
+        }
         
         let section2 = [
             ShareItem(icon: #imageLiteral(resourceName: "copy_link"), title: "复制链接", type: .copyLink),
             ShareItem(icon: #imageLiteral(resourceName: "safari"), title: "在 Safari 中打开", type: .safari),
-            ShareItem(icon: #imageLiteral(resourceName: "share"), title: "分享", type: .share),
-            //            ShareItem(icon: #imageLiteral(resourceName: "refresh_icon"), title: "刷新", type: .refresh),
+            ShareItem(icon: #imageLiteral(resourceName: "share"), title: "分享", type: .share)
         ]
         
         let sheetView = ShareSheetView(sections: [section1, section2], isScrollEnabled: false)
         sheetView.present()
+        
         sheetView.shareSheetDidSelectedHandle = { [weak self] type in
             self?.shareSheetDidSelectedHandle(type)
         }
@@ -185,6 +190,10 @@ class TopicDetailViewController: BaseViewController, TopicService {
             return
         case .favorite:
             favoriteHandle()
+        case .thank:
+            thankTopicHandle()
+        case .ignore:
+            ignoreTopicHandle()
         case .copyLink:
             UIPasteboard.general.string = API.topicDetail(topicID: topicID).defaultURLString
             HUD.showText("链接已复制")
@@ -200,56 +209,72 @@ class TopicDetailViewController: BaseViewController, TopicService {
             break
         }
     }
-    
-    func systemShare() {
-        
-        guard let url = API.topicDetail(topicID: topicID).url,
-            let title = topic?.title else { return }
-        
-        let controller = UIActivityViewController(
-            activityItems: [url, title, headerView.userAvatar ?? #imageLiteral(resourceName: "logo")],
-            applicationActivities: nil)
-        
-        controller.excludedActivityTypes = [
-            .postToTwitter, .postToFacebook, .postToTencentWeibo, .postToWeibo,
-            .postToFlickr, .postToVimeo, .message, .mail, .addToReadingList,
-            .print, .copyToPasteboard, .assignToContact, .saveToCameraRoll,
-        ]
-        
-        if UIDevice.isiPad {
-            controller.popoverPresentationController?.sourceView = view
-            controller.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.size.width * 0.5, y: UIScreen.main.bounds.size.height * 0.5, width: 10, height: 10)
-        }
-        present(controller, animated: true, completion: nil)
-    }
-    
-    func favoriteHandle() {
+}
 
-        guard let `topic` = topic,
-            let token = topic.token else {
-                HUD.showText("操作失败")
-                return
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataSources.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
+        let comment = dataSources[indexPath.row]
+        cell.comment = comment
+        cell.hostUsername = topic?.member?.username ?? ""
+        cell.tapHandle = { [weak self] type in
+            self?.tapHandle(type)
         }
-        // 已收藏, 取消收藏
-        if topic.isFavorite {
-            unfavoriteTopic(topicID: topicID, token: token, success: { [weak self] in
-                HUD.showText("取消收藏成功")
-                self?.topic?.isFavorite = false
-            }, failure: { error in
-                HUD.showText(error)
-            })
-            return
-        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // 没有收藏
-        unfavoriteTopic(topicID: topicID, token: token, success: { [weak self] in
-            HUD.showText("收藏成功")
-            self?.topic?.isFavorite = true
-        }) { error in
-            HUD.showText(error)
+        // TODO: 换成点击弹出 SheetView (或其他 UI 展示), 长按头像添加 @, 可以添加多个
+        // Sheet option:
+        // 1, 回复
+        // 2, 感谢
+        // 3, 查找对话
+        // 4, ...
+        let comment = dataSources[indexPath.row]
+        commentInputView.text = "@\(comment.member.username) "
+        commentInputView.beFirstResponder()
+    }
+}
+
+
+// MARK: - Request
+extension TopicDetailViewController {
+    
+    /// 获取主题详情
+    func fetchTopicDetail() {
+        
+        topicDetail(topicID: topicID, success: { [weak self] topic, comments in
+            self?.topic = topic
+            self?.dataSources = comments
+            self?.comments = comments
+            self?.refreshControl.endRefreshing()
+            self?.endLoading()
+            }, failure: { [weak self] error in
+                
+                HUD.showText(error)
+                
+                if let `emptyView` = self?.emptyView as? EmptyView {
+                    emptyView.message = error
+                }
+                self?.endLoading()
+                self?.refreshControl.endRefreshing()
+        })
+        
+        headerView.webLoadComplete = { [weak self] in
+            self?.endLoading()
+            self?.headerView.isHidden = false
+            self?.tableView.reloadData()
         }
     }
     
+    /// 回复评论
     private func replyComment() {
         
         guard let `topic` = self.topic else {
@@ -297,61 +322,116 @@ class TopicDetailViewController: BaseViewController, TopicService {
             self.commentInputView.beFirstResponder()
         }
     }
+    
+    /// 收藏、取消收藏请求
+    func favoriteHandle() {
+        
+        guard let `topic` = topic,
+            let token = topic.token else {
+                HUD.showText("操作失败")
+                return
+        }
+        
+        // 已收藏, 取消收藏
+        if topic.isFavorite {
+            unfavoriteTopic(topicID: topicID, token: token, success: { [weak self] in
+                HUD.showText("取消收藏成功")
+                self?.topic?.isFavorite = false
+                }, failure: { error in
+                    HUD.showText(error)
+            })
+            return
+        }
+        
+        // 没有收藏
+        favoriteTopic(topicID: topicID, token: token, success: { [weak self] in
+            HUD.showText("收藏成功")
+            self?.topic?.isFavorite = true
+        }) { error in
+            HUD.showText(error)
+        }
+    }
+    
+    /// 感谢主题请求
+    func thankTopicHandle() {
+        
+        guard let `topic` = topic,
+            let token = topic.token else {
+                HUD.showText("操作失败")
+                return
+        }
+        
+        // TODO: 感谢发送成功之后 会提示数据解析失败, 这里需要测试
+        thankTopic(topicID: topicID, token: token, success: { [weak self] in
+            HUD.showText("感谢已发送")
+            self?.topic?.isThank = true
+        }) { error in
+            HUD.showText(error)
+        }
+    }
+    
+    /// 感谢回复请求
+    // TODO: 未调试, UI还没做
+    func thankReplyHandle(replyID: String) {
+        
+        guard let `topic` = topic,
+            let token = topic.token else {
+                HUD.showText("操作失败")
+                return
+        }
+        
+        thankReply(replyID: replyID, token: token, success: {
+            HUD.showText("感谢已发送")
+//            comment.isThank = true
+        }) { error in
+            HUD.showText(error)
+        }
+    }
+    
+    func ignoreTopicHandle() {
+        guard let `topic` = topic,
+            let once = topic.once else {
+                HUD.showText("操作失败")
+                return
+        }
+        
+        ignoreTopic(topicID: topicID, once: once, success: { [weak self] in
+            // 需要 pop 掉该控制器?
+            HUD.showText("已成功忽略该主题", completionBlock: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+        }) { error in
+            HUD.showText(error)
+        }
+    }
 }
 
-extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSources.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
-        let comment = dataSources[indexPath.row]
-        cell.comment = comment
-        cell.hostUsername = topic?.member?.username ?? ""
-        cell.tapHandle = { [weak self] type in
-            self?.tapHandle(type)
-        }
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let comment = dataSources[indexPath.row]
-        commentInputView.text = "@\(comment.member.username) "
-        commentInputView.beFirstResponder()
-    }
-}
 
 extension TopicDetailViewController {
     
-    func fetchTopicDetail() {
+    /// 打开系统分享
+    func systemShare() {
         
-        topicDetail(topicID: topicID, success: { [weak self] topic, comments in
-            self?.topic = topic
-            self?.dataSources = comments
-            self?.comments = comments
-            self?.refreshControl.endRefreshing()
-            self?.endLoading()
-            }, failure: { [weak self] error in
-                
-                HUD.showText(error)
-                
-                if let `emptyView` = self?.emptyView as? EmptyView {
-                    emptyView.message = error
-                }
-                self?.endLoading()
-                self?.refreshControl.endRefreshing()
-        })
+        guard let url = API.topicDetail(topicID: topicID).url,
+            let title = topic?.title else { return }
         
-        headerView.webLoadComplete = { [weak self] in
-            self?.endLoading()
-            self?.headerView.isHidden = false
-            self?.tableView.reloadData()
+        let controller = UIActivityViewController(
+            activityItems: [url, title, headerView.userAvatar ?? #imageLiteral(resourceName: "logo")],
+            applicationActivities: nil)
+        
+        controller.excludedActivityTypes = [
+            .postToTwitter, .postToFacebook, .postToTencentWeibo, .postToWeibo,
+            .postToFlickr, .postToVimeo, .message, .mail, .addToReadingList,
+            .print, .copyToPasteboard, .assignToContact, .saveToCameraRoll,
+        ]
+        
+        if UIDevice.isiPad {
+            controller.popoverPresentationController?.sourceView = view
+            controller.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.size.width * 0.5, y: UIScreen.main.bounds.size.height * 0.5, width: 10, height: 10)
         }
+        present(controller, animated: true, completion: nil)
     }
 }
-
 
 extension TopicDetailViewController: StatefulViewController {
     
@@ -369,4 +449,3 @@ extension TopicDetailViewController: StatefulViewController {
         setupInitialViewState()
     }
 }
-

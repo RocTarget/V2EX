@@ -3,7 +3,6 @@ import Kanna
 
 protocol TopicService: HTMLParseService {
     
-    
     /// 获取 首页 数据
     ///
     /// - Parameters:
@@ -80,7 +79,7 @@ protocol TopicService: HTMLParseService {
     
     // 忽略主题
     func ignoreTopic(topicID: String,
-                     token: String,
+                     once: String,
                      success: Action?,
                      failure: Failure?)
     // 收藏主题
@@ -95,6 +94,12 @@ protocol TopicService: HTMLParseService {
                          failure: Failure?)
     // 感谢主题
     func thankTopic(topicID: String,
+                    token: String,
+                    success: Action?,
+                    failure: Failure?)
+    
+    // 感谢回复
+    func thankReply(replyID: String,
                     token: String,
                     success: Action?,
                     failure: Failure?)
@@ -254,7 +259,8 @@ extension TopicService {
             
             let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
             let comments = commentPath.flatMap({ ele -> CommentModel? in
-                guard let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
+                guard let replyID = ele["id"]?.deleteOccurrences(target: "r_"),
+                    let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
                     let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
                     let userHref = userPath["href"],
                     let username = userPath.content,
@@ -264,10 +270,8 @@ extension TopicService {
                         return nil
                 }
                 content = self.replacingIframe(text: content)
-                
-                let id = ele["id"]?.replacingOccurrences(of: "r_", with: "") ?? "0"
                 let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
-                return CommentModel(id: id, member: member, content: content, publicTime: publicTime, floor: floor)
+                return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, floor: floor)
             })
             guard let userPath = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/div/a").first,
                 let userAvatar = userPath.xpath("./img").first?["src"],
@@ -290,6 +294,8 @@ extension TopicService {
                 let isFavorite = csrfTokenPath.hasPrefix("/unfavorite")
                 topic.token = csrfToken
                 topic.isFavorite = isFavorite
+                let thankStr = html.xpath("//*[@id='topic_thank']").first?.content ?? ""
+                topic.isThank = thankStr != "感谢"
             }
             
             topic.once = self.parseOnce(html: html)
@@ -451,10 +457,12 @@ extension TopicService {
     }
     
     func ignoreTopic(topicID: String,
-                     token: String,
+                     once: String,
                      success: Action?,
                      failure: Failure?) {
-        
+        Network.htmlRequest(target: .ignoreTopic(topicID: topicID, once: once), success: { html in
+            success?()
+        }, failure: failure)
     }
     
     func favoriteTopic(topicID: String,
@@ -479,6 +487,17 @@ extension TopicService {
                     token: String,
                     success: Action?,
                     failure: Failure?) {
-        
+        Network.htmlRequest(target: .thankTopic(topicID: topicID, token: token), success: { html in
+            success?()
+        }, failure: failure)
+    }
+    
+    func thankReply(replyID: String,
+                    token: String,
+                    success: Action?,
+                    failure: Failure?) {
+        Network.htmlRequest(target: .thankReply(replyID: replyID, token: token), success: { html in
+            success?()
+        }, failure: failure)
     }
 }

@@ -19,7 +19,6 @@ PODS:
     - SQLite.swift/standard (= 0.11.4)
   - SQLite.swift/standard (0.11.4)
   - StatefulViewController (3.0)
-  - SwiftyMarkdown (0.5.0)
   - Themes (1.1.0)
   - Toaster (2.1.0)
   - UIView+Positioning (1.5)
@@ -41,7 +40,6 @@ DEPENDENCIES:
   - SnapKit
   - SQLite.swift
   - StatefulViewController
-  - SwiftyMarkdown
   - Themes
   - Toaster
   - UIView+Positioning
@@ -63,12 +61,11 @@ SPEC CHECKSUMS:
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
   StatefulViewController: 4803bf900d44de26074344998e10e041113b5931
-  SwiftyMarkdown: 6dfc24a82dcb4410d89d8fe3159182395ee0c988
   Themes: 9c5626e1b9d0a5683e5179c00c38077bd0281148
   Toaster: 8c3225dc465bef4aa57e147a288724576df8e439
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
   ViewAnimator: a094d13bc86e868e908d33e524fcb58a4ddcf98e
 
-PODFILE CHECKSUM: cd44e3c32454da031e543ac158faa3f088bfb248
+PODFILE CHECKSUM: b1d3cf08e6e3235f54771d3a97b0b0b7bab2f4ae
 
 COCOAPODS: 1.3.1
