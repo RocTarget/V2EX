@@ -77,11 +77,41 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
+    private lazy var previewBarButton: UIBarButtonItem = {
+        let view = UIBarButtonItem(title: "预览")
+        return view
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         edgesForExtendedLayout = []
         titleFieldView.becomeFirstResponder()
+
+        /// 恢复草稿
+        if let title = UserDefaults.get(forKey: Constants.Keys.createTopicTitleDraft) as? String {
+            titleFieldView.text = title
+            titleFieldView.rx.value.onNext(title)
+        }
+
+        if let body = UserDefaults.get(forKey: Constants.Keys.createTopicBodyDraft) as? String {
+            bodyTextView.text = body
+            bodyTextView.rx.value.onNext(body)
+        }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        UserDefaults.save(at: titleFieldView.text, forKey: Constants.Keys.createTopicTitleDraft)
+        UserDefaults.save(at: bodyTextView.text, forKey: Constants.Keys.createTopicBodyDraft)
+//        if let titleString = titleFieldView.text, titleString.trimmed.isNotEmpty {
+//            UserDefaults.save(at: titleString, forKey: Constants.Keys.createTopicTitleDraft)
+//        }
+//
+//        if let bodyString = bodyTextView.text, bodyString.trimmed.isNotEmpty {
+//            UserDefaults.save(at: bodyString, forKey: Constants.Keys.createTopicBodyDraft)
+//        }
     }
 
     override func setupSubviews() {
@@ -100,7 +130,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
         //            }
         //        }
 
-        NotificationCenter.default.addObserver(forName: .UITextViewTextDidChange, object: textView, queue: OperationQueue.main) { (notification) -> Void in
+        NotificationCenter.default.addObserver(forName: .UITextViewTextDidChange, object: textView, queue: .main) { notification in
             if self.bodyTextView.textStorage.string.hasSuffix("\n") {
                 CATransaction.setCompletionBlock({ () -> Void in
                     self.scrollToCaret(self.bodyTextView, animated: false)
@@ -133,7 +163,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
         //                }
         //                self.bodyTextView.tag = (!self.bodyTextView.tag.boolValue).intValue
         //            }
-        navigationItem.rightBarButtonItems = [postTopicBarButton]
+        navigationItem.rightBarButtonItems = [postTopicBarButton, previewBarButton]
     }
 
     override func setupConstraints() {
@@ -169,18 +199,38 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 return Observable.just( $0.trimmed.isNotEmpty && $0.trimmed.count <= Limit.titleMaxCharacter )
             }.bind(to: postTopicBarButton.rx.isEnabled)
             .disposed(by: rx.disposeBag)
+
+        bodyTextView.rx
+            .text
+            .orEmpty
+            .map { $0.trimmed.isNotEmpty }
+            .bind(to: previewBarButton.rx.isEnabled)
+            .disposed(by: rx.disposeBag)
         
         postTopicBarButton.rx
             .tap
             .subscribeNext { [weak self] in
                 self?.postTopicHandle()
         }.disposed(by: rx.disposeBag)
+
+        previewBarButton.rx
+            .tap
+            .subscribeNext { [weak self] in
+                guard let markdownString = self?.bodyTextView.text else {
+                    HUD.showText("预览失败，无法读取到正文内容")
+                    return
+                }
+                let previewVC = MarkdownPreviewViewController(markdownString: markdownString)
+                let nav = NavigationViewController(rootViewController: previewVC)
+                self?.present(nav, animated: true, completion: nil)
+            }.disposed(by: rx.disposeBag)
     }
     
     func postTopicHandle() {
         // TODO:
         // 1. 数据校验 ✅
-        // 2. 保存草稿 ❎
+        // 2. 保存草稿 ✅
+        // 3. Markdown 预览 ✅
         
         guard bodyTextView.text.length <= Limit.bodyMaxCharacter else {
             HUD.showText("正文内容不能超过 \(Limit.bodyMaxCharacter) 个字符")
@@ -191,8 +241,12 @@ class CreateTopicViewController: BaseViewController, TopicService {
             return
         }
         
-        createTopic(nodename: "sandbox", title: title, body: bodyTextView.text, success: {
+        createTopic(nodename: "sandbox", title: title, body: bodyTextView.text, success: { [weak self] in
             HUD.showText("发布成功")
+            self?.titleFieldView.text = nil
+            self?.bodyTextView.text = nil
+            UserDefaults.remove(forKey: Constants.Keys.createTopicTitleDraft)
+            UserDefaults.remove(forKey: Constants.Keys.createTopicBodyDraft)
         }) { error in
             HUD.showText(error)
         }
@@ -202,19 +256,6 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
 // MARK: - Character limit
 extension CreateTopicViewController: UITextViewDelegate {
-//    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-//        guard  let currentText = textView.text,
-//            let stringRange = range.range(for: currentText) else { return false }
-//
-//        let updatedText = currentText.replacingCharacters(in: stringRange, with: text)
-//
-//        let isInBound = updatedText.length <= Limit.maxCharacter
-//        if isInBound {
-//            descriptionNumLabel.text = "\(updatedText.length)/\(Limit.maxCharacter)"
-//        }
-//        return isInBound
-//    }
-
 
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
         print("Should interact with: \(URL)")

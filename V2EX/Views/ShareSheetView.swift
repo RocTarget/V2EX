@@ -1,9 +1,14 @@
 import UIKit
 
 public enum ShareItemType {
-    case floor, favorite, thank, ignore
+    case floor
+    case favorite, thank, ignore
     case copyLink, safari, refresh, share
     case cancel
+
+    public var needAuth: Bool {
+        return [ShareItemType.favorite, ShareItemType.thank, ShareItemType.ignore].contains(self)
+    }
 }
 
 public struct ShareItem {

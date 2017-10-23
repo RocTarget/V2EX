@@ -20,6 +20,11 @@ protocol AccountService {
     func notifications(
         success: ((_ messages: [MessageModel]) -> ())?,
         failure: Failure?)
+
+    func loginReward(
+        once: String,
+        success: Action?,
+        failure: Failure?)
 }
 
 extension AccountService {
@@ -186,6 +191,14 @@ extension AccountService {
             })
             success?(messages)
         }, failure: failure)
+    }
 
+    func loginReward(
+        once: String,
+        success: Action?,
+        failure: Failure?) {
+        Network.htmlRequest(target: .loginReward(once: once), success: { html in
+            log.info(html)
+        }, failure: failure)
     }
 }

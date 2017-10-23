@@ -33,8 +33,9 @@ class NodeSearchResultViewController: BaseViewController {
     
     override func setupSubviews() {
         setupStateFul()
+        startLoading()
     }
-    
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -89,7 +90,6 @@ extension NodeSearchResultViewController: StatefulViewController {
     }
     
     func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
         let ev = EmptyView(frame: tableView.frame)
         ev.type = .empty
         emptyView = ev

@@ -142,10 +142,10 @@ class TopicDetailViewController: BaseViewController, TopicService {
     
     private func moreHandle() {
         let floorItem = isShowOnlyFloor ? ShareItem(icon: #imageLiteral(resourceName: "unfloor"), title: "查看所有", type: .floor) : ShareItem(icon: #imageLiteral(resourceName: "floor"), title: "只看楼主", type: .floor)
-        
+        let favoriteItem = (topic?.isFavorite ?? false) ? ShareItem(icon: #imageLiteral(resourceName: "favorite"), title: "取消收藏", type: .favorite) : ShareItem(icon: #imageLiteral(resourceName: "unfavorite"), title: "收藏", type: .favorite)
         let section1 = [
             floorItem,
-            ShareItem(icon: #imageLiteral(resourceName: "collection"), title: (topic?.isFavorite ?? false) ? "取消收藏" : "收藏", type: .favorite),
+            favoriteItem,
             ShareItem(icon: #imageLiteral(resourceName: "thank"), title: "感谢", type: .thank),
             ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore),
             ]
@@ -164,8 +164,14 @@ class TopicDetailViewController: BaseViewController, TopicService {
             self?.shareSheetDidSelectedHandle(type)
         }
     }
-    
+
     func shareSheetDidSelectedHandle(_ type: ShareItemType) {
+
+        if type.needAuth, !AccountModel.isLogin{
+            HUD.showText("请先登录")
+            return
+        }
+
         switch type {
         case .floor:
             if isShowOnlyFloor {
@@ -218,6 +224,7 @@ class TopicDetailViewController: BaseViewController, TopicService {
     }
     
     func favoriteHandle() {
+
         guard let `topic` = topic,
             let token = topic.token else {
                 HUD.showText("操作失败")
@@ -225,8 +232,9 @@ class TopicDetailViewController: BaseViewController, TopicService {
         }
         // 已收藏, 取消收藏
         if topic.isFavorite {
-            unfavoriteTopic(topicID: topicID, token: token, success: {
+            unfavoriteTopic(topicID: topicID, token: token, success: { [weak self] in
                 HUD.showText("取消收藏成功")
+                self?.topic?.isFavorite = false
             }, failure: { error in
                 HUD.showText(error)
             })
@@ -234,8 +242,9 @@ class TopicDetailViewController: BaseViewController, TopicService {
         }
         
         // 没有收藏
-        unfavoriteTopic(topicID: topicID, token: token, success: {
+        unfavoriteTopic(topicID: topicID, token: token, success: { [weak self] in
             HUD.showText("收藏成功")
+            self?.topic?.isFavorite = true
         }) { error in
             HUD.showText(error)
         }

@@ -52,7 +52,15 @@ open class SweetWebViewController: UIViewController {
     open var rightNavigaionBarItemTypes: [BarButtonItemType] = []
     open var toolbarItemTypes: [BarButtonItemType] = [.back, .forward, .reload, .activity]
     
-    private var webView: WKWebView!
+    private lazy var webView: WKWebView = {
+        let webConfiguration = WKWebViewConfiguration()
+        let webView = WKWebView(frame: .zero, configuration: webConfiguration)
+        webView.uiDelegate = self
+        webView.navigationDelegate = self
+        webView.allowsBackForwardNavigationGestures = true
+        webView.isMultipleTouchEnabled = true
+        return webView
+    }()
     private var progressView: UIProgressView!
     
     private var previousNavigationBarState: (tintColor: UIColor, hidden: Bool) = (Theme.Color.globalColor, false)
@@ -109,15 +117,7 @@ open class SweetWebViewController: UIViewController {
     }
 
     override open func loadView() {
-        let webConfiguration = WKWebViewConfiguration()
-        webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
-        
-        webView.allowsBackForwardNavigationGestures = true
-        webView.isMultipleTouchEnabled = true
-        
+
         webView.addObserver(self, forKeyPath: estimatedProgressKeyPath, options: .new, context: nil)
         if websiteTitleInNavigationBar {
             webView.addObserver(self, forKeyPath: titleKeyPath, options: .new, context: nil)
@@ -189,6 +189,10 @@ public extension SweetWebViewController {
     func load(_ url: URL) {
         let request = URLRequest(url: url)
         webView.load(request)
+    }
+
+    func load(_ html: String) {
+        webView.loadHTMLString(html, baseURL: URL(string: "https://"))
     }
 }
 

@@ -20,7 +20,6 @@ target 'V2EX' do
 
     # Parse
     pod 'Kanna', '~> 2.1.0'
-    pod 'SwiftyMarkdown'
 
     # UI
     pod 'SnapKit'
@@ -30,7 +29,6 @@ target 'V2EX' do
     pod 'ViewAnimator'
     pod 'Themes'
     pod 'StatefulViewController'
-#    pod 'Highlighter'
 
     # DB
     pod 'SQLite.swift'
@@ -40,6 +38,7 @@ target 'V2EX' do
     pod 'IQKeyboardManagerSwift'
     pod 'Carte'
     pod 'Marklight'
+    pod 'MarkdownView'
 
     # Bug
 #    pod 'Fabric'
@@ -66,7 +65,7 @@ post_install do |installer|
     at_exit { `ruby #{pods_dir}/Carte/Sources/Carte/carte.rb configure` }
 
     # 需要指定编译版本的第三方库名称
-    swift3_targets = ['Kanna', 'Marklight', 'Highlighter']
+    swift3_targets = ['Kanna', 'Marklight', 'MarkdownView']
     installer.pods_project.targets.each do |target|
         if swift3_targets.include? target.name
             target.build_configurations.each do |config|

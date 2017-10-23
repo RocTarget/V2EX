@@ -1,18 +1,18 @@
 PODS:
   - Alamofire (4.5.1)
-  - ARSegmentPager (1.1.3)
   - Carte (2.1.4)
   - IQKeyboardManagerSwift (5.0.4)
   - Kanna (2.1.1)
-  - Kingfisher (4.1.1)
+  - Kingfisher (4.2.0)
+  - MarkdownView (1.0.3)
   - Marklight (1.3.0)
   - PKHUD (5.0.0)
   - Reveal-SDK (4)
   - RxCocoa (4.0.0):
     - RxSwift (~> 4.0)
-  - RxOptional (3.2.0):
-    - RxCocoa
-    - RxSwift
+  - RxOptional (3.3.0):
+    - RxCocoa (~> 4.0)
+    - RxSwift (~> 4.0)
   - RxSwift (4.0.0)
   - SnapKit (4.0.0)
   - SQLite.swift (0.11.4):
@@ -27,11 +27,11 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
-  - ARSegmentPager (from `https://github.com/AugustRush/ARSegmentPager.git`)
   - Carte
   - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
   - Kingfisher
+  - MarkdownView
   - Marklight
   - PKHUD
   - Reveal-SDK (~> 4)
@@ -47,27 +47,18 @@ DEPENDENCIES:
   - UIView+Positioning
   - ViewAnimator
 
-EXTERNAL SOURCES:
-  ARSegmentPager:
-    :git: https://github.com/AugustRush/ARSegmentPager.git
-
-CHECKOUT OPTIONS:
-  ARSegmentPager:
-    :commit: 50f90234c2347406724d51490a3935aac1b3cf58
-    :git: https://github.com/AugustRush/ARSegmentPager.git
-
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  ARSegmentPager: 10d9ded8105c6d78841f625a1a71db35e14b1c10
   Carte: a19a62db8478426c406f40048d0c67e98a021c39
   IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
-  Kingfisher: 6793a473357b5dbee42b0068ef203fe8325f259e
+  Kingfisher: 9ee7e788d8ba07c3f21ce0d43f33cec310a4f781
+  MarkdownView: 95619a575e13cffa334528696e405142048dd951
   Marklight: 54432ea3e99f1712129037b3191d54615d6cbe6c
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Reveal-SDK: 178c927f1a3230648d3a92b96f6e730a35b2750a
   RxCocoa: d62846ca96495d862fa4c59ea7d87e5031d7340e
-  RxOptional: d2d6a68064bc16b4801332c40663967f481b0234
+  RxOptional: e5448d3e21024489e07c31f6a262f2b50c975367
   RxSwift: fd680d75283beb5e2559486f3c0ff852f0d35334
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
@@ -78,6 +69,6 @@ SPEC CHECKSUMS:
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
   ViewAnimator: a094d13bc86e868e908d33e524fcb58a4ddcf98e
 
-PODFILE CHECKSUM: 785d09f60f16978a815bb7f27031ef24af179d25
+PODFILE CHECKSUM: cd44e3c32454da031e543ac158faa3f088bfb248
 
 COCOAPODS: 1.3.1

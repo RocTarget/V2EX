@@ -131,9 +131,14 @@ extension Networking {
         case .success(let data):
             log.verbose("✅ SUCCESS: " + message, file: file, function: function, line: line)
 
-            if let statusCode = dataResponse.response?.statusCode, statusCode == 502 {
-                failure?("502 Bad Gateway")
-                return
+            if let statusCode = dataResponse.response?.statusCode {
+                if statusCode == 502 {
+                    failure?("502 Bad Gateway")
+                    return
+                } else if statusCode == 404 {
+                    failure?("404")
+                    return
+                }
             }
             success?(data)
         case .failure(let error):

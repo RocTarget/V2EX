@@ -127,6 +127,13 @@ extension TopicService {
                         
                         AccountModel(username: username, url: href, avatar: avatarPath).save()
                     }
+
+                    // TODO: 领取奖励
+                    /// 领取今日的登录奖励
+                    if let dailyNode = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[1]/div[@class='inner']/a[@href='/mission/daily']").first,
+                        dailyNode.content == "领取今日的登录奖励" {
+
+                    }
                 }
             }
             

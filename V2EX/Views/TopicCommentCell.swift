@@ -155,6 +155,12 @@ class TopicCommentCell: BaseTableViewCell {
 
 extension TopicCommentCell: UITextViewDelegate {
 
+//    @available(iOS 10.0, *)
+//    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+//        return interactHook(URL)
+//    }
+
+
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
         return interactHook(URL)
     }
@@ -169,8 +175,8 @@ extension TopicCommentCell: UITextViewDelegate {
             let member = MemberModel(username: name, url: href, avatar: "")
             tapHandle?(.member(member))
         } else if URL.path.contains("/t/") {
-            let href = URL.path
-            tapHandle?(.topic(href))
+            let topicID = URL.path.lastPathComponent
+            tapHandle?(.topic(topicID))
         } else if URL.path.contains("/go/") {
             tapHandle?(.node(NodeModel(name: "", href: URL.path)))
         }
@@ -205,5 +211,17 @@ extension String {
 
     var html2String: String {
         return html2AttributedString?.string ?? ""
+    }
+}
+
+extension NSAttributedString {
+    var toHTMLString: String? {
+        do {
+            let data = try self.data(from: NSRange(location: 0, length: self.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.html])
+            return String(data: data, encoding: .utf8)
+        } catch {
+            log.info(error)
+            return nil
+        }
     }
 }

@@ -43,7 +43,7 @@ extension HTMLParseService {
         }
 
         guard let rootPath = rootPathOp else { return [] }
-        
+
         let topics = rootPath.flatMap({ ele -> TopicModel? in
             guard let userPage = ele.xpath(".//td/a").first?["href"],
                 let avatarSrc = ele.xpath(".//td/a/img").first?["src"],

@@ -19,6 +19,10 @@ struct Constants {
         // User 持久化
         static let username = "usernameKey"
         static let avatarSrc = "avatarSrcKey"
+
+        // 创建主题的草稿
+        static let createTopicTitleDraft = "createTopicTitleDraft"
+        static let createTopicBodyDraft = "createTopicBodyDraft"
     }
 }
 

@@ -22,6 +22,8 @@ enum API {
     case forgot(dict: [String: String])
     
     case signup(dict: [String: String])
+
+    case loginReward(once: String)
     
     // 我的节点
     case myNodes
@@ -87,6 +89,8 @@ extension API: TargetType {
             return .post("/forgot")
         case .signup:
             return .post("/signup")
+        case .loginReward(let once):
+            return .post("/mission/daily/redeem?once=\(once)")
         case .nodes:
             return .get("/api/nodes/all.json")
         // return .get("/planes")
