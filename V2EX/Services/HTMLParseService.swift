@@ -145,10 +145,11 @@ extension HTMLParseService {
                 let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
                     return nil
             }
+            let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
             content = self.replacingIframe(text: content)
             let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
-            // TODO: 解析是否是感谢
-            return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, isThank: false, floor: floor)
+            let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
+            return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, isThank: isThank, floor: floor, thankCount: thankString)
         })
         return comments
     }

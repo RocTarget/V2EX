@@ -7,4 +7,5 @@ struct CommentModel {
     var publicTime: String
     var isThank: Bool = false
     var floor: String
+    var thankCount: String?
 }

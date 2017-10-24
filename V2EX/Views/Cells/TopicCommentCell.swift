@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 class TopicCommentCell: BaseTableViewCell {
 
@@ -36,12 +37,21 @@ class TopicCommentCell: BaseTableViewCell {
         view.isHidden = true
         return view
     }()
+    
+    private lazy var thankLabel: UILabel = {
+        let view = UILabel()
+        view.text = "♥"
+        view.font = UIFont.systemFont(ofSize: 13)
+        view.textColor = UIColor.hex(0xcccccc)
+        return view
+    }()
 
     private lazy var contentTextView: UITextView = {
         let view = UITextView()
         view.font = UIFont.systemFont(ofSize: 15)
         view.isEditable = false
         view.isScrollEnabled = false
+        view.isUserInteractionEnabled = false
         view.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: -20, right: 0)
         view.textContainer.lineFragmentPadding = 0
         view.linkTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue : Theme.Color.linkColor]
@@ -55,6 +65,8 @@ class TopicCommentCell: BaseTableViewCell {
         return view
     }()
 
+    private var thankLabelLeftConstraint: Constraint?
+    
     public var tapHandle: ((_ type: TapType) -> Void)?
 
     public var hostUsername: String?
@@ -72,7 +84,11 @@ class TopicCommentCell: BaseTableViewCell {
             let html = "<style>\(cssStyle)</style>" + comment.content
             contentTextView.attributedText = html.html2AttributedString
 
-            hostLabel.isHidden = hostUsername ?? ""  != comment.member.username
+            // TODO: Bug - 楼主显示\隐藏 状态不正确
+            hostLabel.isHidden = (hostUsername ?? "")  != comment.member.username
+            thankLabel.text = comment.thankCount
+            
+            thankLabelLeftConstraint?.update(offset: hostLabel.isHidden ? -25 : 10)
         }
     }
 
@@ -109,7 +125,7 @@ class TopicCommentCell: BaseTableViewCell {
             }.disposed(by: rx.disposeBag)
 
         avatarLongPressGesture.rx
-        .event
+            .event
             .subscribeNext { [weak self] gesture in
 
                 guard gesture.state == .began else { return }
@@ -123,6 +139,7 @@ class TopicCommentCell: BaseTableViewCell {
             timeLabel,
             floorLabel,
             hostLabel,
+            thankLabel,
             contentTextView,
             lineView
         )
@@ -152,6 +169,11 @@ class TopicCommentCell: BaseTableViewCell {
         timeLabel.snp.makeConstraints {
             $0.left.equalTo(floorLabel.snp.right).offset(10)
             $0.centerY.equalTo(floorLabel)
+        }
+        
+        thankLabel.snp.makeConstraints {
+            thankLabelLeftConstraint = $0.left.equalTo(hostLabel.snp.right).offset(10).constraint
+            $0.centerY.equalTo(usernameLaebl)
         }
 
         contentTextView.snp.makeConstraints {

@@ -34,6 +34,14 @@ protocol TopicService: HTMLParseService {
         success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
         failure: Failure?)
     
+    /// 发布评论
+    ///
+    /// - Parameters:
+    ///   - once: 凭证
+    ///   - topicID: 主题 id
+    ///   - content: 回复内容
+    ///   - success: 成功
+    ///   - failure: 失败
     func comment(
         once: String,
         topicID: String,
@@ -41,6 +49,14 @@ protocol TopicService: HTMLParseService {
         success: Action?,
         failure: Failure?)
     
+    /// 创建主题
+    ///
+    /// - Parameters:
+    ///   - nodename: 节点名称
+    ///   - title: 主题标题
+    ///   - body: 主题正文
+    ///   - success: 成功
+    ///   - failure: 失败
     func createTopic(
         nodename: String,
         title: String,
@@ -48,16 +64,37 @@ protocol TopicService: HTMLParseService {
         success: Action?,
         failure: @escaping Failure)
     
+    /// 获取会员的主题列表
+    ///
+    /// - Parameters:
+    ///   - username: 会员名字
+    ///   - success: 成功
+    ///   - failure: 失败
     func memberTopics(
         username: String,
         success: ((_ topics: [TopicModel]) -> Void)?,
         failure: Failure?)
     
+    /// 获取会员的回复列表
+    ///
+    /// - Parameters:
+    ///   - username: 会员名字
+    ///   - success: 成功
+    ///   - failure: 失败
     func memberReplys(
         username: String,
         success: ((_ messages: [MessageModel]) -> ())?,
         failure: Failure?)
     
+    /// 搜索主题
+    ///
+    /// - Parameters:
+    ///   - query: 关键字
+    ///   - offset: 偏移量
+    ///   - size: 一页大小
+    ///   - sortType: 排序类型
+    ///   - success: 成功
+    ///   - failure: 失败
     func search(
         query: String,
         offset: Int,
@@ -66,28 +103,61 @@ protocol TopicService: HTMLParseService {
         success: ((_ results: [SearchResultModel]) -> ())?,
         failure: Failure?)
     
-    // 忽略主题
+    /// 忽略主题
+    ///
+    /// - Parameters:
+    ///   - topicID: 主题id
+    ///   - once: 凭证
+    ///   - success: 成功
+    ///   - failure: 失败
     func ignoreTopic(topicID: String,
                      once: String,
                      success: Action?,
                      failure: Failure?)
-    // 收藏主题
+    
+    /// 收藏主题
+    ///
+    /// - Parameters:
+    ///   - topicID: 主题id
+    ///   - token: token
+    ///   - success: 成功
+    ///   - failure: 失败
     func favoriteTopic(topicID: String,
                        token: String,
                        success: Action?,
                        failure: Failure?)
-    // 取消收藏主题
+    
+    /// 取消收藏主题
+    ///
+    /// - Parameters:
+    ///   - topicID: 主题id
+    ///   - token: token
+    ///   - success: 成功
+    ///   - failure: 失败
     func unfavoriteTopic(topicID: String,
                          token: String,
                          success: Action?,
                          failure: Failure?)
-    // 感谢主题
+    
+    /// 感谢主题
+    ///
+    /// - Parameters:
+    ///   - topicID: 主题id
+    ///   - token: token
+    ///   - success: 成功
+    ///   - failure: 失败
     func thankTopic(topicID: String,
                     token: String,
                     success: Action?,
                     failure: Failure?)
     
-    // 感谢回复
+    /// 感谢回复
+    ///
+    /// - Parameters:
+    ///   - replyID: 回复id
+    ///   - token: token
+    ///   - success: 成功
+    ///   - failure: 失败
     func thankReply(replyID: String,
                     token: String,
                     success: Action?,

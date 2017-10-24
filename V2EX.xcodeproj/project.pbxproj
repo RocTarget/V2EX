@@ -45,6 +45,7 @@
 		77C8DF701F9305F8009DE52C /* AccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF6F1F9305F8009DE52C /* AccountService.swift */; };
 		77C8DF721F930B0E009DE52C /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF711F930B0E009DE52C /* LoginForm.swift */; };
 		77C8DF741F9316F1009DE52C /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF731F9316F0009DE52C /* UITextField+Extension.swift */; };
+		77D0DDF31F9F677500DDC366 /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0DDF21F9F677500DDC366 /* MemberCell.swift */; };
 		80BDADB66F39CEA2AACC3733 /* Pods_V2EXUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B6818F911EA9C433951F18 /* Pods_V2EXUITests.framework */; };
 		BF02A2C21F8F3E3800BEF85E /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2C11F8F3E3800BEF85E /* AppSetup.swift */; };
 		BF02A2CE1F8F3FE400BEF85E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CD1F8F3FE400BEF85E /* Theme.swift */; };
@@ -183,6 +184,7 @@
 		77C8DF6F1F9305F8009DE52C /* AccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountService.swift; sourceTree = "<group>"; };
 		77C8DF711F930B0E009DE52C /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		77C8DF731F9316F0009DE52C /* UITextField+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+Extension.swift"; sourceTree = "<group>"; };
+		77D0DDF21F9F677500DDC366 /* MemberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCell.swift; sourceTree = "<group>"; };
 		79E9C346121D264309381B21 /* Pods-V2EXTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXTests/Pods-V2EXTests.release.xcconfig"; sourceTree = "<group>"; };
 		A06D4C2BE8DE9A7F928C74E5 /* Pods-V2EXTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXTests/Pods-V2EXTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A3FD0254BCE3292D3FCA0608 /* Pods-V2EXUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXUITests/Pods-V2EXUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -358,6 +360,22 @@
 			path = More;
 			sourceTree = "<group>";
 		};
+		77D0DDF11F9F674600DDC366 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */,
+				779B17011F8FA8A900E912E7 /* TopicCell.swift */,
+				BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */,
+				7756CCC71F92360F00EF47B8 /* NodeCell.swift */,
+				BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */,
+				BF5A6B6A1F99851500CF6BA1 /* MessageCell.swift */,
+				BF5A6B8A1F99E9DB00CF6BA1 /* ReplyCell.swift */,
+				778AC6A71F9A2D540072C6E9 /* TopicSearchResultCell.swift */,
+				77D0DDF21F9F677500DDC366 /* MemberCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		BF02A2C01F8F3E0800BEF85E /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -388,23 +406,16 @@
 			children = (
 				776EFDCB1F9BA9690087AECC /* TSegmentedView */,
 				BF9EC8231F95D6EE00E7AA02 /* PlaceholderViews */,
+				77D0DDF11F9F674600DDC366 /* Cells */,
 				BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */,
 				BF7B11191F91E5A3003815C1 /* HUD.swift */,
 				BF7B11171F91E473003815C1 /* UIInsetLabel.swift */,
 				BFCE8E071F904CA80026F100 /* NodeTabView.swift */,
-				779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */,
-				779B17011F8FA8A900E912E7 /* TopicCell.swift */,
 				BFE3947A1F90822E00D3ED1D /* TopicDetailHeaderView.swift */,
-				BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */,
-				7756CCC71F92360F00EF47B8 /* NodeCell.swift */,
 				7756CCC91F923D6100EF47B8 /* NodeHeaderView.swift */,
-				BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */,
 				BF3AB5C41F9756D500043269 /* CommentInputView.swift */,
 				BF3AB5C61F97672300043269 /* UIPlaceholderTextView.swift */,
 				BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */,
-				BF5A6B6A1F99851500CF6BA1 /* MessageCell.swift */,
-				BF5A6B8A1F99E9DB00CF6BA1 /* ReplyCell.swift */,
-				778AC6A71F9A2D540072C6E9 /* TopicSearchResultCell.swift */,
 				776EFDD31F9BB9E70087AECC /* ShareItemView.swift */,
 				776EFDD21F9BB9E70087AECC /* ShareSheetView.swift */,
 			);
@@ -1130,6 +1141,7 @@
 				BF5A6B6B1F99851500CF6BA1 /* MessageCell.swift in Sources */,
 				BF4D779E1F9D896500FAEB7C /* MarkdownPreviewViewController.swift in Sources */,
 				BF45DFD21F9ED9140001BEB2 /* ErrorView.swift in Sources */,
+				77D0DDF31F9F677500DDC366 /* MemberCell.swift in Sources */,
 				BF7B111A1F91E5A3003815C1 /* HUD.swift in Sources */,
 				77C8DF701F9305F8009DE52C /* AccountService.swift in Sources */,
 				BFCB67661F8F709F00D05A90 /* TopicService.swift in Sources */,
