@@ -1,7 +1,6 @@
 import UIKit
-import StatefulViewController
 
-class NodeCollectViewController: BaseViewController, NodeService {
+class NodeCollectViewController: DataViewController, NodeService {
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -23,8 +22,6 @@ class NodeCollectViewController: BaseViewController, NodeService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        startLoading()
-        setupStateFul()
         fetchNodes()
     }
 
@@ -34,17 +31,32 @@ class NodeCollectViewController: BaseViewController, NodeService {
         }
     }
 
+    // MARK: State Handle
+
+    override func hasContent() -> Bool {
+        return nodes.count.boolValue
+    }
+
+    override func loadData() {
+        fetchNodes()
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchNodes()
+    }
+
     func fetchNodes() {
+        startLoading()
 
         myNodes(success: { [weak self] nodes in
             self?.nodes = nodes
             self?.collectionView.reloadData()
             self?.endLoading()
         }) { [weak self] error in
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
+            if let `errorView` = self?.errorView as? ErrorView {
+                errorView.message = error
             }
-            self?.endLoading()
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
 }
@@ -65,24 +77,5 @@ extension NodeCollectViewController: UICollectionViewDelegate, UICollectionViewD
         let node = nodes[indexPath.row]
         let nodeDetailVC = NodeDetailViewController(node: node)
         navigationController?.pushViewController(nodeDetailVC, animated: true)
-    }
-}
-
-
-// MARK: - StatefulViewController
-extension NodeCollectViewController: StatefulViewController {
-    
-    func hasContent() -> Bool {
-        return nodes.count.boolValue
-    }
-    
-    func setupStateFul() {
-        loadingView = LoadingView(frame: collectionView.frame)
-        let ev = EmptyView(frame: collectionView.frame)
-        ev.retryHandle = { [weak self] in
-            self?.fetchNodes()
-        }
-        emptyView = ev
-        setupInitialViewState()
     }
 }

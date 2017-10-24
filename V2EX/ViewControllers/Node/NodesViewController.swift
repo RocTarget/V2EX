@@ -1,9 +1,8 @@
 import UIKit
-import StatefulViewController
 import RxSwift
 import RxCocoa
 
-class NodesViewController: BaseViewController, NodeService {
+class NodesViewController: DataViewController, NodeService {
     
     private lazy var segmentedControl: UISegmentedControl = {
         let view = UISegmentedControl(items: ["节点导航", "全部节点"])
@@ -107,7 +106,6 @@ class NodesViewController: BaseViewController, NodeService {
     override func setupSubviews() {
         
         navigationItem.titleView = segmentedControl
-        setupStateFul()
     }
     
     override func setupConstraints() {
@@ -124,6 +122,8 @@ class NodesViewController: BaseViewController, NodeService {
         segmentedControl.rx
             .selectedSegmentIndex
             .subscribe(onNext: { [weak self] index in
+                self?.errorView?.isHidden = true
+                self?.emptyView?.isHidden = true
                 if index == 0 {
                     self?.collectionView.fadeIn()
                     self?.tableView.fadeOut()
@@ -133,9 +133,24 @@ class NodesViewController: BaseViewController, NodeService {
                     self?.tableView.fadeIn()
                     self?.fetchAllNode()
                 }
+
             }).disposed(by: rx.disposeBag)
     }
-    
+
+    // MARK: State Handle
+
+    override func loadData() {
+        fetchNodeNav()
+    }
+
+    override func hasContent() -> Bool {
+        return segmentedControl.selectedSegmentIndex == 0 ? nodeCategorys.count.boolValue : groups.count.boolValue
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        segmentedControl.selectedSegmentIndex == 0 ? fetchNodeNav() : fetchAllNode()
+    }
+
     func fetchNodeNav() {
         if nodeCategorys.count.boolValue { return }
         
@@ -144,11 +159,16 @@ class NodesViewController: BaseViewController, NodeService {
         nodeNavigation(success: { [weak self] cates in
             self?.nodeCategorys = cates
             self?.endLoading()
+
+            self?.errorView?.isHidden = false
+            self?.emptyView?.isHidden = false
         }) { [weak self] error in
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
+            if let `errorView` = self?.errorView as? ErrorView {
+                errorView.message = error
             }
-            self?.endLoading()
+            self?.errorView?.isHidden = false
+            self?.emptyView?.isHidden = false
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
     
@@ -160,11 +180,15 @@ class NodesViewController: BaseViewController, NodeService {
         nodes(success: { [weak self] groups in
             self?.groups = groups
             self?.endLoading()
+            self?.errorView?.isHidden = false
+            self?.emptyView?.isHidden = false
         }) { [weak self] error in
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
+            if let `errorView` = self?.errorView as? ErrorView {
+                errorView.message = error
             }
-            self?.endLoading()
+            self?.errorView?.isHidden = false
+            self?.emptyView?.isHidden = false
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
 }
@@ -249,24 +273,5 @@ extension NodesViewController: UITableViewDelegate, UITableViewDataSource {
         let node = groups[indexPath.section].nodes[indexPath.row]
         let nodeDetailVC = NodeDetailViewController(node: node)
         navigationController?.pushViewController(nodeDetailVC, animated: true)
-    }
-}
-
-
-// MARK: - StatefulViewController
-extension NodesViewController: StatefulViewController {
-    
-    func hasContent() -> Bool {
-        return segmentedControl.selectedSegmentIndex == 0 ? nodeCategorys.count.boolValue : groups.count.boolValue
-    }
-    
-    func setupStateFul() {
-        loadingView = LoadingView(frame: collectionView.frame)
-        let ev = EmptyView(frame: collectionView.frame)
-        ev.retryHandle = { [weak self] in
-            self?.fetchNodeNav()
-        }
-        emptyView = ev
-        setupInitialViewState()
     }
 }

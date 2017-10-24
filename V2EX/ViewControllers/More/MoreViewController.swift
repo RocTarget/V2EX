@@ -53,12 +53,6 @@ class MoreViewController: BaseViewController {
         super.viewDidLoad()
 
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        self.tableView.reloadSections(IndexSet(integer: 0), with: .none)
-    }
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
@@ -66,6 +60,14 @@ class MoreViewController: BaseViewController {
         }
 
         view.animateRandom()
+    }
+
+    override func setupRx() {
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.LoginSuccessName)
+            .subscribeNext { [weak self] _ in
+                self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
+        }.disposed(by: rx.disposeBag)
     }
 }
 
@@ -137,6 +139,8 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .logout:
             AccountModel.delete()
             presentLoginVC()
+            // TODO: 清除 Cookies
+//            HTTPCookieStorage.shared.removeCookies(since: Date())
         default:
             break
         }

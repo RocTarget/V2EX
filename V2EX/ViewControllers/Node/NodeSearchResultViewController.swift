@@ -1,7 +1,6 @@
 import UIKit
-import StatefulViewController
 
-class NodeSearchResultViewController: BaseViewController {
+class NodeSearchResultViewController: DataViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -32,7 +31,7 @@ class NodeSearchResultViewController: BaseViewController {
     }
     
     override func setupSubviews() {
-        setupStateFul()
+        status = .empty
         startLoading()
     }
 
@@ -40,6 +39,19 @@ class NodeSearchResultViewController: BaseViewController {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+
+    // MARK: State Handle
+    override func hasContent() -> Bool {
+        return searchResults.count.boolValue
+    }
+
+    override func loadData() {
+
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+
     }
 }
 
@@ -82,18 +94,3 @@ extension NodeSearchResultViewController: UISearchResultsUpdating {
         searchResults = originData.filter { $0.name.lowercased().contains(query.lowercased()) }
     }
 }
-
-extension NodeSearchResultViewController: StatefulViewController {
-    
-    func hasContent() -> Bool {
-        return searchResults.count.boolValue
-    }
-    
-    func setupStateFul() {
-        let ev = EmptyView(frame: tableView.frame)
-        ev.type = .empty
-        emptyView = ev
-        setupInitialViewState()
-    }
-}
-

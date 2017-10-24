@@ -1,7 +1,6 @@
 import UIKit
 import SnapKit
 import ViewAnimator
-import StatefulViewController
 import RxSwift
 import RxCocoa
 
@@ -16,8 +15,6 @@ class HomeViewController: BaseTopicsViewController {
             nodes: nodes)
         return view
     }()
-    
-//    private var searchController: UISearchController?
     
     var nodes: [NodeModel] = [] {
         didSet {
@@ -77,11 +74,7 @@ class HomeViewController: BaseTopicsViewController {
         tableView.tableHeaderView = searchController.searchBar
         tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
     }
-    
-    override func fetchData() {
-        fetchIndexData()
-    }
-    
+
     override func setupRx() {
         super.setupRx()
         
@@ -119,49 +112,27 @@ class HomeViewController: BaseTopicsViewController {
             
             }, failure: { [weak self] error in
                 HUD.dismiss()
-                self?.endLoading()
-                if let `emptyView` = self?.emptyView as? EmptyView {
-                    emptyView.message = error
+                self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+                if let `errorView` = self?.errorView as? ErrorView {
+                    errorView.message = error
                 }
         })
+    }
+
+    override func loadData() {
+        fetchIndexData()
     }
     
     override func hasContent() -> Bool {
         return nodes.count.boolValue
     }
-    
-    override func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        let ev = EmptyView(frame: tableView.frame)
-        ev.retryHandle = { [weak self] in
-            if self?.nodes.count == 0 {
-                self?.fetchIndexData()
-            } else {
-                self?.startLoading()
-                self?.fetchTopic()
-            }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        if nodes.count == 0 {
+            fetchIndexData()
+        } else {
+            startLoading()
+            fetchTopic()
         }
-        emptyView = ev
-        setupInitialViewState()
     }
 }
-//
-//
-//extension HomeViewController: UISearchBarDelegate {
-//
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        searchResultVC?.search(query: searchBar.text, selectedScope: searchBar.selectedScopeButtonIndex)
-//    }
-//
-//    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-//        searchResultVC?.search(query: searchBar.text, selectedScope: selectedScope)
-//    }
-//}
-//
-//extension HomeViewController: UISearchResultsUpdating {
-//
-//    func updateSearchResults(for searchController: UISearchController) {
-//        searchResultVC?.search(query: searchController.searchBar.text, selectedScope: searchController.searchBar.selectedScopeButtonIndex)
-//    }
-//}
-

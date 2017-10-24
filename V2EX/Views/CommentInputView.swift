@@ -5,6 +5,7 @@ import UIKit
 class CommentInputView: UIView {
 
     public var sendHandle: Action?
+    public var atUserHandle: Action?
 
     private lazy var textView: UIPlaceholderTextView = {
         let view = UIPlaceholderTextView()
@@ -52,19 +53,32 @@ class CommentInputView: UIView {
         backgroundColor = .white
         
         textView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(10)
+            $0.top.equalToSuperview().inset(10)
             $0.left.right.equalToSuperview().inset(15)
+
+            if #available(iOS 11.0, *) {
+                $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(10)
+            } else {
+                $0.bottom.equalToSuperview().inset(10)
+            }
         }
     }
 }
 
 extension CommentInputView: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        log.info(text)
+
         if text == "\n" {
             sendHandle?()
             textView.resignFirstResponder()
             return false
         }
+
+        if text == "@" {
+            atUserHandle?()
+        }
+
         return true
     }
 }

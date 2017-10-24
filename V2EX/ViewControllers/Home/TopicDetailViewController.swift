@@ -1,10 +1,9 @@
 import Foundation
 import UIKit
-import StatefulViewController
 import SafariServices
 
-class TopicDetailViewController: BaseViewController, TopicService {
-    
+class TopicDetailViewController: DataViewController, TopicService {
+
     private struct Metric {
         static let commentInputViewHeight: CGFloat = 55
     }
@@ -86,6 +85,30 @@ class TopicDetailViewController: BaseViewController, TopicService {
         commentInputView.sendHandle = { [weak self] in
             self?.replyComment()
         }
+
+        commentInputView.atUserHandle = { [weak self] in
+            guard let `comments` = self?.comments else { return }
+            guard let `self` = self else { return }
+
+            // 解层
+            let members = comments.flatMap { $0.member }
+            let memberSet = Set<MemberModel>(members)
+            let uniqueMembers = Array(memberSet).filter { $0.username != AccountModel.current?.username }
+            let memberListVC = MemberListViewController(members: uniqueMembers )
+            let nav = NavigationViewController(rootViewController: memberListVC)
+            self.present(nav, animated: true, completion: nil)
+
+            memberListVC.callback = { members in
+                guard members.count.boolValue else { return }
+
+                let ats = members
+                    .filter{ !self.commentInputView.text.contains($0.username) }
+                    .map { "@" + $0.username }
+                    .joined(separator: " ")
+                self.commentInputView.text.append(ats + " ")
+                self.commentInputView.beFirstResponder()
+            }
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: #imageLiteral(resourceName: "moreNav"),
@@ -95,9 +118,7 @@ class TopicDetailViewController: BaseViewController, TopicService {
         })
         
         title = "加载中..."
-        startLoading()
-        fetchTopicDetail()
-        setupStateFul()
+//        fetchTopicDetail()
     }
     
     override func setupConstraints() {
@@ -105,10 +126,15 @@ class TopicDetailViewController: BaseViewController, TopicService {
             $0.left.top.right.equalToSuperview()
             $0.bottom.equalTo(commentInputView.snp.top)
         }
-        
+
         commentInputView.snp.makeConstraints {
-            $0.left.bottom.right.equalToSuperview()
-            $0.height.equalTo(Metric.commentInputViewHeight)
+            $0.left.right.bottom.equalToSuperview()
+
+            if #available(iOS 11.0, *) {
+                $0.height.equalTo(Metric.commentInputViewHeight + view.safeAreaInsets.bottom)
+            } else {
+                $0.height.equalTo(Metric.commentInputViewHeight)
+            }
         }
     }
     
@@ -119,7 +145,22 @@ class TopicDetailViewController: BaseViewController, TopicService {
                 self?.fetchTopicDetail()
             }.disposed(by: rx.disposeBag)
     }
-    
+
+    // MARK: States Handle
+
+    override func hasContent() -> Bool {
+        return topic != nil
+    }
+
+    override func loadData() {
+        fetchTopicDetail()
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchTopicDetail()
+    }
+
+
     private func tapHandle(_ type: TapType) {
         switch type {
         case .webpage(let url):
@@ -128,6 +169,8 @@ class TopicDetailViewController: BaseViewController, TopicService {
         case .member(let member):
             let memberPageVC = MemberPageViewController(member: member)
             self.navigationController?.pushViewController(memberPageVC, animated: true)
+        case .memberAvatarLongPress(let member):
+            avatarLongPressHandle(member.username)
         case .image(let src):
             log.info(src)
         case .node(let node):
@@ -142,17 +185,25 @@ class TopicDetailViewController: BaseViewController, TopicService {
     
     /// 点击更多处理
     private func moreHandle() {
-        
+
         /// 切换 是否显示楼主
-        let floorItem = isShowOnlyFloor ? ShareItem(icon: #imageLiteral(resourceName: "unfloor"), title: "查看所有", type: .floor) : ShareItem(icon: #imageLiteral(resourceName: "floor"), title: "只看楼主", type: .floor)
-        let favoriteItem = (topic?.isFavorite ?? false) ? ShareItem(icon: #imageLiteral(resourceName: "favorite"), title: "取消收藏", type: .favorite) : ShareItem(icon: #imageLiteral(resourceName: "unfavorite"), title: "收藏", type: .favorite)
-        
+        let floorItem = isShowOnlyFloor ?
+            ShareItem(icon: #imageLiteral(resourceName: "unfloor"), title: "查看所有", type: .floor) :
+            ShareItem(icon: #imageLiteral(resourceName: "floor"), title: "只看楼主", type: .floor)
+        let favoriteItem = (topic?.isFavorite ?? false) ?
+            ShareItem(icon: #imageLiteral(resourceName: "favorite"), title: "取消收藏", type: .favorite) :
+            ShareItem(icon: #imageLiteral(resourceName: "unfavorite"), title: "收藏", type: .favorite)
+
         var section1 = [floorItem, favoriteItem]
-        
+
         // 如果已经登录 并且 是当前登录用户发表的主题, 则隐藏 感谢和忽略
-        if let username = AccountModel.current?.username, username != topic?.member?.username {
-            // TODO: 换图标
-            section1.append(ShareItem(icon: #imageLiteral(resourceName: "thank"), title: (topic?.isThank ?? false) ? "已感谢" : "感谢", type: .thank))
+        let username = AccountModel.current?.username ?? ""
+        if username != topic?.member?.username {
+            let thankItem = (topic?.isThank ?? false) ?
+                ShareItem(icon: #imageLiteral(resourceName: "thank"), title: "已感谢", type: .thank) :
+                ShareItem(icon: #imageLiteral(resourceName: "alreadyThank"), title: "感谢", type: .thank)
+
+            section1.append(thankItem)
             section1.append(ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore))
         }
         
@@ -172,6 +223,7 @@ class TopicDetailViewController: BaseViewController, TopicService {
 
     func shareSheetDidSelectedHandle(_ type: ShareItemType) {
 
+        // 需要授权的操作
         if type.needAuth, !AccountModel.isLogin{
             HUD.showText("请先登录")
             return
@@ -179,15 +231,7 @@ class TopicDetailViewController: BaseViewController, TopicService {
 
         switch type {
         case .floor:
-            if isShowOnlyFloor {
-                dataSources = comments
-            } else {
-                let result = comments.filter { $0.member.username == topic?.member?.username }
-                dataSources = result
-            }
-            tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-            isShowOnlyFloor = !isShowOnlyFloor
-            return
+            showOnlyFloorHandle()
         case .favorite:
             favoriteHandle()
         case .thank:
@@ -198,11 +242,7 @@ class TopicDetailViewController: BaseViewController, TopicService {
             UIPasteboard.general.string = API.topicDetail(topicID: topicID).defaultURLString
             HUD.showText("链接已复制")
         case .safari:
-            guard let url = API.topicDetail(topicID: topicID).url else {
-                HUD.showText("无法打开网页")
-                return
-            }
-            UIApplication.shared.openURL(url)
+            openSafariHandle()
         case .share:
             systemShare()
         default:
@@ -249,7 +289,8 @@ extension TopicDetailViewController {
     
     /// 获取主题详情
     func fetchTopicDetail() {
-        
+        startLoading()
+
         topicDetail(topicID: topicID, success: { [weak self] topic, comments in
             self?.topic = topic
             self?.dataSources = comments
@@ -257,13 +298,10 @@ extension TopicDetailViewController {
             self?.refreshControl.endRefreshing()
             self?.endLoading()
             }, failure: { [weak self] error in
-                
-                HUD.showText(error)
-                
-                if let `emptyView` = self?.emptyView as? EmptyView {
-                    emptyView.message = error
+                if let `errorView` = self?.errorView as? ErrorView {
+                    errorView.message = error
                 }
-                self?.endLoading()
+                self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
                 self?.refreshControl.endRefreshing()
         })
         
@@ -354,11 +392,21 @@ extension TopicDetailViewController {
     
     /// 感谢主题请求
     func thankTopicHandle() {
-        
-        guard let `topic` = topic,
-            let token = topic.token else {
-                HUD.showText("操作失败")
-                return
+
+        guard let `topic` = topic else {
+            HUD.showText("操作失败")
+            return
+        }
+
+        // 已感谢
+        guard !topic.isThank else {
+            HUD.showText("主题已感谢，无法重复提交")
+            return
+        }
+
+        guard let token = topic.token else {
+            HUD.showText("操作失败")
+            return
         }
         
         // TODO: 感谢发送成功之后 会提示数据解析失败, 这里需要测试
@@ -382,12 +430,14 @@ extension TopicDetailViewController {
         
         thankReply(replyID: replyID, token: token, success: {
             HUD.showText("感谢已发送")
+            // TODO: 修改状态，解析评论时需要解析是否已经感谢
 //            comment.isThank = true
         }) { error in
             HUD.showText(error)
         }
     }
     
+    /// 忽略主体请求
     func ignoreTopicHandle() {
         guard let `topic` = topic,
             let once = topic.once else {
@@ -396,7 +446,8 @@ extension TopicDetailViewController {
         }
         
         ignoreTopic(topicID: topicID, once: once, success: { [weak self] in
-            // 需要 pop 掉该控制器?
+            // 需要 pop 掉该控制器? YES
+            // 需要刷新主题列表？ NO
             HUD.showText("已成功忽略该主题", completionBlock: { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             })
@@ -406,8 +457,16 @@ extension TopicDetailViewController {
     }
 }
 
-
+// MARK: - Action Handle
 extension TopicDetailViewController {
+
+    func avatarLongPressHandle(_ username: String) {
+        let atStr = "@\(username)"
+        commentInputView.beFirstResponder()
+
+        if commentInputView.text.contains(atStr) { return }
+        commentInputView.text.append(" \(atStr) ")
+    }
     
     /// 打开系统分享
     func systemShare() {
@@ -431,21 +490,26 @@ extension TopicDetailViewController {
         }
         present(controller, animated: true, completion: nil)
     }
-}
 
-extension TopicDetailViewController: StatefulViewController {
-    
-    func hasContent() -> Bool {
-        return topic != nil
-    }
-    
-    func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        let ev = EmptyView(frame: tableView.frame)
-        ev.retryHandle = { [weak self] in
-            self?.fetchTopicDetail()
+    /// 是否只看楼主
+    func showOnlyFloorHandle() {
+        if isShowOnlyFloor {
+            dataSources = comments
+        } else {
+            let result = comments.filter { $0.member.username == topic?.member?.username }
+            dataSources = result
         }
-        emptyView = ev
-        setupInitialViewState()
+        tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        isShowOnlyFloor = !isShowOnlyFloor
+    }
+
+    /// 从系统 Safari 浏览器中打开
+    func openSafariHandle() {
+        guard let url = API.topicDetail(topicID: topicID).url,
+            UIApplication.shared.canOpenURL(url) else {
+                HUD.showText("无法打开网页")
+                return
+        }
+        UIApplication.shared.openURL(url)
     }
 }

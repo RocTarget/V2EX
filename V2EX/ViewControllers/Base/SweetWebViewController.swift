@@ -99,7 +99,7 @@ open class SweetWebViewController: UIViewController {
         if websiteTitleInNavigationBar {
             webView.removeObserver(self, forKeyPath: titleKeyPath)
         }
-        log.info("SweetWebViewController deinit")
+        log.info("DEINIT: SweetWebViewController")
     }
 
     init(url: String) {

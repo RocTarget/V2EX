@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 extension URLComponents {
     subscript(key: String) -> String? {
@@ -104,3 +105,14 @@ extension FileManager {
 }
 
 
+
+extension NSObject {
+    static var className: String {
+        return String(describing: type(of: self)).components(separatedBy: ".").last ?? ""
+    }
+
+    var className: String {
+        return String(describing: type(of: self)).components(separatedBy: ".").last ?? ""
+//        return NSStringFromClass(type(of: self)).components(separatedBy: ".").last!
+    }
+}

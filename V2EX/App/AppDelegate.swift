@@ -18,13 +18,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: UI
-    var window: UIWindow?
+    private var window: UIWindow {
+        return AppWindow.shared.window
+    }
 
     // MARK: UIApplicationDelegate
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        AppSetup.setup()
+        AppWindow.shared.prepare()
+        AppSetup.prepare()
 
         return true
     }

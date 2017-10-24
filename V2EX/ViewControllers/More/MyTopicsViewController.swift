@@ -22,9 +22,9 @@ class MyTopicsViewController: BaseTopicsViewController {
                 self?.refreshControl.endRefreshing()
         }) { [weak self] error in
             self?.refreshControl.endRefreshing()
-            self?.endLoading()
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            if let `errorView` = self?.errorView as? EmptyView {
+                errorView.message = error
             }
         }
     }

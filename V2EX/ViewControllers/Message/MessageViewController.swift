@@ -1,7 +1,6 @@
 import UIKit
-import StatefulViewController
 
-class MessageViewController: BaseViewController, AccountService {
+class MessageViewController: DataViewController, AccountService {
     
     private lazy var tableView: UITableView = {
         let view = UITableView()
@@ -23,31 +22,20 @@ class MessageViewController: BaseViewController, AccountService {
     
     private var messages: [MessageModel] = []
     
-    private var isLoad: Bool = false
+//    /// 标记有新消失时是否刷新，第一次加载不请求
+//    private var isLoad: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
 
-        setupStateFul()
-        
-        guard AccountModel.isLogin else {
-            endLoading()
-            (emptyView as? EmptyView)?.type = .normal
-            (emptyView as? EmptyView)?.message = "您还没有登录"
-            return
-        }
-        
         fetchNotifications()
-        startLoading()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        isLoad = true
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        
+//        isLoad = true
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -68,8 +56,37 @@ class MessageViewController: BaseViewController, AccountService {
             $0.edges.equalToSuperview()
         }
     }
-    
+
+    override func setupRx() {
+        
+        refreshControl.rx
+            .controlEvent(.valueChanged)
+            .subscribeNext { [weak self] in
+                self?.fetchNotifications()
+            }.disposed(by: rx.disposeBag)
+        
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.LoginSuccessName)
+            .subscribeNext { [weak self] _ in
+                self?.fetchNotifications()
+            }.disposed(by: rx.disposeBag)
+    }
+
+    // MARK: States Handle
+
+    override func loadData() {
+        fetchNotifications()
+    }
+
     func fetchNotifications() {
+
+        guard AccountModel.isLogin else {
+            endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            status = .noAuth
+            return
+        }
+
+        startLoading()
 
         notifications(success: { [weak self] messages in
             self?.messages = messages
@@ -78,22 +95,22 @@ class MessageViewController: BaseViewController, AccountService {
             self?.refreshControl.endRefreshing()
             self?.tabBarItem.badgeValue = nil
         }) { [weak self] error in
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
-                emptyView.type = .error
-            }
-            self?.endLoading()
+            self?.errorMessage = error
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self?.refreshControl.endRefreshing()
         }
     }
-    
-    override func setupRx() {
-        
-        refreshControl.rx
-            .controlEvent(.valueChanged)
-            .subscribeNext { [weak self] in
-                self?.fetchNotifications()
-            }.disposed(by: rx.disposeBag)
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton _: UIButton) {
+        if status == .noAuth {
+            presentLoginVC()
+            return
+        }
+        fetchNotifications()
+    }
+
+    override func hasContent() -> Bool {
+        return messages.count.boolValue
     }
 }
 
@@ -111,7 +128,7 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
                 let row = tableView.indexPath(for: cell)?.row else {
                     return
             }
-            log.info(row)
+            log.info(row, self)
             //            let message = self.messages[row]
             //            log.info(message.user.username)
             //            let memberVC = MemberPageViewController(member: member)
@@ -124,22 +141,5 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
         guard let topicID = messages[indexPath.row].topic.topicID else { return }
         let topicDetailVC = TopicDetailViewController(topicID: topicID)
         navigationController?.pushViewController(topicDetailVC, animated: true)
-    }
-}
-
-extension MessageViewController: StatefulViewController {
-    
-    func hasContent() -> Bool {
-        return messages.count.boolValue
-    }
-    
-    func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        let ev = EmptyView(frame: tableView.frame)
-        ev.retryHandle = { [weak self] in
-            self?.fetchNotifications()
-        }
-        emptyView = ev
-        setupInitialViewState()
     }
 }

@@ -1,7 +1,6 @@
 import UIKit
-import StatefulViewController
 
-class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewController {
+class BaseTopicsViewController: DataViewController, TopicService {
 
     internal lazy var tableView: UITableView = {
         let view = UITableView()
@@ -43,23 +42,10 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
     override func setupSubviews() {
         registerForPreviewing(with: self, sourceView: tableView)
 
         tableView.addSubview(refreshControl)
-
-        
-        setupStateFul()
-        fetchData()
-    }
-
-    internal func fetchData() {
-        startLoading()
-        fetchTopic()
     }
 
     override func setupConstraints() {
@@ -77,6 +63,25 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
             }.disposed(by: rx.disposeBag)
     }
 
+    // MARK: State Handle
+
+    override func loadData() {
+        fetchData()
+    }
+
+    override func hasContent() -> Bool {
+        return topics.count.boolValue
+    }
+
+    func fetchData() {
+        startLoading()
+        fetchTopic()
+    }
+    
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchData()
+    }
+
     func fetchTopic() {
 
         topics(href: href, success: { [weak self] topic in
@@ -85,8 +90,8 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
             self?.endLoading()
             }, failure: { [weak self] error in
                 self?.refreshControl.endRefreshing()
-                self?.endLoading()
-                if let `emptyView` = self?.emptyView as? EmptyView {
+                self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+                if let `emptyView` = self?.errorView as? EmptyView {
                     emptyView.message = error
                 }
         })
@@ -106,23 +111,6 @@ class BaseTopicsViewController: BaseViewController, TopicService, StatefulViewCo
             break
         }
     }
-    
-    
-    
-    func hasContent() -> Bool {
-        return topics.count.boolValue
-    }
-
-    func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        let ev = EmptyView(frame: tableView.frame)
-        ev.retryHandle = { [weak self] in
-            self?.fetchData()
-        }
-        emptyView = ev
-        setupInitialViewState()
-    }
-    
 }
 
 extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {

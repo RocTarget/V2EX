@@ -1,7 +1,6 @@
 import UIKit
-import StatefulViewController
 
-class TopicSearchResultViewController: BaseViewController, TopicService {
+class TopicSearchResultViewController: DataViewController, TopicService {
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -34,12 +33,10 @@ class TopicSearchResultViewController: BaseViewController, TopicService {
         if #available(iOS 11.0, *) {
             tableView.contentInsetAdjustmentBehavior = .never
         } else {
-            // Fallback on earlier versions
         }
     }
     
     override func setupSubviews() {
-        setupStateFul()
         startLoading()
     }
     
@@ -48,7 +45,21 @@ class TopicSearchResultViewController: BaseViewController, TopicService {
             $0.edges.equalToSuperview()
         }
     }
-    
+
+    // MARK: State Handle
+
+    override func hasContent() -> Bool {
+        return searchResults.count.boolValue
+    }
+
+    override func loadData() {
+
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+
+    }
+
     public func search(query: String?, selectedScope: Int) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
         
@@ -81,20 +92,5 @@ extension TopicSearchResultViewController: UITableViewDelegate, UITableViewDataS
         guard let id = searchResults[indexPath.row].id else { return }
         let topicDetailVC = TopicDetailViewController(topicID: id)
         presentingViewController?.navigationController?.pushViewController(topicDetailVC, animated: true)
-    }
-}
-
-extension TopicSearchResultViewController: StatefulViewController {
-    
-    func hasContent() -> Bool {
-        return searchResults.count.boolValue
-    }
-    
-    func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        let ev = EmptyView(frame: tableView.frame)
-        ev.type = .empty
-        emptyView = ev
-        setupInitialViewState()
     }
 }

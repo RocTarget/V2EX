@@ -5,6 +5,6 @@ struct CommentModel {
     var member: MemberModel
     var content: String
     var publicTime: String
-//    var thanks: String
+    var isThank: Bool = false
     var floor: String
 }

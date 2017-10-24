@@ -17,7 +17,7 @@ class TabBarViewController: UITabBarController {
     func listenNotification() {
         
         NotificationCenter.default.rx
-            .notification(.UnreadNoticeName)
+            .notification(Notification.Name.V2.UnreadNoticeName)
             .subscribeNext { [weak self] notification in
                 guard let count = notification.object as? Int else {
                     return

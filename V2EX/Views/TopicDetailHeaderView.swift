@@ -4,6 +4,7 @@ import SnapKit
 
 enum TapType {
     case member(MemberModel)
+    case memberAvatarLongPress(MemberModel)
     case node(NodeModel)
     case image(String)
     case webpage(URL)

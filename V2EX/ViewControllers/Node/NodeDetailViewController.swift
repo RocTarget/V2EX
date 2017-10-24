@@ -1,5 +1,4 @@
 import UIKit
-import StatefulViewController
 
 class NodeDetailViewController: BaseTopicsViewController, NodeService {
 
@@ -34,11 +33,8 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService {
                 self?.endLoading()
         }) { [weak self] error in
             self?.refreshControl.endRefreshing()
-
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
-            }
-            self?.endLoading()
+            self?.errorMessage = error
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
 }

@@ -9,5 +9,5 @@ public typealias Action = () -> Void
 
 func presentLoginVC() {
     let nav = NavigationViewController(rootViewController: LoginViewController())
-    AppDelegate.shared.window?.rootViewController?.present(nav, animated: true, completion: nil)
+    AppWindow.shared.window.rootViewController?.present(nav, animated: true, completion: nil)
 }

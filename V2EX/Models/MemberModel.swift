@@ -24,3 +24,13 @@ struct MemberModel {
         self.avatar = avatar
     }
 }
+
+extension MemberModel: Hashable {
+    static func ==(lhs: MemberModel, rhs: MemberModel) -> Bool {
+        return lhs.username == rhs.username && lhs.url == rhs.url && lhs.avatar == rhs.avatar
+    }
+
+    var hashValue: Int {
+        return "\(username),\(url),\(avatar)".hashValue
+    }
+}

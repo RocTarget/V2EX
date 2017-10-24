@@ -96,6 +96,10 @@ class TopicCommentCell: BaseTableViewCell {
         
         let avatarTapGesture = UITapGestureRecognizer()
         avatarView.addGestureRecognizer(avatarTapGesture)
+
+        let avatarLongPressGesture = UILongPressGestureRecognizer()
+        avatarLongPressGesture.minimumPressDuration = 0.25
+        avatarView.addGestureRecognizer(avatarLongPressGesture)
         
         avatarTapGesture.rx
             .event
@@ -103,6 +107,15 @@ class TopicCommentCell: BaseTableViewCell {
                 guard let member = self?.comment?.member else { return }
                 self?.tapHandle?(.member(member))
             }.disposed(by: rx.disposeBag)
+
+        avatarLongPressGesture.rx
+        .event
+            .subscribeNext { [weak self] gesture in
+
+                guard gesture.state == .began else { return }
+                guard let member = self?.comment?.member else { return }
+                self?.tapHandle?(.memberAvatarLongPress(member))
+        }.disposed(by: rx.disposeBag)
         
         contentView.addSubviews(
             avatarView,

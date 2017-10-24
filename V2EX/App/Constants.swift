@@ -1,6 +1,11 @@
 import Foundation
 import UIKit
 
+struct Closure {
+    typealias Completion = () -> Void
+    typealias Failure = (NSError?) -> Void
+}
+
 struct Constants {
 
     struct Config {
@@ -28,9 +33,16 @@ struct Constants {
 
 // MARK: - 通知
 extension Notification.Name {
-    /// 解析到 未读提醒 时的通知
-    static let UnreadNoticeName = Notification.Name("UnreadNoticeName")
     
+    /// 自定义的通知
+    struct V2 {
+
+        /// 解析到 未读提醒 时的通知
+        static let UnreadNoticeName = Notification.Name("UnreadNoticeName")
+
+        /// 登录成功通知
+        static let LoginSuccessName = Notification.Name("LoginSuccessName")
+    }
 }
 
 

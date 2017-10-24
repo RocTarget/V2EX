@@ -22,18 +22,7 @@ protocol TopicService: HTMLParseService {
         href: String,
         success: ((_ topics: [TopicModel]) -> Void)?,
         failure: Failure?)
-    
-    /// 获取 主题 详情数据
-    ///
-    /// - Parameters:
-    ///   - topic: topic
-    ///   - success: 成功
-    ///   - failure: 失败
-    func topicDetail(
-        topic: TopicModel,
-        success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
-        failure: Failure?)
-    
+
     /// 获取 主题 详情数据
     ///
     /// - Parameters:
@@ -64,7 +53,7 @@ protocol TopicService: HTMLParseService {
         success: ((_ topics: [TopicModel]) -> Void)?,
         failure: Failure?)
     
-    func memberReply(
+    func memberReplys(
         username: String,
         success: ((_ messages: [MessageModel]) -> ())?,
         failure: Failure?)
@@ -185,57 +174,7 @@ extension TopicService {
             success?(topics)
         }, failure: failure)
     }
-    
-    func topicDetail(
-        topic: TopicModel,
-        success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
-        failure: Failure?) {
-        
-        Network.htmlRequest(target: .topics(href: topic.href), success: { html in
-            var `topic` = topic
-            
-            guard let publicTimeAndClickCountString = html.xpath("//*[@id='Wrapper']//div[@class='header']/small/text()[2]").first?.text else {
-                // 需要登录
-                if let error = html.xpath("//*[@id='Wrapper']/div[2]/div[2]").first?.content {
-                    failure?(error)
-                    return
-                }
-                failure?("数据解析失败")
-                return
-            }
-            topic.publicTime = publicTimeAndClickCountString
-            topic.once = self.parseOnce(html: html)
-            
-            //            let publicTimeAndClickCountList = publicTimeAndClickCountString.trimmed.components(separatedBy: "·").map { $0.trimmed }.filter { $0.isNotEmpty }
-            //            if publicTimeAndClickCountList.count >= 2 {
-            //            }
-            
-            let contentHTML = html.xpath("//*[@id='Wrapper']//div[@class='topic_content']").first?.toHTML ?? ""
-            let subtleHTML = html.xpath("//*[@id='Wrapper']//div[@class='subtle']").flatMap { $0.toHTML }.joined(separator: "")
-            let content = contentHTML + subtleHTML
-            
-            topic.content = content
-            
-            let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
-            let comments = commentPath.flatMap({ ele -> CommentModel? in
-                guard let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
-                    let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
-                    let userHref = userPath["href"],
-                    let username = userPath.content,
-                    let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
-                    let content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.content,
-                    let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
-                        return nil
-                }
-                
-                let id = ele["id"]?.replacingOccurrences(of: "r_", with: "") ?? "0"
-                let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
-                return CommentModel(id: id, member: member, content: content, publicTime: publicTime, floor: floor)
-            })
-            success?(topic, comments)
-        }, failure: failure)
-    }
-    
+
     func topicDetail(
         topicID: String,
         success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
@@ -257,22 +196,8 @@ extension TopicService {
             let subtleHTML = html.xpath("//*[@id='Wrapper']//div[@class='subtle']").flatMap { $0.toHTML }.joined(separator: "")
             let content = contentHTML + subtleHTML
             
-            let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
-            let comments = commentPath.flatMap({ ele -> CommentModel? in
-                guard let replyID = ele["id"]?.deleteOccurrences(target: "r_"),
-                    let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
-                    let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
-                    let userHref = userPath["href"],
-                    let username = userPath.content,
-                    let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
-                    var content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.toHTML,
-                    let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
-                        return nil
-                }
-                content = self.replacingIframe(text: content)
-                let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
-                return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, floor: floor)
-            })
+            let comments = self.parseComment(html: html)
+
             guard let userPath = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/div/a").first,
                 let userAvatar = userPath.xpath("./img").first?["src"],
                 let userhref = userPath["href"],
@@ -293,9 +218,13 @@ extension TopicService {
                 let csrfToken = URLComponents(string: csrfTokenPath)?["t"]
                 let isFavorite = csrfTokenPath.hasPrefix("/unfavorite")
                 topic.token = csrfToken
-                topic.isFavorite = isFavorite
-                let thankStr = html.xpath("//*[@id='topic_thank']").first?.content ?? ""
-                topic.isThank = thankStr != "感谢"
+
+                // 如果是登录状态 检查是否已经感谢和收藏
+                if AccountModel.isLogin {
+                    topic.isFavorite = isFavorite
+                    let thankStr = html.xpath("//*[@id='topic_thank']").first?.content ?? ""
+                    topic.isThank = thankStr != "感谢"
+                }
             }
             
             topic.once = self.parseOnce(html: html)
@@ -359,82 +288,17 @@ extension TopicService {
         username: String,
         success: ((_ topics: [TopicModel]) -> Void)?,
         failure: Failure?) {
-        
         Network.htmlRequest(target: .memberTopics(username: username), success: { html in
-            let rootPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
-            let topics = rootPath.flatMap({ ele -> TopicModel? in
-                guard let userNode = ele.xpath(".//td//span/strong/a").first,
-                    let userPage = userNode["href"],
-                    let username = userNode.content,
-                    let topicPath = ele.xpath(".//td/span[@class='item_title']/a").first,
-                    let topicTitle = topicPath.content,
-                    //                    let avatarSrc = ele.xpath(".//td/a/img").first?["src"],
-                    let avatarSrc = UserDefaults.get(forKey: Constants.Keys.avatarSrc) as? String,
-                    let topicHref = topicPath["href"] else {
-                        return nil
-                }
-                
-                
-                let replyCount = ele.xpath(".//td[2]/a").first?.text ?? "0"
-                
-                let homeXPath = ele.xpath(".//td/span[3]/text()").first
-                let nodeDetailXPath = ele.xpath(".//td/span[2]/text()").first
-                let textNode = homeXPath ?? nodeDetailXPath
-                let timeString = textNode?.content ?? ""
-                let replyUsername = textNode?.parent?.xpath("./strong").first?.content ?? ""
-                
-                var lastReplyAndTime: String = ""
-                if homeXPath != nil { // 首页的布局
-                    lastReplyAndTime = timeString + replyUsername
-                } else if nodeDetailXPath != nil {
-                    lastReplyAndTime = replyUsername + timeString
-                }
-                
-                let member = MemberModel(username: username, url: userPage, avatar: avatarSrc)
-                
-                var node: NodeModel?
-                
-                if let nodePath = ele.xpath(".//td/span[@class='small fade']/a[@class='node']").first,
-                    let nodename = nodePath.content,
-                    let nodeHref = nodePath["href"] {
-                    node = NodeModel(name: nodename, href: nodeHref)
-                }
-                
-                return TopicModel(member: member, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)
-            })
-            
-            guard topics.count > 0 else {
-                failure?("获取节点信息失败")
-                return
-            }
-            
-            success?(topics)
+            success?(self.parseMemberTopics(html: html))
         }, failure: failure)
     }
     
-    func memberReply(
+    func memberReplys(
         username: String,
         success: ((_ messages: [MessageModel]) -> ())?,
         failure: Failure?) {
         Network.htmlRequest(target: .memberReplys(username: username), success: { html in
-            let titlePath = html.xpath("//*[@id='Wrapper']//div[@class='dock_area']")
-            let contentPath = html.xpath("//*[@id='Wrapper']//div[@class='reply_content']")
-            
-            let messages = titlePath.enumerated().flatMap({ index, ele -> MessageModel? in
-                guard let replyContent = contentPath[index].text,
-                    let replyNode = ele.xpath(".//tr[1]/td[1]/span").first,
-                    let replyDes = ele.content?.trimmed,
-                    let topicNode = replyNode.xpath("./a").first,
-                    let topicTitle = topicNode.content?.trimmed,
-                    let topicHref = topicNode["href"],
-                    let replyTime = ele.xpath(".//tr[1]/td/div/span").first?.content else {
-                        return nil
-                }
-                
-                let topic = TopicModel(member: nil, node: nil, title: topicTitle, href: topicHref)
-                return MessageModel(member: nil, topic: topic, time: replyTime, content: replyContent, replyTypeStr: replyDes)
-            })
-            success?(messages)
+            success?(self.parseMemberReplys(html: html))
         }, failure: failure)
     }
     

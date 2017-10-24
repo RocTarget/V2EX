@@ -1,7 +1,6 @@
 import UIKit
-import StatefulViewController
 
-class MyReplyViewController: BaseViewController, TopicService {
+class MyReplyViewController: DataViewController, TopicService {
 
     private lazy var tableView: UITableView = {
         let view = UITableView()
@@ -33,31 +32,36 @@ class MyReplyViewController: BaseViewController, TopicService {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
-    override func setupSubviews() {
-        fetchReplys()
-        setupStateFul()
-    }
-
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
 
+    // MARK: State Handle
+
+    override func loadData() {
+
+        fetchReplys()
+    }
+
+    override func hasContent() -> Bool {
+        return replys.count.boolValue
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchReplys()
+    }
+
     func fetchReplys() {
         startLoading()
-
-        memberReply(username: username, success: { [weak self] replys in
+        memberReplys(username: username, success: { [weak self] replys in
             self?.replys = replys
             self?.endLoading()
         }) { [weak self] error in
-            self?.endLoading()
-            if let `emptyView` = self?.emptyView as? EmptyView {
-                emptyView.message = error
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            if let `errorView` = self?.errorView as? ErrorView {
+                errorView.message = error
             }
         }
     }
@@ -87,20 +91,4 @@ extension MyReplyViewController: UITableViewDelegate, UITableViewDataSource {
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
     }
 
-}
-
-extension MyReplyViewController: StatefulViewController {
-    func hasContent() -> Bool {
-        return replys.count.boolValue
-    }
-
-    func setupStateFul() {
-        loadingView = LoadingView(frame: tableView.frame)
-        let ev = EmptyView(frame: tableView.frame)
-        ev.retryHandle = { [weak self] in
-            self?.fetchReplys()
-        }
-        emptyView = ev
-        setupInitialViewState()
-    }
 }
