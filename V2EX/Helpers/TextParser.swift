@@ -10,13 +10,17 @@ struct TextParser {
     static var mentioned: NSRegularExpression? {
         return try? NSRegularExpression(pattern: "@(\\S+)\\s", options: [.caseInsensitive])
     }
+    
+    static var iframe: NSRegularExpression? {
+        return try? NSRegularExpression(pattern: "<iframe(.*?)</iframe>", options: [.caseInsensitive, .dotMatchesLineSeparators])
+    }
 
     /// 正则：匹配 www.a.com 或者 http://www.a.com 的类型
     /// ref: http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-    static var regexURLs: NSRegularExpression {
+    static var regexURLs: NSRegularExpression? {
         get {
             let regex: String = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+([-A-Z0-9a-z_\\$\\.\\+!\\*\\(\\)/,:;@&=\\?~#%]*)*"
-            let regularExpression = try! NSRegularExpression(pattern: regex, options: [.caseInsensitive])
+            let regularExpression = try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
             return regularExpression
         }
     }

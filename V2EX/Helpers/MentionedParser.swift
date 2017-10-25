@@ -20,7 +20,7 @@ class MentionedParser: NSObject, YYTextParser{
                 let binding = YYTextBinding()
                 binding.deleteConfirm = true ;
                 text.yy_setTextBinding(binding, range: bindlingRange)
-                text.yy_setColor(UIColor.hex(0x4CBCFA), range: bindlingRange)
+                text.yy_setColor(UIColor.hex(0x778087), range: bindlingRange)
         }
         return false;
     }

@@ -78,12 +78,6 @@ class TopicDetailViewController: DataViewController, TopicService {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        view.endEditing(true)
-    }
-
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -128,20 +122,21 @@ class TopicDetailViewController: DataViewController, TopicService {
             memberListVC.callback = { members in
                 self.commentInputView.beFirstResponder()
 
-                guard members.count.boolValue else {
-                    return
-                }
+                guard members.count.boolValue else { return }
                 
                 var atsWrapper = members
                     .filter{ !self.commentInputView.text.contains($0.atUsername) }
                     .map { $0.atUsername }
                     .joined()
 
-
                 if self.commentInputView.text.last != " " {
                     atsWrapper.insert(" ", at: self.commentInputView.text.startIndex)
                 }
                 self.commentInputView.text.append(atsWrapper)
+                
+                // 修改光标位置
+                let range = self.commentInputView.text.NSString.range(of: atsWrapper)
+                self.commentInputView.textView.selectedRange = NSRange(location: range.location + range.length, length: 0)
             }
         }
 
@@ -251,7 +246,6 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         cell.tapHandle = { [weak self] type in
             self?.tapHandle(type)
         }
-        log.info(comment.isThank, comment.contentUnwrapper)
         return cell
     }
     
@@ -438,8 +432,18 @@ extension TopicDetailViewController {
     }
     
     @objc private func viewDialogAction() {
-
-        log.info("查看对话: ", selectComment?.member.username)
+        guard let `selectComment` = selectComment else { return }
+        let dialogs = CommentModel.atUsernameComments(comments: comments, currentComment: selectComment)
+        
+        guard dialogs.count.boolValue else {
+            HUD.showText("没有找到与该用户有关的对话")
+            return
+        }
+        
+        let viewDialogVC = ViewDialogViewController(comments: dialogs)
+        let nav = NavigationViewController(rootViewController: viewDialogVC)
+        viewDialogVC.title = "有关 \(selectComment.member.username) 的对话"
+        present(nav, animated: true, completion: nil)
     }
 
     @objc private func atMemberAction() {

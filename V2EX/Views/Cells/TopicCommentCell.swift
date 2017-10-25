@@ -105,6 +105,10 @@ class TopicCommentCell: BaseTableViewCell {
             word-break: break-all;
             word-wrap: break-word;
         }
+        img {
+            max-width: \(UIScreen.screenWidth * 0.8)px;
+            margin-top: 2cm;
+        }
     """
 
     override func initialize() {

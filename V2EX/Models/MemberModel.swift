@@ -22,6 +22,10 @@ struct MemberModel {
         return "@\(username) "
     }
     
+    public var atUsernameWithoutSpace: String {
+        return "@\(username)"
+    }
+    
     init(username: String, url: String, avatar: String) {
         self.username = username
         self.url = url

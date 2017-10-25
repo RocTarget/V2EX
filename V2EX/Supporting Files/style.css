@@ -118,33 +118,6 @@ ol {
     image-orientation: from-image;
 }
 
-.markdown_body img {
-    max-width: 100%;
-}
-
-.markdown_body table {
-    padding: 0; border-collapse: collapse; }
-.markdown_body table tr {
-    border-top: 1px solid #cccccc;
-    background-color: white;
-    margin: 0;
-    padding: 0; }
-.markdown_body table tr:nth-child(2n) {
-    background-color: #f8f8f8; }
-.markdown_body table tr th {
-    font-weight: bold;
-    border: 1px solid #cccccc;
-    margin: 0;
-    padding: 6px 12px; }
-.markdown_body table tr td {
-    border: 1px solid #cccccc;
-    margin: 0;
-    padding: 6px 12px; }
-.markdown_body table tr th :first-child, .markdown_body table tr td :first-child {
-    margin-top: 0; }
-.markdown_body table tr th :last-child, .markdown_body table tr td :last-child {
-    margin-bottom: 0; }
-
 body {
     background-color: #ffffff;
 }
@@ -154,9 +127,5 @@ img {
 }
 
 .imgly {
-    max-width: 100%;
-}
-
-.markdown_body>p>img {
     max-width: 100%;
 }

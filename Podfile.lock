@@ -1,6 +1,7 @@
 PODS:
   - Alamofire (4.5.1)
   - Carte (2.1.4)
+  - Disk (0.3.1)
   - IQKeyboardManagerSwift (5.0.4)
   - Kanna (2.1.1)
   - Kingfisher (4.2.0)
@@ -15,9 +16,6 @@ PODS:
     - RxSwift (~> 4.0)
   - RxSwift (4.0.0)
   - SnapKit (4.0.0)
-  - SQLite.swift (0.11.4):
-    - SQLite.swift/standard (= 0.11.4)
-  - SQLite.swift/standard (0.11.4)
   - StatefulViewController (3.0)
   - Themes (1.1.0)
   - Toaster (2.1.0)
@@ -28,6 +26,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire
   - Carte
+  - Disk
   - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
   - Kingfisher
@@ -39,7 +38,6 @@ DEPENDENCIES:
   - RxOptional
   - RxSwift (~> 4.0)
   - SnapKit
-  - SQLite.swift
   - StatefulViewController
   - Themes
   - Toaster
@@ -50,6 +48,7 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   Carte: a19a62db8478426c406f40048d0c67e98a021c39
+  Disk: 64f0f95a4163314aba6f09f010f17de964762140
   IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
   Kingfisher: 9ee7e788d8ba07c3f21ce0d43f33cec310a4f781
@@ -61,7 +60,6 @@ SPEC CHECKSUMS:
   RxOptional: e5448d3e21024489e07c31f6a262f2b50c975367
   RxSwift: fd680d75283beb5e2559486f3c0ff852f0d35334
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
-  SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
   StatefulViewController: 4803bf900d44de26074344998e10e041113b5931
   Themes: 9c5626e1b9d0a5683e5179c00c38077bd0281148
   Toaster: 8c3225dc465bef4aa57e147a288724576df8e439
@@ -69,6 +67,6 @@ SPEC CHECKSUMS:
   ViewAnimator: a094d13bc86e868e908d33e524fcb58a4ddcf98e
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 59d699709ff3b6994fdcef98014099b389c58d14
+PODFILE CHECKSUM: 455020324ce64d231892943c9d1af9c348f02885
 
 COCOAPODS: 1.3.1

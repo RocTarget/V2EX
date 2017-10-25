@@ -89,7 +89,9 @@ extension CommentInputView: YYTextViewDelegate {
         }
 
         if text == "@" {
-            atUserHandle?()
+            GCD.delay(0.2, block: {
+                self.atUserHandle?()
+            })
         }
         return true
     }

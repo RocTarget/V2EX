@@ -80,8 +80,6 @@
 		BF701F201F98610900761E82 /* MarkdownInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */; };
 		BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11171F91E473003815C1 /* UIInsetLabel.swift */; };
 		BF7B111A1F91E5A3003815C1 /* HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11191F91E5A3003815C1 /* HUD.swift */; };
-		BF7B111E1F91F960003815C1 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B111D1F91F960003815C1 /* DB.swift */; };
-		BF7B11201F91F9EA003815C1 /* NodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B111F1F91F9EA003815C1 /* NodeStore.swift */; };
 		BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */; };
 		BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */; };
 		BF9EC8201F95C39A00E7AA02 /* MemberPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */; };
@@ -120,7 +118,6 @@
 		BFE3947D1F90823D00D3ED1D /* TopicCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */; };
 		BFE394841F909CC600D3ED1D /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = BFE3947E1F909B1400D3ED1D /* style.css */; };
 		BFE8CB291FA051E2007E2F02 /* ViewDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE8CB281FA051E2007E2F02 /* ViewDialogViewController.swift */; };
-		BFE8CB2B1FA0541C007E2F02 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE8CB2A1FA0541C007E2F02 /* UIViewController+Extension.swift */; };
 		BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE8CB2C1FA09A9D007E2F02 /* MentionedParser.swift */; };
 		BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */; };
 		BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */; };
@@ -232,8 +229,6 @@
 		BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownInputAccessoryView.swift; sourceTree = "<group>"; };
 		BF7B11171F91E473003815C1 /* UIInsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInsetLabel.swift; sourceTree = "<group>"; };
 		BF7B11191F91E5A3003815C1 /* HUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUD.swift; sourceTree = "<group>"; };
-		BF7B111D1F91F960003815C1 /* DB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
-		BF7B111F1F91F9EA003815C1 /* NodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeStore.swift; sourceTree = "<group>"; };
 		BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectCell.swift; sourceTree = "<group>"; };
 		BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SweetWebViewController.swift; sourceTree = "<group>"; };
 		BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPageViewController.swift; sourceTree = "<group>"; };
@@ -272,7 +267,6 @@
 		BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCommentCell.swift; sourceTree = "<group>"; };
 		BFE3947E1F909B1400D3ED1D /* style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
 		BFE8CB281FA051E2007E2F02 /* ViewDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDialogViewController.swift; sourceTree = "<group>"; };
-		BFE8CB2A1FA0541C007E2F02 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		BFE8CB2C1FA09A9D007E2F02 /* MentionedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MentionedParser.swift; sourceTree = "<group>"; };
 		BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Extension.swift"; sourceTree = "<group>"; };
 		BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -474,15 +468,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		BF02A2C91F8F3E8900BEF85E /* DB */ = {
-			isa = PBXGroup;
-			children = (
-				BF7B111D1F91F960003815C1 /* DB.swift */,
-				BF7B111F1F91F9EA003815C1 /* NodeStore.swift */,
-			);
-			path = DB;
-			sourceTree = "<group>";
-		};
 		BF02A2CA1F8F3E9200BEF85E /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -527,7 +512,6 @@
 				773CD8F71F9B141200D5578F /* UIScrollView+Extension.swift */,
 				77507E681F9B168800D62286 /* String+PinYin.swift */,
 				779064471F9B72C1001A5ABA /* UIViewChain.swift */,
-				BFE8CB2A1FA0541C007E2F02 /* UIViewController+Extension.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -569,7 +553,6 @@
 				BF02A2C31F8F3E4800BEF85E /* ViewControllers */,
 				BF02A2C41F8F3E5900BEF85E /* Views */,
 				BF02A2CA1F8F3E9200BEF85E /* Models */,
-				BF02A2C91F8F3E8900BEF85E /* DB */,
 				BF02A2C81F8F3E7600BEF85E /* Services */,
 				BF02A2C71F8F3E6F00BEF85E /* Managers */,
 				BFCB67561F8F50D600D05A90 /* Networking */,
@@ -905,6 +888,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-V2EX/Pods-V2EX-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Carte/Carte.framework",
+				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
 				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Kanna/Kanna.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
@@ -915,7 +899,6 @@
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/StatefulViewController/StatefulViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/Themes/Themes.framework",
@@ -928,6 +911,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Carte.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kanna.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
@@ -938,7 +922,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StatefulViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Themes.framework",
@@ -1099,7 +1082,6 @@
 				BF5A6B871F99D3D800CF6BA1 /* MyTopicsViewController.swift in Sources */,
 				BFCB675C1F8F51DD00D05A90 /* TargetType.swift in Sources */,
 				BF9EC8271F95D6EE00E7AA02 /* BasePlaceholderView.swift in Sources */,
-				BFE8CB2B1FA0541C007E2F02 /* UIViewController+Extension.swift in Sources */,
 				BFBCE5B11F90C14B000106D6 /* Scheduler+Rx.swift in Sources */,
 				77C8DF721F930B0E009DE52C /* LoginForm.swift in Sources */,
 				77C8DF741F9316F1009DE52C /* UITextField+Extension.swift in Sources */,
@@ -1113,7 +1095,6 @@
 				BFCB674D1F8F4A2C00D05A90 /* Foundation+Extension.swift in Sources */,
 				BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */,
 				BF5A6B851F99D05800CF6BA1 /* BaseTopicsViewController.swift in Sources */,
-				BF7B11201F91F9EA003815C1 /* NodeStore.swift in Sources */,
 				BF9EC8281F95D6EE00E7AA02 /* EmptyView.swift in Sources */,
 				778AC6A61F9A2C810072C6E9 /* TopicSearchResultViewController.swift in Sources */,
 				BFCB67601F8F52B800D05A90 /* GCD.swift in Sources */,
@@ -1129,7 +1110,6 @@
 				BF39FFE91F9442DA00D6F8BD /* LoadingButton.swift in Sources */,
 				BFCB67431F8F48AA00D05A90 /* NSObject+Rx.swift in Sources */,
 				BF45E0051F9EFEE30001BEB2 /* EnumCollection.swift in Sources */,
-				BF7B111E1F91F960003815C1 /* DB.swift in Sources */,
 				77C8DF6E1F92FDE2009DE52C /* LoginViewController.swift in Sources */,
 				7756CCC61F92354B00EF47B8 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */,
 				BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */,

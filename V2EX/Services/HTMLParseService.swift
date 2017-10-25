@@ -105,9 +105,11 @@ extension HTMLParseService {
     // MARK: - 评论里面的视频替换成链接地址
     func replacingIframe(text: String) -> String {
         guard text.contains("</iframe>") else { return text }
-        let pattern = "<iframe(.*?)</iframe>"
-        let regx = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
-        guard let results = regx?.matches(in: text, options: .reportProgress, range: NSRange(location: 0, length: text.count)) else {
+        
+        guard let results = TextParser.iframe?.matches(
+            in: text,
+            options: .reportProgress,
+            range: NSRange(location: 0, length: text.count)) else {
             return text
         }
 

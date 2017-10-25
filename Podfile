@@ -32,8 +32,8 @@ target 'V2EX' do
     pod 'MarkdownView'
     pod 'YYText'
 
-    # DB
-    pod 'SQLite.swift'
+    # Cache
+    pod 'Disk'
 
     # Misc
     pod 'IQKeyboardManagerSwift'
