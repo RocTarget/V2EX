@@ -97,6 +97,8 @@
 		BFBCE5B31F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */; };
 		BFBCE5B61F90C14B000106D6 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */; };
 		BFBCE5B81F90C4FC000106D6 /* NodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5B71F90C4FC000106D6 /* NodesViewController.swift */; };
+		BFC89B491FA0283800759577 /* TextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC89B481FA0283800759577 /* TextParser.swift */; };
+		BFC89B4B1FA033CD00759577 /* FPSLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC89B4A1FA033CD00759577 /* FPSLabel.swift */; };
 		BFCB67431F8F48AA00D05A90 /* NSObject+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCB67421F8F489E00D05A90 /* NSObject+Rx.swift */; };
 		BFCB67461F8F498900D05A90 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCB67451F8F498900D05A90 /* HomeViewController.swift */; };
 		BFCB67481F8F499600D05A90 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCB67471F8F499600D05A90 /* BaseViewController.swift */; };
@@ -117,6 +119,9 @@
 		BFE3947B1F90822E00D3ED1D /* TopicDetailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE3947A1F90822E00D3ED1D /* TopicDetailHeaderView.swift */; };
 		BFE3947D1F90823D00D3ED1D /* TopicCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */; };
 		BFE394841F909CC600D3ED1D /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = BFE3947E1F909B1400D3ED1D /* style.css */; };
+		BFE8CB291FA051E2007E2F02 /* ViewDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE8CB281FA051E2007E2F02 /* ViewDialogViewController.swift */; };
+		BFE8CB2B1FA0541C007E2F02 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE8CB2A1FA0541C007E2F02 /* UIViewController+Extension.swift */; };
+		BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE8CB2C1FA09A9D007E2F02 /* MentionedParser.swift */; };
 		BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */; };
 		BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */; };
 		BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91D01F9490570050B7F5 /* ForgotPasswordViewController.swift */; };
@@ -244,6 +249,8 @@
 		BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+ClosureAction.swift"; sourceTree = "<group>"; };
 		BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
 		BFBCE5B71F90C4FC000106D6 /* NodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodesViewController.swift; sourceTree = "<group>"; };
+		BFC89B481FA0283800759577 /* TextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextParser.swift; sourceTree = "<group>"; };
+		BFC89B4A1FA033CD00759577 /* FPSLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPSLabel.swift; sourceTree = "<group>"; };
 		BFCB67421F8F489E00D05A90 /* NSObject+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Rx.swift"; sourceTree = "<group>"; };
 		BFCB67451F8F498900D05A90 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BFCB67471F8F499600D05A90 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
@@ -264,6 +271,9 @@
 		BFE3947A1F90822E00D3ED1D /* TopicDetailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailHeaderView.swift; sourceTree = "<group>"; };
 		BFE3947C1F90823D00D3ED1D /* TopicCommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCommentCell.swift; sourceTree = "<group>"; };
 		BFE3947E1F909B1400D3ED1D /* style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		BFE8CB281FA051E2007E2F02 /* ViewDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDialogViewController.swift; sourceTree = "<group>"; };
+		BFE8CB2A1FA0541C007E2F02 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
+		BFE8CB2C1FA09A9D007E2F02 /* MentionedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MentionedParser.swift; sourceTree = "<group>"; };
 		BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Extension.swift"; sourceTree = "<group>"; };
 		BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		BFEC91D01F9490570050B7F5 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
@@ -425,10 +435,13 @@
 		BF02A2C51F8F3E5E00BEF85E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				BFE8CB2C1FA09A9D007E2F02 /* MentionedParser.swift */,
+				BFC89B4A1FA033CD00759577 /* FPSLabel.swift */,
 				7756CCC51F92354B00EF47B8 /* LeftAlignedCollectionViewFlowLayout.swift */,
 				BFCB675F1F8F52B700D05A90 /* GCD.swift */,
 				BFCB67491F8F49BD00D05A90 /* Logger.swift */,
 				BFBCE5A21F90BB9E000106D6 /* HelperFunctions.swift */,
+				BFC89B481FA0283800759577 /* TextParser.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -514,6 +527,7 @@
 				773CD8F71F9B141200D5578F /* UIScrollView+Extension.swift */,
 				77507E681F9B168800D62286 /* String+PinYin.swift */,
 				779064471F9B72C1001A5ABA /* UIViewChain.swift */,
+				BFE8CB2A1FA0541C007E2F02 /* UIViewController+Extension.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -637,6 +651,7 @@
 			children = (
 				BFCB67451F8F498900D05A90 /* HomeViewController.swift */,
 				BF45FCCC1F906E0D006B2C2F /* TopicDetailViewController.swift */,
+				BFE8CB281FA051E2007E2F02 /* ViewDialogViewController.swift */,
 				BFFAFDE81F9F4428000EB91C /* MemberListViewController.swift */,
 				BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */,
 				778AC6A51F9A2C810072C6E9 /* TopicSearchResultViewController.swift */,
@@ -907,6 +922,7 @@
 				"${BUILT_PRODUCTS_DIR}/Toaster/Toaster.framework",
 				"${BUILT_PRODUCTS_DIR}/UIView+Positioning/UIView_Positioning.framework",
 				"${BUILT_PRODUCTS_DIR}/ViewAnimator/ViewAnimator.framework",
+				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -929,6 +945,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toaster.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIView_Positioning.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ViewAnimator.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1052,6 +1069,7 @@
 			files = (
 				778AC6B51F9AF07F0072C6E9 /* HighlightableContainer.swift in Sources */,
 				779064481F9B72C1001A5ABA /* UIViewChain.swift in Sources */,
+				BFC89B491FA0283800759577 /* TextParser.swift in Sources */,
 				773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */,
 				778AC6B91F9AF07F0072C6E9 /* String+Extensions.swift in Sources */,
 				BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */,
@@ -1067,6 +1085,7 @@
 				7756CCC81F92360F00EF47B8 /* NodeCell.swift in Sources */,
 				7756CCCA1F923D6100EF47B8 /* NodeHeaderView.swift in Sources */,
 				BF45FCCD1F906E0D006B2C2F /* TopicDetailViewController.swift in Sources */,
+				BFE8CB291FA051E2007E2F02 /* ViewDialogViewController.swift in Sources */,
 				BFBCE5B61F90C14B000106D6 /* UIViewController+Rx.swift in Sources */,
 				BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */,
 				BF3AB5C71F97672300043269 /* UIPlaceholderTextView.swift in Sources */,
@@ -1080,11 +1099,13 @@
 				BF5A6B871F99D3D800CF6BA1 /* MyTopicsViewController.swift in Sources */,
 				BFCB675C1F8F51DD00D05A90 /* TargetType.swift in Sources */,
 				BF9EC8271F95D6EE00E7AA02 /* BasePlaceholderView.swift in Sources */,
+				BFE8CB2B1FA0541C007E2F02 /* UIViewController+Extension.swift in Sources */,
 				BFBCE5B11F90C14B000106D6 /* Scheduler+Rx.swift in Sources */,
 				77C8DF721F930B0E009DE52C /* LoginForm.swift in Sources */,
 				77C8DF741F9316F1009DE52C /* UITextField+Extension.swift in Sources */,
 				779B17061F8FAF5A00E912E7 /* UILable+Extension.swift in Sources */,
 				776EFDCF1F9BA9690087AECC /* TSegmentedControlView.swift in Sources */,
+				BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */,
 				BF45E00C1F9F0A400001BEB2 /* StateView.swift in Sources */,
 				77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */,
 				7756CCD01F924F7A00EF47B8 /* HTMLParseService.swift in Sources */,
@@ -1129,6 +1150,7 @@
 				BFBCE5B81F90C4FC000106D6 /* NodesViewController.swift in Sources */,
 				BF02A2D21F8F42B600BEF85E /* UIColor+Extension.swift in Sources */,
 				BF9EC8291F95D6EE00E7AA02 /* LoadingView.swift in Sources */,
+				BFC89B4B1FA033CD00759577 /* FPSLabel.swift in Sources */,
 				BF39FFE71F94421C00D6F8BD /* Binder+Extension.swift in Sources */,
 				BFE3947D1F90823D00D3ED1D /* TopicCommentCell.swift in Sources */,
 				BFCB67481F8F499600D05A90 /* BaseViewController.swift in Sources */,

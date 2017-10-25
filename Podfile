@@ -29,16 +29,16 @@ target 'V2EX' do
     pod 'ViewAnimator'
     pod 'Themes'
     pod 'StatefulViewController'
+    pod 'MarkdownView'
+    pod 'YYText'
 
     # DB
     pod 'SQLite.swift'
 
     # Misc
-#    pod 'R.swift'
     pod 'IQKeyboardManagerSwift'
     pod 'Carte'
     pod 'Marklight'
-    pod 'MarkdownView'
 
     # Bug
 #    pod 'Fabric'

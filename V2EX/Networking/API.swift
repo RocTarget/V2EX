@@ -66,7 +66,7 @@ enum API {
     // 忽略回复
     case ignoreReply(replyID: String, once: String)
     // 预览 Markdown
-    case previewTopic(md: String)
+    case previewTopic(md: String, once: String)
 }
 
 extension API: TargetType {
@@ -134,6 +134,8 @@ extension API: TargetType {
             return .post("/thank/reply/\(replyID)?t=\(token)")
         case let .ignoreReply(replyID, once):
             return .post("/ignore/reply/\(replyID)?once=\(once)")
+        case let .previewTopic(md, once):
+            return .post("/preview/markdown?md=\(md)&once=\(once)&syntax=1")
         default:
             return .get("")
         }

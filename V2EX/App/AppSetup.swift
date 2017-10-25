@@ -8,6 +8,7 @@ struct AppSetup {
     static func prepare() {
         setupKeyboardManager()
         HUD.configureAppearance()
+        setupFPS()
     }
 }
 
@@ -30,5 +31,13 @@ extension AppSetup {
         IQKeyboardManager.sharedManager().disabledTouchResignedClasses = [
             TopicDetailViewController.self
         ]
+    }
+
+    private static func setupFPS() {
+        DispatchQueue.main.async {
+            let label = FPSLabel(frame: CGRect(x: AppWindow.shared.window.bounds.width - 55 - 8, y: 20, width: 55, height: 20))
+            label.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
+            AppWindow.shared.window.addSubview(label)
+        }
     }
 }

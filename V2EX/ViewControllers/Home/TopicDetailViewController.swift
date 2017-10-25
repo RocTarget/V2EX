@@ -1,13 +1,13 @@
 import Foundation
 import UIKit
 import SafariServices
+import SnapKit
+import RxSwift
+import RxCocoa
+
 
 class TopicDetailViewController: DataViewController, TopicService {
-    
-    private struct Metric {
-        static let commentInputViewHeight: CGFloat = 55
-    }
-    
+
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -54,7 +54,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         return comments[selectIndexPath.row]
     }
     
-    var topicID: String
+    public var topicID: String
     
     private var dataSources: [CommentModel] = []
     
@@ -63,6 +63,10 @@ class TopicDetailViewController: DataViewController, TopicService {
     private var commentText: String = ""
     
     private var isShowOnlyFloor: Bool = false
+
+    private var inputViewBottomConstranit: Constraint?
+
+    private var inputViewHeightConstraint: Constraint?
     
     init(topicID: String) {
         self.topicID = topicID
@@ -79,24 +83,23 @@ class TopicDetailViewController: DataViewController, TopicService {
         
         view.endEditing(true)
     }
-    
+
     override var canBecomeFirstResponder: Bool {
         return true
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if !isFirstResponder {
-            if action == #selector(copyCommentAction) ||
-                action == #selector(replyCommentAction) ||
-                action == #selector(thankCommentAction) ||
-                action == #selector(viewDialogAction) {
-                    return false
-            }
-
+        // 如果当前 textView 是第一响应者，则忽略自定义的 MenuItemAction， 不在 Menu视图上显示自定义的 item
+        if !isFirstResponder, [#selector(copyCommentAction),
+                               #selector(replyCommentAction),
+                               #selector(thankCommentAction),
+                               #selector(viewDialogAction),
+                               #selector(atMemberAction)].contains(action) {
+            return false
         }
         return super.canPerformAction(action, withSender: sender)
     }
-    
+
     override func setupSubviews() {
         
         tableView.addSubview(refreshControl)
@@ -111,11 +114,11 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         
         commentInputView.atUserHandle = { [weak self] in
-            guard let `comments` = self?.comments else { return }
-            guard let `self` = self else { return }
+            guard let `self` = self,
+                self.comments.count.boolValue else { return }
             
             // 解层
-            let members = comments.flatMap { $0.member }
+            let members = self.comments.flatMap { $0.member }
             let memberSet = Set<MemberModel>(members)
             let uniqueMembers = Array(memberSet).filter { $0.username != AccountModel.current?.username }
             let memberListVC = MemberListViewController(members: uniqueMembers )
@@ -124,15 +127,26 @@ class TopicDetailViewController: DataViewController, TopicService {
             
             memberListVC.callback = { members in
                 self.commentInputView.beFirstResponder()
+
+                guard members.count.boolValue else {
+                    return
+                }
                 
-                guard members.count.boolValue else { return }
-                
-                let ats = members
-                    .filter{ !self.commentInputView.text.contains($0.username) }
-                    .map { "@" + $0.username + " " }
+                var atsWrapper = members
+                    .filter{ !self.commentInputView.text.contains($0.atUsername) }
+                    .map { $0.atUsername }
                     .joined()
-                self.commentInputView.text.append(ats)
+
+
+                if self.commentInputView.text.last != " " {
+                    atsWrapper.insert(" ", at: self.commentInputView.text.startIndex)
+                }
+                self.commentInputView.text.append(atsWrapper)
             }
+        }
+
+        commentInputView.updateHeightHandle = { [weak self] height in
+            self?.inputViewHeightConstraint?.update(offset: height)
         }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -143,7 +157,6 @@ class TopicDetailViewController: DataViewController, TopicService {
         })
         
         title = "加载中..."
-        //        fetchTopicDetail()
     }
     
     override func setupConstraints() {
@@ -153,12 +166,13 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         
         commentInputView.snp.makeConstraints {
-            $0.left.right.bottom.equalToSuperview()
+            $0.left.right.equalToSuperview()
+            self.inputViewBottomConstranit = $0.bottom.equalToSuperview().constraint
             
             if #available(iOS 11.0, *) {
-                $0.height.equalTo(Metric.commentInputViewHeight + view.safeAreaInsets.bottom)
+                self.inputViewHeightConstraint = $0.height.equalTo(KcommentInputViewHeight + view.safeAreaInsets.bottom).constraint
             } else {
-                $0.height.equalTo(Metric.commentInputViewHeight)
+                self.inputViewHeightConstraint = $0.height.equalTo(KcommentInputViewHeight).constraint
             }
         }
     }
@@ -179,13 +193,113 @@ class TopicDetailViewController: DataViewController, TopicService {
     
     override func loadData() {
         fetchTopicDetail()
+
+        keyboardControl()
     }
     
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
         fetchTopicDetail()
     }
+
+    func keyboardControl() {
+
+        Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
+                      NotificationCenter.default.rx.notification(.UIKeyboardWillHide)).merge()
+            .subscribeNext { [weak self] notification in
+                guard let `self` = self else { return }
+                guard var userInfo = notification.userInfo,
+                    let keyboardRect = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+                let convertedFrame = self.view.convert(keyboardRect, from: nil)
+                let heightOffset = self.view.bounds.size.height - convertedFrame.origin.y
+                let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double
+                self.inputViewBottomConstranit?.update(offset: -heightOffset)
+
+                UIView.animate(withDuration: duration!) {
+                    self.view.layoutIfNeeded()
+                }
+                //                self?.keyboardControl(notification)
+            }.disposed(by: rx.disposeBag)
+    }
+
+//    func keyboardControl(_ notification: Notification) {
+
+//        var userInfo = notification.userInfo!
+//        let keyboardRect = (userInfo[UIKeyboardFrameEndUserInfoKey]! as AnyObject).cgRectValue
+//        let convertedFrame = view.convert(keyboardRect!, from: nil)
+//        let heightOffset = view.bounds.size.height - convertedFrame.origin.y
+//        let duration = (userInfo[UIKeyboardAnimationDurationUserInfoKey]! as AnyObject).doubleValue
+//        self.inputViewBottomConstranit?.update(offset: -heightOffset)
+//
+//        UIView.animate(withDuration: duration!) {
+//            self.view.layoutIfNeeded()
+//        }
+//    }
+}
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataSources.count
+    }
     
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
+        let comment = dataSources[indexPath.row]
+        cell.comment = comment
+        cell.hostUsername = topic?.member?.username ?? ""
+        cell.tapHandle = { [weak self] type in
+            self?.tapHandle(type)
+        }
+        log.info(comment.isThank, comment.contentUnwrapper)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        // TODO: 换成点击弹出 SheetView (或其他 UI 展示), 长按头像添加 @, 可以添加多个
+        // Sheet option:
+        // 1, 回复
+        // 2, 感谢
+        // 3, 查看对话
+        // 4, ...
+
+        // 强制结束 HeaderView 中 WebView 的第一响应者， 不然无法显示 MenuView
+        if !commentInputView.textView.isFirstResponder {
+            view.endEditing(true)
+        }
+
+        // 如果当前控制器不是第一响应者不显示 MenuView
+        guard isFirstResponder else { return }
+
+        let comment = dataSources[indexPath.row]
+        let menuVC = UIMenuController.shared
+        let cell = tableView.cellForRow(at: indexPath)!
+        var targetRectangle = cell.frame
+        targetRectangle.origin.y = targetRectangle.height * 0.4
+        targetRectangle.size.height = 1
+        
+        let replyItem = UIMenuItem(title: "回复", action: #selector(replyCommentAction))
+        let atUserItem = UIMenuItem(title: "@TA", action: #selector(atMemberAction))
+        let copyItem = UIMenuItem(title: "复制", action: #selector(copyCommentAction))
+        let thankItem = UIMenuItem(title: "感谢", action: #selector(thankCommentAction))
+        let viewDialogItem = UIMenuItem(title: "查看对话", action: #selector(viewDialogAction))
+        menuVC.setTargetRect(targetRectangle, in: cell)
+        menuVC.menuItems = [replyItem, copyItem, atUserItem, viewDialogItem]
+        if !comment.isThank {
+            menuVC.menuItems?.insert(thankItem, at: 1)
+        }
+        menuVC.setMenuVisible(true, animated: true)
+
+    }
+}
+
+// MARK: - 处理 Cell 内部、导航栏Item、SheetShare 的 Action
+extension TopicDetailViewController {
+
+    /// Cell 内部点击处理
+    ///
+    /// - Parameter type: 触发的类型
     private func tapHandle(_ type: TapType) {
         switch type {
         case .webpage(let url):
@@ -195,7 +309,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             let memberPageVC = MemberPageViewController(member: member)
             self.navigationController?.pushViewController(memberPageVC, animated: true)
         case .memberAvatarLongPress(let member):
-            avatarLongPressHandle(member.username)
+            atMember(member.atUsername)
         case .image(let src):
             log.info(src)
         case .node(let node):
@@ -207,10 +321,10 @@ class TopicDetailViewController: DataViewController, TopicService {
             log.info()
         }
     }
-    
+
     /// 点击更多处理
     private func moreHandle() {
-        
+
         /// 切换 是否显示楼主
         let floorItem = isShowOnlyFloor ?
             ShareItem(icon: #imageLiteral(resourceName: "unfloor"), title: "查看所有", type: .floor) :
@@ -218,42 +332,42 @@ class TopicDetailViewController: DataViewController, TopicService {
         let favoriteItem = (topic?.isFavorite ?? false) ?
             ShareItem(icon: #imageLiteral(resourceName: "favorite"), title: "取消收藏", type: .favorite) :
             ShareItem(icon: #imageLiteral(resourceName: "unfavorite"), title: "收藏", type: .favorite)
-        
+
         var section1 = [floorItem, favoriteItem]
-        
+
         // 如果已经登录 并且 是当前登录用户发表的主题, 则隐藏 感谢和忽略
         let username = AccountModel.current?.username ?? ""
         if username != topic?.member?.username {
             let thankItem = (topic?.isThank ?? false) ?
                 ShareItem(icon: #imageLiteral(resourceName: "thank"), title: "已感谢", type: .thank) :
                 ShareItem(icon: #imageLiteral(resourceName: "alreadyThank"), title: "感谢", type: .thank)
-            
+
             section1.append(thankItem)
             section1.append(ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore))
         }
-        
+
         let section2 = [
             ShareItem(icon: #imageLiteral(resourceName: "copy_link"), title: "复制链接", type: .copyLink),
             ShareItem(icon: #imageLiteral(resourceName: "safari"), title: "在 Safari 中打开", type: .safari),
             ShareItem(icon: #imageLiteral(resourceName: "share"), title: "分享", type: .share)
         ]
-        
+
         let sheetView = ShareSheetView(sections: [section1, section2], isScrollEnabled: false)
         sheetView.present()
-        
+
         sheetView.shareSheetDidSelectedHandle = { [weak self] type in
             self?.shareSheetDidSelectedHandle(type)
         }
     }
-    
+
+    // 点击导航栏右侧的 更多
     func shareSheetDidSelectedHandle(_ type: ShareItemType) {
-        
         // 需要授权的操作
         if type.needAuth, !AccountModel.isLogin{
             HUD.showText("请先登录")
             return
         }
-        
+
         switch type {
         case .floor:
             showOnlyFloorHandle()
@@ -276,68 +390,34 @@ class TopicDetailViewController: DataViewController, TopicService {
     }
 }
 
-// MARK: - UITableViewDelegate, UITableViewDataSource
-extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSources.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
-        let comment = dataSources[indexPath.row]
-        cell.comment = comment
-        cell.hostUsername = topic?.member?.username ?? ""
-        cell.tapHandle = { [weak self] type in
-            self?.tapHandle(type)
-        }
-        log.info(comment.isThank, comment.content)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        // TODO: 换成点击弹出 SheetView (或其他 UI 展示), 长按头像添加 @, 可以添加多个
-        // Sheet option:
-        // 1, 回复
-        // 2, 感谢
-        // 3, 查看对话
-        // 4, ...
-        let comment = dataSources[indexPath.row]
-        
-        if commentInputView.isFirstResponder { return }
-        
-        let menuVC = UIMenuController.shared
-        let cell = tableView.cellForRow(at: indexPath)!
-        var targetRectangle = cell.frame
-        targetRectangle.origin.y = targetRectangle.height * 0.4
-        targetRectangle.size.height = 1
-        
-        let replyItem = UIMenuItem(title: "回复", action: #selector(replyCommentAction))
-        let thankItem = UIMenuItem(title: "感谢", action: #selector(thankCommentAction))
-        let copyItem = UIMenuItem(title: "复制", action: #selector(copyCommentAction))
-        let viewDialogItem = UIMenuItem(title: "查看对话", action: #selector(viewDialogAction))
-        menuVC.setTargetRect(targetRectangle, in: cell)
-        menuVC.menuItems = [replyItem, copyItem, viewDialogItem]
-        if !comment.isThank {
-            menuVC.menuItems?.insert(thankItem, at: 1)
-        }
-        menuVC.setMenuVisible(true, animated: true)
-        
-    }
-}
-
 // MARK: - 点击回复的相关操作
 extension TopicDetailViewController {
-    
-    @objc func replyCommentAction() {
-        guard let username = selectComment?.member.username else { return }
-        commentInputView.text = "@\(username) "
+
+    // 如果已经 at 的用户， 让 TextView 选中用户名
+    private func atMember(_ atUsername: String?) {
+        commentInputView.beFirstResponder()
+        guard var `atUsername` = atUsername, atUsername.trimmed.isNotEmpty else { return }
+
+        if commentInputView.text.contains(atUsername) {
+            let range = commentInputView.text.NSString.range(of: atUsername)
+            commentInputView.textView.selectedRange = range
+            return
+        }
+
+        if commentInputView.text.last != " " {
+            atUsername.insert(" ", at: commentInputView.text.startIndex)
+        }
+        commentInputView.text.append(atUsername)
+    }
+
+    @objc private func replyCommentAction() {
+        guard let atUsername = selectComment?.member.atUsername else { return }
+        commentInputView.text = atUsername
         commentInputView.beFirstResponder()
     }
     
     // TODO: 未调试
-    @objc func thankCommentAction() {
+    @objc private func thankCommentAction() {
         guard let replyID = selectComment?.id,
             let token = topic?.token else { return }
         thankReply(replyID: replyID, token: token, success: { [weak self] in
@@ -350,14 +430,20 @@ extension TopicDetailViewController {
         }
     }
     
-    @objc func copyCommentAction() {
-        /// TODO: 直接取 content 是 HTML, 应该只要内容
-        guard let content = selectComment?.content else { return }
+    @objc private func copyCommentAction() {
+        guard let content = selectComment?.contentUnwrapper else { return }
         UIPasteboard.general.string = content
+
+        log.info(content)
     }
     
-    @objc func viewDialogAction() {
+    @objc private func viewDialogAction() {
+
         log.info("查看对话: ", selectComment?.member.username)
+    }
+
+    @objc private func atMemberAction() {
+        atMember(selectComment?.member.atUsername)
     }
 }
 
@@ -515,7 +601,7 @@ extension TopicDetailViewController {
         }
     }
     
-    /// 忽略主体请求
+    /// 忽略主题请求
     func ignoreTopicHandle() {
         guard let `topic` = topic,
             let once = topic.once else {
@@ -537,14 +623,6 @@ extension TopicDetailViewController {
 
 // MARK: - Action Handle
 extension TopicDetailViewController {
-    
-    func avatarLongPressHandle(_ username: String) {
-        let atStr = "@\(username)"
-        commentInputView.beFirstResponder()
-        
-        if commentInputView.text.contains(atStr) { return }
-        commentInputView.text.append(" \(atStr) ")
-    }
     
     /// 打开系统分享
     func systemShare() {

@@ -17,6 +17,10 @@ struct MemberModel {
     public var avatarSrc: String {
         return Constants.Config.URIScheme + avatar
     }
+
+    public var atUsername: String {
+        return "@\(username) "
+    }
     
     init(username: String, url: String, avatar: String) {
         self.username = username

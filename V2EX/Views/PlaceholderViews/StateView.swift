@@ -74,6 +74,7 @@ class StateView: BasePlaceholderView {
         view.backgroundColor = Theme.Color.globalColor
         view.setCornerRadius = 20
         view.addTarget(self, action: #selector(retryBtnClick), for: .touchUpInside)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return view
     }()
 

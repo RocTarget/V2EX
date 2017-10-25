@@ -46,7 +46,8 @@ class TopicDetailHeaderView: UIView{
         let view = UILabel()
         view.numberOfLines = 0
         view.font = UIFont.boldSystemFont(ofSize: 17)
-        view.copyable = true
+        view.clickCopyable = true
+        view.isUserInteractionEnabled = true
         return view
     }()
     

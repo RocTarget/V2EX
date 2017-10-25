@@ -1,26 +1,31 @@
 import Foundation
 import UIKit
+import YYText
+import SnapKit
 
+let KcommentInputViewHeight: CGFloat = 55
 
 class CommentInputView: UIView {
 
-    public var sendHandle: Action?
-    public var atUserHandle: Action?
+     lazy var textView: YYTextView = {
+        let view = YYTextView()
+        view.placeholderAttributedText = NSAttributedString(
+            string: "添加一条新回复",
+            attributes: [NSAttributedStringKey.foregroundColor: UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6)])
 
-    private lazy var textView: UIPlaceholderTextView = {
-        let view = UIPlaceholderTextView()
-        view.placeholder = "添加一条新回复"
+//        view.placeholder = "添加一条新回复"  // 奔溃 。。。
         view.setCornerRadius = 17.5
         view.font = UIFont.systemFont(ofSize: 15)
         view.layer.borderWidth = 1
         view.layer.borderColor = Theme.Color.borderColor.cgColor
-        view.layoutManager.allowsNonContiguousLayout = false
         view.scrollsToTop = false
-        view.textContainerInset = UIEdgeInsets(top: view.textContainerInset.top, left: 14, bottom: 5, right: 14)
+        view.textContainerInset = UIEdgeInsets(top: 8, left: 14, bottom: 5, right: 14)
         view.backgroundColor = Theme.Color.bgColor
         view.returnKeyType = .send
         view.enablesReturnKeyAutomatically = true
         view.delegate = self
+        view.textParser = MentionedParser()
+        view.tintColor = Theme.Color.globalColor
         self.addSubview(view)
         return view
     }()
@@ -33,11 +38,20 @@ class CommentInputView: UIView {
         }
     }
 
+    private struct Misc {
+        static let maxLine = 5
+        static let textViewContentHeight: CGFloat = KcommentInputViewHeight - 20
+    }
+
     public func beFirstResponder() {
-        guard !textView.isFirstResponder else { return }
+        if textView.isFirstResponder { return }
         
         textView.becomeFirstResponder()
     }
+
+    public var sendHandle: Action?
+    public var atUserHandle: Action?
+    public var updateHeightHandle: ((CGFloat) -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,22 +77,35 @@ class CommentInputView: UIView {
             }
         }
     }
+
 }
 
-extension CommentInputView: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        log.info(text)
-
+extension CommentInputView: YYTextViewDelegate {
+    func textView(_ textView: YYTextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             sendHandle?()
             textView.resignFirstResponder()
-            return false
+            return true
         }
 
         if text == "@" {
             atUserHandle?()
         }
-
         return true
+    }
+
+    func textViewDidChange(_ textView: YYTextView) {
+
+        guard let lineHeight = textView.font?.lineHeight else { return }
+
+        // 调用代理方法
+        let contentHeight = (textView.contentSize.height - textView.textContainerInset.top - textView.textContainerInset.bottom)
+        let rows =  Int(contentHeight / lineHeight)
+
+        guard rows <= Misc.maxLine else { return }
+
+        var height = Misc.textViewContentHeight * rows.f
+        height = height < KcommentInputViewHeight ? KcommentInputViewHeight : height
+        self.updateHeightHandle?(height)
     }
 }

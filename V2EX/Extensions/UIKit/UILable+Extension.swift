@@ -97,6 +97,8 @@ extension UILabel {
     private struct AssociatedKeys {
         static var copyable = "copyable"
         static var longPressGestureRecognizer = "longPressGestureRecognizer"
+        static var clickCopyable = "clickCopyable"
+        static var tapGestureRecognizer = "tapGestureRecognizer"
     }
 
     @IBInspectable public var copyable: Bool {
@@ -116,6 +118,23 @@ extension UILabel {
         }
     }
 
+    @IBInspectable public var clickCopyable: Bool {
+        get {
+            guard let number = objc_getAssociatedObject(self, &AssociatedKeys.copyable) as? NSNumber else {
+                return true
+            }
+
+            return number.boolValue
+        }
+
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.clickCopyable, NSNumber(value: newValue),
+                                     objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+            newValue ? enableClickCopying() : enableClickCopying()
+        }
+    }
+
     private var longPressGestureRecognizer: UILongPressGestureRecognizer? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.longPressGestureRecognizer) as?
@@ -124,6 +143,18 @@ extension UILabel {
 
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.longPressGestureRecognizer, newValue,
+                                     objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    private var tapGestureRecognizer: UITapGestureRecognizer? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.tapGestureRecognizer) as?
+            UITapGestureRecognizer
+        }
+
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.tapGestureRecognizer, newValue,
                                      objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
@@ -144,6 +175,22 @@ extension UILabel {
         }
     }
 
+    private func enableClickCopying() {
+        isUserInteractionEnabled = true
+
+        tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showCopyMenu))
+        addGestureRecognizer(tapGestureRecognizer!)
+    }
+
+    private func disableClickCopying() {
+        isUserInteractionEnabled = false
+
+        if let gestureRecognizer = tapGestureRecognizer {
+            removeGestureRecognizer(gestureRecognizer)
+            tapGestureRecognizer = nil
+        }
+    }
+
     @objc private func showCopyMenu() {
         let copyMenu = UIMenuController.shared
 
@@ -156,11 +203,11 @@ extension UILabel {
     }
 
     override open var canBecomeFirstResponder: Bool {
-        return copyable
+        return copyable || clickCopyable
     }
 
     override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        guard copyable else { return false }
+        guard copyable || clickCopyable else { return false }
 
         if action == #selector(copy(_:)) {
             return true
