@@ -58,8 +58,6 @@ class MoreViewController: BaseViewController {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
-        view.animateRandom()
     }
 
     override func setupRx() {

@@ -35,7 +35,8 @@ class TopicSearchResultCell: BaseTableViewCell {
             contentLabel.text = topic.content?
                 .deleteOccurrences(target: "\r")
                 .deleteOccurrences(target: "\n")
-            
+
+            // TODO: 多个关键字应该都高亮
             if let `query` = query {
                 titleLabel.highlight(text: query, normal: nil, highlight: [NSAttributedStringKey.foregroundColor : UIColor.hex(0xD33F3F)])
                 contentLabel.highlight(text: query, normal: nil, highlight: [NSAttributedStringKey.foregroundColor : UIColor.hex(0xD33F3F)])

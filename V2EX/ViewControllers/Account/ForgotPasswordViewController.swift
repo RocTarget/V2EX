@@ -1,4 +1,5 @@
 import UIKit
+import NSObject_Rx
 
 class ForgotPasswordViewController: BaseViewController, AccountService {
 

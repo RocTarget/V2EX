@@ -6,7 +6,8 @@ enum TapType {
     case member(MemberModel)
     case memberAvatarLongPress(MemberModel)
     case node(NodeModel)
-    case image(String)
+    case imageURL(String)
+    case image(UIImage)
     case webpage(URL)
     case topic(String)
 }
@@ -191,7 +192,7 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
             let urlString = url.absoluteString
             if url.scheme == "v2ex-image" {
                 let src = urlString.replacingOccurrences(of: "v2ex-image:", with: "")
-                tapHandle?(.image(src))
+                tapHandle?(.imageURL(src))
                 decisionHandler(.cancel)
                 return
             }else if urlString.hasPrefix("https://") || urlString.hasPrefix("http://") {

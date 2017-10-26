@@ -21,6 +21,12 @@ protocol AccountService {
         success: ((_ messages: [MessageModel]) -> ())?,
         failure: Failure?)
 
+    func deleteNotification(
+        notifacationID: String,
+        once: String,
+        success: Action?,
+        failure: Failure?)
+
     func loginReward(
         once: String,
         success: Action?,
@@ -190,6 +196,16 @@ extension AccountService {
                 return MessageModel(member: member, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr)
             })
             success?(messages)
+        }, failure: failure)
+    }
+
+    func deleteNotification(
+        notifacationID: String,
+        once: String,
+        success: Action?,
+        failure: Failure?) {
+        Network.htmlRequest(target: .deleteNotification(notifacationID: notifacationID, once: once), success: { html in
+            success?()
         }, failure: failure)
     }
 

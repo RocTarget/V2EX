@@ -42,7 +42,9 @@ class MemberListViewController: UITableViewController {
             title: "取消",
             style: .plain,
             action: { [weak self] in
-                self?.dismiss(animated: true, completion: nil)
+                self?.dismiss(animated: true, completion: { [weak self] in
+                    self?.callback?([])
+                })
         })
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(

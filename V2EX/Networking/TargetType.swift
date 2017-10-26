@@ -132,3 +132,4 @@ public enum Task {
     /// A download task.
     case download(DownloadType)
 }
+

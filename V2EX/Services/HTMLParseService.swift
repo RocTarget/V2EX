@@ -1,5 +1,6 @@
 import Foundation
 import Kanna
+import YYText
 
 /// 解析类型
 ///
@@ -143,18 +144,116 @@ extension HTMLParseService {
                 let userHref = userPath["href"],
                 let username = userPath.content,
                 let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
-                var content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.toHTML,
+                let content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.content,
                 let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
                     return nil
             }
+
+
+            let contentNode = ele.xpath("./table/tr/td[3]/div[@class='reply_content']/node()")
+            let attributedString = NSMutableAttributedString()
+            wrapperAttributedString(attributedString, node: contentNode)
+            let textContainer = YYTextContainer(size: CGSize(width: UIScreen.screenWidth - 30, height: CGFloat.max))
+            let textLayout = YYTextLayout(container: textContainer, text: attributedString)
+
             let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
-            content = self.replacingIframe(text: content)
             let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
             let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
-            return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, isThank: isThank, floor: floor, thankCount: thankString)
+
+            return CommentModel(id: replyID,
+                                member: member,
+                                content: content,
+                                publicTime: publicTime,
+                                isThank: isThank,
+                                floor: floor,
+                                thankCount: thankString,
+                                textLayout: textLayout)
         })
         return comments
     }
+
+    func wrapperAttributedString(_ attributedString: NSMutableAttributedString, node: XPathObject) {
+
+        for ele in node {
+            let tagName = ele.tagName
+
+            if tagName == "text", let content = ele.content {
+                let textAttrString = NSMutableAttributedString(
+                    string: content,
+                    attributes: [
+                        NSAttributedStringKey.foregroundColor: UIColor.black,
+                        NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
+                )
+                attributedString.append(textAttrString)
+                attributedString.yy_lineSpacing = 5
+            } else if tagName == "img", let imageSrc = ele["src"] {
+                let imageAttachment = wrapperImageAttachment(URL(string: imageSrc))
+                attributedString.append(imageAttachment)
+            } else if tagName == "a", let content = ele.content, let urlString = ele["href"] {
+                // 是图片链接
+                if ["jpg", "png", "jpeg", "gif"].contains(urlString.pathExtension.lowercased()),
+                    let url = URL(string: urlString) {
+                    let imageAttachment = wrapperImageAttachment(url)
+                    attributedString.append(imageAttachment)
+                    continue
+                }
+
+                let subnodes = ele.xpath("./node()")
+                if subnodes.first?.tagName != "text" && subnodes.count > 0 {
+                    wrapperAttributedString(attributedString, node: subnodes)
+                }
+
+                if content.length.boolValue {
+                    let linkAttrString = NSMutableAttributedString(string: content,
+                                                                   attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
+                    linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.length),
+                                                       color: Theme.Color.linkColor,
+                                                       backgroundColor: .clear,
+                                                       userInfo: ["url": urlString],
+                                                       tapAction: { _, attrString, range, _ in
+                        guard let highlight = attrString.yy_attribute(YYTextHighlightAttributeName, at: UInt(range.location)),
+                            let url = (highlight as AnyObject).userInfo["url"] as? String else { return }
+
+                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
+
+                    }, longPressAction: nil)
+
+                    attributedString.append(linkAttrString)
+                }
+            } else if let content = ele.content {
+                let contentAttrString = NSAttributedString(string: content, attributes: [NSAttributedStringKey.foregroundColor: UIColor.black])
+                attributedString.append(contentAttrString)
+            }
+        }
+    }
+
+    func wrapperImageAttachment(_ url: URL?) -> NSMutableAttributedString {
+        let imageAttachment = ImageAttachment(url: url)
+        let imageAttrString = NSMutableAttributedString.yy_attachmentString(withContent: imageAttachment, contentMode: .scaleAspectFit, attachmentSize: CGSize(width: 80, height: 80), alignTo: UIFont.systemFont(ofSize: 15), alignment: .bottom)
+        return imageAttrString
+    }
+
+//    func parseComment(html: HTMLDocument) -> [CommentModel] {
+//        let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
+//        let comments = commentPath.flatMap({ ele -> CommentModel? in
+//            guard let replyID = ele["id"]?.deleteOccurrences(target: "r_"),
+//                let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
+//                let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
+//                let userHref = userPath["href"],
+//                let username = userPath.content,
+//                let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
+//                var content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.toHTML,
+//                let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
+//                    return nil
+//            }
+//            let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
+//            content = self.replacingIframe(text: content)
+//            let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
+//            let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
+//            return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, isThank: isThank, floor: floor, thankCount: thankString)
+//        })
+//        return comments
+//    }
 
     func parseMemberReplys(html: HTMLDocument) -> [MessageModel] {
         let titlePath = html.xpath("//*[@id='Wrapper']//div[@class='dock_area']")

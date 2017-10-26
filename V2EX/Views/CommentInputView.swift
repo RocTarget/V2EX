@@ -30,6 +30,14 @@ class CommentInputView: UIView {
         return view
     }()
 
+    private lazy var uploadPictureBtn: UIButton = {
+        let view = UIButton()
+        view.setImage(#imageLiteral(resourceName: "uploadPicture"), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "uploadPicture"), for: .selected)
+        self.addSubview(view)
+        return view
+    }()
+
     public var text: String {
         set {
             textView.text = newValue
@@ -51,7 +59,10 @@ class CommentInputView: UIView {
 
     public var sendHandle: Action?
     public var atUserHandle: Action?
+    public var uploadPictureHandle: Action?
     public var updateHeightHandle: ((CGFloat) -> Void)?
+
+    private var uploadPictureRightConstraint: Constraint?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -68,7 +79,8 @@ class CommentInputView: UIView {
         
         textView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
-            $0.left.right.equalToSuperview().inset(15)
+            $0.left.equalToSuperview().inset(15)
+            $0.right.equalTo(uploadPictureBtn.snp.left).inset(-15)
 
             if #available(iOS 11.0, *) {
                 $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(10)
@@ -76,11 +88,35 @@ class CommentInputView: UIView {
                 $0.bottom.equalToSuperview().inset(10)
             }
         }
+
+        uploadPictureBtn.snp.makeConstraints {
+            uploadPictureRightConstraint = $0.left.equalTo(snp.right).constraint
+            $0.centerY.equalTo(textView)
+            $0.width.equalTo(32)
+        }
+
+        uploadPictureBtn.rx
+            .tap
+            .subscribeNext { [weak self] in
+                self?.uploadPictureHandle?()
+        }.disposed(by: rx.disposeBag)
     }
 
 }
 
 extension CommentInputView: YYTextViewDelegate {
+
+    func textViewDidBeginEditing(_ textView: YYTextView) {
+        UIView.animate(withDuration: 1) {
+            self.uploadPictureRightConstraint?.update(offset: -50)
+            self.uploadPictureBtn.layoutIfNeeded()
+        }
+    }
+
+    func textViewDidEndEditing(_ textView: YYTextView) {
+        uploadPictureRightConstraint?.update(offset: 0)
+    }
+
     func textView(_ textView: YYTextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             sendHandle?()

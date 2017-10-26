@@ -48,7 +48,18 @@ protocol TopicService: HTMLParseService {
         content: String,
         success: Action?,
         failure: Failure?)
-    
+
+    /// 上传图片到 SM.MS
+    ///
+    /// - Parameters:
+    ///   - localURL: 图片本地URL
+    ///   - success: 成功
+    ///   - failure: 失败
+    func uploadPicture(
+        localURL: String,
+        success: ((String) -> Void)?,
+        failure: Failure?)
+
     /// 创建主题
     ///
     /// - Parameters:
@@ -325,7 +336,28 @@ extension TopicService {
             failure?(problem)
         }, failure: failure)
     }
-    
+
+    func uploadPicture(
+        localURL: String,
+        success: ((String) -> Void)?,
+        failure: Failure?) {
+        Network.request(target: .uploadPicture(localURL: localURL), success: { data in
+            guard let resultDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+                failure?("上传失败")
+                return
+            }
+
+            guard let dict = resultDict ,
+            (dict["code"] as? String) == "success",
+            let dataDict = dict["data"] as? [String: Any],
+            let url = dataDict["url"] as? String else {
+                failure?("上传失败")
+                return
+            }
+            success?(url)
+        }, failure: failure)
+    }
+
     func createTopic(
         nodename: String,
         title: String,

@@ -12,6 +12,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         tableView.register(cellWithClass: TopicSearchResultCell.self)
         tableView.hideEmptyCells()
         tableView.backgroundColor = Theme.Color.bgColor
+        tableView.contentInset = UIEdgeInsetsMake(0, 0, 50, 0)
         self.view.addSubview(tableView)
         return tableView
     }()
@@ -29,7 +30,9 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        edgesForExtendedLayout = [.bottom]
+
         if #available(iOS 11.0, *) {
             tableView.contentInsetAdjustmentBehavior = .never
         } else {

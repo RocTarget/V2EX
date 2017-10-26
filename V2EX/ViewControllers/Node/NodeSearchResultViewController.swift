@@ -11,6 +11,7 @@ class NodeSearchResultViewController: DataViewController {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.hideEmptyCells()
         tableView.backgroundColor = Theme.Color.bgColor
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         self.view.addSubview(tableView)
         return tableView
     }()
@@ -28,6 +29,8 @@ class NodeSearchResultViewController: DataViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        edgesForExtendedLayout = [.bottom]
     }
     
     override func setupSubviews() {

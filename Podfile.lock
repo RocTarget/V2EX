@@ -1,12 +1,13 @@
 PODS:
   - Alamofire (4.5.1)
   - Carte (2.1.4)
-  - Disk (0.3.1)
   - IQKeyboardManagerSwift (5.0.4)
   - Kanna (2.1.1)
   - Kingfisher (4.2.0)
   - MarkdownView (1.1.0)
   - Marklight (1.3.0)
+  - NSObject+Rx (4.1.0):
+    - RxSwift (~> 4.0)
   - PKHUD (5.0.0)
   - Reveal-SDK (4)
   - RxCocoa (4.0.0):
@@ -20,18 +21,17 @@ PODS:
   - Themes (1.1.0)
   - Toaster (2.1.0)
   - UIView+Positioning (1.5)
-  - ViewAnimator (1.0.1)
   - YYText (1.0.7)
 
 DEPENDENCIES:
   - Alamofire
   - Carte
-  - Disk
   - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
   - Kingfisher
   - MarkdownView
   - Marklight
+  - NSObject+Rx
   - PKHUD
   - Reveal-SDK (~> 4)
   - RxCocoa (~> 4.0)
@@ -42,18 +42,17 @@ DEPENDENCIES:
   - Themes
   - Toaster
   - UIView+Positioning
-  - ViewAnimator
   - YYText
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   Carte: a19a62db8478426c406f40048d0c67e98a021c39
-  Disk: 64f0f95a4163314aba6f09f010f17de964762140
   IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
   Kingfisher: 9ee7e788d8ba07c3f21ce0d43f33cec310a4f781
   MarkdownView: 80db8e9a27a6c6cc22615e644e3e85c06065bab7
   Marklight: 54432ea3e99f1712129037b3191d54615d6cbe6c
+  NSObject+Rx: 6447292bbd5e39c94e252de67e76c7ce08e05939
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Reveal-SDK: 178c927f1a3230648d3a92b96f6e730a35b2750a
   RxCocoa: d62846ca96495d862fa4c59ea7d87e5031d7340e
@@ -64,9 +63,8 @@ SPEC CHECKSUMS:
   Themes: 9c5626e1b9d0a5683e5179c00c38077bd0281148
   Toaster: 8c3225dc465bef4aa57e147a288724576df8e439
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
-  ViewAnimator: a094d13bc86e868e908d33e524fcb58a4ddcf98e
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 455020324ce64d231892943c9d1af9c348f02885
+PODFILE CHECKSUM: 16c69a5eaf7851e098f7e7646cad2d48cc960941
 
 COCOAPODS: 1.3.1

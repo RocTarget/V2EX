@@ -1,6 +1,5 @@
 import UIKit
 import SnapKit
-import ViewAnimator
 import RxSwift
 import RxCocoa
 

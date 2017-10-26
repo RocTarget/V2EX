@@ -37,6 +37,7 @@ class NodesViewController: DataViewController, NodeService {
         view.hideEmptyCells()
         view.backgroundColor = Theme.Color.bgColor
         view.tableHeaderView = searchController.searchBar
+        view.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         self.view.addSubview(view)
         return view
     }()

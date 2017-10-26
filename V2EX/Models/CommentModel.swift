@@ -1,5 +1,6 @@
 import Foundation
 import Kanna
+import YYText
 
 struct CommentModel {
     var id: String
@@ -9,10 +10,7 @@ struct CommentModel {
     var isThank: Bool = false
     var floor: String
     var thankCount: String?
-
-    var contentUnwrapper: String {
-        return HTML(html: content, encoding: .utf8)?.content ?? ""
-    }
+    var textLayout: YYTextLayout?
 }
 
 extension CommentModel {
@@ -50,7 +48,8 @@ extension CommentModel {
     /// - Returns: @用户的Set
     static func atUsernames(_ comment: CommentModel?) -> Set<String>?  {
         guard let `comment` = comment else { return nil }
-        let text = comment.contentUnwrapper
+        let text = comment.content
+        log.info(text)
         guard let result = TextParser.mentioned?.matches(in: text, options: .reportProgress, range: NSRange(location: 0, length: text.count)) else {
             return nil
         }

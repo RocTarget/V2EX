@@ -15,7 +15,7 @@ target 'V2EX' do
     # Rx
     pod 'RxSwift', '~> 4.0' #, git: 'https://github.com/ReactiveX/RxSwift.git', branch: 'rxswift4.0-swift4.0'
     pod 'RxCocoa', '~> 4.0'
-    #  pod 'NSObject+Rx', git: 'https://github.com/RxSwiftCommunity/NSObject-Rx.git'
+    pod 'NSObject+Rx'
     pod 'RxOptional'
 
     # Parse
@@ -26,19 +26,20 @@ target 'V2EX' do
     pod 'UIView+Positioning'
     pod 'PKHUD'
     pod 'Toaster'
-    pod 'ViewAnimator'
     pod 'Themes'
     pod 'StatefulViewController'
-    pod 'MarkdownView'
     pod 'YYText'
 
     # Cache
-    pod 'Disk'
+#    pod 'Cache'
+
+    # Markdown
+    pod 'Marklight'
+    pod 'MarkdownView'
 
     # Misc
     pod 'IQKeyboardManagerSwift'
     pod 'Carte'
-    pod 'Marklight'
 
     # Bug
 #    pod 'Fabric'

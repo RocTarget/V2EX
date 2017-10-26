@@ -43,6 +43,7 @@ enum API {
     case createTopic(nodename: String, dict: [String: String])
     
     case notifications
+    case deleteNotification(notifacationID: String, once: String)
     
     case memberTopics(username: String)
     case memberReplys(username: String)
@@ -67,6 +68,9 @@ enum API {
     case ignoreReply(replyID: String, once: String)
     // 预览 Markdown
     case previewTopic(md: String, once: String)
+
+    // 上传图片
+    case uploadPicture(localURL: String)
 }
 
 extension API: TargetType {
@@ -78,6 +82,8 @@ extension API: TargetType {
             return "https://github.com/Joe0708/V2EX"
         case .search:
             return "https://www.sov2ex.com/api/search"
+        case .uploadPicture:
+            return "https://sm.ms/api"
         default:
             return Constants.Config.baseURL
         }
@@ -116,6 +122,8 @@ extension API: TargetType {
             return .post("/t/\(topicID)")
         case .notifications:
             return .get("/notifications")
+        case let .deleteNotification(notifacationID, once):
+            return .post("/delete/notification/\(notifacationID)?once=\(once)")
         case .memberTopics(let username):
             return .get("/member/\(username)/topics")
         case .memberReplys(let username):
@@ -136,6 +144,8 @@ extension API: TargetType {
             return .post("/ignore/reply/\(replyID)?once=\(once)")
         case let .previewTopic(md, once):
             return .post("/preview/markdown?md=\(md)&once=\(once)&syntax=1")
+        case .uploadPicture:
+            return .post("/upload")
         default:
             return .get("")
         }
@@ -183,7 +193,12 @@ extension API: TargetType {
     
     /// The type of HTTP task to be performed.
     var task: Task {
-        return .request
+        switch self {
+        case .uploadPicture(let localURL):
+            return .upload(.file(URL(fileURLWithPath: localURL)))
+        default:
+            return .request
+        }
     }
 }
 

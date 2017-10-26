@@ -112,6 +112,16 @@ class MessageViewController: DataViewController, AccountService {
     override func hasContent() -> Bool {
         return messages.count.boolValue
     }
+
+    /// TODO: 删除消息
+    private func deleteMessages() {
+
+    }
+
+    /// TODO: 回复消息
+    private func replyMessage() {
+
+    }
 }
 
 
@@ -141,5 +151,25 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
         guard let topicID = messages[indexPath.row].topic.topicID else { return }
         let topicDetailVC = TopicDetailViewController(topicID: topicID)
         navigationController?.pushViewController(topicDetailVC, animated: true)
+    }
+
+
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let replyAction = UITableViewRowAction(
+            style: .default,
+            title: "回复") { _, indexPath in
+                log.info("回复评论")
+                self.replyMessage()
+        }
+        replyAction.backgroundColor = UIColor.hex(0x0058E5)
+
+        let deleteAction = UITableViewRowAction(
+            style: .destructive,
+            title: "删除") { _, indexPath in
+                self.messages.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                self.deleteMessages()
+        }
+        return [deleteAction, replyAction]
     }
 }

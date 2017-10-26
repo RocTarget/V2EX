@@ -42,6 +42,9 @@ extension Notification.Name {
 
         /// 登录成功通知
         static let LoginSuccessName = Notification.Name("LoginSuccessName")
+
+        /// 点击富文本中的链接通知
+        static let HighlightTextClickName = Notification.Name("HighlightTextClickName")
     }
 }
 

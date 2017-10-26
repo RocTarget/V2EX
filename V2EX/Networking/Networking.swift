@@ -81,7 +81,7 @@ final class Networking {
 
             Alamofire.upload(multipartFormData: { multipartFormData in
 
-                multipartFormData.append(fileUrl, withName: "file")
+                multipartFormData.append(fileUrl, withName: "smfile")
 
                 if let params = target.parameters as? [String: String] {
                     for (key, value) in params {
@@ -102,9 +102,6 @@ final class Networking {
                     log.error(error.localizedDescription)
                 }
             })
-
-            //        case .download(.request(let destination)):
-        //            break
         default:
             break
         }
@@ -163,12 +160,13 @@ extension Networking {
                 failure?("数据解析失败")
                 return
             }
-            
-            guard let content = html.content,
-                !content.contains("Access Denied") else {
-                failure?("Access Denied")
-                return
-            }
+
+            // 误伤
+//            guard let content = html.content,
+//                !content.contains("Access Denied") else {
+//                failure?("Access Denied")
+//                return
+//            }
 
             success?(html)
         }, failure: failure)

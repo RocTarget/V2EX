@@ -15,6 +15,10 @@ struct TextParser {
         return try? NSRegularExpression(pattern: "<iframe(.*?)</iframe>", options: [.caseInsensitive, .dotMatchesLineSeparators])
     }
 
+    static var imgTag: NSRegularExpression? {
+        return try? NSRegularExpression(pattern: "<img src=(.*?)>", options: [.caseInsensitive, .dotMatchesLineSeparators])
+    }
+
     /// 正则：匹配 www.a.com 或者 http://www.a.com 的类型
     /// ref: http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
     static var regexURLs: NSRegularExpression? {
