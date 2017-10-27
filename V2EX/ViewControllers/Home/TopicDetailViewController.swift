@@ -7,7 +7,7 @@ import RxCocoa
 import MobileCoreServices
 
 class TopicDetailViewController: DataViewController, TopicService {
-
+    
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -21,7 +21,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         self.view.addSubview(view)
         return view
     }()
-
+    
     private lazy var imagePicker: UIImagePickerController = {
         let view = UIImagePickerController()
         view.allowsEditing = true
@@ -30,7 +30,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         view.delegate = self
         return view
     }()
-
+    
     private lazy var headerView: TopicDetailHeaderView = {
         let view = TopicDetailHeaderView()
         view.isHidden = true
@@ -57,7 +57,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         return comments[selectIndexPath.row]
     }
-
+    
     public var topicID: String
     
     private var dataSources: [CommentModel] = [] {
@@ -69,12 +69,12 @@ class TopicDetailViewController: DataViewController, TopicService {
     
     private var commentText: String = ""
     private var isShowOnlyFloor: Bool = false
-
+    
     private var page = 1, maxPage = 1
-
+    
     private var inputViewBottomConstranit: Constraint?
     private var inputViewHeightConstraint: Constraint?
-
+    
     
     init(topicID: String) {
         self.topicID = topicID
@@ -89,7 +89,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     override var canBecomeFirstResponder: Bool {
         return true
     }
-
+    
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         // 如果当前 textView 是第一响应者，则忽略自定义的 MenuItemAction， 不在 Menu视图上显示自定义的 item
         if !isFirstResponder, [#selector(copyCommentAction),
@@ -101,25 +101,26 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         return super.canPerformAction(action, withSender: sender)
     }
-
+    
     override func setupSubviews() {
-
+        
         tableView.tableHeaderView = headerView
         
         headerView.tapHandle = { [weak self] type in
             self?.tapHandle(type)
         }
-
+        
         headerView.webLoadComplete = { [weak self] in
             self?.endLoading()
             self?.headerView.isHidden = false
             self?.tableView.reloadData()
+            self?.setupRefresh()
         }
-
+        
         commentInputView.sendHandle = { [weak self] in
             self?.replyComment()
         }
-
+        
         commentInputView.uploadPictureHandle = { [weak self] in
             guard let `self` = self else { return }
             self.present(self.imagePicker, animated: true, completion: nil)
@@ -130,7 +131,7 @@ class TopicDetailViewController: DataViewController, TopicService {
                 self.comments.count.boolValue else { return }
             self.atMembers()
         }
-
+        
         commentInputView.updateHeightHandle = { [weak self] height in
             self?.inputViewHeightConstraint?.update(offset: height)
         }
@@ -141,26 +142,30 @@ class TopicDetailViewController: DataViewController, TopicService {
             action: { [weak self] in
                 self?.moreHandle()
         })
-
+        
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.HighlightTextClickName)
             .subscribeNext { [weak self] noti in
                 guard let urlString = noti.object as? String,
                     let url = URL(string: urlString) else { return }
                 self?.interactHook(url)
-        }.disposed(by: rx.disposeBag)
-
+            }.disposed(by: rx.disposeBag)
+        
         title = "加载中..."
-
+    }
+    
+    func setupRefresh() {
+        
         tableView.addHeaderRefresh { [weak self] in
             self?.fetchTopicDetail()
         }
-
+        
         tableView.addFooterRefresh { [weak self] in
             self?.fetchMoreComment()
         }
     }
-
+    
+    
     func interactHook(_ URL: URL) {
         let link = URL.absoluteString
         if link.hasPrefix("https://") || link.hasPrefix("http://"){
@@ -177,7 +182,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             tapHandle(.node(NodeModel(name: "", href: URL.path)))
         }
     }
-
+    
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.left.top.right.equalToSuperview()
@@ -195,7 +200,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             }
         }
     }
-
+    
     // MARK: States Handle
     
     override func hasContent() -> Bool {
@@ -204,16 +209,16 @@ class TopicDetailViewController: DataViewController, TopicService {
     
     override func loadData() {
         fetchTopicDetail()
-
+        
         keyboardControl()
     }
     
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
         fetchTopicDetail()
     }
-
+    
     func keyboardControl() {
-
+        
         Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
                       NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
                       NotificationCenter.default.rx.notification(.UIKeyboardDidShow),
@@ -226,7 +231,7 @@ class TopicDetailViewController: DataViewController, TopicService {
                 let heightOffset = self.view.bounds.size.height - convertedFrame.origin.y
                 let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double
                 self.inputViewBottomConstranit?.update(offset: -heightOffset)
-
+                
                 UIView.animate(withDuration: duration!) {
                     self.view.layoutIfNeeded()
                 }
@@ -261,15 +266,15 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         // 2, 感谢
         // 3, 查看对话
         // 4, ...
-
+        
         // 强制结束 HeaderView 中 WebView 的第一响应者， 不然无法显示 MenuView
         if !commentInputView.textView.isFirstResponder {
             view.endEditing(true)
         }
-
+        
         // 如果当前控制器不是第一响应者不显示 MenuView
         guard isFirstResponder else { return }
-
+        
         let comment = dataSources[indexPath.row]
         let menuVC = UIMenuController.shared
         let cell = tableView.cellForRow(at: indexPath)!
@@ -288,7 +293,7 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
             menuVC.menuItems?.insert(thankItem, at: 1)
         }
         menuVC.setMenuVisible(true, animated: true)
-
+        
     }
 }
 
@@ -298,7 +303,7 @@ extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigati
         guard var image = info[UIImagePickerControllerEditedImage] as? UIImage else { return }
         image = image.resized(by: 0.7)
         guard let data = UIImageJPEGRepresentation(image, 0.5) else { return }
-
+        
         let path = FileManager.document.appendingPathComponent("smfile.png")
         _ = FileManager.save(data, savePath: path)
         uploadPictureHandle(path)
@@ -308,7 +313,7 @@ extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigati
 
 // MARK: - 处理 Cell 内部、导航栏Item、SheetShare 的 Action
 extension TopicDetailViewController {
-
+    
     /// Cell 内部点击处理
     ///
     /// - Parameter type: 触发的类型
@@ -318,7 +323,7 @@ extension TopicDetailViewController {
             let webView = SweetWebViewController(url: url)
             self.navigationController?.pushViewController(webView, animated: true)
         case .member(let member):
-            let memberPageVC = MemberPageViewController(member: member)
+            let memberPageVC = MemberPageViewController(memberName: member.username)
             self.navigationController?.pushViewController(memberPageVC, animated: true)
         case .memberAvatarLongPress(let member):
             atMember(member.atUsername)
@@ -336,10 +341,10 @@ extension TopicDetailViewController {
             log.info()
         }
     }
-
+    
     /// 点击更多处理
     private func moreHandle() {
-
+        
         /// 切换 是否显示楼主
         let floorItem = isShowOnlyFloor ?
             ShareItem(icon: #imageLiteral(resourceName: "unfloor"), title: "查看所有", type: .floor) :
@@ -347,34 +352,34 @@ extension TopicDetailViewController {
         let favoriteItem = (topic?.isFavorite ?? false) ?
             ShareItem(icon: #imageLiteral(resourceName: "favorite"), title: "取消收藏", type: .favorite) :
             ShareItem(icon: #imageLiteral(resourceName: "unfavorite"), title: "收藏", type: .favorite)
-
+        
         var section1 = [floorItem, favoriteItem]
-
+        
         // 如果已经登录 并且 是当前登录用户发表的主题, 则隐藏 感谢和忽略
         let username = AccountModel.current?.username ?? ""
         if username != topic?.member?.username {
             let thankItem = (topic?.isThank ?? false) ?
                 ShareItem(icon: #imageLiteral(resourceName: "thank"), title: "已感谢", type: .thank) :
                 ShareItem(icon: #imageLiteral(resourceName: "alreadyThank"), title: "感谢", type: .thank)
-
+            
             section1.append(thankItem)
             section1.append(ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore))
         }
-
+        
         let section2 = [
             ShareItem(icon: #imageLiteral(resourceName: "copy_link"), title: "复制链接", type: .copyLink),
             ShareItem(icon: #imageLiteral(resourceName: "safari"), title: "在 Safari 中打开", type: .safari),
             ShareItem(icon: #imageLiteral(resourceName: "share"), title: "分享", type: .share)
         ]
-
+        
         let sheetView = ShareSheetView(sections: [section1, section2], isScrollEnabled: false)
         sheetView.present()
-
+        
         sheetView.shareSheetDidSelectedHandle = { [weak self] type in
             self?.shareSheetDidSelectedHandle(type)
         }
     }
-
+    
     // 点击导航栏右侧的 更多
     func shareSheetDidSelectedHandle(_ type: ShareItemType) {
         // 需要授权的操作
@@ -382,7 +387,7 @@ extension TopicDetailViewController {
             HUD.showText("请先登录")
             return
         }
-
+        
         switch type {
         case .floor:
             showOnlyFloorHandle()
@@ -407,24 +412,24 @@ extension TopicDetailViewController {
 
 // MARK: - 点击回复的相关操作
 extension TopicDetailViewController {
-
+    
     // 如果已经 at 的用户， 让 TextView 选中用户名
     private func atMember(_ atUsername: String?) {
         commentInputView.beFirstResponder()
         guard var `atUsername` = atUsername, atUsername.trimmed.isNotEmpty else { return }
-
+        
         if commentInputView.text.contains(atUsername) {
             let range = commentInputView.text.NSString.range(of: atUsername)
             commentInputView.textView.selectedRange = range
             return
         }
-
+        
         if commentInputView.text.last != " " {
             atUsername.insert(" ", at: commentInputView.text.startIndex)
         }
         commentInputView.text.append(atUsername)
     }
-
+    
     private func atMembers() {
         // 解层
         let members = self.comments.flatMap { $0.member }
@@ -433,31 +438,31 @@ extension TopicDetailViewController {
         let memberListVC = MemberListViewController(members: uniqueMembers )
         let nav = NavigationViewController(rootViewController: memberListVC)
         self.present(nav, animated: true, completion: nil)
-
+        
         memberListVC.callback = { [weak self] members in
             guard let `self` = self else { return }
             self.commentInputView.beFirstResponder()
-
+            
             guard members.count.boolValue else { return }
-
+            
             var atsWrapper = members
                 .filter{ !self.commentInputView.text.contains($0.atUsername) }
                 .map { $0.atUsername }
                 .joined()
-
+            
             if self.commentInputView.text.last != " " {
                 atsWrapper.insert(" ", at: self.commentInputView.text.startIndex)
             }
             self.commentInputView.text.append(atsWrapper)
-
+            
             // 修改光标位置
             self.commentInputView.textView.deleteBackward()
             let range = self.commentInputView.text.NSString.range(of: atsWrapper)
-//            self.commentInputView.textView.selectedRange = NSRange(location: self.commentInputView.text.count, length: 0)
+            //            self.commentInputView.textView.selectedRange = NSRange(location: self.commentInputView.text.count, length: 0)
             self.commentInputView.textView.selectedRange = NSRange(location: range.location + range.length, length: 0)
         }
     }
-
+    
     @objc private func replyCommentAction() {
         guard let atUsername = selectComment?.member.atUsername else { return }
         commentInputView.text = atUsername
@@ -481,7 +486,7 @@ extension TopicDetailViewController {
     @objc private func copyCommentAction() {
         guard let content = selectComment?.content else { return }
         UIPasteboard.general.string = content
-
+        
         log.info(content)
     }
     
@@ -499,7 +504,7 @@ extension TopicDetailViewController {
         viewDialogVC.title = "有关 \(selectComment.member.username) 的对话"
         present(nav, animated: true, completion: nil)
     }
-
+    
     @objc private func atMemberAction() {
         atMember(selectComment?.member.atUsername)
     }
@@ -512,7 +517,7 @@ extension TopicDetailViewController {
     /// 获取主题详情
     func fetchTopicDetail() {
         page = 1
-
+        
         startLoading()
         
         topicDetail(topicID: topicID, success: { [weak self] topic, comments, maxPage in
@@ -521,8 +526,7 @@ extension TopicDetailViewController {
             self.dataSources = comments
             self.tableView.endHeaderRefresh()
             self.maxPage = maxPage
-            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
-//            self?.endLoading()
+            //            self?.endLoading()
             }, failure: { [weak self] error in
                 if let `errorView` = self?.errorView as? ErrorView {
                     errorView.message = error
@@ -531,11 +535,16 @@ extension TopicDetailViewController {
                 self?.tableView.endHeaderRefresh()
         })
     }
-
+    
     /// 获取更多评论
     func fetchMoreComment() {
+        if page >= maxPage {
+            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
+            return
+        }
+        
         page += 1
-
+        
         topicMoreComment(topicID: topicID, page: page, success: { [weak self] comments in
             guard let `self` = self else { return }
             self.dataSources.append(contentsOf: comments)
@@ -546,8 +555,8 @@ extension TopicDetailViewController {
                 self?.page -= 1
         })
     }
-
-
+    
+    
     /// 回复评论
     private func replyComment() {
         
@@ -578,10 +587,8 @@ extension TopicDetailViewController {
         }
         
         commentText = commentInputView.text
-        // TODO: 奔溃
-//        commentInputView.textView.attributedText = NSAttributedString(string: "")
-//        commentInputView.textView.text = ""
-
+        commentInputView.textView.text = nil
+        
         HUD.show()
         comment(
             once: once,
@@ -599,7 +606,7 @@ extension TopicDetailViewController {
             self.commentInputView.beFirstResponder()
         }
     }
-
+    
     // 上传配图请求
     private func uploadPictureHandle(_ fileURL: String) {
         HUD.show()

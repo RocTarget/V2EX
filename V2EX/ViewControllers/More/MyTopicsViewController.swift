@@ -1,6 +1,6 @@
 import UIKit
 
-class MyTopicsViewController: BaseTopicsViewController {
+class MyTopicsViewController: BaseTopicsViewController, MemberService {
 
     var username: String
 

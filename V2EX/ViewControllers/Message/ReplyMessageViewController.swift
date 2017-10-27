@@ -1,5 +1,4 @@
 import UIKit
-import YYText
 import RxSwift
 import RxCocoa
 import MobileCoreServices
@@ -27,7 +26,7 @@ class ReplyMessageViewController: BaseViewController, TopicService {
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .center
-        view.text = "回复"
+        view.font = UIFont.systemFont(ofSize: 14)
         return view
     }()
 
@@ -43,15 +42,16 @@ class ReplyMessageViewController: BaseViewController, TopicService {
         return view
     }()
 
-    lazy var textView: YYTextView = {
-        let view = YYTextView()
+    private lazy var textView: UIPlaceholderTextView = {
+        let view = UIPlaceholderTextView()
         view.font = UIFont.systemFont(ofSize: 15)
         view.textContainerInset = UIEdgeInsets(top: 8, left: 14, bottom: 5, right: 14)
         view.enablesReturnKeyAutomatically = true
-        view.textParser = MentionedParser()
         view.tintColor = Theme.Color.globalColor
         view.backgroundColor = .white
         view.delegate = self
+        view.autocorrectionType = .no
+        view.autocapitalizationType = .none
         return view
     }()
 
@@ -66,16 +66,12 @@ class ReplyMessageViewController: BaseViewController, TopicService {
 
     public var message: MessageModel? {
         didSet {
-            guard let atUsername = message?.member?.atUsername else { return }
-            textView.text = atUsername
+            guard let username = message?.member?.username else { return }
+            let text = "正在回复 \(username)"
+            titleLabel.text = text
+            textView.placeholder = text as NSString
             textView.becomeFirstResponder()
         }
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        definesPresentationContext = true
     }
 
     override func setupRx() {
@@ -99,13 +95,6 @@ class ReplyMessageViewController: BaseViewController, TopicService {
         }.disposed(by: rx.disposeBag)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        guard view.isHidden else { return }
-        textView.becomeFirstResponder()
-    }
-
     override func setupSubviews() {
         view.backgroundColor = .clear
 
@@ -122,13 +111,14 @@ class ReplyMessageViewController: BaseViewController, TopicService {
     override func setupConstraints() {
         contentView.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.4)
-            $0.top.equalToSuperview().offset(64)
+            $0.height.equalToSuperview().multipliedBy(0.37)
+            let margin = navigationController?.navigationBar.bottom ?? 64
+            $0.top.equalToSuperview().offset(margin + 20)
         }
 
         topContainer.snp.makeConstraints {
             $0.left.right.top.equalToSuperview()
-            $0.height.equalTo(44)
+            $0.height.equalTo(40)
         }
 
         closeBtn.snp.makeConstraints {
@@ -165,6 +155,7 @@ class ReplyMessageViewController: BaseViewController, TopicService {
         uploadPicture(localURL: fileURL, success: { [weak self] url in
             log.info(url)
             self?.textView.text.append(url)
+            self?.textView.becomeFirstResponder()
             HUD.dismiss()
         }) { error in
             HUD.dismiss()
@@ -175,7 +166,7 @@ class ReplyMessageViewController: BaseViewController, TopicService {
     /// 回复评论
     private func replyComment() {
 
-        guard let `message` = message else { return }
+        guard let `message` = message, let atUsername = message.member?.atUsername else { return }
 
         guard textView.text.trimmed.isNotEmpty else {
             HUD.showText("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
@@ -196,11 +187,12 @@ class ReplyMessageViewController: BaseViewController, TopicService {
             return
         }
 
+        textView.text = nil
         HUD.show()
         comment(
             once: once,
             topicID: topicID,
-            content: textView.text, success: { [weak self] in
+            content: atUsername + textView.text, success: { [weak self] in
                 HUD.showText("回复成功")
                 HUD.dismiss()
                 self?.view.endEditing(true)
@@ -223,17 +215,21 @@ extension ReplyMessageViewController: UIImagePickerControllerDelegate, UINavigat
         _ = FileManager.save(data, savePath: path)
         uploadPictureHandle(path)
     }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true) {
+            self.textView.becomeFirstResponder()
+        }
+    }
 }
 
-extension ReplyMessageViewController: YYTextViewDelegate {
+extension ReplyMessageViewController: UITextViewDelegate {
 
-    func textViewDidEndEditing(_ textView: YYTextView) {
+    func textViewDidEndEditing(_ textView: UITextView) {
         view.fadeOut()
-        view.isHidden = true
     }
 
-    func textViewDidBeginEditing(_ textView: YYTextView) {
-        view.isHidden = false
+    func textViewDidBeginEditing(_ textView: UITextView) {
         view.fadeIn()
     }
 }

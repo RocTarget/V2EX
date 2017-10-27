@@ -36,6 +36,6 @@ extension String {
     var firstLetter: String {
         if count == 0 { return self }
         let index = self.index(self.startIndex, offsetBy: 1)
-        return self.substring(to: index)
+        return String(self[startIndex..<index])
     }
 }

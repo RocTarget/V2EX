@@ -165,3 +165,13 @@ extension String {
         return attributedText
     }
 }
+
+extension String {
+    /// 是否是邮箱
+    func isEmail() -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}"
+        //        let emailRegex = "^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\\.[a-zA-Z0-9_-]{2,3}){1,2})$"
+        let testPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+        return testPredicate.evaluate(with: self)
+    }
+}

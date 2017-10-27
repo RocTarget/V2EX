@@ -1,6 +1,6 @@
 import UIKit
 
-class MyReplyViewController: DataViewController, TopicService {
+class MyReplyViewController: DataViewController, MemberService {
 
     private lazy var tableView: UITableView = {
         let view = UITableView()

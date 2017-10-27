@@ -121,7 +121,7 @@ extension CommentInputView: YYTextViewDelegate {
         if text == "\n" {
             sendHandle?()
             textView.resignFirstResponder()
-            return true
+            return false
         }
 
         if text == "@" {

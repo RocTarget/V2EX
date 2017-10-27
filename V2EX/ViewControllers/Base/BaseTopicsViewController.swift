@@ -82,16 +82,14 @@ class BaseTopicsViewController: DataViewController, TopicService {
             }, failure: { [weak self] error in
                 self?.tableView.endHeaderRefresh()
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-                if let `emptyView` = self?.errorView as? EmptyView {
-                    emptyView.message = error
-                }
+                self?.errorMessage = error
         })
     }
 
     func tapHandle(_ type: TapType) {
         switch type {
         case .member(let member):
-            let memberPageVC = MemberPageViewController(member: member)
+            let memberPageVC = MemberPageViewController(memberName: member.username)
             navigationController?.pushViewController(memberPageVC, animated: true)
             log.info(member)
         case .node(let node):

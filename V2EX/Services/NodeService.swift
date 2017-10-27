@@ -141,7 +141,7 @@ extension NodeService {
             for node in nodes {
                 let initial = node.name.pinYingString.firstLetter
 
-                //  不放在其他组, 单独一组, 谁让我是果粉 😀
+                //  不放在其他组, 单独一组
                 if initial != "", !self.isLetter(string: initial) {
                     otherGroup.nodes.append(node)
                     continue

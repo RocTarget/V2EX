@@ -98,27 +98,6 @@ protocol TopicService: HTMLParseService {
         success: Action?,
         failure: @escaping Failure)
     
-    /// 获取会员的主题列表
-    ///
-    /// - Parameters:
-    ///   - username: 会员名字
-    ///   - success: 成功
-    ///   - failure: 失败
-    func memberTopics(
-        username: String,
-        success: ((_ topics: [TopicModel]) -> Void)?,
-        failure: Failure?)
-    
-    /// 获取会员的回复列表
-    ///
-    /// - Parameters:
-    ///   - username: 会员名字
-    ///   - success: 成功
-    ///   - failure: 失败
-    func memberReplys(
-        username: String,
-        success: ((_ messages: [MessageModel]) -> ())?,
-        failure: Failure?)
     
     /// 搜索主题
     ///
@@ -434,23 +413,6 @@ extension TopicService {
             }, failure: failure)
         }, failure: failure)
         
-    }
-    func memberTopics(
-        username: String,
-        success: ((_ topics: [TopicModel]) -> Void)?,
-        failure: Failure?) {
-        Network.htmlRequest(target: .memberTopics(username: username), success: { html in
-            success?(self.parseMemberTopics(html: html))
-        }, failure: failure)
-    }
-    
-    func memberReplys(
-        username: String,
-        success: ((_ messages: [MessageModel]) -> ())?,
-        failure: Failure?) {
-        Network.htmlRequest(target: .memberReplys(username: username), success: { html in
-            success?(self.parseMemberReplys(html: html))
-        }, failure: failure)
     }
     
     func search(

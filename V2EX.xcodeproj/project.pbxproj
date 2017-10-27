@@ -35,6 +35,7 @@
 		779B17041F8FA8C100E912E7 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */; };
 		779B17061F8FAF5A00E912E7 /* UILable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779B17051F8FAF5A00E912E7 /* UILable+Extension.swift */; };
 		779B17081F8FB0AF00E912E7 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779B17071F8FB0AF00E912E7 /* UIImageView+Extension.swift */; };
+		77ABB3811FA36D8300F376DA /* MemberService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77ABB3801FA36D8300F376DA /* MemberService.swift */; };
 		77B75DAC1F94EA8F00B7312B /* MemberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B75DAB1F94EA8F00B7312B /* MemberModel.swift */; };
 		77B75DAE1F94FB8C00B7312B /* NodeCollectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B75DAD1F94FB8C00B7312B /* NodeCollectViewController.swift */; };
 		77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF6A1F92FD8F009DE52C /* MoreViewController.swift */; };
@@ -123,7 +124,6 @@
 		BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */; };
 		BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */; };
 		BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91D01F9490570050B7F5 /* ForgotPasswordViewController.swift */; };
-		BFEC91D31F94AC530050B7F5 /* String+Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91D21F94AC530050B7F5 /* String+Validate.swift */; };
 		BFFAFDE91F9F4428000EB91C /* MemberListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFAFDE81F9F4428000EB91C /* MemberListViewController.swift */; };
 		C00FF4E9D54113900F400975 /* Pods_V2EX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDEF560D2C703ABBF56BE30E /* Pods_V2EX.framework */; };
 /* End PBXBuildFile section */
@@ -177,6 +177,7 @@
 		779B17031F8FA8C100E912E7 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
 		779B17051F8FAF5A00E912E7 /* UILable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILable+Extension.swift"; sourceTree = "<group>"; };
 		779B17071F8FB0AF00E912E7 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
+		77ABB3801FA36D8300F376DA /* MemberService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberService.swift; sourceTree = "<group>"; };
 		77B75DAB1F94EA8F00B7312B /* MemberModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberModel.swift; sourceTree = "<group>"; };
 		77B75DAD1F94FB8C00B7312B /* NodeCollectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectViewController.swift; sourceTree = "<group>"; };
 		77C8DF6A1F92FD8F009DE52C /* MoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreViewController.swift; sourceTree = "<group>"; };
@@ -273,7 +274,6 @@
 		BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Extension.swift"; sourceTree = "<group>"; };
 		BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		BFEC91D01F9490570050B7F5 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
-		BFEC91D21F94AC530050B7F5 /* String+Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Validate.swift"; sourceTree = "<group>"; };
 		BFFAFDE81F9F4428000EB91C /* MemberListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListViewController.swift; sourceTree = "<group>"; };
 		E337C44E6CA49FA430E4D9C1 /* Pods-V2EX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EX.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EX/Pods-V2EX.release.xcconfig"; sourceTree = "<group>"; };
 		EDEF560D2C703ABBF56BE30E /* Pods_V2EX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_V2EX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -455,6 +455,7 @@
 			children = (
 				BFCB67651F8F709F00D05A90 /* TopicService.swift */,
 				7756CCCD1F9248CF00EF47B8 /* NodeService.swift */,
+				77ABB3801FA36D8300F376DA /* MemberService.swift */,
 				77C8DF6F1F9305F8009DE52C /* AccountService.swift */,
 				7756CCCF1F924F7A00EF47B8 /* HTMLParseService.swift */,
 			);
@@ -499,7 +500,6 @@
 				BFCB67501F8F4B2300D05A90 /* UIView+Extension.swift */,
 				BF3AB5C81F976D7000043269 /* UIView+Border.swift */,
 				BFCB674E1F8F4A4000D05A90 /* String+Extension.swift */,
-				BFEC91D21F94AC530050B7F5 /* String+Validate.swift */,
 				BF02A2D11F8F425C00BEF85E /* UIColor+Extension.swift */,
 				779B17051F8FAF5A00E912E7 /* UILable+Extension.swift */,
 				779B17071F8FB0AF00E912E7 /* UIImageView+Extension.swift */,
@@ -1113,6 +1113,7 @@
 				772A577B1F9786EB003FBE1A /* CreateTopicViewController.swift in Sources */,
 				778AC6B81F9AF07F0072C6E9 /* NSAttributedString+Extensions.swift in Sources */,
 				BF39FFE91F9442DA00D6F8BD /* LoadingButton.swift in Sources */,
+				77ABB3811FA36D8300F376DA /* MemberService.swift in Sources */,
 				BF45E0051F9EFEE30001BEB2 /* EnumCollection.swift in Sources */,
 				77C8DF6E1F92FDE2009DE52C /* LoginViewController.swift in Sources */,
 				7756CCC61F92354B00EF47B8 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */,
@@ -1139,7 +1140,6 @@
 				BF39FFE71F94421C00D6F8BD /* Binder+Extension.swift in Sources */,
 				BFE3947D1F90823D00D3ED1D /* TopicCommentCell.swift in Sources */,
 				BFCB67481F8F499600D05A90 /* BaseViewController.swift in Sources */,
-				BFEC91D31F94AC530050B7F5 /* String+Validate.swift in Sources */,
 				BF02A2CE1F8F3FE400BEF85E /* Theme.swift in Sources */,
 				BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */,
 				778AC6A01F9A29730072C6E9 /* SearchResultModel.swift in Sources */,

@@ -61,7 +61,12 @@ extension ViewDialogViewController {
         cell.comment = comment
         return cell
     }
-
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        (tableView.tableHeaderView as? UILabel)?.text = scrollView.contentOffset.y <= -100 ? "松开关闭查看" : "下拉关闭查看"
+    }
+    
+    
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
 
         //下拉关闭

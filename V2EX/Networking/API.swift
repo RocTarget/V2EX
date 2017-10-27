@@ -47,6 +47,7 @@ enum API {
     case notifications(page: Int)
     case deleteNotification(notifacationID: String, once: String)
     
+    case memberHome(username: String)
     case memberTopics(username: String)
     case memberReplys(username: String)
     
@@ -128,6 +129,8 @@ extension API: TargetType {
             return .get("/notifications?p=\(page)")
         case let .deleteNotification(notifacationID, once):
             return .post("/delete/notification/\(notifacationID)?once=\(once)")
+        case .memberHome(let username):
+            return .get("/member/\(username)")
         case .memberTopics(let username):
             return .get("/member/\(username)/topics")
         case .memberReplys(let username):

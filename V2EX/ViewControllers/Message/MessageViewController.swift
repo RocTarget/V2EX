@@ -14,69 +14,67 @@ class MessageViewController: DataViewController, AccountService {
         view.hideEmptyCells()
         return view
     }()
-
+    
     private weak var replyMessageViewController: ReplyMessageViewController?
-
+    
     private var messages: [MessageModel] = []
-
+    
     private var page = 1, maxPage = 1
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        fetchNotifications()
-
+        
         tableView.addHeaderRefresh { [weak self] in
             self?.fetchNotifications()
         }
-
+        
         tableView.addFooterRefresh { [weak self] in
             self?.fetchMoreNotifications()
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         /// 有未读通知, 主动刷新
         guard isLoad, let _ = tabBarItem.badgeValue else { return }
-
+        
         tableView.startHeaderRefresh()
     }
-
+    
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
-
+    
     override func setupRx() {
-
+        
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
                 self?.fetchNotifications()
             }.disposed(by: rx.disposeBag)
     }
-
+    
     // MARK: States Handle
-
+    
     override func loadData() {
         fetchNotifications()
     }
-
+    
     func fetchNotifications() {
-
+        
         guard AccountModel.isLogin else {
             endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             status = .noAuth
             return
         }
-
+        
         page = 1
-
+        
         startLoading()
-
+        
         notifications(page: page, success: { [weak self] messages, maxPage in
             guard let `self` = self else { return }
             self.messages = messages
@@ -91,12 +89,12 @@ class MessageViewController: DataViewController, AccountService {
             self?.tableView.endHeaderRefresh()
         }
     }
-
+    
     func fetchMoreNotifications() {
         page += 1
-
+        
         startLoading()
-
+        
         notifications(page: page, success: { [weak self] messages, maxPage in
             guard let `self` = self else { return }
             self.messages.append(contentsOf: messages)
@@ -107,7 +105,7 @@ class MessageViewController: DataViewController, AccountService {
             self?.page -= 1
         }
     }
-
+    
     override func errorView(_ errorView: ErrorView, didTapActionButton _: UIButton) {
         if status == .noAuth {
             presentLoginVC()
@@ -115,24 +113,24 @@ class MessageViewController: DataViewController, AccountService {
         }
         fetchNotifications()
     }
-
+    
     override func hasContent() -> Bool {
         return messages.count.boolValue
     }
-
+    
     private func deleteMessages(_ message: MessageModel) {
         guard let id = message.id,
             let once = message.once else {
-            HUD.showText("操作失败，无法获取消息 ID 或 once")
-            return
+                HUD.showText("操作失败，无法获取消息 ID 或 once")
+                return
         }
         deleteNotification(notifacationID: id, once: once, success: {
-
+            
         }) { error in
             HUD.showText(error)
         }
     }
-
+    
     /// TODO: 回复消息
     private func replyMessage(_ message: MessageModel) {
         if replyMessageViewController == nil {
@@ -142,7 +140,7 @@ class MessageViewController: DataViewController, AccountService {
             addChildViewController(replyMessageVC)
             self.view.addSubview(replyMessageVC.view)
         }
-
+        
         replyMessageViewController?.message = message
     }
 }
@@ -158,14 +156,13 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
         cell.message = messages[indexPath.row]
         cell.avatarTapHandle = { [weak self] cell in
             guard let `self` = self,
-                let row = tableView.indexPath(for: cell)?.row else {
+                let row = tableView.indexPath(for: cell)?.row,
+                let username = self.messages[row].member?.username else {
                     return
             }
-            log.info(row, self)
-            //            let message = self.messages[row]
-            //            log.info(message.user.username)
-            //            let memberVC = MemberPageViewController(member: member)
-            //            self.navigationController?.pushViewController(memberVC, animated: true)
+            
+            let memberVC = MemberPageViewController(memberName: username)
+            self.navigationController?.pushViewController(memberVC, animated: true)
         }
         return cell
     }
@@ -175,8 +172,8 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
         let topicDetailVC = TopicDetailViewController(topicID: topicID)
         navigationController?.pushViewController(topicDetailVC, animated: true)
     }
-
-
+    
+    
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let replyAction = UITableViewRowAction(
             style: .default,
@@ -185,7 +182,7 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
                 self.replyMessage(message)
         }
         replyAction.backgroundColor = UIColor.hex(0x0058E5)
-
+        
         let deleteAction = UITableViewRowAction(
             style: .destructive,
             title: "删除") { _, indexPath in

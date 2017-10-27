@@ -70,7 +70,7 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
     }
 
     deinit {
-        log.verbose("DEINIT: \(self.className)")
+        log.verbose("DEINIT: \(className)")
     }
 
     // MARK: Status Bar Style

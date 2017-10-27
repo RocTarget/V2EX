@@ -13,6 +13,7 @@ struct MemberModel {
     public var username: String
     public var url: String
     public var avatar: String
+    public var joinTime: String?
     
     public var avatarSrc: String {
         return Constants.Config.URIScheme + avatar
