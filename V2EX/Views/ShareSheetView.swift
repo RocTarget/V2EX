@@ -86,7 +86,7 @@ public class ShareSheetView: UIView {
         }
         
         shareSheetHeight = CGFloat(btnCount) * Metric.cardHeight + tHeight + cancelHeight + CGFloat(btnCount) * Metric.divideLineHeight
-        let aFrame = CGRect(x: 0, y: UIScreen.screenHeight, width: UIScreen.screenWidth, height: shareSheetHeight)
+        let aFrame = CGRect(x: 0, y: Constants.Metric.screenHeight, width: Constants.Metric.screenWidth, height: shareSheetHeight)
         shareSheetView.frame = aFrame
         addSubview(shareSheetView)
     }
@@ -96,7 +96,7 @@ public class ShareSheetView: UIView {
         
         //标题不为空，则添加标题
         if title.isNotEmpty {
-            let titlelabel = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.screenWidth, height: Metric.titleHeight))
+            let titlelabel = UILabel(frame: CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth, height: Metric.titleHeight))
             titlelabel.text = title
             titlelabel.textAlignment = .center
             titlelabel.textColor = UIColor(red: 0.361, green: 0.361, blue: 0.361, alpha: 1.00)
@@ -118,12 +118,12 @@ public class ShareSheetView: UIView {
             
             let origin_y = tHeight + Metric.cardHeight * CGFloat(index) + Metric.divideLineHeight * CGFloat(index)
             
-            let scroller = UIScrollView(frame: CGRect(x: 0.0, y: origin_y, width: UIScreen.screenWidth, height: Metric.cardHeight))
+            let scroller = UIScrollView(frame: CGRect(x: 0.0, y: origin_y, width: Constants.Metric.screenWidth, height: Metric.cardHeight))
             scroller.backgroundColor = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 0.80)
             scroller.showsHorizontalScrollIndicator = false
             scroller.showsVerticalScrollIndicator = false
             scroller.isScrollEnabled = isScrollEnabled
-            let contentSizeWidth = CGFloat(section.count) * Metric.itemwidth > UIScreen.screenWidth ? CGFloat(section.count) * Metric.itemwidth : (UIScreen.screenWidth + 1.0)
+            let contentSizeWidth = CGFloat(section.count) * Metric.itemwidth > Constants.Metric.screenWidth ? CGFloat(section.count) * Metric.itemwidth : (Constants.Metric.screenWidth + 1.0)
             scroller.contentSize = CGSize.init(width: contentSizeWidth, height: Metric.cardHeight)
             let itemsCount = section.count
             for subIdx in 0..<itemsCount {
@@ -141,7 +141,7 @@ public class ShareSheetView: UIView {
         guard cancelTitle.isNotEmpty else { return }
         
         let button = UIButton()
-        button.frame = CGRect(x: 0, y: Int(self.shareSheetView.bounds.size.height - Metric.buttonHeight), width: Int(UIScreen.screenWidth), height: Int(Metric.buttonHeight))
+        button.frame = CGRect(x: 0, y: Int(self.shareSheetView.bounds.size.height - Metric.buttonHeight), width: Int(Constants.Metric.screenWidth), height: Int(Metric.buttonHeight))
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.setTitle(cancelTitle, for: .normal)
         button.setTitleColor(.black, for: .normal)
@@ -167,7 +167,7 @@ public class ShareSheetView: UIView {
         }) { _ in
             UIView.animate(withDuration: Metric.defaultDuration) {
                 self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3)
-                self.shareSheetView.y = UIScreen.screenHeight - self.shareSheetHeight
+                self.shareSheetView.y = Constants.Metric.screenHeight - self.shareSheetHeight
             }
         }
     }
@@ -176,7 +176,7 @@ public class ShareSheetView: UIView {
     func dismiss() {
         UIView.animate(withDuration: Metric.defaultDuration, animations: {
             self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
-            self.shareSheetView.y = UIScreen.screenHeight
+            self.shareSheetView.y = Constants.Metric.screenHeight
         }) { (finished:Bool) in
             self.removeFromSuperview()
         }

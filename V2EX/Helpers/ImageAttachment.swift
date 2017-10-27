@@ -30,7 +30,14 @@ class ImageAttachment: AnimatedImageView {
 
         guard image == nil else { return }
 
-        setImage(url: url, placeholder: #imageLiteral(resourceName: "placeholder"))
+        setImage(with: url, placeholder: #imageLiteral(resourceName: "placeholder"), progress: nil) { imageResult in
+            guard let imageSize = imageResult.image?.size else { return }
+            if imageSize.width < self.width && imageSize.height < self.height {
+                self.contentMode = .bottomLeft
+            }
+        }
+
+//        setImage(url: url, placeholder: #imageLiteral(resourceName: "placeholder"))
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {

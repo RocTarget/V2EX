@@ -1,6 +1,7 @@
 import UIKit
+import StatefulViewController
 
-class LoadingView: BasePlaceholderView {
+class LoadingView: BasePlaceholderView, StatefulPlaceholderView {
 
     override func setupView() {
         
@@ -16,6 +17,6 @@ class LoadingView: BasePlaceholderView {
     }
 
     func placeholderViewInsets() -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        return UIEdgeInsets(top: Constants.Metric.navigationHeight, left: 0, bottom: Constants.Metric.tabbarHeight, right: 0)
     }
 }

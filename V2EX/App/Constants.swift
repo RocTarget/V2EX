@@ -29,6 +29,15 @@ struct Constants {
         static let createTopicTitleDraft = "createTopicTitleDraft"
         static let createTopicBodyDraft = "createTopicBodyDraft"
     }
+
+    struct Metric {
+        /// TODO: iPhone X 适配
+        static let navigationHeight: CGFloat = 64
+        static let tabbarHeight: CGFloat = 49
+
+        static let screenWidth: CGFloat = UIScreen.main.bounds.width
+        static let screenHeight: CGFloat = UIScreen.main.bounds.height
+    }
 }
 
 // MARK: - 通知

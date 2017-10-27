@@ -40,11 +40,6 @@ extension String {
         return nil
     }
 
-    /// 获取字符串长度
-    var length: Int {
-        return count
-    }
-
     /// 转为 NSString
     var NSString: NSString {
         return self as NSString

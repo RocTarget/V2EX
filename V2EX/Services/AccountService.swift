@@ -18,7 +18,8 @@ protocol AccountService {
         failure: ((_ error: String, _ forgotForm: LoginForm?) -> Void)?)
 
     func notifications(
-        success: ((_ messages: [MessageModel]) -> ())?,
+        page: Int,
+        success: ((_ messages: [MessageModel], _ maxPage: Int) -> ())?,
         failure: Failure?)
 
     func deleteNotification(
@@ -171,31 +172,39 @@ extension AccountService {
     }
 
     func notifications(
-        success: ((_ messages: [MessageModel]) -> ())?,
+        page: Int,
+        success: ((_ messages: [MessageModel], _ maxPage: Int) -> ())?,
         failure: Failure?) {
 
-        Network.htmlRequest(target: .notifications, success: { html in
-            let cellPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell']/table/tr")
+        Network.htmlRequest(target: .notifications(page: page), success: { html in
+            let cellPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell']")
+
             let messages = cellPath.flatMap({ ele -> MessageModel? in
-                guard let userNode = ele.xpath("td[1]/a/img").first,
+                guard let id = ele["id"]?.deleteOccurrences(target: "n_"),
+                    let userNode = ele.xpath("table/tr/td[1]/a/img").first,
                     let userPageHref = userNode.parent?["href"],
                     let avatarSrc = userNode["src"],
-                    let topicNode = ele.xpath("td[2]/span/a[2]").first,
+                    let topicNode = ele.xpath("table/tr/td[2]/span/a[2]").first,
                     let topicHref = topicNode["href"],
                     let topicTitle = topicNode.content,
-                    let time = ele.xpath("td[2]/span[2]").first?.content?.trimmed,
-                    let replyTypeStr = ele.xpath("td[2]/span[1]").first?.text else {
+                    let time = ele.xpath("table/tr/td[2]/span[2]").first?.content?.trimmed,
+                    let replyTypeStr = ele.xpath("table/tr/td[2]/span[1]").first?.text else {
                     return nil
                 }
-//                ele.xpath("td[2]/a").map {$0["onclick"]}
+                let onclick = ele.xpath("table/tr/td[2]/a").first?["onclick"]
+                let once = onclick?.components(separatedBy: ",").last?.deleteOccurrences(target: ")").trimmed
+
                 let username = userPageHref.lastPathComponent
-                let content = ele.xpath("td[2]/div[@class='payload']").first?.text ?? ""
+                let content = ele.xpath("table/tr/td[2]/div[@class='payload']").first?.text ?? ""
                 
                 let member = MemberModel(username: username, url: userPageHref, avatar: avatarSrc)
                 let topic = TopicModel(member: nil, node: nil, title: topicTitle, href: topicHref)
-                return MessageModel(member: member, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr)
+                return MessageModel(id: id,member: member, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr, once: once)
             })
-            success?(messages)
+            let pageComponents = html.xpath("//*[@id='Wrapper']//div[@class='box']/div[@class='inner']//strong").first?.content?.components(separatedBy: "/")
+//            let currentPage = pageComponents?.first
+            let maxPage = pageComponents?.last?.int ?? 1
+            success?(messages, maxPage)
         }, failure: failure)
     }
 
@@ -204,7 +213,7 @@ extension AccountService {
         once: String,
         success: Action?,
         failure: Failure?) {
-        Network.htmlRequest(target: .deleteNotification(notifacationID: notifacationID, once: once), success: { html in
+        Network.htmlRequestNotResponse(target: .deleteNotification(notifacationID: notifacationID, once: once), success: {
             success?()
         }, failure: failure)
     }

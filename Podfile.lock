@@ -9,6 +9,7 @@ PODS:
   - NSObject+Rx (4.1.0):
     - RxSwift (~> 4.0)
   - PKHUD (5.0.0)
+  - PullToRefreshKit (0.7.0)
   - Reveal-SDK (4)
   - RxCocoa (4.0.0):
     - RxSwift (~> 4.0)
@@ -16,6 +17,7 @@ PODS:
     - RxCocoa (~> 4.0)
     - RxSwift (~> 4.0)
   - RxSwift (4.0.0)
+  - SKPhotoBrowser (5.0.0)
   - SnapKit (4.0.0)
   - StatefulViewController (3.0)
   - Themes (1.1.0)
@@ -33,16 +35,27 @@ DEPENDENCIES:
   - Marklight
   - NSObject+Rx
   - PKHUD
+  - PullToRefreshKit (from `https://github.com/Joe0708/PullToRefreshKit.git`)
   - Reveal-SDK (~> 4)
   - RxCocoa (~> 4.0)
   - RxOptional
   - RxSwift (~> 4.0)
+  - SKPhotoBrowser
   - SnapKit
   - StatefulViewController
   - Themes
   - Toaster
   - UIView+Positioning
   - YYText
+
+EXTERNAL SOURCES:
+  PullToRefreshKit:
+    :git: https://github.com/Joe0708/PullToRefreshKit.git
+
+CHECKOUT OPTIONS:
+  PullToRefreshKit:
+    :commit: c04adc720d374b6013db34e6b67b4e94c31663af
+    :git: https://github.com/Joe0708/PullToRefreshKit.git
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
@@ -54,10 +67,12 @@ SPEC CHECKSUMS:
   Marklight: 54432ea3e99f1712129037b3191d54615d6cbe6c
   NSObject+Rx: 6447292bbd5e39c94e252de67e76c7ce08e05939
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
+  PullToRefreshKit: 537bd8152e2baba53ceb01874010026480e09e73
   Reveal-SDK: 178c927f1a3230648d3a92b96f6e730a35b2750a
   RxCocoa: d62846ca96495d862fa4c59ea7d87e5031d7340e
   RxOptional: e5448d3e21024489e07c31f6a262f2b50c975367
   RxSwift: fd680d75283beb5e2559486f3c0ff852f0d35334
+  SKPhotoBrowser: fe936f878955a568c726bf05d14e1d2717d91ce0
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   StatefulViewController: 4803bf900d44de26074344998e10e041113b5931
   Themes: 9c5626e1b9d0a5683e5179c00c38077bd0281148
@@ -65,6 +80,6 @@ SPEC CHECKSUMS:
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 16c69a5eaf7851e098f7e7646cad2d48cc960941
+PODFILE CHECKSUM: 192534092bde708126d06d55eada90b8e325ebb6
 
 COCOAPODS: 1.3.1

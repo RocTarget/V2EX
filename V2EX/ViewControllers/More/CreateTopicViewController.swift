@@ -227,12 +227,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
     }
     
     func postTopicHandle() {
-        // TODO:
-        // 1. 数据校验 ✅
-        // 2. 保存草稿 ✅
-        // 3. Markdown 预览 ✅
-        
-        guard bodyTextView.text.length <= Limit.bodyMaxCharacter else {
+
+        guard bodyTextView.text.count <= Limit.bodyMaxCharacter else {
             HUD.showText("正文内容不能超过 \(Limit.bodyMaxCharacter) 个字符")
             return
         }

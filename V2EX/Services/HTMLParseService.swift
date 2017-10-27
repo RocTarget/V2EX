@@ -89,6 +89,10 @@ extension HTMLParseService {
         return topics
     }
     
+    /// 解析节点导航
+    ///
+    /// - Parameter html: HTMLDoc
+    /// - Returns: node model
     func parseNodeNavigation(html: HTMLDocument) -> [NodeCategoryModel] {
         let nodesPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][last()]/div/table/tr")
         let nodeCategorys = nodesPath.flatMap { (ele) -> NodeCategoryModel? in
@@ -103,7 +107,7 @@ extension HTMLParseService {
     }
 
 
-    // MARK: - 评论里面的视频替换成链接地址
+    //／ 评论里面的视频替换成链接地址
     func replacingIframe(text: String) -> String {
         guard text.contains("</iframe>") else { return text }
         
@@ -131,10 +135,18 @@ extension HTMLParseService {
         return content
     }
 
+
+    /// 解析 once
+    ///
+    /// - Parameter html: HTMLDoc
     func parseOnce(html: HTMLDocument) -> String? {
         return html.xpath("//input[@name='once']").first?["value"]
     }
 
+
+    /// 解析回复列表
+    ///
+    /// - Parameter html: HTMLDoc
     func parseComment(html: HTMLDocument) -> [CommentModel] {
         let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
         let comments = commentPath.flatMap({ ele -> CommentModel? in
@@ -153,7 +165,7 @@ extension HTMLParseService {
             let contentNode = ele.xpath("./table/tr/td[3]/div[@class='reply_content']/node()")
             let attributedString = NSMutableAttributedString()
             wrapperAttributedString(attributedString, node: contentNode)
-            let textContainer = YYTextContainer(size: CGSize(width: UIScreen.screenWidth - 30, height: CGFloat.max))
+            let textContainer = YYTextContainer(size: CGSize(width: Constants.Metric.screenWidth - 30, height: CGFloat.max))
             let textLayout = YYTextLayout(container: textContainer, text: attributedString)
 
             let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
@@ -203,10 +215,10 @@ extension HTMLParseService {
                     wrapperAttributedString(attributedString, node: subnodes)
                 }
 
-                if content.length.boolValue {
+                if content.count.boolValue {
                     let linkAttrString = NSMutableAttributedString(string: content,
                                                                    attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
-                    linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.length),
+                    linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),
                                                        color: Theme.Color.linkColor,
                                                        backgroundColor: .clear,
                                                        userInfo: ["url": urlString],
@@ -271,7 +283,14 @@ extension HTMLParseService {
             }
 
             let topic = TopicModel(member: nil, node: nil, title: topicTitle, href: topicHref)
-            return MessageModel(member: nil, topic: topic, time: replyTime, content: replyContent, replyTypeStr: replyDes)
+            return MessageModel(
+                id: nil,
+                member: nil,
+                topic: topic,
+                time: replyTime,
+                content: replyContent,
+                replyTypeStr: replyDes,
+                once: nil)
         })
         return messages
     }

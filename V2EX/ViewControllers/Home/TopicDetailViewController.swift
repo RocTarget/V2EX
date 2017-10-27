@@ -22,7 +22,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         return view
     }()
 
-    fileprivate lazy var imagePicker: UIImagePickerController = {
+    private lazy var imagePicker: UIImagePickerController = {
         let view = UIImagePickerController()
         view.allowsEditing = true
         view.mediaTypes = [kUTTypeImage as String]
@@ -31,11 +31,6 @@ class TopicDetailViewController: DataViewController, TopicService {
         return view
     }()
 
-    private lazy var refreshControl: UIRefreshControl = {
-        let view = UIRefreshControl()
-        return view
-    }()
-    
     private lazy var headerView: TopicDetailHeaderView = {
         let view = TopicDetailHeaderView()
         view.isHidden = true
@@ -62,18 +57,24 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         return comments[selectIndexPath.row]
     }
-    
+
     public var topicID: String
     
-    private var dataSources: [CommentModel] = []
+    private var dataSources: [CommentModel] = [] {
+        didSet {
+            comments = dataSources
+        }
+    }
     private var comments: [CommentModel] = []
     
     private var commentText: String = ""
-    
     private var isShowOnlyFloor: Bool = false
+
+    private var page = 1, maxPage = 1
 
     private var inputViewBottomConstranit: Constraint?
     private var inputViewHeightConstraint: Constraint?
+
     
     init(topicID: String) {
         self.topicID = topicID
@@ -102,8 +103,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     }
 
     override func setupSubviews() {
-        
-        tableView.addSubview(refreshControl)
+
         tableView.tableHeaderView = headerView
         
         headerView.tapHandle = { [weak self] type in
@@ -151,6 +151,14 @@ class TopicDetailViewController: DataViewController, TopicService {
         }.disposed(by: rx.disposeBag)
 
         title = "加载中..."
+
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchTopicDetail()
+        }
+
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreComment()
+        }
     }
 
     func interactHook(_ URL: URL) {
@@ -187,15 +195,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             }
         }
     }
-    
-    override func setupRx() {
-        refreshControl.rx
-            .controlEvent(.valueChanged)
-            .subscribeNext { [weak self] in
-                self?.fetchTopicDetail()
-            }.disposed(by: rx.disposeBag)
-    }
-    
+
     // MARK: States Handle
     
     override func hasContent() -> Bool {
@@ -233,20 +233,6 @@ class TopicDetailViewController: DataViewController, TopicService {
                 //                self?.keyboardControl(notification)
             }.disposed(by: rx.disposeBag)
     }
-
-//    func keyboardControl(_ notification: Notification) {
-
-//        var userInfo = notification.userInfo!
-//        let keyboardRect = (userInfo[UIKeyboardFrameEndUserInfoKey]! as AnyObject).cgRectValue
-//        let convertedFrame = view.convert(keyboardRect!, from: nil)
-//        let heightOffset = view.bounds.size.height - convertedFrame.origin.y
-//        let duration = (userInfo[UIKeyboardAnimationDurationUserInfoKey]! as AnyObject).doubleValue
-//        self.inputViewBottomConstranit?.update(offset: -heightOffset)
-//
-//        UIView.animate(withDuration: duration!) {
-//            self.view.layoutIfNeeded()
-//        }
-//    }
 }
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -319,6 +305,7 @@ extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigati
     }
 }
 
+
 // MARK: - 处理 Cell 内部、导航栏Item、SheetShare 的 Action
 extension TopicDetailViewController {
 
@@ -337,8 +324,9 @@ extension TopicDetailViewController {
             atMember(member.atUsername)
         case .imageURL(let src):
             log.info(src)
+            showImageBrowser(imageType: .imageURL(src))
         case .image(let image):
-            log.info(image)
+            showImageBrowser(imageType: .image(image))
         case .node(let node):
             let nodeDetailVC = NodeDetailViewController(node: node)
             self.navigationController?.pushViewController(nodeDetailVC, animated: true)
@@ -405,7 +393,7 @@ extension TopicDetailViewController {
         case .ignore:
             ignoreTopicHandle()
         case .copyLink:
-            UIPasteboard.general.string = API.topicDetail(topicID: topicID).defaultURLString
+            UIPasteboard.general.string = API.topicDetail(topicID: topicID, page: page).defaultURLString
             HUD.showText("链接已复制")
         case .safari:
             openSafariHandle()
@@ -446,7 +434,8 @@ extension TopicDetailViewController {
         let nav = NavigationViewController(rootViewController: memberListVC)
         self.present(nav, animated: true, completion: nil)
 
-        memberListVC.callback = { members in
+        memberListVC.callback = { [weak self] members in
+            guard let `self` = self else { return }
             self.commentInputView.beFirstResponder()
 
             guard members.count.boolValue else { return }
@@ -464,6 +453,7 @@ extension TopicDetailViewController {
             // 修改光标位置
             self.commentInputView.textView.deleteBackward()
             let range = self.commentInputView.text.NSString.range(of: atsWrapper)
+//            self.commentInputView.textView.selectedRange = NSRange(location: self.commentInputView.text.count, length: 0)
             self.commentInputView.textView.selectedRange = NSRange(location: range.location + range.length, length: 0)
         }
     }
@@ -521,23 +511,43 @@ extension TopicDetailViewController {
     
     /// 获取主题详情
     func fetchTopicDetail() {
+        page = 1
+
         startLoading()
         
-        topicDetail(topicID: topicID, success: { [weak self] topic, comments in
-            self?.topic = topic
-            self?.dataSources = comments
-            self?.comments = comments
-            self?.refreshControl.endRefreshing()
-            self?.endLoading()
+        topicDetail(topicID: topicID, success: { [weak self] topic, comments, maxPage in
+            guard let `self` = self else { return }
+            self.topic = topic
+            self.dataSources = comments
+            self.tableView.endHeaderRefresh()
+            self.maxPage = maxPage
+            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
+//            self?.endLoading()
             }, failure: { [weak self] error in
                 if let `errorView` = self?.errorView as? ErrorView {
                     errorView.message = error
                 }
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-                self?.refreshControl.endRefreshing()
+                self?.tableView.endHeaderRefresh()
         })
     }
-    
+
+    /// 获取更多评论
+    func fetchMoreComment() {
+        page += 1
+
+        topicMoreComment(topicID: topicID, page: page, success: { [weak self] comments in
+            guard let `self` = self else { return }
+            self.dataSources.append(contentsOf: comments)
+            self.tableView.reloadData()
+            self.tableView.endFooterRefresh(showNoMore: self.page >= self.maxPage)
+            }, failure: { [weak self] error in
+                self?.tableView.endFooterRefresh()
+                self?.page -= 1
+        })
+    }
+
+
     /// 回复评论
     private func replyComment() {
         
@@ -569,6 +579,7 @@ extension TopicDetailViewController {
         
         commentText = commentInputView.text
         // TODO: 奔溃
+//        commentInputView.textView.attributedText = NSAttributedString(string: "")
 //        commentInputView.textView.text = ""
 
         HUD.show()
@@ -650,7 +661,6 @@ extension TopicDetailViewController {
             return
         }
         
-        // TODO: 感谢发送成功之后 会提示数据解析失败, 这里需要测试
         thankTopic(topicID: topicID, token: token, success: { [weak self] in
             HUD.showText("感谢已发送")
             self?.topic?.isThank = true
@@ -704,7 +714,7 @@ extension TopicDetailViewController {
     /// 打开系统分享
     func systemShare() {
         
-        guard let url = API.topicDetail(topicID: topicID).url,
+        guard let url = API.topicDetail(topicID: topicID, page: page).url,
             let title = topic?.title else { return }
         
         let controller = UIActivityViewController(
@@ -738,7 +748,7 @@ extension TopicDetailViewController {
     
     /// 从系统 Safari 浏览器中打开
     func openSafariHandle() {
-        guard let url = API.topicDetail(topicID: topicID).url,
+        guard let url = API.topicDetail(topicID: topicID, page: page).url,
             UIApplication.shared.canOpenURL(url) else {
                 HUD.showText("无法打开网页")
                 return

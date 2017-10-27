@@ -9,7 +9,7 @@ class HomeViewController: BaseTopicsViewController {
         let view = NodeTabView(
             frame: CGRect(x: 0,
                           y: 0,
-                          width: UIScreen.screenWidth,
+                          width: Constants.Metric.screenWidth,
                           height: self.navigationController!.navigationBar.height),
             nodes: nodes)
         return view
@@ -44,13 +44,18 @@ class HomeViewController: BaseTopicsViewController {
         }
         return searchController
     }()
-    
+
+    // MARK: - View Life Cycle...
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupSearchBar()
         
         definesPresentationContext = true
+
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreTopic()
+        }
     }
     
     override func setupSubviews() {
@@ -62,9 +67,9 @@ class HomeViewController: BaseTopicsViewController {
     func tabChangebHandle() {
         tabView.valueChange = { [weak self] index in
             guard let `self` = self else { return }
-            
             self.tableView.scrollToTop()
-            self.href = self.nodes[index].href
+            let node = self.nodes[index]
+            self.href = node.href
             self.fetchTopic()
         }
     }
@@ -75,7 +80,6 @@ class HomeViewController: BaseTopicsViewController {
     }
 
     override func setupRx() {
-        super.setupRx()
         
         searchController.searchBar.rx.text.orEmpty
             .debounce(0.5, scheduler: MainScheduler.instance)
@@ -98,14 +102,14 @@ class HomeViewController: BaseTopicsViewController {
     
     func fetchIndexData() {
         startLoading()
-        
+
         index(success: { [weak self] nodes, topics in
             guard let `self` = self else { return }
             
             self.nodes = nodes
             self.topics = topics
             self.endLoading()
-            
+
             // 避免调用两次请求
             self.tabChangebHandle()
             
@@ -116,6 +120,27 @@ class HomeViewController: BaseTopicsViewController {
                     errorView.message = error
                 }
         })
+    }
+
+    func fetchMoreTopic() {
+        let href = nodes[tabView.selectIndex].href
+        let allHref = "/?tab=all"
+        let isAllowRefresh = href.hasPrefix(allHref)
+        if isAllowRefresh == false {
+            tableView.endFooterRefresh(showNoMore: !isAllowRefresh)
+        }
+
+        guard isAllowRefresh else { return }
+
+        recentTopics(page: page, success: { [weak self] topics, maxPage in
+            guard let `self` = self else { return }
+            self.page += 1
+            self.maxPage = maxPage
+            self.topics.append(contentsOf: topics)
+            self.tableView.endFooterRefresh(showNoMore: self.page >= maxPage)
+        }) { [weak self] error in
+            self?.tableView.endFooterRefresh()
+        }
     }
 
     override func loadData() {

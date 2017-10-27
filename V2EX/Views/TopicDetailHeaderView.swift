@@ -72,7 +72,7 @@ class TopicDetailHeaderView: UIView{
     }
     
     init() {
-        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.screenWidth, height: 130))
+        super.init(frame: CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth, height: 130))
         backgroundColor = .white
 
         addSubviews(

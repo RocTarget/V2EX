@@ -68,13 +68,6 @@ extension String {
         return pred.evaluate(with: self)
     }
     
-    /// 正则匹配URL
-    func checkURL() -> Bool {
-        let pattern = "^[0-9A-Za-z]{1,50}"
-        let pred = NSPredicate(format: "SELF MATCHES %@", pattern)
-        return pred.evaluate(with: self)
-    }
-    
     /// 正则匹配用户姓名,20位的中文或英文
     func checkUserName() -> Bool {
         let pattern = "^[a-zA-Z\\u4E00-\\u9FA5]{1,20}"

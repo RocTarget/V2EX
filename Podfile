@@ -29,6 +29,8 @@ target 'V2EX' do
     pod 'Themes'
     pod 'StatefulViewController'
     pod 'YYText'
+    pod 'SKPhotoBrowser'
+    pod 'PullToRefreshKit', git: 'https://github.com/Joe0708/PullToRefreshKit.git'
 
     # Cache
 #    pod 'Cache'
@@ -40,6 +42,7 @@ target 'V2EX' do
     # Misc
     pod 'IQKeyboardManagerSwift'
     pod 'Carte'
+#    pod 'RxKeyboard'
 
     # Bug
 #    pod 'Fabric'

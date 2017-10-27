@@ -12,8 +12,10 @@ enum CaptchaType: String {
 enum API {
     
     case topics(href: String?)
-    
-    case topicDetail(topicID: String)
+
+    case recentTopics(page: Int)
+
+    case topicDetail(topicID: String, page: Int)
     
     case captcha(type: CaptchaType)
     
@@ -42,7 +44,7 @@ enum API {
     case comment(topicID: String, dict: [String: String])
     case createTopic(nodename: String, dict: [String: String])
     
-    case notifications
+    case notifications(page: Int)
     case deleteNotification(notifacationID: String, once: String)
     
     case memberTopics(username: String)
@@ -93,8 +95,10 @@ extension API: TargetType {
         switch self {
         case .topics(let href):
             return .get(href ?? "")
-        case .topicDetail(let topicID):
-            return .get("/t/\(topicID)")
+        case .recentTopics(let page):
+            return .get("/recent?p=\(page)")
+        case .topicDetail(let topicID, let page):
+            return .get("/t/\(topicID)?p=\(page)")
         case .captcha(let type):
             return .get(type.rawValue)
         case .captchaImageData(let once):
@@ -120,8 +124,8 @@ extension API: TargetType {
             return .get("/about")
         case .comment(let topicID, _):
             return .post("/t/\(topicID)")
-        case .notifications:
-            return .get("/notifications")
+        case .notifications(let page):
+            return .get("/notifications?p=\(page)")
         case let .deleteNotification(notifacationID, once):
             return .post("/delete/notification/\(notifacationID)?once=\(once)")
         case .memberTopics(let username):

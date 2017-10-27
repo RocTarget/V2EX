@@ -49,7 +49,6 @@ extension CommentModel {
     static func atUsernames(_ comment: CommentModel?) -> Set<String>?  {
         guard let `comment` = comment else { return nil }
         let text = comment.content
-        log.info(text)
         guard let result = TextParser.mentioned?.matches(in: text, options: .reportProgress, range: NSRange(location: 0, length: text.count)) else {
             return nil
         }

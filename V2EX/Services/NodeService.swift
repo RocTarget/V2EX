@@ -125,42 +125,48 @@ extension NodeService {
     /// - Parameters:
     ///   - nodes: nodes
     ///   - complete: 完成
-    private func nodeSort(_ nodes: [NodeModel], complete: ((_ nodeGroup: [NodeCategoryModel]) -> Void )) {
+    private func nodeSort(_ nodes: [NodeModel], complete: @escaping ((_ nodeGroup: [NodeCategoryModel]) -> Void )) {
         guard nodes.count > 0 else { return }
-        
-        var `nodes` = nodes
-        
-        let tempInitial = nodes[0].name.pinYingString.firstLetter
-        let currentGroup = NodeCategoryModel(id: 0, name: tempInitial, nodes: [])
-        var group: [NodeCategoryModel] = [currentGroup]
-        
-        var otherGroup = NodeCategoryModel(id: 0, name: "#", nodes: [])
-        
-        for node in nodes {
-            let initial = node.name.pinYingString.firstLetter
-            
-            //  不放在其他组, 单独一组, 谁让我是果粉 😀
-            if initial != "", !isLetter(string: initial) {
-                otherGroup.nodes.append(node)
-                continue
+
+        GCD.runOnBackgroundThread {
+
+            var `nodes` = nodes
+
+            let tempInitial = nodes[0].name.pinYingString.firstLetter
+            let currentGroup = NodeCategoryModel(id: 0, name: tempInitial, nodes: [])
+            var group: [NodeCategoryModel] = [currentGroup]
+
+            var otherGroup = NodeCategoryModel(id: 0, name: "#", nodes: [])
+
+            for node in nodes {
+                let initial = node.name.pinYingString.firstLetter
+
+                //  不放在其他组, 单独一组, 谁让我是果粉 😀
+                if initial != "", !self.isLetter(string: initial) {
+                    otherGroup.nodes.append(node)
+                    continue
+                }
+
+                if let index = group.index(where: { $0.name == initial }) {
+                    group[index].nodes.append(node)
+                    continue
+                }
+
+                group.append(NodeCategoryModel(id: 0, name: initial, nodes: [node]))
             }
-            
-            if let index = group.index(where: { $0.name == initial }) {
-                group[index].nodes.append(node)
-                continue
+
+            if otherGroup.nodes.count.boolValue {
+                group.append(otherGroup)
             }
-            
-            group.append(NodeCategoryModel(id: 0, name: initial, nodes: [node]))
+
+            group.sort { (lhs, rhs) -> Bool in
+                return lhs.name < rhs.name
+            }
+
+            GCD.runOnMainThread {
+                complete(group)
+            }
         }
-        
-        if otherGroup.nodes.count.boolValue {
-            group.append(otherGroup)
-        }
-        
-        group.sort { (lhs, rhs) -> Bool in
-            return lhs.name < rhs.name
-        }
-        complete(group)
     }
     
     // 判断是否为字母

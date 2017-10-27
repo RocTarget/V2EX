@@ -197,18 +197,6 @@ extension UIDevice {
 
 
 
-extension UIScreen {
-    class var screenWidth: CGFloat {
-        return UIScreen.main.bounds.width
-    }
-    
-    class var screenHeight: CGFloat {
-        return UIScreen.main.bounds.height
-    }
-}
-
-
-
 extension NSRange {
     func range(for str: String) -> Range<String.Index>? {
         guard location != NSNotFound else { return nil }

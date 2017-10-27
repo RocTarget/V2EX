@@ -81,7 +81,7 @@ extension UILabel {
         paragraphStyle.lineSpacing = CGFloat(lineHeight)
         paragraphStyle.alignment = textAlignment
 
-        attributedString?.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: displayText.length))
+        attributedString?.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: displayText.count))
 
         attributedText = attributedString
     }

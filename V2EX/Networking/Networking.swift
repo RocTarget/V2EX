@@ -171,4 +171,18 @@ extension Networking {
             success?(html)
         }, failure: failure)
     }
+
+    /// 不需要响应结果，  用于 感谢、删除通知评论时， data count = 0
+    public func htmlRequestNotResponse(
+        file: StaticString = #file,
+        function: StaticString = #function,
+        line: UInt = #line,
+        target: API,
+        success: Action?,
+        failure: Failure?
+        ) {
+        request(target: target, success: { data in
+            success?()
+        }, failure: failure)
+    }
 }

@@ -7,26 +7,34 @@ import YYText
 //    "src=\"([^\"]+)\""; // 找出IMG标签的SRC属性
 struct TextParser {
 
+    // 匹配 @
     static var mentioned: NSRegularExpression? {
         return try? NSRegularExpression(pattern: "@(\\S+)\\s", options: [.caseInsensitive])
     }
-    
+
+    /// 匹配 iframe 标签
     static var iframe: NSRegularExpression? {
         return try? NSRegularExpression(pattern: "<iframe(.*?)</iframe>", options: [.caseInsensitive, .dotMatchesLineSeparators])
     }
 
+    /// 匹配 img 标签
     static var imgTag: NSRegularExpression? {
         return try? NSRegularExpression(pattern: "<img src=(.*?)>", options: [.caseInsensitive, .dotMatchesLineSeparators])
     }
 
-    /// 正则：匹配 www.a.com 或者 http://www.a.com 的类型
+    /// 匹配 www.a.com 或者 http://www.a.com 的类型
     /// ref: http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-    static var regexURLs: NSRegularExpression? {
+    static var link: NSRegularExpression? {
         get {
             let regex: String = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+([-A-Z0-9a-z_\\$\\.\\+!\\*\\(\\)/,:;@&=\\?~#%]*)*"
-            let regularExpression = try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
-            return regularExpression
+            return try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
         }
+    }
+
+    /// 匹配链接和@
+    static var linkAndAt: NSRegularExpression? {
+        let regex: String = "(((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+([-A-Z0-9a-z_\\$\\.\\+!\\*\\(\\)/,:;@&=\\?~#%]*)*)\\s|@(\\S+)\\s"
+        return try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
     }
 }
 

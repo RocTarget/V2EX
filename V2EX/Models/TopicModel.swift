@@ -40,6 +40,6 @@ public struct TopicModel {
     
     /// 计算高度 ps: 偷懒做法, 有时间再优化 👻
     var cellHeight: CGFloat {
-        return 40 + 45 + title.toHeight(width: UIScreen.screenWidth - 30, fontSize: 17)
+        return 40 + 45 + title.toHeight(width: Constants.Metric.screenWidth - 30, fontSize: 17)
     }
 }

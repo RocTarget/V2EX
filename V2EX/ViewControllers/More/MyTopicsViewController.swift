@@ -19,9 +19,9 @@ class MyTopicsViewController: BaseTopicsViewController {
             success: {[weak self] topics in
                 self?.topics = topics
                 self?.endLoading()
-                self?.refreshControl.endRefreshing()
+                self?.tableView.endFooterRefresh()
         }) { [weak self] error in
-            self?.refreshControl.endRefreshing()
+            self?.tableView.endFooterRefresh()
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             if let `errorView` = self?.errorView as? EmptyView {
                 errorView.message = error

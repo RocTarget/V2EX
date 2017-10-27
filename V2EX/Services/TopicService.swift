@@ -11,6 +11,16 @@ protocol TopicService: HTMLParseService {
     func index(
         success: ((_ nodes: [NodeModel], _ topics: [TopicModel]) -> Void)?,
         failure: Failure?)
+
+    /// 获取 最近 的分页数据
+    ///
+    /// - Parameters:
+    ///   - success: 成功返回 topics
+    ///   - failure: 失败
+    func recentTopics(
+        page: Int,
+        success: ((_ topics: [TopicModel], _ maxPage: Int) -> Void)?,
+        failure: Failure?)
     
     /// 获取 首页 主题数据
     ///
@@ -31,7 +41,20 @@ protocol TopicService: HTMLParseService {
     ///   - failure: 失败
     func topicDetail(
         topicID: String,
-        success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
+        success: ((_ topic: TopicModel, _ comments: [CommentModel], _ maxPage: Int) -> Void)?,
+        failure: Failure?)
+
+    /// 获取主题中更多评论
+    ///
+    /// - Parameters:
+    ///   - topicID: 主题ID
+    ///   - page: 获取页数
+    ///   - success: 成功
+    ///   - failure: 失败
+    func topicMoreComment(
+        topicID: String,
+        page: Int,
+        success: ((_ comments: [CommentModel]) -> Void)?,
         failure: Failure?)
     
     /// 发布评论
@@ -215,7 +238,7 @@ extension TopicService {
             //  已登录 div[2] / 没登录 div[1]
             let nodePath = html.xpath("//*[@id='Wrapper']/div[@class='content']/div/div[\(isLogin ? 2 : 1)]/a")
             
-            var nodes = nodePath.flatMap({ ele -> NodeModel? in
+            let nodes = nodePath.flatMap({ ele -> NodeModel? in
                 guard let href = ele["href"],
                     let name = ele.content else {
                         return nil
@@ -223,10 +246,7 @@ extension TopicService {
                 let isCurrent = ele.className == "tab_current"
                 
                 return NodeModel(name: name, href: href, isCurrent: isCurrent)
-            })//.filter { $0.href != "/?tab=nodes" } // 过滤导航上的 ‘节点’ 节点
-            
-            let recent = NodeModel(name: "最近", href: "/recent")
-            nodes.insert(recent, at: 0)
+            })
             
             let topics = self.parseTopic(html: html, type: .index)
             
@@ -237,6 +257,20 @@ extension TopicService {
             
             success?(nodes, topics)
         }, failure: failure)
+    }
+
+    func recentTopics(
+        page: Int,
+        success: ((_ topics: [TopicModel], _ maxPage: Int) -> Void)?,
+        failure: Failure?) {
+
+        Network.htmlRequest(target: .recentTopics(page: page), success: { html in
+            let topics = self.parseTopic(html: html, type: .index)
+            let pageComponents = html.xpath("//*[@id='Wrapper']//div[@class='box']/div[@class='inner']//strong").first?.content?.components(separatedBy: "/")
+            let maxPage = pageComponents?.last?.int ?? 1
+            success?(topics, maxPage)
+        }, failure: failure)
+
     }
     
     func topics(
@@ -258,10 +292,10 @@ extension TopicService {
 
     func topicDetail(
         topicID: String,
-        success: ((_ topic: TopicModel, _ comments: [CommentModel]) -> Void)?,
+        success: ((_ topic: TopicModel, _ comments: [CommentModel], _ maxPage: Int) -> Void)?,
         failure: Failure?) {
-        
-        Network.htmlRequest(target: .topicDetail(topicID: topicID), success: { html in
+
+        Network.htmlRequest(target: .topicDetail(topicID: topicID, page: 1), success: { html in
             
             guard let _ = html.xpath("//*[@id='Wrapper']//div[@class='header']/small/text()[2]").first?.text else {
                 // 需要登录
@@ -311,10 +345,25 @@ extension TopicService {
             topic.once = self.parseOnce(html: html)
             topic.content = content
             topic.publicTime = html.xpath("//*[@id='Wrapper']/div/div[1]/div[1]/small/text()[2]").first?.content ?? ""
-            success?(topic, comments)
+            let maxPage = html.xpath("//*[@id='Wrapper']/div/div[@class='box'][2]/div[last()]/a[last()]").first?.content?.int ?? 1
+            success?(topic, comments, maxPage)
         }, failure: failure)
     }
-    
+
+
+    func topicMoreComment(
+        topicID: String,
+        page: Int,
+        success: ((_ comments: [CommentModel]) -> Void)?,
+        failure: Failure?) {
+
+        Network.htmlRequest(target: .topicDetail(topicID: topicID, page: page), success: { html in
+            let comments = self.parseComment(html: html)
+            success?(comments)
+        }, failure: failure)
+    }
+
+
     func comment(
         once: String,
         topicID: String,
@@ -453,7 +502,7 @@ extension TopicService {
                     token: String,
                     success: Action?,
                     failure: Failure?) {
-        Network.htmlRequest(target: .thankTopic(topicID: topicID, token: token), success: { html in
+        Network.htmlRequestNotResponse(target: .thankTopic(topicID: topicID, token: token), success: {
             success?()
         }, failure: failure)
     }

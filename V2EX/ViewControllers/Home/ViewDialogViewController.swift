@@ -9,9 +9,13 @@ class ViewDialogViewController: UITableViewController {
         self.comments = comments
         super.init(style: .plain)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        log.verbose("DEINIT \(className)")
     }
     
     override func viewDidLoad() {
@@ -29,6 +33,19 @@ class ViewDialogViewController: UITableViewController {
             action: { [weak self] in
             self?.dismiss(animated: true, completion: nil)
         })
+
+        let headerView = UILabel().hand.config { headerView in
+            headerView.text = "下拉关闭查看"
+            headerView.sizeToFit()
+            headerView.width = tableView.width
+            headerView.textAlignment = .center
+            headerView.textColor = .gray
+            headerView.height = 44
+            headerView.font = UIFont.systemFont(ofSize: 12)
+        }
+
+        tableView.tableHeaderView = headerView
+        tableView.contentInset = UIEdgeInsetsMake(-44, 0, 0, 0)
     }
 }
 
@@ -43,5 +60,16 @@ extension ViewDialogViewController {
         let comment = comments[indexPath.row]
         cell.comment = comment
         return cell
+    }
+
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+        //下拉关闭
+        if scrollView.contentOffset.y <= -100 {
+            //让scrollView 不弹跳回来
+            scrollView.contentInset = UIEdgeInsetsMake(-1 * scrollView.contentOffset.y, 0, 0, 0)
+            scrollView.isScrollEnabled = false
+            navigationController?.dismiss(animated: true, completion: nil)
+        }
     }
 }

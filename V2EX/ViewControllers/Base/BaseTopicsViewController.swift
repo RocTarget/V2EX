@@ -15,12 +15,6 @@ class BaseTopicsViewController: DataViewController, TopicService {
         return view
     }()
 
-    internal lazy var refreshControl: UIRefreshControl = {
-        let view = UIRefreshControl()
-        view.backgroundColor = .clear
-        return view
-    }()
-
     var topics: [TopicModel] = [] {
         didSet {
             tableView.reloadData()
@@ -28,6 +22,8 @@ class BaseTopicsViewController: DataViewController, TopicService {
     }
 
     public var href: String
+
+    internal var page = 1, maxPage = 1
 
     init(href: String) {
         self.href = href
@@ -45,22 +41,16 @@ class BaseTopicsViewController: DataViewController, TopicService {
     override func setupSubviews() {
         registerForPreviewing(with: self, sourceView: tableView)
 
-        tableView.addSubview(refreshControl)
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchTopic()
+        }
+
     }
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-    }
-
-    override func setupRx() {
-
-        refreshControl.rx
-            .controlEvent(.valueChanged)
-            .subscribeNext { [weak self] in
-                self?.fetchTopic()
-            }.disposed(by: rx.disposeBag)
     }
 
     // MARK: State Handle
@@ -83,13 +73,14 @@ class BaseTopicsViewController: DataViewController, TopicService {
     }
 
     func fetchTopic() {
+        page = 1
 
         topics(href: href, success: { [weak self] topic in
             self?.topics = topic
-            self?.refreshControl.endRefreshing()
             self?.endLoading()
+            self?.tableView.endHeaderRefresh()
             }, failure: { [weak self] error in
-                self?.refreshControl.endRefreshing()
+                self?.tableView.endHeaderRefresh()
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
                 if let `emptyView` = self?.errorView as? EmptyView {
                     emptyView.message = error
@@ -97,7 +88,6 @@ class BaseTopicsViewController: DataViewController, TopicService {
         })
     }
 
-    
     func tapHandle(_ type: TapType) {
         switch type {
         case .member(let member):

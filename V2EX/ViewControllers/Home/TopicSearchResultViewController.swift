@@ -32,11 +32,6 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         super.viewDidLoad()
 
         edgesForExtendedLayout = [.bottom]
-
-        if #available(iOS 11.0, *) {
-            tableView.contentInsetAdjustmentBehavior = .never
-        } else {
-        }
     }
     
     override func setupSubviews() {

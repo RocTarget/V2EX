@@ -29,10 +29,10 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService {
             success: { [weak self] node, topics in
                 self?.node = node
                 self?.topics = topics
-                self?.refreshControl.endRefreshing()
+                self?.tableView.endFooterRefresh()
                 self?.endLoading()
         }) { [weak self] error in
-            self?.refreshControl.endRefreshing()
+            self?.tableView.endFooterRefresh()
             self?.errorMessage = error
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }

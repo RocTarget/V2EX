@@ -14,43 +14,36 @@ class MessageViewController: DataViewController, AccountService {
         view.hideEmptyCells()
         return view
     }()
-    
-    private lazy var refreshControl: UIRefreshControl = {
-        let view = UIRefreshControl()
-        return view
-    }()
-    
+
+    private weak var replyMessageViewController: ReplyMessageViewController?
+
     private var messages: [MessageModel] = []
-    
-//    /// 标记有新消失时是否刷新，第一次加载不请求
-//    private var isLoad: Bool = false
-    
+
+    private var page = 1, maxPage = 1
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         fetchNotifications()
+
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchNotifications()
+        }
+
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreNotifications()
+        }
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        
-//        isLoad = true
-//    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         /// 有未读通知, 主动刷新
         guard isLoad, let _ = tabBarItem.badgeValue else { return }
-        
-        refreshControl.beginRefreshing()
-        refreshControl.sendActions(for: .valueChanged)
+
+        tableView.startHeaderRefresh()
     }
-    
-    override func setupSubviews() {
-        tableView.addSubview(refreshControl)
-    }
-    
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -58,13 +51,7 @@ class MessageViewController: DataViewController, AccountService {
     }
 
     override func setupRx() {
-        
-        refreshControl.rx
-            .controlEvent(.valueChanged)
-            .subscribeNext { [weak self] in
-                self?.fetchNotifications()
-            }.disposed(by: rx.disposeBag)
-        
+
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
@@ -86,18 +73,38 @@ class MessageViewController: DataViewController, AccountService {
             return
         }
 
+        page = 1
+
         startLoading()
 
-        notifications(success: { [weak self] messages in
-            self?.messages = messages
-            self?.endLoading()
-            self?.tableView.reloadData()
-            self?.refreshControl.endRefreshing()
-            self?.tabBarItem.badgeValue = nil
+        notifications(page: page, success: { [weak self] messages, maxPage in
+            guard let `self` = self else { return }
+            self.messages = messages
+            self.maxPage = maxPage
+            self.endLoading()
+            self.tableView.reloadData()
+            self.tabBarItem.badgeValue = nil
+            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
         }) { [weak self] error in
             self?.errorMessage = error
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            self?.refreshControl.endRefreshing()
+            self?.tableView.endHeaderRefresh()
+        }
+    }
+
+    func fetchMoreNotifications() {
+        page += 1
+
+        startLoading()
+
+        notifications(page: page, success: { [weak self] messages, maxPage in
+            guard let `self` = self else { return }
+            self.messages.append(contentsOf: messages)
+            self.tableView.reloadData()
+            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
+        }) { [weak self] error in
+            self?.tableView.endRefresh()
+            self?.page -= 1
         }
     }
 
@@ -113,14 +120,30 @@ class MessageViewController: DataViewController, AccountService {
         return messages.count.boolValue
     }
 
-    /// TODO: 删除消息
-    private func deleteMessages() {
+    private func deleteMessages(_ message: MessageModel) {
+        guard let id = message.id,
+            let once = message.once else {
+            HUD.showText("操作失败，无法获取消息 ID 或 once")
+            return
+        }
+        deleteNotification(notifacationID: id, once: once, success: {
 
+        }) { error in
+            HUD.showText(error)
+        }
     }
 
     /// TODO: 回复消息
-    private func replyMessage() {
+    private func replyMessage(_ message: MessageModel) {
+        if replyMessageViewController == nil {
+            let replyMessageVC = ReplyMessageViewController()
+            replyMessageVC.view.alpha = 0
+            self.replyMessageViewController = replyMessageVC
+            addChildViewController(replyMessageVC)
+            self.view.addSubview(replyMessageVC.view)
+        }
 
+        replyMessageViewController?.message = message
     }
 }
 
@@ -158,17 +181,17 @@ extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
         let replyAction = UITableViewRowAction(
             style: .default,
             title: "回复") { _, indexPath in
-                log.info("回复评论")
-                self.replyMessage()
+                let message = self.messages[indexPath.row]
+                self.replyMessage(message)
         }
         replyAction.backgroundColor = UIColor.hex(0x0058E5)
 
         let deleteAction = UITableViewRowAction(
             style: .destructive,
             title: "删除") { _, indexPath in
-                self.messages.remove(at: indexPath.row)
+                let message = self.messages.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
-                self.deleteMessages()
+                self.deleteMessages(message)
         }
         return [deleteAction, replyAction]
     }

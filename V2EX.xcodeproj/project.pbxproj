@@ -79,6 +79,9 @@
 		BF701F201F98610900761E82 /* MarkdownInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */; };
 		BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11171F91E473003815C1 /* UIInsetLabel.swift */; };
 		BF7B111A1F91E5A3003815C1 /* HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11191F91E5A3003815C1 /* HUD.swift */; };
+		BF8043ED1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */; };
+		BF8043F11FA3007800AD3C49 /* VFooterRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043F01FA3007800AD3C49 /* VFooterRefresh.swift */; };
+		BF8043F31FA3369900AD3C49 /* ReplyMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043F21FA3369900AD3C49 /* ReplyMessageViewController.swift */; };
 		BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */; };
 		BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */; };
 		BF9EC8201F95C39A00E7AA02 /* MemberPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */; };
@@ -226,6 +229,9 @@
 		BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownInputAccessoryView.swift; sourceTree = "<group>"; };
 		BF7B11171F91E473003815C1 /* UIInsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInsetLabel.swift; sourceTree = "<group>"; };
 		BF7B11191F91E5A3003815C1 /* HUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUD.swift; sourceTree = "<group>"; };
+		BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Refresh.swift"; sourceTree = "<group>"; };
+		BF8043F01FA3007800AD3C49 /* VFooterRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VFooterRefresh.swift; sourceTree = "<group>"; };
+		BF8043F21FA3369900AD3C49 /* ReplyMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyMessageViewController.swift; sourceTree = "<group>"; };
 		BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectCell.swift; sourceTree = "<group>"; };
 		BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SweetWebViewController.swift; sourceTree = "<group>"; };
 		BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPageViewController.swift; sourceTree = "<group>"; };
@@ -394,6 +400,7 @@
 		BF02A2C41F8F3E5900BEF85E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BF8043EF1FA3006400AD3C49 /* Refresh */,
 				BF9EC8231F95D6EE00E7AA02 /* PlaceholderViews */,
 				77D0DDF11F9F674600DDC366 /* Cells */,
 				BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */,
@@ -507,6 +514,7 @@
 			isa = PBXGroup;
 			children = (
 				BF5A6B671F99834400CF6BA1 /* MessageViewController.swift */,
+				BF8043F21FA3369900AD3C49 /* ReplyMessageViewController.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -567,6 +575,15 @@
 				BF65BDD91F8E12C80010B4C9 /* Info.plist */,
 			);
 			path = V2EXUITests;
+			sourceTree = "<group>";
+		};
+		BF8043EF1FA3006400AD3C49 /* Refresh */ = {
+			isa = PBXGroup;
+			children = (
+				BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */,
+				BF8043F01FA3007800AD3C49 /* VFooterRefresh.swift */,
+			);
+			path = Refresh;
 			sourceTree = "<group>";
 		};
 		BF9EC8231F95D6EE00E7AA02 /* PlaceholderViews */ = {
@@ -881,10 +898,12 @@
 				"${BUILT_PRODUCTS_DIR}/Marklight/Marklight.framework",
 				"${BUILT_PRODUCTS_DIR}/NSObject+Rx/NSObject_Rx.framework",
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
+				"${BUILT_PRODUCTS_DIR}/PullToRefreshKit/PullToRefreshKit.framework",
 				"${PODS_ROOT}/Reveal-SDK/RevealServer-4/iOS/RevealServer.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SKPhotoBrowser/SKPhotoBrowser.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/StatefulViewController/StatefulViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/Themes/Themes.framework",
@@ -903,10 +922,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Marklight.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NSObject_Rx.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PullToRefreshKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKPhotoBrowser.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StatefulViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Themes.framework",
@@ -1078,6 +1099,7 @@
 				BFCB674D1F8F4A2C00D05A90 /* Foundation+Extension.swift in Sources */,
 				BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */,
 				BF5A6B851F99D05800CF6BA1 /* BaseTopicsViewController.swift in Sources */,
+				BF8043F31FA3369900AD3C49 /* ReplyMessageViewController.swift in Sources */,
 				BF9EC8281F95D6EE00E7AA02 /* EmptyView.swift in Sources */,
 				778AC6A61F9A2C810072C6E9 /* TopicSearchResultViewController.swift in Sources */,
 				BFCB67601F8F52B800D05A90 /* GCD.swift in Sources */,
@@ -1105,6 +1127,7 @@
 				BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */,
 				77B75DAC1F94EA8F00B7312B /* MemberModel.swift in Sources */,
 				BFCB67681F8F716600D05A90 /* NodeModel.swift in Sources */,
+				BF8043ED1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift in Sources */,
 				BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */,
 				BFCB67461F8F498900D05A90 /* HomeViewController.swift in Sources */,
 				BFCB67641F8F666100D05A90 /* API.swift in Sources */,
@@ -1133,6 +1156,7 @@
 				BF3AB5C91F976D7100043269 /* UIView+Border.swift in Sources */,
 				BF02A2C21F8F3E3800BEF85E /* AppSetup.swift in Sources */,
 				776EFDD51F9BB9E70087AECC /* ShareItemView.swift in Sources */,
+				BF8043F11FA3007800AD3C49 /* VFooterRefresh.swift in Sources */,
 				779B17041F8FA8C100E912E7 /* BaseTableViewCell.swift in Sources */,
 				BF5A6B891F99DBB600CF6BA1 /* MyReplyViewController.swift in Sources */,
 				BF3AB6B41FA1A61200ACA17A /* ImageAttachment.swift in Sources */,

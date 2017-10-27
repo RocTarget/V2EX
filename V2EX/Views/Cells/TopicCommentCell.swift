@@ -49,6 +49,8 @@ class TopicCommentCell: BaseTableViewCell {
 
     private lazy var contentLabel: YYLabel = {
         let view = YYLabel()
+        view.numberOfLines = 0
+        view.preferredMaxLayoutWidth = Constants.Metric.screenWidth - 30;
         view.displaysAsynchronously = true
         return view
     }()

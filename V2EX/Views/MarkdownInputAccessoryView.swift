@@ -21,7 +21,7 @@ class MarkdownInputAccessoryView: UIView {
     weak var textView: UITextView?
 
     init(height: CGFloat = 44, textView: UITextView) {
-        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.screenWidth, height: height))
+        super.init(frame: CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth, height: height))
         self.textView = textView
 
         autoresizingMask = .flexibleWidth
