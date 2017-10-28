@@ -77,11 +77,11 @@ final class Networking {
                 })
             break
 
-        case .upload(.file(let fileUrl)):
-
+        case .upload(.file(let fileUrl, let name)):
+            
             Alamofire.upload(multipartFormData: { multipartFormData in
 
-                multipartFormData.append(fileUrl, withName: "smfile")
+                multipartFormData.append(fileUrl, withName: name)
 
                 if let params = target.parameters as? [String: String] {
                     for (key, value) in params {
@@ -159,6 +159,10 @@ extension Networking {
             guard let html = HTML(html: data, encoding: .utf8) else {
                 failure?("数据解析失败")
                 return
+            }
+
+            if let once = html.xpath("//input[@name='once']").first?["value"] {
+                AccountModel.saveOnce(once)
             }
 
             // 误伤

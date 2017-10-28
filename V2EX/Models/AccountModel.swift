@@ -1,24 +1,24 @@
 import Foundation
 
-struct AccountModel {
+struct AccountModel: Codable {
 
-    private struct SerializationKeys {
-        static let avatarNormal = "avatar_normal"
-        static let twitter = "twitter"
-        static let github = "github"
-        static let avatarMini = "avatar_mini"
-        static let website = "website"
-        static let bio = "bio"
-        static let psn = "psn"
-        static let username = "username"
-        static let status = "status"
-        static let location = "location"
-        static let id = "id"
-        static let created = "created"
-        static let btc = "btc"
-        static let tagline = "tagline"
-        static let avatarLarge = "avatar_large"
-        static let url = "url"
+    private enum CodingKeys: String, CodingKey {
+        case avatarNormal = "avatar_normal"
+        case twitter = "twitter"
+        case github = "github"
+        case avatarMini = "avatar_mini"
+        case website = "website"
+        case bio = "bio"
+        case psn = "psn"
+        case username = "username"
+        case status = "status"
+        case location = "location"
+        case id = "id"
+        case created = "created"
+        case btc = "btc"
+        case tagline = "tagline"
+        case avatarLarge = "avatar_large"
+        case url = "url"
     }
 
     // MARK: Properties
@@ -79,5 +79,17 @@ struct AccountModel {
     public static func delete() {
         UserDefaults.remove(forKey: Constants.Keys.avatarSrc)
         UserDefaults.remove(forKey: Constants.Keys.username)
+    }
+
+    public static func saveOnce(_ once: String) {
+        UserDefaults.save(at: once, forKey: Constants.Keys.once)
+    }
+
+    public static func getOnce() -> String? {
+        return UserDefaults.get(forKey: Constants.Keys.once) as? String
+    }
+
+    static func account(data: Data) -> AccountModel? {
+        return try? JSONDecoder().decode(AccountModel.self, from: data)
     }
 }

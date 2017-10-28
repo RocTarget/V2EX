@@ -44,7 +44,6 @@ class BaseTopicsViewController: DataViewController, TopicService {
         tableView.addHeaderRefresh { [weak self] in
             self?.fetchTopic()
         }
-
     }
 
     override func setupConstraints() {
@@ -91,7 +90,6 @@ class BaseTopicsViewController: DataViewController, TopicService {
         case .member(let member):
             let memberPageVC = MemberPageViewController(memberName: member.username)
             navigationController?.pushViewController(memberPageVC, animated: true)
-            log.info(member)
         case .node(let node):
             let nodeDetailVC = NodeDetailViewController(node: node)
             navigationController?.pushViewController(nodeDetailVC, animated: true)
@@ -135,22 +133,6 @@ extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return topics[indexPath.section].cellHeight
     }
-    
-//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        return 0.01
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-//        return 10
-//    }
-//
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        return UIView()
-//    }
-//
-//    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-//        return UIView()
-//    }
 }
 
 extension BaseTopicsViewController: UIViewControllerPreviewingDelegate {

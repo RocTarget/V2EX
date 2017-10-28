@@ -245,9 +245,8 @@ extension TopicService {
 
         Network.htmlRequest(target: .recentTopics(page: page), success: { html in
             let topics = self.parseTopic(html: html, type: .index)
-            let pageComponents = html.xpath("//*[@id='Wrapper']//div[@class='box']/div[@class='inner']//strong").first?.content?.components(separatedBy: "/")
-            let maxPage = pageComponents?.last?.int ?? 1
-            success?(topics, maxPage)
+            let page = self.parsePage(html: html)
+            success?(topics, page.max)
         }, failure: failure)
 
     }

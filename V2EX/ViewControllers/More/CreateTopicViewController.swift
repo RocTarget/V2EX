@@ -82,9 +82,12 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
+    public var nodename: String?
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        title = "创建新主题"
         edgesForExtendedLayout = []
         titleFieldView.becomeFirstResponder()
 
@@ -236,8 +239,13 @@ class CreateTopicViewController: BaseViewController, TopicService {
             HUD.showText("标题不能为空")
             return
         }
+
+        guard let `nodename` = nodename else {
+            HUD.showText("请选择主题节点")
+            return
+        }
         
-        createTopic(nodename: "sandbox", title: title, body: bodyTextView.text, success: { [weak self] in
+        createTopic(nodename: nodename, title: title, body: bodyTextView.text, success: { [weak self] in
             HUD.showText("发布成功")
             self?.titleFieldView.text = nil
             self?.bodyTextView.text = nil

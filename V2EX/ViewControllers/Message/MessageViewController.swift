@@ -35,7 +35,15 @@ class MessageViewController: DataViewController, AccountService {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
+        guard AccountModel.isLogin else {
+            messages.removeAll()
+            tableView.reloadData()
+            endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            status = .noAuth
+            return
+        }
+
         /// 有未读通知, 主动刷新
         guard isLoad, let _ = tabBarItem.badgeValue else { return }
         
@@ -64,7 +72,6 @@ class MessageViewController: DataViewController, AccountService {
     }
     
     func fetchNotifications() {
-        
         guard AccountModel.isLogin else {
             endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             status = .noAuth
@@ -113,7 +120,7 @@ class MessageViewController: DataViewController, AccountService {
         }
         fetchNotifications()
     }
-    
+
     override func hasContent() -> Bool {
         return messages.count.boolValue
     }
@@ -130,8 +137,7 @@ class MessageViewController: DataViewController, AccountService {
             HUD.showText(error)
         }
     }
-    
-    /// TODO: 回复消息
+
     private func replyMessage(_ message: MessageModel) {
         if replyMessageViewController == nil {
             let replyMessageVC = ReplyMessageViewController()

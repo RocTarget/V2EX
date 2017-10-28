@@ -1,10 +1,11 @@
 import UIKit
 import Carte
 import MessageUI
+import MobileCoreServices
 
 enum MoreItemType {
     case user
-    case createTopic, nodeCollect, topicCollect, follow, myTopic, myReply
+    case createTopic, nodeCollect, myFavorites, follow, myTopic, myReply
     case nightMode, grade, sourceCode, feedback, about, libs
     case logout
 }
@@ -14,7 +15,7 @@ struct MoreItem {
     var type: MoreItemType
 }
 
-class MoreViewController: BaseViewController {
+class MoreViewController: BaseViewController, AccountService, MemberService {
     
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .grouped)
@@ -22,16 +23,26 @@ class MoreViewController: BaseViewController {
         view.dataSource = self
         view.backgroundColor = .clear
         view.sectionHeaderHeight = 10
+        view.register(cellWithClass: MoreUserCell.self)
+        view.register(cellWithClass: BaseTableViewCell.self)
         self.view.addSubview(view)
         return view
     }()
-    
-    var sections: [[MoreItem]] = [
+
+    private lazy var imagePicker: UIImagePickerController = {
+        let view = UIImagePickerController()
+        view.allowsEditing = true
+        view.mediaTypes = [kUTTypeImage as String]
+        view.delegate = self
+        return view
+    }()
+
+    private var sections: [[MoreItem]] = [
         [MoreItem(icon: #imageLiteral(resourceName: "avatar"), title: "请先登录", type: .user)],
         [
             MoreItem(icon: #imageLiteral(resourceName: "createTopic"), title: "创作新主题", type: .createTopic),
             MoreItem(icon: #imageLiteral(resourceName: "nodeCollect"), title: "节点收藏", type: .nodeCollect),
-            MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .topicCollect),
+            MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .myFavorites),
 //            MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
             MoreItem(icon: #imageLiteral(resourceName: "topic"), title: "我的主题", type: .myTopic),
             MoreItem(icon: #imageLiteral(resourceName: "myReply"), title: "我的回复", type: .myReply)
@@ -48,11 +59,6 @@ class MoreViewController: BaseViewController {
             MoreItem(icon: #imageLiteral(resourceName: "logout"), title: "退出登录", type: .logout)
         ]
     ]
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-    }
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
@@ -64,15 +70,44 @@ class MoreViewController: BaseViewController {
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
-                self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
+                self?.updateUserInfo()
         }.disposed(by: rx.disposeBag)
+    }
+
+    private func updateUserInfo() {
+
+        guard let username = AccountModel.current?.username else {
+            HUD.dismiss()
+            return
+        }
+
+        memberProfile(memberName: username, success: { [weak self] member in
+            AccountModel(username: member.username, url: member.url, avatar: member.avatar).save()
+            self?.tableView.reloadData()
+//            self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
+            HUD.dismiss()
+        }) { error in
+            HUD.dismiss()
+            log.error(error)
+        }
+
+        // 有缓冲，数据更新不及时， 废弃
+//        userIntro(username: username, success: { [weak self] account in
+//            self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
+//            log.info(account)
+//            HUD.dismiss()
+//        }) { error in
+//            HUD.dismiss()
+//            log.error(error)
+//        }
     }
 }
 
 
 extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        // 没有登录 不显示 退出登录 cell
+        return AccountModel.isLogin ? sections.count : sections.count - 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -80,23 +115,37 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "MoreItemCell")
-        if cell == nil {
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "MoreItemCell")
-            cell?.accessoryType = .disclosureIndicator
-        }
-        
+
         let item = sections[indexPath.section][indexPath.row]
-        if indexPath.section == 0 {
-            cell?.textLabel?.text = AccountModel.current?.username ?? item.title
-            cell?.imageView?.image = item.icon
-            cell?.imageView?.setRoundImage(urlString: AccountModel.current?.avatarNormalSrc, placeholder: item.icon)
-        } else {
-            cell?.textLabel?.text = item.title
-            cell?.imageView?.image = item.icon
+        if indexPath.section != 0 {
+            let cell = tableView.dequeueReusableCell(withClass: BaseTableViewCell.self)!
+            cell.textLabel?.text = item.title
+            cell.imageView?.image = item.icon
+            cell.accessoryType = .disclosureIndicator
+            return cell
         }
-        
-        return cell!
+
+        let cell = tableView.dequeueReusableCell(withClass: MoreUserCell.self)!
+        cell.textLabel?.text = AccountModel.current?.username ?? item.title
+        cell.imageView?.image = item.icon
+        cell.imageView?.setImage(urlString: AccountModel.current?.avatarNormalSrc, placeholder: item.icon)
+        return cell
+
+//        var cell = tableView.dequeueReusableCell(withIdentifier: "MoreItemCell")
+//        if cell == nil {
+//            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "MoreItemCell")
+//            cell?.accessoryType = .disclosureIndicator
+//        }
+//        let item = sections[indexPath.section][indexPath.row]
+//        if indexPath.section == 0 {
+//            cell?.textLabel?.text = AccountModel.current?.username ?? item.title
+//            cell?.imageView?.image = item.icon
+//            cell?.imageView?.setImage(urlString: AccountModel.current?.avatarNormalSrc, placeholder: item.icon)
+//        } else {
+//            cell?.textLabel?.text = item.title
+//            cell?.imageView?.image = item.icon
+//        }
+//
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -112,7 +161,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         var viewController: UIViewController?
         switch type {
         case .user:
-            break
+            updateAvatarHandle()
         case .createTopic:
             viewController = CreateTopicViewController()
         case .nodeCollect:
@@ -123,8 +172,8 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .myReply:
             guard let username = AccountModel.current?.username else { return }
             viewController = MyReplyViewController(username: username)
-        case .topicCollect, .follow:
-            let href = type == .topicCollect ? API.topicCollect.path : API.following.path
+        case .myFavorites, .follow:
+            let href = type == .myFavorites ? API.myFavorites.path : API.following.path
             viewController = BaseTopicsViewController(href: href)
         case .feedback:
             sendEmail()
@@ -136,9 +185,11 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             viewController = SweetWebViewController(url: API.about.defaultURLString)
         case .logout:
             AccountModel.delete()
+            HTTPCookieStorage.shared.cookies?.forEach({ cookie in
+                HTTPCookieStorage.shared.deleteCookie(cookie)
+            })
             presentLoginVC()
-            // TODO: 清除 Cookies
-//            HTTPCookieStorage.shared.removeCookies(since: Date())
+            tableView.reloadData()
         default:
             break
         }
@@ -169,9 +220,53 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+extension MoreViewController {
+    private func updateAvatarHandle() {
+        let alertView = UIAlertController(title: "修改头像", message: nil, preferredStyle: .actionSheet)
+        alertView.addAction(UIAlertAction(title: "拍照", style: .default, handler: { action in
+            self.imagePicker.sourceType = .camera
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }))
+
+        alertView.addAction(UIAlertAction(title: "相册", style: .default, handler: { action in
+            self.imagePicker.sourceType = .photoLibrary
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }))
+
+        alertView.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { action in
+            log.info("Cancle")
+        }))
+        present(alertView, animated: true, completion: nil)
+    }
+
+    // TODO: UI 头像更新
+    private func uploadAvatarHandle(_ path: String) {
+        HUD.show()
+        updateAvatar(localURL: path, success: { [weak self] in
+            self?.updateUserInfo()
+        }) { error in
+            HUD.dismiss()
+            HUD.showText(error)
+        }
+    }
+}
+
+extension MoreViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        dismiss(animated: true, completion: nil)
+        guard var image = info[UIImagePickerControllerEditedImage] as? UIImage else { return }
+        image = image.resized(by: 0.7)
+        guard let data = UIImageJPEGRepresentation(image, 0.5) else { return }
+
+        let path = FileManager.document.appendingPathComponent("smfile.png")
+        _ = FileManager.save(data, savePath: path)
+        uploadAvatarHandle(path)
+    }
+}
+
 extension MoreViewController: MFMailComposeViewControllerDelegate {
     
-    func sendEmail() {
+    private func sendEmail() {
         
         guard MFMailComposeViewController.canSendMail() else {
             HUD.showText("操作失败，请先在系统邮件中设置个人邮箱账号。")

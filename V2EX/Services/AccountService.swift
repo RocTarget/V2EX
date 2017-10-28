@@ -1,7 +1,12 @@
 import Foundation
 import Kanna
 
-protocol AccountService {
+protocol AccountService: HTMLParseService {
+
+    func once(
+        success: @escaping ((_ once: String) -> Void),
+        failure: Failure?)
+
     func captcha(
         type: CaptchaType,
         success: ((LoginForm) -> Void)?,
@@ -32,9 +37,64 @@ protocol AccountService {
         once: String,
         success: Action?,
         failure: Failure?)
+
+    func updateAvatar(
+        localURL: String,
+        success: Action?,
+        failure: Failure?)
+
+    func userIntro(
+        username: String,
+        success: @escaping ((AccountModel) -> Void),
+        failure: Failure?)
+
+    /// 关注 或 取消关注 用户， 根据 href
+    ///
+    /// - Parameters:
+    ///   - href: href
+    ///   - success: 成功
+    ///   - failure: 失败
+    func follow(
+        href: String,
+        success: Action?,
+        failure: Failure?)
+
+    /// 屏蔽 或 取消屏蔽 用户， 根据 href 决定
+    ///
+    /// - Parameters:
+    ///   - href: href
+    ///   - success: 成功
+    ///   - failure: 失败
+    func block(
+        href: String,
+        success: Action?,
+        failure: Failure?)
+
+    /// 收藏 或 取消收藏 节点， 根据 href 决定
+    ///
+    /// - Parameters:
+    ///   - href: href
+    ///   - success: 成功
+    ///   - failure: 失败
+    func favorite(
+        href: String,
+        success: Action?,
+        failure: Failure?)
 }
 
 extension AccountService {
+
+    func once(
+        success: @escaping ((_ once: String) -> Void),
+        failure: Failure?) {
+        Network.htmlRequest(target: .once, success: { html in
+            if let once = self.parseOnce(html: html) {
+                success(once)
+            }
+            failure?("获取 once 失败")
+        }, failure: failure)
+    }
+
     func captcha(
         type: CaptchaType,
         success: ((LoginForm) -> Void)?,
@@ -201,10 +261,8 @@ extension AccountService {
                 let topic = TopicModel(member: nil, node: nil, title: topicTitle, href: topicHref)
                 return MessageModel(id: id,member: member, topic: topic, time: time, content: content, replyTypeStr: replyTypeStr, once: once)
             })
-            let pageComponents = html.xpath("//*[@id='Wrapper']//div[@class='box']/div[@class='inner']//strong").first?.content?.components(separatedBy: "/")
-//            let currentPage = pageComponents?.first
-            let maxPage = pageComponents?.last?.int ?? 1
-            success?(messages, maxPage)
+            let page = self.parsePage(html: html)
+            success?(messages, page.max)
         }, failure: failure)
     }
 
@@ -224,6 +282,81 @@ extension AccountService {
         failure: Failure?) {
         Network.htmlRequest(target: .loginReward(once: once), success: { html in
             log.info(html)
+
+            /// TODO: 未测试
+            let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
+            guard let content = messagePath?.content, content.contains("已成功领取") else {
+                failure?("领取每日奖励失败")
+                return
+            }
+            success?()
+        }, failure: failure)
+    }
+
+    func updateAvatar(
+        localURL: String,
+        success: Action?,
+        failure: Failure?) {
+        
+        if let once = AccountModel.getOnce() {
+            Network.htmlRequest(target: .updateAvatar(localURL: localURL, once: once), success: { html in
+                // Optimize: 成功失败判断
+                success?()
+            }, failure: failure)
+            return
+        }
+
+        // 没有才去获取
+        once(success: { once in
+            Network.htmlRequest(target: .updateAvatar(localURL: localURL, once: once), success: { html in
+                // Optimize: 成功失败判断
+                success?()
+            }, failure: failure)
+        }, failure: failure)
+    }
+
+    func userIntro(
+        username: String,
+        success: @escaping ((AccountModel) -> Void),
+        failure: Failure?) {
+        Network.request(target: .memberIntro(username: username), success: { data in
+            guard let account = AccountModel.account(data: data) else {
+                failure?("未知错误")
+                return
+            }
+            account.save()
+            success(account)
+        }, failure: failure)
+    }
+
+    func follow(
+        href: String,
+        success: Action?,
+        failure: Failure?) {
+        
+        Network.htmlRequest(target: .currency(href: href), success: { html in
+            success?()
+        }, failure: failure)
+    }
+
+    func block(
+        href: String,
+        success: Action?,
+        failure: Failure?) {
+        
+        Network.htmlRequest(target: .currency(href: href), success: { html in
+            success?()
+        }, failure: failure)
+    }
+
+
+    func favorite(
+        href: String,
+        success: Action?,
+        failure: Failure?) {
+
+        Network.htmlRequest(target: .currency(href: href), success: { html in
+            success?()
         }, failure: failure)
     }
 }

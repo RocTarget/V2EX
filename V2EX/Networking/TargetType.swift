@@ -107,7 +107,9 @@ public extension TargetType {
 public enum UploadType {
 
     /// Upload a file.
-    case file(URL)
+    /// URL: Image URl
+    /// String: name
+    case file(URL, String)
 
     /// Upload "multipart/form-data"
     case multipart([MultipartFormData])

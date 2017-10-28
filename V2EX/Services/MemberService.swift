@@ -25,7 +25,12 @@ protocol MemberService: HTMLParseService {
     
     func memberHome(
         memberName: String,
-        success: ((_ member: MemberModel, _ replys: [TopicModel], _ replys: [MessageModel]) -> Void),
+        success: @escaping ((_ member: MemberModel, _ topics: [TopicModel], _ replys: [MessageModel]) -> Void),
+        failure: Failure?)
+
+    func memberProfile(
+        memberName: String,
+        success: @escaping ((_ member: MemberModel) -> Void),
         failure: Failure?)
 }
 
@@ -51,7 +56,7 @@ extension MemberService {
     
     func memberHome(
         memberName: String,
-        success: ((_ member: MemberModel, _ replys: [TopicModel], _ replys: [MessageModel]) -> Void),
+        success: @escaping ((_ member: MemberModel, _ topics: [TopicModel], _ replys: [MessageModel]) -> Void),
         failure: Failure?) {
         Network.htmlRequest(target: .memberHome(username: memberName), success: { html in
             guard let headerPath = html.xpath("//*[@id='Wrapper']/div/div[@class='box'][1]//tr").first,
@@ -63,36 +68,44 @@ extension MemberService {
             }
             let follow = headerPath.xpath("td[last()]//input[1]").first?["onclick"]
             let block = headerPath.xpath("td[last()]//input[2]").first?["onclick"]
-            
-//            let topicPath = html.xpath("//*[@id='Wrapper']/div/div[@class='box'][2]/div[@class='cell item']")
-//            let topics = self.parseTopic(html: html, type: .member)
-            
-            let titlePath = html.xpath("//*[@id='Wrapper']//div[@class='dock_area']")
-            let contentPath = html.xpath("//*[@id='Wrapper']//div[@class='reply_content']")
-            
-            let messages = titlePath.enumerated().flatMap({ index, ele -> MessageModel? in
-                guard let replyContent = contentPath[index].text,
-                    let replyNode = ele.xpath(".//tr[1]/td[1]/span").first,
-                    let replyDes = ele.content?.trimmed,
-                    let topicNode = replyNode.xpath("./a").first,
-                    let topicTitle = topicNode.content?.trimmed,
-                    let topicHref = topicNode["href"],
-                    let replyTime = ele.xpath(".//tr[1]/td/div/span").first?.content else {
-                        return nil
-                }
-                
-                let topic = TopicModel(member: nil, node: nil, title: topicTitle, href: topicHref)
-                return MessageModel(
-                    id: nil,
-                    member: nil,
-                    topic: topic,
-                    time: replyTime,
-                    content: replyContent,
-                    replyTypeStr: replyDes,
-                    once: nil)
-            })
-            
-//            let  = html.xpath("//*[@id='Wrapper']/div/div[1]//tr/td[last()]/h1").first?.content
+            var followHref: String?
+            var blockHref: String?
+            if let comps = follow?.components(separatedBy: "'"), comps.count > 4 {
+                followHref = comps[3]
+            }
+            if let comps = block?.components(separatedBy: "'"), comps.count > 4 {
+                blockHref = comps[3]
+            }
+            let messages = self.parseMemberReplys(html: html)
+
+            let isFollow = followHref?.hasPrefix("/unfollow") ?? false
+            let isBlock = blockHref?.hasPrefix("/unblock") ?? false
+
+            let member = MemberModel(
+                username: username,
+                url: API.memberHome(username: username).path,
+                avatar: avatar,
+                joinTime: joinTime,
+                followHref: followHref,
+                blockHref: blockHref,
+                isFollow: isFollow,
+                isBlock: isBlock
+            )
+            let topics = self.parseMemberTopics(html: html)
+            success(member, topics, messages)
+        }, failure: failure)
+    }
+
+    func memberProfile(
+        memberName: String,
+        success: @escaping ((_ member: MemberModel) -> Void),
+        failure: Failure?) {
+        Network.htmlRequest(target: .memberHome(username: memberName), success: { html in
+            guard let member = self.parseMemberProfile(html: html) else {
+                failure?("数据解析失败")
+                return
+            }
+            success(member)
         }, failure: failure)
     }
 }

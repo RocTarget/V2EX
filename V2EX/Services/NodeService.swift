@@ -20,8 +20,9 @@ protocol NodeService: HTMLParseService {
     ///   - success: 成功
     ///   - failure: 失败
     func nodeDetail(
+        page: Int,
         node: NodeModel,
-        success: ((_ node: NodeModel, _ topics: [TopicModel]) -> Void)?,
+        success: ((_ node: NodeModel, _ topics: [TopicModel], _ maxPage: Int) -> Void)?,
         failure: Failure?)
     
     
@@ -57,10 +58,11 @@ extension NodeService {
     
     
     func nodeDetail(
+        page: Int,
         node: NodeModel,
-        success: ((_ node: NodeModel, _ topics: [TopicModel]) -> Void)?,
+        success: ((_ node: NodeModel, _ topics: [TopicModel], _ maxPage: Int) -> Void)?,
         failure: Failure?) {
-        Network.htmlRequest(target: .topics(href: node.path), success: { html in
+        Network.htmlRequest(target: .nodeDetail(href: node.href, page: page), success: { html in
             
             //            let nodeIcon = html.xpath("//*[@id='Main']//div[@class='header']/div/img").first?["src"]
             //            let nodeIntro = html.xpath("//*[@id='Main']//div[@class='header']/span[last()]").first?.content
@@ -74,8 +76,11 @@ extension NodeService {
             if let nodename = html.xpath("//*[@id='Wrapper']//div[@class='header']/text()[2]").first?.text?.trimmed {
                 node.name = nodename
             }
+            node.favoriteHref = html.xpath("//*[@id='Wrapper']//div[@class='header']/div/a").first?["href"]
+            node.isFavorite = node.favoriteHref?.hasPrefix("/unfavorite") ?? false
             let topics = self.parseTopic(html: html, type: .nodeDetail)
-            success?(node, topics)
+            let page = self.parsePage(html: html).max
+            success?(node, topics, page)
         }, failure: failure)
     }
     
@@ -99,6 +104,12 @@ extension NodeService {
     func nodes(
         success: @escaping ((_ groups: [NodeCategoryModel]) -> Void),
         failure: Failure?) {
+
+        if let groups = NodeCategoryModel.get() {
+            success(groups)
+            return
+        }
+
         Network.request(target: .nodes, success: { data in
             guard let nodes = NodeModel.nodes(data: data) else {
                 failure?("数据解析失败")
@@ -142,7 +153,7 @@ extension NodeService {
                 let initial = node.name.pinYingString.firstLetter
 
                 //  不放在其他组, 单独一组
-                if initial != "", !self.isLetter(string: initial) {
+                if initial != "", !initial.isLetter() {
                     otherGroup.nodes.append(node)
                     continue
                 }
@@ -163,17 +174,14 @@ extension NodeService {
                 return lhs.name < rhs.name
             }
 
+            // 缓存排序后的数据
+            NodeCategoryModel.save(group)
+
             GCD.runOnMainThread {
                 complete(group)
             }
         }
     }
     
-    // 判断是否为字母
-    private func isLetter(string: String) -> Bool {
-        if string.count == 0 {return false}
-        let index = string.index(string.startIndex, offsetBy: 1)
-        let regextest = NSPredicate(format: "SELF MATCHES %@", "^[A-Za-z]+$")
-        return regextest.evaluate(with: string[..<index])
-    }
+
 }

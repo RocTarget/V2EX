@@ -174,4 +174,12 @@ extension String {
         let testPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
         return testPredicate.evaluate(with: self)
     }
+
+    /// 判断是否为字母
+    func isLetter() -> Bool {
+        if count == 0 { return false }
+        let index = self.index(self.startIndex, offsetBy: 1)
+        let regextest = NSPredicate(format: "SELF MATCHES %@", "^[A-Za-z]+$")
+        return regextest.evaluate(with: self[..<index])
+    }
 }

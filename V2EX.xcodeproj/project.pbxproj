@@ -78,6 +78,7 @@
 		BF65BDD81F8E12C80010B4C9 /* V2EXUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF65BDD71F8E12C80010B4C9 /* V2EXUITests.swift */; };
 		BF6C76BC1FA1E57A00E4D418 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C76BB1FA1E57900E4D418 /* UIImage+Extension.swift */; };
 		BF701F201F98610900761E82 /* MarkdownInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */; };
+		BF796F801FA46921002E1B5E /* ETNavBarTransparent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF796F7F1FA46921002E1B5E /* ETNavBarTransparent.swift */; };
 		BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11171F91E473003815C1 /* UIInsetLabel.swift */; };
 		BF7B111A1F91E5A3003815C1 /* HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11191F91E5A3003815C1 /* HUD.swift */; };
 		BF8043ED1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */; };
@@ -228,6 +229,7 @@
 		BF65BDD91F8E12C80010B4C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF6C76BB1FA1E57900E4D418 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownInputAccessoryView.swift; sourceTree = "<group>"; };
+		BF796F7F1FA46921002E1B5E /* ETNavBarTransparent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ETNavBarTransparent.swift; sourceTree = "<group>"; };
 		BF7B11171F91E473003815C1 /* UIInsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInsetLabel.swift; sourceTree = "<group>"; };
 		BF7B11191F91E5A3003815C1 /* HUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUD.swift; sourceTree = "<group>"; };
 		BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Refresh.swift"; sourceTree = "<group>"; };
@@ -627,6 +629,7 @@
 		BFCB673F1F8F47AD00D05A90 /* Vender */ = {
 			isa = PBXGroup;
 			children = (
+				BF796F7F1FA46921002E1B5E /* ETNavBarTransparent.swift */,
 				778AC6AC1F9AF07F0072C6E9 /* Highlighter */,
 			);
 			path = Vender;
@@ -1144,6 +1147,7 @@
 				BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */,
 				778AC6A01F9A29730072C6E9 /* SearchResultModel.swift in Sources */,
 				778AC6A81F9A2D540072C6E9 /* TopicSearchResultCell.swift in Sources */,
+				BF796F801FA46921002E1B5E /* ETNavBarTransparent.swift in Sources */,
 				BF5A6B6B1F99851500CF6BA1 /* MessageCell.swift in Sources */,
 				BF4D779E1F9D896500FAEB7C /* MarkdownPreviewViewController.swift in Sources */,
 				BF45DFD21F9ED9140001BEB2 /* ErrorView.swift in Sources */,

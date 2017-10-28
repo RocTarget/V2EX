@@ -19,6 +19,8 @@ protocol HTMLParseService {
     func parseComment(html: HTMLDocument) -> [CommentModel]
     func parseMemberReplys(html: HTMLDocument) -> [MessageModel]
     func parseMemberTopics(html: HTMLDocument) -> [TopicModel]
+    func parseMemberProfile(html: HTMLDocument) -> MemberModel?
+    func parsePage(html: HTMLDocument) -> (current: Int, max: Int)
 }
 
 extension HTMLParseService {
@@ -70,7 +72,9 @@ extension HTMLParseService {
             if homeXPath != nil { // 首页的布局
                 lastReplyAndTime = timeString + replyUsername
             } else if nodeDetailXPath != nil {
-                lastReplyAndTime = replyUsername + timeString
+                var str = timeString.trimmed
+                str.removeFirst()
+                lastReplyAndTime = str.trimmed
             }
             
             let member = MemberModel(username: username, url: userPage, avatar: avatarSrc)
@@ -275,7 +279,7 @@ extension HTMLParseService {
             guard let replyContent = contentPath[index].text,
                 let replyNode = ele.xpath(".//tr[1]/td[1]/span").first,
                 let replyDes = ele.content?.trimmed,
-                let topicNode = replyNode.xpath("./a").first,
+                let topicNode = replyNode.xpath("a").first,
                 let topicTitle = topicNode.content?.trimmed,
                 let topicHref = topicNode["href"],
                 let replyTime = ele.xpath(".//tr[1]/td/div/span").first?.content else {
@@ -339,5 +343,21 @@ extension HTMLParseService {
         })
 
         return topics
+    }
+
+    func parseMemberProfile(html: HTMLDocument) -> MemberModel? {
+        guard let headerPath = html.xpath("//*[@id='Wrapper']/div/div[@class='box'][1]//tr").first,
+            let avatar = headerPath.xpath("td/img").first?["src"],
+            let username = headerPath.xpath("td[last()]/h1").first?.content else {
+                return nil
+        }
+        return MemberModel(username: username, url: API.memberHome(username: username).path, avatar: avatar)
+    }
+
+    func parsePage(html: HTMLDocument) -> (current: Int, max: Int) {
+        let pageComponents = html.xpath("//*[@id='Wrapper']//div[@class='box']/div[@class='inner']//strong").first?.content?.components(separatedBy: "/")
+        let currentPage = pageComponents?.first?.int ?? 1
+        let maxPage = pageComponents?.last?.int ?? 1
+        return (currentPage, maxPage)
     }
 }

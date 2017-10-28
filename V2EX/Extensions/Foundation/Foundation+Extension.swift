@@ -20,7 +20,7 @@ extension FileManager {
     ///   - data: 数据源
     ///   - savePath: 保存位置
     /// - Returns: 删除或者保存错误
-    class func save(_ data: Data, savePath: String) -> Error? {
+    @discardableResult class func save(_ data: Data, savePath: String) -> Error? {
         if FileManager.default.fileExists(atPath: savePath) {
             do {
                 try FileManager.default.removeItem(atPath: savePath)
@@ -40,8 +40,7 @@ extension FileManager {
     ///
     /// - Parameter path: 文件夹地址
     /// - Returns: 创建错误
-    @discardableResult
-    class func create(at path: String) -> Error? {
+    @discardableResult class func create(at path: String) -> Error? {
         if !FileManager.default.fileExists(atPath: path) {
             do {
                 try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)

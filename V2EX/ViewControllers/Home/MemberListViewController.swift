@@ -74,7 +74,7 @@ extension MemberListViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: MemberCell.self)!
         cell.textLabel?.text = members[indexPath.row].username
-        cell.imageView?.setImage(urlString: members[indexPath.row].avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
+        cell.imageView?.setCornerRadiusImage(urlString: members[indexPath.row].avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
         return cell
     }
     

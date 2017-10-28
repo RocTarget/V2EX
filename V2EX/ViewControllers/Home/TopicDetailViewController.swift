@@ -372,7 +372,7 @@ extension TopicDetailViewController {
             ShareItem(icon: #imageLiteral(resourceName: "share"), title: "分享", type: .share)
         ]
         
-        let sheetView = ShareSheetView(sections: [section1, section2], isScrollEnabled: false)
+        let sheetView = ShareSheetView(sections: [section1, section2])
         sheetView.present()
         
         sheetView.shareSheetDidSelectedHandle = { [weak self] type in

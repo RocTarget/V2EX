@@ -86,7 +86,7 @@ class MessageCell: BaseTableViewCell {
             guard let `message` = message else { return }
             guard let member = message.member else { return }
 
-            avatarView.setImage(urlString: member.avatarSrc)
+            avatarView.setCornerRadiusImage(urlString: member.avatarSrc)
             contentLabel.text = message.content
             timeLabel.text = message.time
             replyLabel.text = message.replyTypeStr

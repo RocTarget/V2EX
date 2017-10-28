@@ -53,6 +53,10 @@ class MyReplyViewController: DataViewController, MemberService {
         fetchReplys()
     }
 
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchReplys()
+    }
+
     func fetchReplys() {
         startLoading()
         memberReplys(username: username, success: { [weak self] replys in

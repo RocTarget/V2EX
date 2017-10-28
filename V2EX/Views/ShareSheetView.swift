@@ -43,8 +43,7 @@ public class ShareSheetView: UIView {
     private var title: String = ""     //标题
     private var sections: [[ShareItem]] = []    //按钮组
     private var cancelTitle: String = ""     //取消按钮
-    private var isScrollEnabled: Bool = true
-    
+
     var shareSheetHeight: CGFloat = 0
     public var shareSheetView: UIView = UIView()
     
@@ -56,14 +55,13 @@ public class ShareSheetView: UIView {
     ///   - title: 标题
     ///   - buttons: 按钮数组
     ///   - cancel: 是否需要取消按钮
-    convenience public init(title: String = "", sections: [[ShareItem]], cancelTitle: String = "取消", isScrollEnabled: Bool = true) {
+    convenience public init(title: String = "", sections: [[ShareItem]], cancelTitle: String = "取消") {
         
         self.init(frame: UIScreen.main.bounds)
         
         self.sections = sections
         self.title = title
         self.cancelTitle = cancelTitle
-        self.isScrollEnabled = isScrollEnabled
         //添加单击事件，隐藏sheet
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(self.singleTapDismiss))
         singleTap.delegate = self
@@ -122,7 +120,6 @@ public class ShareSheetView: UIView {
             scroller.backgroundColor = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 0.80)
             scroller.showsHorizontalScrollIndicator = false
             scroller.showsVerticalScrollIndicator = false
-            scroller.isScrollEnabled = isScrollEnabled
             let contentSizeWidth = CGFloat(section.count) * Metric.itemwidth > Constants.Metric.screenWidth ? CGFloat(section.count) * Metric.itemwidth : (Constants.Metric.screenWidth + 1.0)
             scroller.contentSize = CGSize.init(width: contentSizeWidth, height: Metric.cardHeight)
             let itemsCount = section.count

@@ -1,10 +1,26 @@
 import Foundation
 import UIKit
 
-public struct NodeCategoryModel {
+public struct NodeCategoryModel: Codable {
     var id: Int
     var name: String
     var nodes: [NodeModel]
+
+    static func save(_ groups: [NodeCategoryModel]) {
+        if let enc = try? JSONEncoder().encode(groups) {
+            FileManager.save(enc, savePath: Constants.Keys.nodeGroupCache)
+        }
+    }
+
+    static func get() -> [NodeCategoryModel]? {
+        if FileManager.default.fileExists(atPath: Constants.Keys.nodeGroupCache),
+            let data = try? Data(contentsOf: URL(fileURLWithPath: Constants.Keys.nodeGroupCache)),
+            let model = try? JSONDecoder().decode([NodeCategoryModel].self, from: data),
+            model.count.boolValue {
+            return model
+        }
+        return nil
+    }
 }
 
 public struct NodeModel: Codable {
@@ -15,13 +31,15 @@ public struct NodeModel: Codable {
     var comments: String?
     var intro: String?
     var topicNumber: Int?
+    var favoriteHref: String?
+    var isFavorite: Bool = false
 
     private enum CodingKeys: String, CodingKey {
         case name = "title"
         case href = "url"
         case intro = "header"
         case topicNumber = "topics"
-        case isCurrent, icon, comments
+        case isCurrent, icon, comments, favoriteHref, isFavorite
     }
     
     var path: String {
@@ -33,6 +51,18 @@ public struct NodeModel: Codable {
             return Constants.Config.URIScheme + icon
         }
         return nil
+    }
+
+    public var favoriteOrUnfavoriteHref: String? {
+        guard let href = favoriteHref else { return nil }
+
+        if isFavorite, href.hasPrefix("/favorite") {
+            return href.replacingOccurrences(of: "/favorite", with: "/unfavorite")
+        } else if !isFavorite, href.hasPrefix("/unfavorite") {
+            return href.replacingOccurrences(of: "/unfavorite", with: "/favorite")
+        } else {
+            return href
+        }
     }
 
     init(name: String, href: String, isCurrent: Bool = false) {

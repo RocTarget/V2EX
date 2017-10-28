@@ -32,9 +32,6 @@ target 'V2EX' do
     pod 'SKPhotoBrowser'
     pod 'PullToRefreshKit', git: 'https://github.com/Joe0708/PullToRefreshKit.git'
 
-    # Cache
-#    pod 'Cache'
-
     # Markdown
     pod 'Marklight'
     pod 'MarkdownView'

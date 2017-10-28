@@ -10,7 +10,9 @@ enum CaptchaType: String {
 // https://www.v2ex.com/static/js/v2ex.js?v=2658dbd9f54ebdeb51d27a0611b2ba96
 
 enum API {
-    
+
+    case currency(href: String)
+
     case topics(href: String?)
 
     case recentTopics(page: Int)
@@ -20,7 +22,8 @@ enum API {
     case captcha(type: CaptchaType)
     
     case captchaImageData(once: String)
-    
+
+    case once
     case signin(dict: [String: String])
     
     case forgot(dict: [String: String])
@@ -28,17 +31,27 @@ enum API {
     case signup(dict: [String: String])
 
     case loginReward(once: String)
-    
+
+    case updateAvatar(localURL: String, once: String)
+
+    case memberIntro(username: String)
+
     // 我的节点
     case myNodes
     
     // 全部节点
     case nodes
-    
+
+    /// 节点详情
+    case nodeDetail(href: String, page: Int)
+
+    // 特别关注
     case following
     
-    case topicCollect
-    
+    // 我收藏的收藏
+    case myFavorites
+
+    // 关于
     case about
     
     case comment(topicID: String, dict: [String: String])
@@ -94,6 +107,8 @@ extension API: TargetType {
     
     var route: Route {
         switch self {
+        case .currency(let href):
+            return .get(href)
         case .topics(let href):
             return .get(href ?? "")
         case .recentTopics(let page):
@@ -104,6 +119,8 @@ extension API: TargetType {
             return .get(type.rawValue)
         case .captchaImageData(let once):
             return .get("/_captcha?once=\(once)")
+        case .once:
+            return .get("/signin")
         case .signin:
             return .post("/signin")
         case .forgot:
@@ -112,14 +129,20 @@ extension API: TargetType {
             return .post("/signup")
         case .loginReward(let once):
             return .post("/mission/daily/redeem?once=\(once)")
+        case .updateAvatar:
+            return .post("/settings/avatar")
+        case .memberIntro(let username):
+            return .get("/api/members/show.json?username=\(username)")
         case .nodes:
             return .get("/api/nodes/all.json")
+        case let .nodeDetail(href, page):
+            return .get("\(href)?p=\(page)")
         // return .get("/planes")
         case .myNodes:
             return .get("/my/nodes")
         case .following:
             return .get("/my/following")
-        case .topicCollect:
+        case .myFavorites:
             return .get("/my/topics")
         case .about:
             return .get("/about")
@@ -173,6 +196,8 @@ extension API: TargetType {
             param["from"] = offset
             param["size"] = size
             param["sort"] = sortType
+        case .updateAvatar(_, let once):
+            param["once"] = once
         default:
             return nil
         }
@@ -190,7 +215,7 @@ extension API: TargetType {
         headers["User-Agent"] = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Version/10.0 Mobile/14D27 Safari/602.1"
         //        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36"
         switch self {
-        case .signin, .forgot, .createTopic:
+        case .signin, .forgot, .createTopic, .updateAvatar:
             headers["Referer"] = defaultURLString
         default:
             break
@@ -202,7 +227,9 @@ extension API: TargetType {
     var task: Task {
         switch self {
         case .uploadPicture(let localURL):
-            return .upload(.file(URL(fileURLWithPath: localURL)))
+            return .upload(.file(URL(fileURLWithPath: localURL), "smfile"))
+        case .updateAvatar(let localURL, _):
+            return .upload(.file(URL(fileURLWithPath: localURL), "avatar"))
         default:
             return .request
         }
