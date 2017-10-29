@@ -32,6 +32,8 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         super.viewDidLoad()
 
         edgesForExtendedLayout = [.bottom]
+        
+        status = .noSearchResult
     }
     
     override func setupSubviews() {
@@ -56,6 +58,10 @@ class TopicSearchResultViewController: DataViewController, TopicService {
 
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
 
+    }
+    
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        
     }
 
     public func search(query: String?, selectedScope: Int) {

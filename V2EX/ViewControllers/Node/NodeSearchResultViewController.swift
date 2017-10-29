@@ -31,6 +31,7 @@ class NodeSearchResultViewController: DataViewController {
         super.viewDidLoad()
 
         edgesForExtendedLayout = [.bottom]
+        status = .noSearchResult
     }
     
     override func setupSubviews() {

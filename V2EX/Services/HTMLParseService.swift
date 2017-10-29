@@ -300,6 +300,7 @@ extension HTMLParseService {
     }
 
     func parseMemberTopics(html: HTMLDocument) -> [TopicModel] {
+        
         let rootPath = html.xpath("//*[@id='Wrapper']/div/div/div[@class='cell item']")
         let topics = rootPath.flatMap({ ele -> TopicModel? in
             guard let userNode = ele.xpath(".//td//span/strong/a").first,
@@ -308,11 +309,9 @@ extension HTMLParseService {
                 let topicPath = ele.xpath(".//td/span[@class='item_title']/a").first,
                 let topicTitle = topicPath.content,
                 //                    let avatarSrc = ele.xpath(".//td/a/img").first?["src"],
-                let avatarSrc = UserDefaults.get(forKey: Constants.Keys.avatarSrc) as? String,
                 let topicHref = topicPath["href"] else {
                     return nil
             }
-
 
             let replyCount = ele.xpath(".//td[2]/a").first?.text ?? "0"
 
@@ -329,7 +328,7 @@ extension HTMLParseService {
                 lastReplyAndTime = replyUsername + timeString
             }
 
-            let member = MemberModel(username: username, url: userPage, avatar: avatarSrc)
+            let member = MemberModel(username: username, url: userPage, avatar: "")
 
             var node: NodeModel?
 

@@ -13,7 +13,7 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
     public var node: NodeModel {
         didSet {
             title = node.name
-            favoriteTopicItem.title = node.isFavorite ? "已收藏" : "收藏"
+            favoriteTopicItem.title = (node.isFavorite ?? false) ? "已收藏" : "收藏"
         }
     }
 
@@ -111,9 +111,9 @@ extension NodeDetailViewController {
 
         favorite(href: href, success: { [weak self] in
             guard let `self` = self else { return }
-            self.node.isFavorite = !self.node.isFavorite
-            HUD.showText("已成功\(self.node.isFavorite ? "收藏" : "取消收藏") \(self.node.name)")
-            self.favoriteTopicItem.title = self.node.isFavorite ? "已收藏" : "收藏"
+            self.node.isFavorite = !self.node.isFavorite!
+            HUD.showText("已成功\(self.node.isFavorite! ? "收藏" : "取消收藏") \(self.node.name)")
+            self.favoriteTopicItem.title = self.node.isFavorite! ? "已收藏" : "收藏"
         }) { error in
             HUD.showText(error)
         }

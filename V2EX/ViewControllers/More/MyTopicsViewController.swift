@@ -3,6 +3,8 @@ import UIKit
 class MyTopicsViewController: BaseTopicsViewController, MemberService {
 
     var username: String
+    
+    public var scrollViewDidScroll: ((UIScrollView) -> Void)?
 
     init(username: String) {
         self.username = username
@@ -22,6 +24,8 @@ class MyTopicsViewController: BaseTopicsViewController, MemberService {
     }
 
     override func fetchTopic() {
+        startLoading()
+        
         memberTopics(
             username: username,
             success: {[weak self] topics in
@@ -31,9 +35,11 @@ class MyTopicsViewController: BaseTopicsViewController, MemberService {
         }) { [weak self] error in
             self?.tableView.endRefresh()
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            if let `errorView` = self?.errorView as? EmptyView {
-                errorView.message = error
-            }
+            self?.errorMessage = error
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollViewDidScroll?(scrollView)
     }
 }

@@ -164,9 +164,7 @@ class NodesViewController: DataViewController, NodeService {
             self?.errorView?.isHidden = false
             self?.emptyView?.isHidden = false
         }) { [weak self] error in
-            if let `errorView` = self?.errorView as? ErrorView {
-                errorView.message = error
-            }
+            self?.errorMessage = error
             self?.errorView?.isHidden = false
             self?.emptyView?.isHidden = false
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
@@ -184,12 +182,10 @@ class NodesViewController: DataViewController, NodeService {
             self?.errorView?.isHidden = false
             self?.emptyView?.isHidden = false
         }) { [weak self] error in
-            if let `errorView` = self?.errorView as? ErrorView {
-                errorView.message = error
-            }
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            self?.errorMessage = error
             self?.errorView?.isHidden = false
             self?.emptyView?.isHidden = false
-            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
 }

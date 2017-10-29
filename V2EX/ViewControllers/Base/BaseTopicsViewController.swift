@@ -145,7 +145,7 @@ extension BaseTopicsViewController: UIViewControllerPreviewingDelegate {
 
         guard let indexPath = tableView.indexPathForRow(at: location),
             let cell = tableView.cellForRow(at: indexPath) else { return nil }
-        guard let topicID = topics[indexPath.row].topicID else { return nil }
+        guard let topicID = topics[indexPath.section].topicID else { return nil }
 
         let viewController = TopicDetailViewController(topicID: topicID)
         previewingContext.sourceRect = cell.frame

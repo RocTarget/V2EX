@@ -58,11 +58,11 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         return view
     }()
 
-    private lazy var segmentContainerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        return view
-    }()
+//    private lazy var segmentContainerView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .white
+//        return view
+//    }()
 
     private lazy var segmentView: UISegmentedControl = {
         let view = UISegmentedControl(items: [
@@ -72,6 +72,16 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         view.tintColor = Theme.Color.globalColor
         view.selectedSegmentIndex = 0
         view.sizeToFit()
+        view.tintColor = .clear
+        view.setTitleTextAttributes([
+            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14),
+            NSAttributedStringKey.foregroundColor: UIColor.black
+            ], for: .normal)
+        view.setTitleTextAttributes(
+            [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14),
+             NSAttributedStringKey.foregroundColor: Theme.Color.globalColor
+            ], for: .selected)
+        view.backgroundColor = .white
         return view
     }()
 
@@ -138,7 +148,15 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         navBarBgAlpha = 0
         navBarTintColor = .white
 
-        lastOffsetY = -(200 + 64)
+        lastOffsetY = -200
+        
+        topicVC.scrollViewDidScroll = { scrollView in
+            self.scrollViewDidScroll(scrollView)
+        }
+        
+        replyVC.scrollViewDidScroll = { scrollView in
+            self.scrollViewDidScroll(scrollView)
+        }
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -146,8 +164,7 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
     }
     
     override func setupSubviews() {
-        view.addSubviews(headerView, segmentContainerView, scrollView)
-        segmentContainerView.addSubview(segmentView)
+        view.addSubviews(headerView, segmentView, scrollView)
         headerView.addSubviews(blurView, avatarView, usernameLabel, joinTimeLabel, followBtn, blockBtn)
     }
     
@@ -214,19 +231,15 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
             $0.top.equalTo(usernameLabel.snp.bottom).offset(15)
         }
 
-        segmentContainerView.snp.makeConstraints {
+        segmentView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
             $0.top.equalTo(headerView.snp.bottom).offset(10)
             $0.height.equalTo(44)
         }
 
-        segmentView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-
         scrollView.snp.makeConstraints {
             $0.left.bottom.right.equalToSuperview()
-            $0.top.equalTo(segmentContainerView.snp.bottom).offset(1)
+            $0.top.equalTo(segmentView.snp.bottom).offset(1)
         }
     }
 
@@ -285,7 +298,11 @@ extension MemberPageViewController: UIScrollViewDelegate {
 
         let headOffset = 200 - delta
 
-        headerViewTopConstraint?.update(inset: headOffset)
+        if contentOffsetY > 200 {
+            headerViewTopConstraint?.update(inset: -200)
+        } else {
+            headerViewTopConstraint?.update(inset: headOffset)
+        }
 
         //navigationBar alpha
         if contentOffsetY > showNavBarOffsetY  {

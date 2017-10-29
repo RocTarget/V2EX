@@ -19,15 +19,23 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
         return errorView
     }()
 
-    public var status: StatusType = .error {
+    public var status: StatusType = .empty {
         didSet {
             customEmptyView.set(status)
             customErrorView.set(status)
         }
     }
+    
+    public var emptyMessage: String? {
+        didSet {
+            status = .empty
+            customEmptyView.message = emptyMessage
+        }
+    }
 
     public var errorMessage: String? {
         didSet {
+            status = .error
             customErrorView.message = errorMessage
         }
     }

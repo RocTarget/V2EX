@@ -116,9 +116,7 @@ class HomeViewController: BaseTopicsViewController {
             }, failure: { [weak self] error in
                 HUD.dismiss()
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-                if let `errorView` = self?.errorView as? ErrorView {
-                    errorView.message = error
-                }
+                self?.errorMessage = error
         })
     }
 

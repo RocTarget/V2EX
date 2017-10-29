@@ -120,7 +120,7 @@ class TopicCell: BaseTableViewCell {
         didSet {
             guard let `topic` = topic else { return }
             guard let user = topic.member else { return }
-            avatarView.setCornerRadiusImage(urlString: user.avatarSrc)
+            avatarView.setCornerRadiusImage(urlString: user.avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
             usernameLabel.text = user.username
             titleLabel.text = topic.title
             lastReplyLabel.text = topic.lastReplyTime

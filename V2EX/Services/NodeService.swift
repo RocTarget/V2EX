@@ -62,7 +62,7 @@ extension NodeService {
         node: NodeModel,
         success: ((_ node: NodeModel, _ topics: [TopicModel], _ maxPage: Int) -> Void)?,
         failure: Failure?) {
-        Network.htmlRequest(target: .nodeDetail(href: node.href, page: page), success: { html in
+        Network.htmlRequest(target: .nodeDetail(href: node.path, page: page), success: { html in
             
             //            let nodeIcon = html.xpath("//*[@id='Main']//div[@class='header']/div/img").first?["src"]
             //            let nodeIntro = html.xpath("//*[@id='Main']//div[@class='header']/span[last()]").first?.content

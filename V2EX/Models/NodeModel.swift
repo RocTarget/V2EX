@@ -32,7 +32,7 @@ public struct NodeModel: Codable {
     var intro: String?
     var topicNumber: Int?
     var favoriteHref: String?
-    var isFavorite: Bool = false
+    var isFavorite: Bool? = false
 
     private enum CodingKeys: String, CodingKey {
         case name = "title"
@@ -54,7 +54,8 @@ public struct NodeModel: Codable {
     }
 
     public var favoriteOrUnfavoriteHref: String? {
-        guard let href = favoriteHref else { return nil }
+        guard let href = favoriteHref,
+            let `isFavorite` = isFavorite else { return nil }
 
         if isFavorite, href.hasPrefix("/favorite") {
             return href.replacingOccurrences(of: "/favorite", with: "/unfavorite")
@@ -88,6 +89,11 @@ public struct NodeModel: Codable {
     }
     
     static func nodes(data: Data) -> [NodeModel]? {
-        return try? JSONDecoder().decode([NodeModel].self, from: data)
+        do {
+            return try JSONDecoder().decode([NodeModel].self, from: data)
+        } catch {
+            log.error(error)
+            return nil
+        }
     }
 }

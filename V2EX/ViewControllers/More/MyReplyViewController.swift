@@ -15,7 +15,9 @@ class MyReplyViewController: DataViewController, MemberService {
         return view
     }()
 
-    var username: String
+    public var scrollViewDidScroll: ((UIScrollView) -> Void)?
+    
+    public var username: String
 
     private var replys: [MessageModel] = [] {
         didSet {
@@ -64,9 +66,7 @@ class MyReplyViewController: DataViewController, MemberService {
             self?.endLoading()
         }) { [weak self] error in
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            if let `errorView` = self?.errorView as? ErrorView {
-                errorView.message = error
-            }
+            self?.errorMessage = error
         }
     }
 
@@ -94,5 +94,8 @@ extension MyReplyViewController: UITableViewDelegate, UITableViewDataSource {
         let topicDetailVC = TopicDetailViewController(topicID: topicId)
         self.navigationController?.pushViewController(topicDetailVC, animated: true)
     }
-
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollViewDidScroll?(scrollView)
+    }
 }

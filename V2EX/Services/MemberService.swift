@@ -41,7 +41,12 @@ extension MemberService {
         success: ((_ topics: [TopicModel]) -> Void)?,
         failure: Failure?) {
         Network.htmlRequest(target: .memberTopics(username: username), success: { html in
-            success?(self.parseMemberTopics(html: html))
+            if let content = html.content, content.contains("主题列表被隐藏") {
+                failure?("该用户隐藏了 主题列表")
+                return
+            }
+            let topics = self.parseMemberTopics(html: html)
+            success?(topics)
         }, failure: failure)
     }
     
@@ -91,6 +96,7 @@ extension MemberService {
                 isFollow: isFollow,
                 isBlock: isBlock
             )
+            
             let topics = self.parseMemberTopics(html: html)
             success(member, topics, messages)
         }, failure: failure)

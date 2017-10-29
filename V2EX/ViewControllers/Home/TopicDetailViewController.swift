@@ -528,9 +528,7 @@ extension TopicDetailViewController {
             self.maxPage = maxPage
             //            self?.endLoading()
             }, failure: { [weak self] error in
-                if let `errorView` = self?.errorView as? ErrorView {
-                    errorView.message = error
-                }
+                self?.errorMessage = error
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
                 self?.tableView.endHeaderRefresh()
         })

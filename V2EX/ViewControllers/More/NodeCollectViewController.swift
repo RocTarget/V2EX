@@ -53,9 +53,7 @@ class NodeCollectViewController: DataViewController, NodeService {
             self?.collectionView.reloadData()
             self?.endLoading()
         }) { [weak self] error in
-            if let `errorView` = self?.errorView as? ErrorView {
-                errorView.message = error
-            }
+            self?.errorMessage = error
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
