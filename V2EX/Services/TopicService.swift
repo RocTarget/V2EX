@@ -281,6 +281,11 @@ extension TopicService {
                     failure?(error)
                     return
                 }
+                // 需要验证
+                if let error = html.xpath("//*[@id='Main']/div/div//span[@class='negative'][text()]").first?.content {
+                    failure?("访问被限制节点的内容之前，你的账号需要完成以下验证：\n\(error)")
+                    return
+                }
                 failure?("数据解析失败")
                 return
             }

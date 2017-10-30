@@ -168,9 +168,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     
     func interactHook(_ URL: URL) {
         let link = URL.absoluteString
-        if link.hasPrefix("https://") || link.hasPrefix("http://"){
-            tapHandle(.webpage(URL))
-        } else if URL.path.contains("/member/") {
+        if URL.path.contains("/member/") {
             let href = URL.path
             let name = href.lastPathComponent
             let member = MemberModel(username: name, url: href, avatar: "")
@@ -180,6 +178,8 @@ class TopicDetailViewController: DataViewController, TopicService {
             tapHandle(.topic(topicID))
         } else if URL.path.contains("/go/") {
             tapHandle(.node(NodeModel(name: "", href: URL.path)))
+        } else if link.hasPrefix("https://") || link.hasPrefix("http://"){
+            tapHandle(.webpage(URL))
         }
     }
     
