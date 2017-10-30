@@ -15,7 +15,13 @@ protocol AccountService: HTMLParseService {
     func signin(
         loginForm: LoginForm,
         success: Action?,
-        failure: ((_ error: String, _ loginForm: LoginForm?) -> Void)?)
+        failure: ((_ error: String, _ loginForm: LoginForm?, _ is2Fa: Bool) -> Void)?)
+
+    func twoStepVerification(
+        code: String,
+        once: String,
+        success: Action?,
+        failure: Failure?)
 
     func forgot(
         forgotForm: LoginForm,
@@ -108,9 +114,16 @@ extension AccountService {
     func signin(
         loginForm: LoginForm,
         success: Action?,
-        failure: ((_ error: String, _ loginForm: LoginForm?) -> Void)?) {
+        failure: ((_ error: String, _ loginForm: LoginForm?, _ is2Fa: Bool) -> Void)?) {
         Network.htmlRequest(target: .signin(dict: loginForm.loginDict()), success: { html in
             //html.xpath("//*[@id='Top']/div/div/table/tr/td/a").map {$0["href"]}
+
+            // 两步验证
+            if let title = html.title, title.contains("两步验证登录") {
+                failure?("您的账号已经开启了两步验证，请输入验证码继续", nil, true)
+                return
+            }
+
             // 有通知 代表登录成功
             if let innerHTML = html.innerHTML, innerHTML.contains("notifications") {
                 // 领取今日登录奖励
@@ -126,21 +139,35 @@ extension AccountService {
             // 没有登录成功， 获取失败原因
             if let problem = html.xpath("//*[@id='Wrapper']//div[@class='problem']/ul/li").first?.content {
                 self.parseCaptcha(html: html, success: { loginForm in
-                    failure?(problem, loginForm)
+                    failure?(problem, loginForm, false)
                 }, failure: { error in
-                    failure?(problem, nil)
+                    failure?(problem, nil, false)
                 })
                 return
             } else if let errorLimit = html.xpath("//*[@id='Wrapper']/div/div/div[2]/div").first?.text?.trimmed.replacingOccurrences(of: " ", with: "") { // 错误次数过多提升
-                failure?(errorLimit, nil)
+                failure?(errorLimit, nil, false)
                 return
             }
-            failure?("登录失败", nil)
+            failure?("登录失败", nil, false)
         }, failure: { error in
-            failure?(error, nil)
+            failure?(error, nil, false)
         })
     }
 
+    func twoStepVerification(
+        code: String,
+        once: String,
+        success: Action?,
+        failure: Failure?) {
+        
+        Network.htmlRequest(target: .twoStepVerification(code: code, once: once), success: { html in
+            if let errorMessage = html.xpath("//*[@id='Wrapper']//div[@class='message']").first?.content {
+                failure?(errorMessage)
+                return
+            }
+            success?()
+        }, failure: failure)
+    }
 
     func forgot(
         forgotForm: LoginForm,

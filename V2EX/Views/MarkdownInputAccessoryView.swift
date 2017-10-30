@@ -8,26 +8,111 @@
 
 import UIKit
 
+enum MarkdownItemType: Int, EnumCollection {
+    case leftMove
+    case rightMove
+    case undo
+    case redo
+    case bold
+    case italic
+    case heading
+    case quote
+    case codeBlock
+    case genericList
+    case numberedList
+    case link
+    case image
+    case clear
+    case closeKeyboard
+
+    var image: UIImage {
+        switch self {
+        case .leftMove: return #imageLiteral(resourceName: "leftArrow")
+        case .rightMove: return #imageLiteral(resourceName: "rightArrow")
+        case .undo: return #imageLiteral(resourceName: "undo")
+        case .redo: return #imageLiteral(resourceName: "redo")
+        case .bold: return #imageLiteral(resourceName: "bold")
+        case .italic: return #imageLiteral(resourceName: "italic")
+        case .heading: return #imageLiteral(resourceName: "heading")
+        case .quote: return #imageLiteral(resourceName: "quote")
+        case .codeBlock: return #imageLiteral(resourceName: "codeBlock")
+        case .genericList: return #imageLiteral(resourceName: "genericList")
+        case .numberedList: return #imageLiteral(resourceName: "numberedList")
+        case .link: return #imageLiteral(resourceName: "link")
+        case .image: return #imageLiteral(resourceName: "image")
+        case .clear: return #imageLiteral(resourceName: "Clear")
+        case .closeKeyboard: return #imageLiteral(resourceName: "closeKeyboard")
+        }
+    }
+
+    var mark: String? {
+        switch self {
+        case .bold: return "****"
+        case .italic: return "**"
+        case .heading: return "# "
+        case .quote: return "> "
+        case .codeBlock: return "\n```\n\n```"
+        case .genericList: return "* "
+        case .numberedList: return "1. "
+        case .link: return "[]()"
+        default: return nil
+        }
+    }
+
+    var location: Int? {
+        switch self {
+        case .bold: return 2
+        case .italic: return 1
+        case .codeBlock: return 4
+        case .link: return 3
+        default: return nil
+        }
+    }
+}
+
 class MarkdownInputAccessoryView: UIView {
 
     private lazy var scrollView: UIScrollView = {
         let view = UIScrollView()
-        view.autoresizingMask = .flexibleWidth
         view.delaysContentTouches = true
-        view.isPagingEnabled = true
+        view.showsVerticalScrollIndicator = false
+        view.showsHorizontalScrollIndicator = false
+        view.backgroundColor = .clear
+        view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         return view
     }()
 
-    weak var textView: UITextView?
+    private lazy var closeKeyboardBtn: UIButton = {
+        let view = UIButton()
+        view.setImage(MarkdownItemType.closeKeyboard.image, for: .normal)
+        view.setImage(MarkdownItemType.closeKeyboard.image, for: .selected)
+        view.tag = MarkdownItemType.closeKeyboard.rawValue
+        view.addTarget(self, action: #selector(clickHandle(_:)), for: .touchUpInside)
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowRadius = 1
+        view.layer.shadowOpacity = 0.3
+        view.layer.shadowOffset = CGSize(width: -2, height: 0)
+        view.backgroundColor = .white
+        return view
+    }()
 
-    init(height: CGFloat = 44, textView: UITextView) {
+    public var didSelectedItemHandle: ((_ type: MarkdownItemType) -> Void)?
+
+    private var items: [MarkdownItemType] = MarkdownItemType.allValues
+    private var pins: [MarkdownItemType] = [.closeKeyboard]
+
+    init(height: CGFloat = 44) {
         super.init(frame: CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth, height: height))
-        self.textView = textView
-
-        autoresizingMask = .flexibleWidth
+        autoresizingMask = [.flexibleHeight, .flexibleWidth]
         backgroundColor = UIColor.hex(0xd7d7d7)
+        layer.borderColor = Theme.Color.borderColor.cgColor
+        layer.borderWidth = 0.3
 
-        addSubview(scrollView)
+        scrollView.frame = frame
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: pins.count.f * height)
+        scrollView.contentSize = CGSize(width: (items.count - pins.count).f * height, height: height)
+
+        backgroundColor = .white
 
         setupUI()
     }
@@ -37,8 +122,26 @@ class MarkdownInputAccessoryView: UIView {
     }
 
     func setupUI() {
-//        var btns: [UIButton] = []
+        addSubviews(scrollView, closeKeyboardBtn)
 
+        let w = height
+        for (index, item) in items.enumerated() {
+            if pins.contains(item) { continue }
+            let btn = UIButton()
+            btn.frame = CGRect(x: index.f * w, y: 0, width: w, height: w)
+            btn.tag = item.rawValue
+            btn.setImage(item.image, for: .normal)
+            btn.setImage(item.image, for: .selected)
+            btn.addTarget(self, action: #selector(clickHandle(_:)), for: .touchUpInside)
+            scrollView.addSubview(btn)
+        }
 
+        closeKeyboardBtn.frame = CGRect(x: width - height, y: 0, width: height, height: height)
+    }
+
+    @objc func clickHandle(_ btn: UIButton) {
+        guard let type = MarkdownItemType(rawValue: btn.tag) else { return }
+
+        didSelectedItemHandle?(type)
     }
 }

@@ -2,6 +2,8 @@ import UIKit
 import Marklight
 import RxSwift
 import RxCocoa
+import MobileCoreServices
+import SnapKit
 
 class CreateTopicViewController: BaseViewController, TopicService {
     
@@ -40,7 +42,10 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
-//    var bodyTextView : UIPlaceholderTextView?
+    private lazy var markdownToolbar: MarkdownInputAccessoryView = {
+        let view = MarkdownInputAccessoryView()
+        return view
+    }()
 
     private lazy var bodyTextView: UIPlaceholderTextView = {
         let textContainer = NSTextContainer()
@@ -56,10 +61,11 @@ class CreateTopicViewController: BaseViewController, TopicService {
         view.keyboardDismissMode = .onDrag
         view.delegate = self
         view.isEditable = true
+        view.inputAccessoryView = markdownToolbar
         return view
     }()
 
-//    private var bodyText: String = ""
+    //    private var bodyText: String = ""
 
     private lazy var textStorage: MarklightTextStorage = {
         let textStorage = MarklightTextStorage()
@@ -68,7 +74,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
         textStorage.marklightTextProcessor.syntaxColor = .blue
         textStorage.marklightTextProcessor.codeFontName = "Courier"
         textStorage.marklightTextProcessor.fontTextStyle = UIFontTextStyle.subheadline.rawValue
-//        textStorage.marklightTextProcessor.hideSyntax = true
+        //        textStorage.marklightTextProcessor.hideSyntax = true
         return textStorage
     }()
     
@@ -82,7 +88,34 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
+    private lazy var imagePicker: UIImagePickerController = {
+        let view = UIImagePickerController()
+        view.allowsEditing = true
+        view.mediaTypes = [kUTTypeImage as String]
+        view.sourceType = .photoLibrary
+        view.delegate = self
+        return view
+    }()
+
+    private lazy var selectNodeBtn: UIButton = {
+        let view = UIButton()
+        view.setImage(#imageLiteral(resourceName: "selectNode"), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "selectNode"), for: .selected)
+        view.setTitle("选择节点", for: .normal)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        view.setTitleColor(.black, for: .normal)
+        view.sizeToFit()
+        view.backgroundColor = .white
+        view.contentEdgeInsets = UIEdgeInsetsMake(5, 10, 5, 10)
+        view.setCornerRadius = 15
+        view.layer.borderColor = Theme.Color.globalColor.cgColor
+        view.layer.borderWidth = 0.5
+        return view
+    }()
+
     public var nodename: String?
+
+    private var selectNodeBtnBottomConstranit: Constraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,6 +134,20 @@ class CreateTopicViewController: BaseViewController, TopicService {
             bodyTextView.text = body
             bodyTextView.rx.value.onNext(body)
         }
+
+        if let nodename = UserDefaults.get(forKey: Constants.Keys.createTopicNodenameDraft) as? String {
+            selectNodeBtn.setTitle("  " + nodename, for: .normal)
+        }
+
+        markdownToolbar.didSelectedItemHandle = { [weak self] type in
+            self?.toolbarClickHandle(type)
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        view.endEditing(true)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -108,31 +155,12 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
         UserDefaults.save(at: titleFieldView.text, forKey: Constants.Keys.createTopicTitleDraft)
         UserDefaults.save(at: bodyTextView.text, forKey: Constants.Keys.createTopicBodyDraft)
-//        if let titleString = titleFieldView.text, titleString.trimmed.isNotEmpty {
-//            UserDefaults.save(at: titleString, forKey: Constants.Keys.createTopicTitleDraft)
-//        }
-//
-//        if let bodyString = bodyTextView.text, bodyString.trimmed.isNotEmpty {
-//            UserDefaults.save(at: bodyString, forKey: Constants.Keys.createTopicBodyDraft)
-//        }
+        if let `nodename` = nodename {
+            UserDefaults.save(at: nodename, forKey: Constants.Keys.createTopicNodenameDraft)
+        }
     }
 
     override func setupSubviews() {
-
-        // Load a sample markdown content from a file inside the app bundle
-        //        if let samplePath = Bundle.main.path(forResource: "Sample", ofType:  "md"){
-        //            do {
-        //                let string = try String(contentsOfFile: samplePath)
-        //                // Convert string to an `NSAttributedString`
-        //                let attributedString = NSAttributedString(string: string)
-        //
-        //                // Set the loaded string to the `UITextView`
-        //                textStorage.append(attributedString)
-        //            } catch _ {
-        //                print("Cannot read Sample.md file")
-        //            }
-        //        }
-
         NotificationCenter.default.addObserver(forName: .UITextViewTextDidChange, object: textView, queue: .main) { notification in
             if self.bodyTextView.textStorage.string.hasSuffix("\n") {
                 CATransaction.setCompletionBlock({ () -> Void in
@@ -147,26 +175,15 @@ class CreateTopicViewController: BaseViewController, TopicService {
             titleLabel,
             titleFieldView,
             bodyLabel,
-            bodyTextView
+            bodyTextView,
+            selectNodeBtn
         )
-        
-        //            UIBarButtonItem(title: "预览", style: .plain) { [weak self] in
-        //                guard let `self` = self else { return }
-        //
-        //
-        //
-        //                if self.bodyTextView.tag.boolValue { // plain text
-        //                    self.bodyText = self.bodyTextView.text
-        //                    let attributedString = NSAttributedString(string: self.bodyText)
-        //                    self.bodyTextView.attributedText = attributedString
-        //                } else { // attr text
-        //                    self.bodyTextView.text = self.bodyText
-        //                    self.bodyTextView.font = UIFont.systemFont(ofSize: 15)
-        //                    self.bodyTextView.textColor = .black
-        //                }
-        //                self.bodyTextView.tag = (!self.bodyTextView.tag.boolValue).intValue
-        //            }
         navigationItem.rightBarButtonItems = [postTopicBarButton, previewBarButton]
+
+        if let `nodename` = self.nodename {
+            selectNodeBtn.setTitle(nodename, for: .normal)
+            return
+        }
     }
 
     override func setupConstraints() {
@@ -189,6 +206,11 @@ class CreateTopicViewController: BaseViewController, TopicService {
         bodyTextView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
             $0.top.equalTo(bodyLabel.snp.bottom).offset(1)
+        }
+
+        selectNodeBtn.snp.makeConstraints {
+            $0.left.equalToSuperview().inset(20)
+            selectNodeBtnBottomConstranit = $0.bottom.equalToSuperview().inset(20).constraint
         }
     }
 
@@ -214,7 +236,14 @@ class CreateTopicViewController: BaseViewController, TopicService {
             .tap
             .subscribeNext { [weak self] in
                 self?.postTopicHandle()
+            }.disposed(by: rx.disposeBag)
+
+        selectNodeBtn.rx
+            .tap
+            .subscribeNext { [weak self] in
+                self?.selectNodeHandle()
         }.disposed(by: rx.disposeBag)
+
 
         previewBarButton.rx
             .tap
@@ -226,6 +255,23 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 let previewVC = MarkdownPreviewViewController(markdownString: markdownString)
                 let nav = NavigationViewController(rootViewController: previewVC)
                 self?.present(nav, animated: true, completion: nil)
+            }.disposed(by: rx.disposeBag)
+
+        Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
+                      NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
+                      NotificationCenter.default.rx.notification(.UIKeyboardDidHide)).merge()
+            .subscribeNext { [weak self] notification in
+                guard let `self` = self else { return }
+                guard var userInfo = notification.userInfo,
+                    let keyboardRect = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+                let convertedFrame = self.view.convert(keyboardRect, from: nil)
+                let heightOffset = self.view.bounds.size.height - convertedFrame.origin.y
+                let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double
+                self.selectNodeBtnBottomConstranit?.update(offset: -(heightOffset + 20))
+
+                UIView.animate(withDuration: duration!) {
+                    self.view.layoutIfNeeded()
+                }
             }.disposed(by: rx.disposeBag)
     }
     
@@ -240,19 +286,79 @@ class CreateTopicViewController: BaseViewController, TopicService {
             return
         }
 
-        guard let `nodename` = nodename else {
-            HUD.showText("请选择主题节点")
+        guard let selectedNodename = nodename else {
+            selectNodeHandle()
             return
         }
         
-        createTopic(nodename: nodename, title: title, body: bodyTextView.text, success: { [weak self] in
+        createTopic(nodename: selectedNodename, title: title, body: bodyTextView.text, success: { [weak self] in
             HUD.showText("发布成功")
             self?.titleFieldView.text = nil
             self?.bodyTextView.text = nil
             UserDefaults.remove(forKey: Constants.Keys.createTopicTitleDraft)
             UserDefaults.remove(forKey: Constants.Keys.createTopicBodyDraft)
+            UserDefaults.remove(forKey: Constants.Keys.createTopicNodenameDraft)
         }) { error in
             HUD.showText(error)
+        }
+    }
+
+    private func toolbarClickHandle(_ type: MarkdownItemType) {
+
+        if let mark = type.mark {
+            bodyTextView.insertText(mark)
+        }
+
+        var range = bodyTextView.selectedRange
+        if let location = type.location {
+            range.location -= location
+        }
+
+        switch type {
+        case .closeKeyboard:
+            bodyTextView.resignFirstResponder()
+        case .undo:
+            bodyTextView.undoManager?.undo()
+        case .redo:
+            bodyTextView.undoManager?.redo()
+        case .leftMove:
+            range.location -= 1
+        case .rightMove:
+            range.location += 1
+        case .image:
+            present(imagePicker, animated: true, completion: nil)
+        case .clear:
+            bodyTextView.text = nil
+        default:
+            break
+        }
+        bodyTextView.selectedRange = range
+    }
+
+    // 上传配图请求
+    private func uploadPictureHandle(_ fileURL: String) {
+        HUD.show()
+        uploadPicture(localURL: fileURL, success: { [weak self] url in
+            self?.bodyTextView.insertText("![V2EX](\(url))")
+            self?.bodyTextView.becomeFirstResponder()
+            HUD.dismiss()
+        }) { error in
+            HUD.dismiss()
+            HUD.showText(error)
+        }
+    }
+
+    private func selectNodeHandle() {
+
+        let allNodeVC = AllNodesViewController()
+        allNodeVC.title = "请选择主题节点"
+        let nav = NavigationViewController(rootViewController: allNodeVC)
+        present(nav, animated: true, completion: nil)
+
+        allNodeVC.didSelectedNodeHandle = { [weak self] node in
+            self?.selectNodeBtn.setTitle("  " + node.name, for: .normal)
+            self?.nodename = node.name
+            self?.view.becomeFirstResponder()
         }
     }
 }
@@ -270,5 +376,24 @@ extension CreateTopicViewController: UITextViewDelegate {
         var rect = textView.caretRect(for: textView.selectedTextRange!.end)
         rect.size.height = rect.size.height + textView.textContainerInset.bottom
         textView.scrollRectToVisible(rect, animated: animated)
+    }
+}
+
+extension CreateTopicViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        dismiss(animated: true, completion: nil)
+        guard var image = info[UIImagePickerControllerEditedImage] as? UIImage else { return }
+        image = image.resized(by: 0.7)
+        guard let data = UIImageJPEGRepresentation(image, 0.5) else { return }
+
+        let path = FileManager.document.appendingPathComponent("smfile.png")
+        _ = FileManager.save(data, savePath: path)
+        uploadPictureHandle(path)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true) {
+            self.bodyTextView.becomeFirstResponder()
+        }
     }
 }

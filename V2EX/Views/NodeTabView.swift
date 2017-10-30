@@ -39,6 +39,7 @@ public class NodeTabView: UIControl {
         view.isScrollEnabled = true
         view.contentInset = UIEdgeInsets.zero
         view.contentOffset = CGPoint.zero
+        view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         return view
     }()
 
@@ -61,9 +62,17 @@ public class NodeTabView: UIControl {
         self.style = segmentStyle
         self.nodes = nodes
         super.init(frame: frame)
-        addSubview(UIView()) // fix automaticallyAdjustsScrollViewInsets bug
         addSubview(scrollView)
         reloadData()
+
+        autoresizingMask = [.flexibleHeight, .flexibleWidth]
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.deviceOrientationDidChange),
+            name: .UIDeviceOrientationDidChange,
+            object: nil
+        )
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -78,7 +87,11 @@ public class NodeTabView: UIControl {
                 break
             }
         }
+    }
 
+    // TODO: 优化 横屏支持
+    @objc dynamic func deviceOrientationDidChange() {
+        setNeedsLayout()
     }
 }
 

@@ -8,6 +8,7 @@ class NodesViewController: DataViewController, NodeService {
         let view = UISegmentedControl(items: ["节点导航", "全部节点"])
         view.tintColor = Theme.Color.globalColor
         view.selectedSegmentIndex = 0
+        view.addTarget(self, action: #selector(segmentControlDidChangeHandle), for: .valueChanged)
         return view
     }()
     
@@ -25,117 +26,36 @@ class NodesViewController: DataViewController, NodeService {
         self.view.addSubview(view)
         return view
     }()
-    
-    private lazy var tableView: UITableView = {
-        let view = UITableView()
-        view.delegate = self
-        view.dataSource = self
-        view.alpha = 0
-        view.sectionIndexColor = Theme.Color.globalColor
-        view.sectionIndexBackgroundColor = .clear
-        view.sectionIndexTrackingBackgroundColor = Theme.Color.bgColor
-        view.hideEmptyCells()
-        view.backgroundColor = Theme.Color.bgColor
-        view.tableHeaderView = searchController.searchBar
-        view.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
-        self.view.addSubview(view)
-        return view
-    }()
-    
-    private lazy var footerLabel: UILabel = {
-        let footerLabel = UILabel()
-        let nodeTotalCount = groups.flatMap { $0.nodes.count }.reduce(0, +)
-        footerLabel.text = "\(nodeTotalCount) 个节点"
-        footerLabel.sizeToFit()
-        footerLabel.textColor = .gray
-        footerLabel.textAlignment = .center
-        footerLabel.height = 44
-        return footerLabel
-    }()
-    
-    private lazy var searchResultVC: NodeSearchResultViewController = {
-        let view = NodeSearchResultViewController()
-        return view
-    }()
-    
-    private lazy var searchController: UISearchController = {
-        let searchController = UISearchController(searchResultsController: searchResultVC)
-        searchController.searchBar.placeholder = "搜索节点"
-        searchController.searchBar.tintColor = Theme.Color.globalColor
-        searchController.searchBar.barTintColor = Theme.Color.bgColor
-        searchController.searchResultsUpdater = searchResultVC
-        // SearchBar 边框颜色
-        searchController.searchBar.layer.borderWidth = 0.5
-        searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
-        // TextField 边框颜色
-        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
-            searchField.layer.borderWidth = 0.5
-            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
-            searchField.layer.cornerRadius = 5.0
-            searchField.layer.masksToBounds = true
-        }
-        return searchController
-    }()
-    
-    private struct ReuseIdentifier {
-        static let NodeCell = "NodeCell"
-    }
-    
+
+    private weak var allNodeViewController: AllNodesViewController?
+
     private var nodeCategorys: [NodeCategoryModel] = [] {
         didSet {
             collectionView.reloadData()
         }
     }
-    
-    private var groups: [NodeCategoryModel] = [] {
-        didSet {
-            tableView.reloadData()
-            tableView.tableFooterView = footerLabel
-            searchResultVC.originData = groups.flatMap { $0.nodes }
-        }
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "节点导航"
         definesPresentationContext = true
-        
-        tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
+
+        automaticallyAdjustsScrollViewInsets = false
+        edgesForExtendedLayout = []
     }
-    
+
     override func setupSubviews() {
-        
         navigationItem.titleView = segmentedControl
+
+        let allNodeViewVC = AllNodesViewController()
+        allNodeViewController = allNodeViewVC
+        addChildViewController(allNodeViewVC)
     }
     
     override func setupConstraints() {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        tableView.snp.makeConstraints {
-            $0.left.right.bottom.equalToSuperview()
-            $0.top.equalTo(self.navigationController?.navigationBar.bottom ?? 200)
-        }
-    }
-    
-    override func setupRx() {
-        segmentedControl.rx
-            .selectedSegmentIndex
-            .subscribe(onNext: { [weak self] index in
-                self?.errorView?.isHidden = true
-                self?.emptyView?.isHidden = true
-                if index == 0 {
-                    self?.collectionView.fadeIn()
-                    self?.tableView.fadeOut()
-                    self?.fetchNodeNav()
-                } else {
-                    self?.collectionView.fadeOut()
-                    self?.tableView.fadeIn()
-                    self?.fetchAllNode()
-                }
-
-            }).disposed(by: rx.disposeBag)
     }
 
     // MARK: State Handle
@@ -145,11 +65,11 @@ class NodesViewController: DataViewController, NodeService {
     }
 
     override func hasContent() -> Bool {
-        return segmentedControl.selectedSegmentIndex == 0 ? nodeCategorys.count.boolValue : groups.count.boolValue
+        return nodeCategorys.count.boolValue
     }
 
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-        segmentedControl.selectedSegmentIndex == 0 ? fetchNodeNav() : fetchAllNode()
+        fetchNodeNav()
     }
 
     func fetchNodeNav() {
@@ -160,32 +80,25 @@ class NodesViewController: DataViewController, NodeService {
         nodeNavigation(success: { [weak self] cates in
             self?.nodeCategorys = cates
             self?.endLoading()
-
-            self?.errorView?.isHidden = false
-            self?.emptyView?.isHidden = false
         }) { [weak self] error in
             self?.errorMessage = error
-            self?.errorView?.isHidden = false
-            self?.emptyView?.isHidden = false
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
         }
     }
-    
-    func fetchAllNode() {
-        if groups.count.boolValue { return }
-        
-        startLoading()
-        
-        nodes(success: { [weak self] groups in
-            self?.groups = groups
-            self?.endLoading()
-            self?.errorView?.isHidden = false
-            self?.emptyView?.isHidden = false
-        }) { [weak self] error in
-            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            self?.errorMessage = error
-            self?.errorView?.isHidden = false
-            self?.emptyView?.isHidden = false
+
+    @objc private func segmentControlDidChangeHandle() {
+        if let allNodeVC = childViewControllers.first,
+            !allNodeVC.isViewLoaded {
+            allNodeVC.view.frame = collectionView.frame
+            view.addSubview(allNodeVC.view)
+        }
+
+        if segmentedControl.selectedSegmentIndex == 0 {
+            collectionView.fadeIn()
+            allNodeViewController?.view.fadeOut()
+        } else {
+            collectionView.fadeOut()
+            allNodeViewController?.view.fadeIn()
         }
     }
 }
@@ -229,46 +142,4 @@ extension NodesViewController: UICollectionViewDelegateFlowLayout {
 }
 
 
-// MARK: - UITableViewDelegate, UITableViewDataSource
-extension NodesViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return groups.count
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groups[section].nodes.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.NodeCell)
-        if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier.NodeCell)
-        }
-        cell?.textLabel?.text = groups[indexPath.section].nodes[indexPath.row].name
-        return cell!
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return groups[section].name
-    }
 
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        let headers = groups.map { $0.name }
-//        headers.insert(UITableViewIndexSearch, at: 0)
-        return headers
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.tintColor = Theme.Color.bgColor
-//        let header = view as! UITableViewHeaderFooterView
-//        header.textLabel?.textColor = UIColor.white
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        let node = groups[indexPath.section].nodes[indexPath.row]
-        let nodeDetailVC = NodeDetailViewController(node: node)
-        navigationController?.pushViewController(nodeDetailVC, animated: true)
-    }
-}

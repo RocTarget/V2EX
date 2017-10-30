@@ -7,7 +7,7 @@ let KcommentInputViewHeight: CGFloat = 55
 
 class CommentInputView: UIView {
 
-     lazy var textView: YYTextView = {
+     public lazy var textView: YYTextView = {
         let view = YYTextView()
         view.placeholderAttributedText = NSAttributedString(
             string: "添加一条新回复",
@@ -38,23 +38,17 @@ class CommentInputView: UIView {
         return view
     }()
 
-    public var text: String {
-        set {
-            textView.text = newValue
-        } get {
-            return textView.text
+    public var inputViewHeight: CGFloat {
+        if #available(iOS 11.0, *) {
+            return KcommentInputViewHeight + safeAreaInsets.bottom
+        } else {
+            return KcommentInputViewHeight
         }
     }
 
     private struct Misc {
         static let maxLine = 5
         static let textViewContentHeight: CGFloat = KcommentInputViewHeight - 20
-    }
-
-    public func beFirstResponder() {
-        if textView.isFirstResponder { return }
-        
-        textView.becomeFirstResponder()
     }
 
     public var sendHandle: Action?
@@ -143,7 +137,9 @@ extension CommentInputView: YYTextViewDelegate {
         guard rows <= Misc.maxLine else { return }
 
         var height = Misc.textViewContentHeight * rows.f
-        height = height < KcommentInputViewHeight ? KcommentInputViewHeight : height
+        height = height < inputViewHeight ? inputViewHeight : height
+
+        log.info("height = ", height)
         self.updateHeightHandle?(height)
     }
 }

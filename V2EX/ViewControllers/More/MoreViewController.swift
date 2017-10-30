@@ -48,8 +48,8 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             MoreItem(icon: #imageLiteral(resourceName: "myReply"), title: "我的回复", type: .myReply)
         ],
         [
-            MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
-            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
+//            MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
+//            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
             MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "意见反馈", type: .feedback),
             MoreItem(icon: #imageLiteral(resourceName: "sourceCode"), title: "项目源码", type: .sourceCode),
             MoreItem(icon: #imageLiteral(resourceName: "libs"), title: "开源库", type: .libs),

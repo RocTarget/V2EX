@@ -128,6 +128,11 @@ extension Networking {
         case .success(let data):
             log.verbose("✅ SUCCESS: " + message, file: file, function: function, line: line)
 
+            // 两步验证
+            if let path = dataResponse.response?.url?.path, path.hasPrefix("/2fa") {
+                NotificationCenter.default.post(.init(name: NSNotification.Name.V2.TwoStepVerificationName))
+            }
+
             if let statusCode = dataResponse.response?.statusCode {
                 if statusCode == 502 {
                     failure?("502 Bad Gateway")

@@ -1,5 +1,7 @@
 import UIKit
 import NSObject_Rx
+import RxSwift
+import RxCocoa
 
 class ForgotPasswordViewController: BaseViewController, AccountService {
 
@@ -89,6 +91,9 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
         super.viewDidLoad()
 
         fetchCode()
+
+        // TODO: 优化
+        // 点击忘记密码，用户名直接获取登录时输入的用户名（如果有）
     }
 
     override func setupSubviews() {
@@ -144,6 +149,37 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
     }
 
     override func setupRx() {
+
+        // 验证输入状态
+        let accountTextFieldUsable = accountTextField.rx
+            .text
+            .orEmpty
+            .flatMapLatest {
+                return Observable.just( $0.isNotEmpty )
+        }
+
+        let emailTextFieldUsable = emailTextField.rx
+            .text
+            .orEmpty
+            .flatMapLatest {
+                return Observable.just( $0.isNotEmpty )
+        }
+
+        let captchaTextFieldUsable = captchaTextField.rx
+            .text
+            .orEmpty
+            .flatMapLatest {
+                return Observable.just( $0.isNotEmpty )
+        }
+
+        Observable.combineLatest(
+            accountTextFieldUsable,
+            emailTextFieldUsable,
+            captchaTextFieldUsable) { $0 && $1 && $2}
+            .distinctUntilChanged()
+            .share(replay: 1)
+            .bind(to: nextBtn.rx.isEnableAlpha)
+            .disposed(by: rx.disposeBag)
 
         captchaBtn.rx
             .tap

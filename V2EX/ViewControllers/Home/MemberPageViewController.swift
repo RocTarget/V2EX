@@ -58,12 +58,6 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         return view
     }()
 
-//    private lazy var segmentContainerView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .white
-//        return view
-//    }()
-
     private lazy var segmentView: UISegmentedControl = {
         let view = UISegmentedControl(items: [
             "发布的主题",
@@ -131,7 +125,6 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -315,7 +308,7 @@ extension MemberPageViewController: UIScrollViewDelegate {
                 navBarTintColor = UIColor.defaultNavBarTintColor
                 statusBarShouldLight = false
             }else{
-                navBarTintColor = UIColor.white
+                navBarTintColor = .white
                 statusBarShouldLight = true
             }
         }else{

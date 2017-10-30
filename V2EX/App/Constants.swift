@@ -29,6 +29,7 @@ struct Constants {
         // 创建主题的草稿
         static let createTopicTitleDraft = "createTopicTitleDraft"
         static let createTopicBodyDraft = "createTopicBodyDraft"
+        static let createTopicNodenameDraft = "createTopicNodenameDraft"
 
         // Once
         static let once = "once"
@@ -60,6 +61,9 @@ extension Notification.Name {
 
         /// 点击富文本中的链接通知
         static let HighlightTextClickName = Notification.Name("HighlightTextClickName")
+
+        /// 两步验证通知
+        static let TwoStepVerificationName = Notification.Name("TwoStepVerificationName")
     }
 }
 

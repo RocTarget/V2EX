@@ -154,7 +154,7 @@ class ReplyMessageViewController: BaseViewController, TopicService {
         HUD.show()
         uploadPicture(localURL: fileURL, success: { [weak self] url in
             log.info(url)
-            self?.textView.text.append(url)
+            self?.textView.insertText(url)
             self?.textView.becomeFirstResponder()
             HUD.dismiss()
         }) { error in

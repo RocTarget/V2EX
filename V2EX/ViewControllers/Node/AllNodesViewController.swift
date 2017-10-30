@@ -1,0 +1,166 @@
+import UIKit
+
+class AllNodesViewController: DataViewController, NodeService {
+
+    private lazy var tableView: UITableView = {
+        let view = UITableView()
+        view.delegate = self
+        view.dataSource = self
+        view.sectionIndexColor = Theme.Color.globalColor
+        view.sectionIndexBackgroundColor = .clear
+        view.sectionIndexTrackingBackgroundColor = Theme.Color.bgColor
+        view.hideEmptyCells()
+        view.backgroundColor = Theme.Color.bgColor
+        view.tableHeaderView = searchController.searchBar
+        self.view.addSubview(view)
+        return view
+    }()
+
+    private lazy var footerLabel: UILabel = {
+        let footerLabel = UILabel()
+        let nodeTotalCount = groups.flatMap { $0.nodes.count }.reduce(0, +)
+        footerLabel.text = "\(nodeTotalCount) 个节点"
+        footerLabel.sizeToFit()
+        footerLabel.textColor = .gray
+        footerLabel.textAlignment = .center
+        footerLabel.height = 44
+        return footerLabel
+    }()
+
+    private lazy var searchResultVC: NodeSearchResultViewController = {
+        let view = NodeSearchResultViewController()
+        return view
+    }()
+
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: searchResultVC)
+        searchController.searchBar.placeholder = "搜索节点"
+        searchController.searchBar.tintColor = Theme.Color.globalColor
+        searchController.searchBar.barTintColor = Theme.Color.bgColor
+        searchController.searchResultsUpdater = searchResultVC
+        // SearchBar 边框颜色
+        searchController.searchBar.layer.borderWidth = 0.5
+        searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
+        // TextField 边框颜色
+        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
+            searchField.layer.borderWidth = 0.5
+            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
+            searchField.layer.cornerRadius = 5.0
+            searchField.layer.masksToBounds = true
+        }
+        return searchController
+    }()
+
+
+    private var groups: [NodeCategoryModel] = [] {
+        didSet {
+            tableView.reloadData()
+            tableView.tableFooterView = footerLabel
+            searchResultVC.originData = groups.flatMap { $0.nodes }
+        }
+    }
+
+    private struct ReuseIdentifier {
+        static let NodeCell = "NodeCell"
+    }
+
+    public var didSelectedNodeHandle:((NodeModel) -> Void)?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.title = "节点导航"
+//        definesPresentationContext = true
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, action: { [weak self] in
+            self?.dismiss()
+        })
+    }
+
+    override func setupConstraints() {
+        tableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+
+    func fetchAllNode() {
+        startLoading()
+
+        nodes(success: { [weak self] groups in
+            self?.groups = groups
+            self?.endLoading()
+        }) { [weak self] error in
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            self?.errorMessage = error
+        }
+    }
+
+    override func hasContent() -> Bool {
+        return groups.count.boolValue
+    }
+
+    override func loadData() {
+        fetchAllNode()
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchAllNode()
+    }
+
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchAllNode()
+    }
+}
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension AllNodesViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return groups.count
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return groups[section].nodes.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.NodeCell)
+        if cell == nil {
+            cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier.NodeCell)
+        }
+        cell?.textLabel?.text = groups[indexPath.section].nodes[indexPath.row].name
+        return cell!
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return groups[section].name
+    }
+
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        let headers = groups.map { $0.name }
+        //        headers.insert(UITableViewIndexSearch, at: 0)
+        return headers
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        view.tintColor = Theme.Color.bgColor
+        //        let header = view as! UITableViewHeaderFooterView
+        //        header.textLabel?.textColor = UIColor.white
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        let node = groups[indexPath.section].nodes[indexPath.row]
+
+        if let callback = didSelectedNodeHandle {
+            dismiss(animated: true, completion: {
+                callback(node)
+            })
+            return
+        }
+
+        let nodeDetailVC = NodeDetailViewController(node: node)
+        navigationController?.pushViewController(nodeDetailVC, animated: true)
+    }
+}
+

@@ -192,7 +192,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         commentInputView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
             self.inputViewBottomConstranit = $0.bottom.equalToSuperview().constraint
-            
+                
             if #available(iOS 11.0, *) {
                 self.inputViewHeightConstraint = $0.height.equalTo(KcommentInputViewHeight + view.safeAreaInsets.bottom).constraint
             } else {
@@ -217,7 +217,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         fetchTopicDetail()
     }
     
-    func keyboardControl() {
+    private func keyboardControl() {
         
         Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
                       NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
@@ -415,19 +415,19 @@ extension TopicDetailViewController {
     
     // 如果已经 at 的用户， 让 TextView 选中用户名
     private func atMember(_ atUsername: String?) {
-        commentInputView.beFirstResponder()
+        commentInputView.textView.becomeFirstResponder()
         guard var `atUsername` = atUsername, atUsername.trimmed.isNotEmpty else { return }
         
-        if commentInputView.text.contains(atUsername) {
-            let range = commentInputView.text.NSString.range(of: atUsername)
+        if commentInputView.textView.text.contains(atUsername) {
+            let range = commentInputView.textView.text.NSString.range(of: atUsername)
             commentInputView.textView.selectedRange = range
             return
         }
         
-        if commentInputView.text.last != " " {
-            atUsername.insert(" ", at: commentInputView.text.startIndex)
+        if commentInputView.textView.text.last != " " {
+            atUsername.insert(" ", at: commentInputView.textView.text.startIndex)
         }
-        commentInputView.text.append(atUsername)
+        commentInputView.textView.insertText(atUsername)
     }
     
     private func atMembers() {
@@ -441,32 +441,27 @@ extension TopicDetailViewController {
         
         memberListVC.callback = { [weak self] members in
             guard let `self` = self else { return }
-            self.commentInputView.beFirstResponder()
+            self.commentInputView.textView.becomeFirstResponder()
             
             guard members.count.boolValue else { return }
             
             var atsWrapper = members
-                .filter{ !self.commentInputView.text.contains($0.atUsername) }
+                .filter{ !self.commentInputView.textView.text.contains($0.atUsername) }
                 .map { $0.atUsername }
                 .joined()
             
-            if self.commentInputView.text.last != " " {
-                atsWrapper.insert(" ", at: self.commentInputView.text.startIndex)
+            if self.commentInputView.textView.text.last != " " {
+                atsWrapper.insert(" ", at: self.commentInputView.textView.text.startIndex)
             }
-            self.commentInputView.text.append(atsWrapper)
-            
-            // 修改光标位置
             self.commentInputView.textView.deleteBackward()
-            let range = self.commentInputView.text.NSString.range(of: atsWrapper)
-            //            self.commentInputView.textView.selectedRange = NSRange(location: self.commentInputView.text.count, length: 0)
-            self.commentInputView.textView.selectedRange = NSRange(location: range.location + range.length, length: 0)
+            self.commentInputView.textView.insertText(atsWrapper)
         }
     }
     
     @objc private func replyCommentAction() {
         guard let atUsername = selectComment?.member.atUsername else { return }
-        commentInputView.text = atUsername
-        commentInputView.beFirstResponder()
+        commentInputView.textView.text = atUsername
+        commentInputView.textView.becomeFirstResponder()
     }
     
     // TODO: 未调试
@@ -570,9 +565,9 @@ extension TopicDetailViewController {
             return
         }
         
-        guard commentInputView.text.trimmed.isNotEmpty else {
+        guard commentInputView.textView.text.trimmed.isNotEmpty else {
             HUD.showText("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
-                self?.commentInputView.beFirstResponder()
+                self?.commentInputView.textView.becomeFirstResponder()
             })
             return
         }
@@ -584,7 +579,7 @@ extension TopicDetailViewController {
             return
         }
         
-        commentText = commentInputView.text
+        commentText = commentInputView.textView.text
         commentInputView.textView.text = nil
         
         HUD.show()
@@ -600,8 +595,8 @@ extension TopicDetailViewController {
             guard let `self` = self else { return }
             HUD.dismiss()
             HUD.showText(error)
-            self.commentInputView.text = self.commentText
-            self.commentInputView.beFirstResponder()
+            self.commentInputView.textView.text = self.commentText
+            self.commentInputView.textView.becomeFirstResponder()
         }
     }
     
@@ -610,7 +605,7 @@ extension TopicDetailViewController {
         HUD.show()
         uploadPicture(localURL: fileURL, success: { [weak self] url in
             log.info(url)
-            self?.commentInputView.text.append(url)
+            self?.commentInputView.textView.insertText(url)
             HUD.dismiss()
         }) { error in
             HUD.dismiss()

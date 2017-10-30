@@ -24,16 +24,22 @@ enum API {
     case captchaImageData(once: String)
 
     case once
+
+    // MARK: - 个人账号相关接口
+
+    // 登录
     case signin(dict: [String: String])
-    
+    // 两步验证
+    case twoStepVerification(code: String, once: String)
+    // 忘记密码
     case forgot(dict: [String: String])
-    
+    // 注册
     case signup(dict: [String: String])
-
+    // 登录奖励
     case loginReward(once: String)
-
+    // 上传头像
     case updateAvatar(localURL: String, once: String)
-
+    // 账号信息
     case memberIntro(username: String)
 
     // 我的节点
@@ -123,6 +129,8 @@ extension API: TargetType {
             return .get("/signin")
         case .signin:
             return .post("/signin")
+        case .twoStepVerification:
+            return .post("/2fa")
         case .forgot:
             return .post("/forgot")
         case .signup:
@@ -191,6 +199,9 @@ extension API: TargetType {
              .comment(_, let dict),
              .createTopic(_, let dict):
             param = dict
+        case .twoStepVerification(let code, let once):
+            param["code"] = code
+            param["once"] = once
         case let .search(query, offset, size, sortType):
             param["q"] = query
             param["from"] = offset

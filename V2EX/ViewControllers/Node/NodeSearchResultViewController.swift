@@ -30,7 +30,8 @@ class NodeSearchResultViewController: DataViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        edgesForExtendedLayout = [.bottom]
+        edgesForExtendedLayout = []
+        automaticallyAdjustsScrollViewInsets = false
         status = .noSearchResult
     }
     

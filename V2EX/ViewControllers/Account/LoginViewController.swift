@@ -6,6 +6,8 @@ class LoginViewController: BaseViewController, AccountService {
     
     private lazy var logoView: UIImageView = {
         let view = UIImageView(image: #imageLiteral(resourceName: "site_logo"))
+//        view.contentMode = .center
+        view.contentMode = .scaleAspectFit
         return view
     }()
     
@@ -96,6 +98,12 @@ class LoginViewController: BaseViewController, AccountService {
         return view
     }()
 
+    private lazy var blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        return blurView
+    }()
+
     private var loginForm: LoginForm?
     
     override func viewDidLoad() {
@@ -120,10 +128,6 @@ class LoginViewController: BaseViewController, AccountService {
 
         view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
 
-        let blurEffect = UIBlurEffect(style: .light)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame.size = CGSize(width: view.frame.width, height: view.frame.height)
-
         view.addSubviews(
             blurView,
             logoView,
@@ -138,6 +142,11 @@ class LoginViewController: BaseViewController, AccountService {
     }
     
     override func setupConstraints() {
+
+        blurView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
         logoView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(view.height * 0.2)
@@ -308,8 +317,17 @@ class LoginViewController: BaseViewController, AccountService {
             AccountModel(username: username, url: API.memberHome(username: username).path, avatar: "").save()
             NotificationCenter.default.post(.init(name: Notification.Name.V2.LoginSuccessName))
             self?.dismiss()
-        }) { [weak self] error, form in
+        }) { [weak self] error, form, is2Fa in
             HUD.dismiss()
+
+            // 两步验证
+            if is2Fa {
+                AccountModel(username: username, url: API.memberHome(username: username).path, avatar: "").save()
+                let twoSetpV = TwoStepVerificationViewController()
+                self?.navigationController?.pushViewController(twoSetpV, animated: true)
+                return
+            }
+
             HUD.showText(error)
             self?.captchaTextField.text = ""
             if let `form` = form {

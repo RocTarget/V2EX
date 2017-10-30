@@ -56,6 +56,14 @@ class HomeViewController: BaseTopicsViewController {
         tableView.addFooterRefresh { [weak self] in
             self?.fetchMoreTopic()
         }
+
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.TwoStepVerificationName)
+            .subscribeNext { [weak self] _ in
+                let twoStepVer = TwoStepVerificationViewController()
+                let nav = NavigationViewController(rootViewController: twoStepVer)
+                self?.present(nav, animated: true, completion: nil)
+            }.disposed(by: rx.disposeBag)
     }
     
     override func setupSubviews() {

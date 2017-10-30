@@ -26,7 +26,8 @@ extension AppSetup {
 //            CreateTopicViewController.self
 //        ]
         IQKeyboardManager.sharedManager().disabledToolbarClasses = [
-            TopicDetailViewController.self
+            TopicDetailViewController.self,
+            CreateTopicViewController.self
         ]
         IQKeyboardManager.sharedManager().disabledTouchResignedClasses = [
             TopicDetailViewController.self
@@ -34,10 +35,12 @@ extension AppSetup {
     }
 
     private static func setupFPS() {
-        DispatchQueue.main.async {
-            let label = FPSLabel(frame: CGRect(x: AppWindow.shared.window.bounds.width - 55 - 8, y: 20, width: 55, height: 20))
-            label.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
-            AppWindow.shared.window.addSubview(label)
-        }
+        #if DEBUG
+            DispatchQueue.main.async {
+                let label = FPSLabel(frame: CGRect(x: AppWindow.shared.window.bounds.width - 55 - 8, y: 20, width: 55, height: 20))
+                label.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
+                AppWindow.shared.window.addSubview(label)
+            }
+        #endif
     }
 }
