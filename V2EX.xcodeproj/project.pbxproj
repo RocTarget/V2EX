@@ -51,7 +51,6 @@
 		BF02A2D21F8F42B600BEF85E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D11F8F425C00BEF85E /* UIColor+Extension.swift */; };
 		BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CC1F8F3F3E00BEF85E /* TabBarViewController.swift */; };
 		BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */; };
-		BF1B1D171FA6F25100544A11 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF1B1D161FA6F25100544A11 /* README.md */; };
 		BF1B1D191FA6F2A500544A11 /* TwoStepVerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */; };
 		BF1B1D1B1FA7003400544A11 /* AllNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */; };
 		BF39FFE71F94421C00D6F8BD /* Binder+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF39FFE61F94421C00D6F8BD /* Binder+Extension.swift */; };
@@ -716,6 +715,7 @@
 				6F09AC68488332B30709BADD /* [Carte] Post Script */,
 				414A5DDE7007F40233E10F82 /* [CP] Embed Pods Frameworks */,
 				A2AFEDC3B4ED40EC4475EB07 /* [CP] Copy Pods Resources */,
+				BF4765EE1FA8688E00C9AE5E /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -825,7 +825,6 @@
 			files = (
 				BFE394841F909CC600D3ED1D /* style.css in Resources */,
 				BF65BDC21F8E12C80010B4C9 /* LaunchScreen.storyboard in Resources */,
-				BF1B1D171FA6F25100544A11 /* README.md in Resources */,
 				BF65BDBF1F8E12C80010B4C9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -922,7 +921,6 @@
 				"${BUILT_PRODUCTS_DIR}/SKPhotoBrowser/SKPhotoBrowser.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/StatefulViewController/StatefulViewController.framework",
-				"${BUILT_PRODUCTS_DIR}/Themes/Themes.framework",
 				"${BUILT_PRODUCTS_DIR}/Toaster/Toaster.framework",
 				"${BUILT_PRODUCTS_DIR}/UIView+Positioning/UIView_Positioning.framework",
 				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
@@ -946,7 +944,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKPhotoBrowser.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StatefulViewController.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Themes.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toaster.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIView_Positioning.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
@@ -1030,6 +1027,20 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-V2EXTests/Pods-V2EXTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		BF4765EE1FA8688E00C9AE5E /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Crashlytics;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 33cd2af14c3e3eab3742353e1fb6e272b19ef683 39f7175dcad496b599e26dca106e9a365ba8e8ae7fed561d5a515fe9724eb441";
 		};
 		D642D6D2000EFE05B1160B62 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

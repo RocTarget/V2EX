@@ -185,6 +185,16 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
             self.height = self.titleLabel.bottom + htmlHeight + 15
             self.webLoadComplete?()
         }
+        let script = """
+            var imgs = document.getElementsByTagName('img');
+            for (var i = 0; i < imgs.length; ++i) {
+                var img = imgs[i];
+                img.onclick = function () {
+                    window.location.href = 'v2ex-image:' + this.src;
+                }
+            }
+            """
+        webView.evaluateJavaScript(script, completionHandler: nil)
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {

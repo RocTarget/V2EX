@@ -137,6 +137,7 @@ class MarkdownInputAccessoryView: UIView {
         }
 
         closeKeyboardBtn.frame = CGRect(x: width - height, y: 0, width: height, height: height)
+        closeKeyboardBtn.autoresizingMask = .flexibleLeftMargin
     }
 
     @objc func clickHandle(_ btn: UIButton) {

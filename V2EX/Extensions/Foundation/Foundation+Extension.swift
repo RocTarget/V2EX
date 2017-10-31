@@ -103,6 +103,55 @@ extension FileManager {
     }
 }
 
+extension FileManager {
+
+    class func fileSizeOfCache() -> Int {
+        // 取出文件夹下所有文件数组
+        guard let fileArr = FileManager.default.subpaths(atPath: FileManager.caches) else { return 0 }
+        //快速枚举出所有文件名 计算文件大小
+        var size = 0
+        for file in fileArr {
+            // 把文件名拼接到路径中
+            let path = FileManager.caches.appendingPathComponent(file)
+            // 取出文件属性
+            do {
+                let floder = try FileManager.default.attributesOfItem(atPath: path)
+                // 用元组取出文件大小属性
+                for (abc, bcd) in floder {
+                    // 累加文件大小
+                    if abc == FileAttributeKey.size {
+                        size += (bcd as AnyObject).integerValue
+                    }
+                }
+            } catch {
+                print(error)
+            }
+        }
+        let mm = size / 1024 / 1024
+        return mm
+    }
+
+    class func clearCache(complete: ((Int) -> Void)) {
+        let size = fileSizeOfCache()
+
+        // 取出文件夹下所有文件数组
+        guard let fileArr = FileManager.default.subpaths(atPath: FileManager.caches) else { return }
+        // 遍历删除
+        for file in fileArr {
+            let path = FileManager.caches.appendingPathComponent(file)
+            if FileManager.default.fileExists(atPath: path) {
+                do {
+                    try FileManager.default.removeItem(atPath: path)
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        complete(size)
+    }
+
+}
+
 
 
 extension NSObject {

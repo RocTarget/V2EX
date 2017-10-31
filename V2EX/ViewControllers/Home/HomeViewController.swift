@@ -3,7 +3,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-class HomeViewController: BaseTopicsViewController {
+class HomeViewController: BaseTopicsViewController, AccountService {
     
     private lazy var tabView: NodeTabView = {
         let view = NodeTabView(
@@ -64,6 +64,12 @@ class HomeViewController: BaseTopicsViewController {
                 let nav = NavigationViewController(rootViewController: twoStepVer)
                 self?.present(nav, animated: true, completion: nil)
             }.disposed(by: rx.disposeBag)
+
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.LoginSuccessName)
+            .subscribeNext { [weak self] _ in
+                self?.dailyRewardMission()
+            }.disposed(by: rx.disposeBag)
     }
     
     override func setupSubviews() {
@@ -108,12 +114,14 @@ class HomeViewController: BaseTopicsViewController {
             }.disposed(by: rx.disposeBag)
     }
     
-    func fetchIndexData() {
+    private func fetchIndexData() {
         startLoading()
 
-        index(success: { [weak self] nodes, topics in
+        index(success: { [weak self] nodes, topics, rewardable in
             guard let `self` = self else { return }
-            
+
+            if rewardable { self.dailyRewardMission() }
+
             self.nodes = nodes
             self.topics = topics
             self.endLoading()
@@ -128,7 +136,7 @@ class HomeViewController: BaseTopicsViewController {
         })
     }
 
-    func fetchMoreTopic() {
+    private func fetchMoreTopic() {
         let href = nodes[tabView.selectIndex].href
         let allHref = "/?tab=all"
         let isAllowRefresh = href.hasPrefix(allHref)
@@ -146,6 +154,16 @@ class HomeViewController: BaseTopicsViewController {
             self.tableView.endFooterRefresh(showNoMore: self.page >= maxPage)
         }) { [weak self] error in
             self?.tableView.endFooterRefresh()
+        }
+    }
+
+    private func dailyRewardMission() {
+        guard AccountModel.isLogin else { return }
+        
+        dailyReward(success: { days in
+            HUD.showText(days)
+        }) { error in
+            log.error(error)
         }
     }
 

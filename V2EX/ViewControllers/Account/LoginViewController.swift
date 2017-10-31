@@ -329,6 +329,7 @@ class LoginViewController: BaseViewController, AccountService {
             }
 
             HUD.showText(error)
+            self?.captchaTextField.becomeFirstResponder()
             self?.captchaTextField.text = ""
             if let `form` = form {
                 self?.captchaBtn.setImage(UIImage(data: form.captchaImageData), for: .normal)

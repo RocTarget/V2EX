@@ -4,15 +4,14 @@ import StatefulViewController
 class LoadingView: BasePlaceholderView, StatefulPlaceholderView {
 
     override func setupView() {
-        
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        activityIndicator.startAnimating()
-        activityIndicator.activityIndicatorViewStyle = UIDevice.isiPad ? .whiteLarge : .white
-        activityIndicator.color = .gray
-        self.addSubview(activityIndicator)
-        
-        activityIndicator.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            .hand.adhere(toSuperView: self)
+            .hand.config { activityIndicator in
+                activityIndicator.startAnimating()
+                activityIndicator.activityIndicatorViewStyle = UIDevice.isiPad ? .whiteLarge : .white
+                activityIndicator.color = .gray
+            }.hand.layout { maker in
+                maker.center.equalToSuperview()
         }
     }
 

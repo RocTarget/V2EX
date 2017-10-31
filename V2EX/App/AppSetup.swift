@@ -1,7 +1,8 @@
 import Foundation
 import UIKit
 import IQKeyboardManagerSwift
-
+import Fabric
+import Crashlytics
 
 struct AppSetup {
 
@@ -9,6 +10,7 @@ struct AppSetup {
         setupKeyboardManager()
         HUD.configureAppearance()
         setupFPS()
+        setupCrashlytics()
     }
 }
 
@@ -22,9 +24,9 @@ extension AppSetup {
         IQKeyboardManager.sharedManager().keyboardDistanceFromTextField = 70
         IQKeyboardManager.sharedManager().shouldResignOnTouchOutside = true
         
-//        IQKeyboardManager.sharedManager().disabledDistanceHandlingClasses = [
-//            CreateTopicViewController.self
-//        ]
+        IQKeyboardManager.sharedManager().disabledDistanceHandlingClasses = [
+            CreateTopicViewController.self
+        ]
         IQKeyboardManager.sharedManager().disabledToolbarClasses = [
             TopicDetailViewController.self,
             CreateTopicViewController.self
@@ -42,5 +44,9 @@ extension AppSetup {
                 AppWindow.shared.window.addSubview(label)
             }
         #endif
+    }
+
+    private static func setupCrashlytics() {
+        Fabric.with([Crashlytics.self])
     }
 }

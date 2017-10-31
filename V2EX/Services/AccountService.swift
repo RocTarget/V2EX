@@ -39,9 +39,8 @@ protocol AccountService: HTMLParseService {
         success: Action?,
         failure: Failure?)
 
-    func loginReward(
-        once: String,
-        success: Action?,
+    func dailyReward(
+        success: ((String) -> Void)?,
         failure: Failure?)
 
     func updateAvatar(
@@ -144,7 +143,7 @@ extension AccountService {
                     failure?(problem, nil, false)
                 })
                 return
-            } else if let errorLimit = html.xpath("//*[@id='Wrapper']/div/div/div[2]/div").first?.text?.trimmed.replacingOccurrences(of: " ", with: "") { // 错误次数过多提升
+            } else if let errorLimit = html.xpath("//*[@id='Wrapper']/div/div/div[2]/div").first?.text?.trimmed.replacingOccurrences(of: " ", with: "") { // 错误次数过多提示
                 failure?(errorLimit, nil, false)
                 return
             }
@@ -303,20 +302,27 @@ extension AccountService {
         }, failure: failure)
     }
 
-    func loginReward(
-        once: String,
-        success: Action?,
+    func dailyReward(
+        success: ((String) -> Void)?,
         failure: Failure?) {
+        guard let once = AccountModel.getOnce() else {
+            failure?("无法获取 once")
+            return
+        }
         Network.htmlRequest(target: .loginReward(once: once), success: { html in
-            log.info(html)
 
-            /// TODO: 未测试
             let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
             guard let content = messagePath?.content, content.contains("已成功领取") else {
                 failure?("领取每日奖励失败")
                 return
             }
-            success?()
+
+            if let days =  html.xpath("//*[@id='Wrapper']/div/div/div[last()]").first?.content {
+                success?("每日登录奖励已领取\n\(days)")
+                return
+            }
+
+            success?("每日登录奖励已领取")
         }, failure: failure)
     }
 

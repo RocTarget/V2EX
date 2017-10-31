@@ -29,8 +29,10 @@ func showImageBrowser(imageType: PhotoBrowserType) {
         photo?.shouldCachePhotoURLImage = true
     }
     guard let photoItem = photo else { return }
+    SKPhotoBrowserOptions.bounceAnimation = true
+    SKPhotoBrowserOptions.enableSingleTapDismiss = true
     let photoBrowser = SKPhotoBrowser(photos: [photoItem])
     photoBrowser.initializePageIndex(0)
+    photoBrowser.showToolbar(bool: true)
     AppWindow.shared.window.rootViewController?.present(photoBrowser, animated: true, completion: nil)
 }
-

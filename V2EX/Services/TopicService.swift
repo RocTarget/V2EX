@@ -9,7 +9,7 @@ protocol TopicService: HTMLParseService {
     ///   - success: 成功返回 nodes, topics, navigations
     ///   - failure: 失败
     func index(
-        success: ((_ nodes: [NodeModel], _ topics: [TopicModel]) -> Void)?,
+        success: ((_ nodes: [NodeModel], _ topics: [TopicModel], _ rewardable: Bool) -> Void)?,
         failure: Failure?)
 
     /// 获取 最近 的分页数据
@@ -180,7 +180,7 @@ protocol TopicService: HTMLParseService {
 extension TopicService {
     
     func index(
-        success: ((_ nodes: [NodeModel], _ topics: [TopicModel]) -> Void)?,
+        success: ((_ nodes: [NodeModel], _ topics: [TopicModel], _ rewardable: Bool) -> Void)?,
         failure: Failure?) {
         Networking.shared.htmlRequest(target: .topics(href: nil), success: { html in
             
@@ -188,15 +188,21 @@ extension TopicService {
             
             // 有通知 代表登录成功
             var isLogin = false
+            var rewardable = false
             if let innerHTML = html.innerHTML {
                 isLogin = innerHTML.contains("notifications")
                 if  isLogin {
                     // 领取今日登录奖励
                     if let dailyHref = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='inner']/a").first?["href"],
                         dailyHref == "/mission/daily" {
+                        rewardable = true
                     }
-                    
-                    //
+//                    /// 领取今日的登录奖励
+//                    if let dailyNode = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[1]/div[@class='inner']/a[@href='/mission/daily']").first,
+//                        dailyNode.content == "领取今日的登录奖励" {
+//
+//                    }
+
                     if let avatarNode = html.xpath("//*[@id='Top']/div/div/table/tr/td[3]/a[1]/img[1]").first,
                         let avatarPath = avatarNode["src"]?.replacingOccurrences(of: "s=24", with: "s=55"), // 修改图片尺寸
                         let href = avatarNode.parent?["href"] {
@@ -205,12 +211,6 @@ extension TopicService {
                         AccountModel(username: username, url: href, avatar: avatarPath).save()
                     }
 
-                    // TODO: 领取奖励
-                    /// 领取今日的登录奖励
-                    if let dailyNode = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[1]/div[@class='inner']/a[@href='/mission/daily']").first,
-                        dailyNode.content == "领取今日的登录奖励" {
-
-                    }
                 }
             }
             
@@ -234,7 +234,7 @@ extension TopicService {
                 return
             }
             
-            success?(nodes, topics)
+            success?(nodes, topics, rewardable)
         }, failure: failure)
     }
 
@@ -477,7 +477,7 @@ extension TopicService {
                     token: String,
                     success: Action?,
                     failure: Failure?) {
-        Network.htmlRequest(target: .thankReply(replyID: replyID, token: token), success: { html in
+        Network.htmlRequestNotResponse(target: .thankReply(replyID: replyID, token: token), success: {
             success?()
         }, failure: failure)
     }

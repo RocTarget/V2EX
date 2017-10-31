@@ -47,10 +47,9 @@ public struct NodeModel: Codable {
     }
     
     var iconFullURL: String? {
-        if let `icon` = icon {
-            return Constants.Config.URIScheme + icon
-        }
-        return nil
+        guard let `icon` = icon else { return nil }
+        // 静态资源，没有 host， 故加上
+        return icon.hasPrefix("//v2ex") ? Constants.Config.URIScheme + icon : Constants.Config.baseURL + icon
     }
 
     public var favoriteOrUnfavoriteHref: String? {

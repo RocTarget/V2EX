@@ -260,13 +260,6 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // TODO: 换成点击弹出 SheetView (或其他 UI 展示), 长按头像添加 @, 可以添加多个
-        // Sheet option:
-        // 1, 回复
-        // 2, 感谢
-        // 3, 查看对话
-        // 4, ...
-        
         // 强制结束 HeaderView 中 WebView 的第一响应者， 不然无法显示 MenuView
         if !commentInputView.textView.isFirstResponder {
             view.endEditing(true)
@@ -289,12 +282,26 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         let viewDialogItem = UIMenuItem(title: "查看对话", action: #selector(viewDialogAction))
         menuVC.setTargetRect(targetRectangle, in: cell)
         menuVC.menuItems = [replyItem, copyItem, atUserItem, viewDialogItem]
-        if !comment.isThank {
+        // 已经感谢 或 主题主是当前登录用户， 则不显示， 否则插入
+        if !comment.isThank, topic?.member?.username != AccountModel.current?.username {
             menuVC.menuItems?.insert(thankItem, at: 1)
         }
         menuVC.setMenuVisible(true, animated: true)
         
     }
+
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        return "全部回复"
+//    }
+//
+//    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+//        guard let header = view as? UITableViewHeaderFooterView else { return }
+//        header.tintColor = .white
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return  50
+//    }
 }
 
 extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -328,7 +335,6 @@ extension TopicDetailViewController {
         case .memberAvatarLongPress(let member):
             atMember(member.atUsername)
         case .imageURL(let src):
-            log.info(src)
             showImageBrowser(imageType: .imageURL(src))
         case .image(let image):
             showImageBrowser(imageType: .image(image))
@@ -463,16 +469,20 @@ extension TopicDetailViewController {
         commentInputView.textView.text = atUsername
         commentInputView.textView.becomeFirstResponder()
     }
-    
-    // TODO: 未调试
+
     @objc private func thankCommentAction() {
         guard let replyID = selectComment?.id,
-            let token = topic?.token else { return }
+            let token = topic?.token else {
+                HUD.showText("操作失败")
+                return
+        }
         thankReply(replyID: replyID, token: token, success: { [weak self] in
             guard let `self` = self,
-                let selectRow = self.tableView.indexPathForSelectedRow?.row else { return }
+                let selectIndexPath = self.tableView.indexPathForSelectedRow else { return }
             HUD.showText("已成功发送感谢")
-            self.comments[selectRow].isThank = true
+            self.dataSources[selectIndexPath.row].isThank = true
+            // TODO: Bug 感谢之后刷新视图不正确
+            self.tableView.reloadRows(at: [selectIndexPath], with: .none)
         }) { error in
             HUD.showText(error)
         }
@@ -668,26 +678,7 @@ extension TopicDetailViewController {
             HUD.showText(error)
         }
     }
-    
-    /// 感谢回复请求
-    // TODO: 未调试, UI还没做
-    private func thankReplyHandle(replyID: String) {
-        
-        guard let `topic` = topic,
-            let token = topic.token else {
-                HUD.showText("操作失败")
-                return
-        }
-        
-        thankReply(replyID: replyID, token: token, success: {
-            HUD.showText("感谢已发送")
-            // TODO: 修改状态，解析评论时需要解析是否已经感谢
-            //            comment.isThank = true
-        }) { error in
-            HUD.showText(error)
-        }
-    }
-    
+
     /// 忽略主题请求
     private func ignoreTopicHandle() {
         guard let `topic` = topic,

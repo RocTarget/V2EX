@@ -80,7 +80,12 @@ class TopicCommentCell: BaseTableViewCell {
 
             // TODO: Bug - 楼主显示\隐藏 状态不正确
             hostLabel.isHidden = (hostUsername ?? "")  != comment.member.username
-            thankLabel.text = comment.thankCount
+
+            var thankText = comment.thankCount
+            if comment.isThank {
+                thankText?.append("  已感谢")
+            }
+            thankLabel.text = thankText
             
             thankLabelLeftConstraint?.update(offset: hostLabel.isHidden ? -25 : 10)
 
@@ -182,24 +187,3 @@ extension TopicCommentCell: ImageAttachmentDelegate {
         tapHandle?(.image(image))
     }
 }
-
-//extension TopicCommentCell {
-//
-//    func interactHook(_ URL: URL) -> Bool {
-//        let link = URL.absoluteString
-//        if link.hasPrefix("https://") || link.hasPrefix("http://"){
-//            tapHandle?(.webpage(URL))
-//        } else if URL.path.contains("/member/") {
-//            let href = URL.path
-//            let name = href.lastPathComponent
-//            let member = MemberModel(username: name, url: href, avatar: "")
-//            tapHandle?(.member(member))
-//        } else if URL.path.contains("/t/") {
-//            let topicID = URL.path.lastPathComponent
-//            tapHandle?(.topic(topicID))
-//        } else if URL.path.contains("/go/") {
-//            tapHandle?(.node(NodeModel(name: "", href: URL.path)))
-//        }
-//        return false
-//    }
-//}

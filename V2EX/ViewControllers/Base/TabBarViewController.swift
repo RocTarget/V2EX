@@ -66,14 +66,14 @@ extension TabBarViewController {
                                selectedImageName: #imageLiteral(resourceName: "more_selected"))
     }
     
-    fileprivate func addChildViewController(childController: UIViewController, title: String, normalImage: UIImage?, selectedImageName: UIImage?) {
+    private func addChildViewController(childController: UIViewController, title: String, normalImage: UIImage?, selectedImageName: UIImage?) {
         childController.tabBarItem.image = normalImage?.withRenderingMode(.alwaysOriginal)
         childController.tabBarItem.selectedImage = selectedImageName?.withRenderingMode(.alwaysOriginal)
         childController.title = title
         addChildViewController(NavigationViewController(rootViewController: childController))
     }
     
-    fileprivate func clickBackTop() {
+    private func clickBackTop() {
         self.rx.didSelect
             .scan((nil, nil)) { state, viewController in
                 return (state.1, viewController)
@@ -89,7 +89,7 @@ extension TabBarViewController {
     }
     
     
-    fileprivate func scrollToTop(_ viewController: UIViewController) {
+    private func scrollToTop(_ viewController: UIViewController) {
         if let navigationController = viewController as? UINavigationController {
             let topViewController = navigationController.topViewController
             let firstViewController = navigationController.viewControllers.first

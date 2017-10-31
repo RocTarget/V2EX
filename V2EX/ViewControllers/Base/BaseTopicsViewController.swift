@@ -7,7 +7,6 @@ class BaseTopicsViewController: DataViewController, TopicService {
         view.delegate = self
         view.dataSource = self
         view.backgroundColor = .clear
-//        view.separatorStyle = .none
         view.register(cellWithClass: TopicCell.self)
         view.keyboardDismissMode = .onDrag
         view.hideEmptyCells()
@@ -100,18 +99,14 @@ class BaseTopicsViewController: DataViewController, TopicService {
 }
 
 extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return topics.count
-    }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return topics.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: TopicCell.self)!
-        let topic = topics[indexPath.section]
-        cell.topic = topic
+        cell.topic = topics[indexPath.row]
         cell.tapHandle = { [weak self] type in
             self?.tapHandle(type)
         }
@@ -121,7 +116,7 @@ extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         view.endEditing(true)
         
-        let topic = topics[indexPath.section]
+        let topic = topics[indexPath.row]
         guard let topicId = topic.topicID else {
             HUD.showText("操作失败，无法解析主题 ID")
             return
@@ -131,7 +126,7 @@ extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return topics[indexPath.section].cellHeight
+        return topics[indexPath.row].cellHeight
     }
 }
 
@@ -145,7 +140,7 @@ extension BaseTopicsViewController: UIViewControllerPreviewingDelegate {
 
         guard let indexPath = tableView.indexPathForRow(at: location),
             let cell = tableView.cellForRow(at: indexPath) else { return nil }
-        guard let topicID = topics[indexPath.section].topicID else { return nil }
+        guard let topicID = topics[indexPath.row].topicID else { return nil }
 
         let viewController = TopicDetailViewController(topicID: topicID)
         previewingContext.sourceRect = cell.frame

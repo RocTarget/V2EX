@@ -136,7 +136,7 @@ extension API: TargetType {
         case .signup:
             return .post("/signup")
         case .loginReward(let once):
-            return .post("/mission/daily/redeem?once=\(once)")
+            return .get("/mission/daily/redeem?once=\(once)")
         case .updateAvatar:
             return .post("/settings/avatar")
         case .memberIntro(let username):

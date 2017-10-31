@@ -66,13 +66,6 @@ public class NodeTabView: UIControl {
         reloadData()
 
         autoresizingMask = [.flexibleHeight, .flexibleWidth]
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.deviceOrientationDidChange),
-            name: .UIDeviceOrientationDidChange,
-            object: nil
-        )
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -89,10 +82,6 @@ public class NodeTabView: UIControl {
         }
     }
 
-    // TODO: 优化 横屏支持
-    @objc dynamic func deviceOrientationDidChange() {
-        setNeedsLayout()
-    }
 }
 
 //MARK: - public helper

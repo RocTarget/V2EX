@@ -2,11 +2,12 @@ import UIKit
 import Carte
 import MessageUI
 import MobileCoreServices
+import Kingfisher
 
 enum MoreItemType {
     case user
     case createTopic, nodeCollect, myFavorites, follow, myTopic, myReply
-    case nightMode, grade, sourceCode, feedback, about, libs
+    case nightMode, grade, sourceCode, clearCache, feedback, about, libs
     case logout
 }
 struct MoreItem {
@@ -50,6 +51,7 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         [
 //            MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
 //            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
+            MoreItem(icon: #imageLiteral(resourceName: "cache"), title: "清除缓存", type: .clearCache),
             MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "意见反馈", type: .feedback),
             MoreItem(icon: #imageLiteral(resourceName: "sourceCode"), title: "项目源码", type: .sourceCode),
             MoreItem(icon: #imageLiteral(resourceName: "libs"), title: "开源库", type: .libs),
@@ -175,6 +177,12 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .myFavorites, .follow:
             let href = type == .myFavorites ? API.myFavorites.path : API.following.path
             viewController = BaseTopicsViewController(href: href)
+        case .clearCache:
+            HUD.show()
+            FileManager.clearCache(complete: { size in
+                HUD.dismiss()
+                HUD.showText("成功清除 \(size)M 缓存")
+            })
         case .feedback:
             sendEmail()
         case .sourceCode:
@@ -198,7 +206,9 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         vc.title = item.title
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
+
+
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return indexPath.section == 0 ? 80 : 50
     }
@@ -239,7 +249,6 @@ extension MoreViewController {
         present(alertView, animated: true, completion: nil)
     }
 
-    // TODO: UI 头像更新
     private func uploadAvatarHandle(_ path: String) {
         HUD.show()
         updateAvatar(localURL: path, success: { [weak self] in

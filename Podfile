@@ -26,7 +26,7 @@ target 'V2EX' do
     pod 'UIView+Positioning'
     pod 'PKHUD'
     pod 'Toaster'
-    pod 'Themes'
+#    pod 'Themes'
     pod 'StatefulViewController'
     pod 'YYText'
     pod 'SKPhotoBrowser'
@@ -42,8 +42,8 @@ target 'V2EX' do
 #    pod 'RxKeyboard'
 
     # Bug
-#    pod 'Fabric'
-#    pod 'Crashlytics'
+    pod 'Fabric'
+    pod 'Crashlytics'
 
     # Debug only
     pod 'Reveal-SDK', '~> 4', :configurations => ['Debug']

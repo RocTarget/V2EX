@@ -3,18 +3,19 @@
 
 ## 介绍
 
-一款针对 iOS 设备的 V2EX 客户端，苦于在 iPhone 上一直没有一款称得上 **好用的** V2EX 客户端，于是有了这个项目，如果你有任何意见欢迎打开 Issue 或 PR，感谢 😊
+一款针对 iOS 设备的 V2EX 客户端，苦于在 iPhone 上一直没有找到一款 **好用的** V2EX 客户端，于是*十月十二号*这个项目正式诞生了，该项目借鉴很多开源的 V2EX 客户端，在此表示感谢。由于目前开发周期较短，很多地方还不够完善，存在着很多问题和不合理的设计，如果你有任何意见欢迎打开 Issue 或 PR，最后希望能得到您的喜欢，感谢 😊
 
 
 ## 截图
 
-<img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/home.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/node.png" width="210"> <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/more.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/login.png" width="210">
+<img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/home.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/node.png" width="210"> <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/message.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/more.png" width="210">
+<img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/search.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/topicDetail.png" width="210"> <img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/createTopic.png" width="210"><img src="https://github.com/Joe0708/V2EX/raw/master/Screenshot/login.png" width="210">
 
 
 ## 功能
 
 ### 首页
-1. 主题数据展示
+1. 浏览热门主题、最新主题等主题列表。。
 2. 主题搜索（按权重 or 时间排序）
 
 ### 主题详情
@@ -22,7 +23,7 @@
 2. 复制链接、Safari打开、系统分享
 3. 主题(主题回复) 收藏、感谢、忽略 操作
 4. 查看对话上下文
-5. 主题回复、贴图、@单个或多个用户
+5. 主题回复（支持贴图）、@单个或多个用户
 6. 回复列表如果是图片链接直接解析成图片
 
 ### 节点
@@ -36,7 +37,7 @@
 4. 快捷回复
 
 ### 更多
-1. 创作新主题
+1. 创作新主题（支持 Markdown 编辑、预览、上传图片）
 2. 查看我的
      - 节点收藏
      - 主题收藏
@@ -44,6 +45,7 @@
      - 我的回复
 3. 修改头像
 4. 两步验证
+5. 每日奖励自动领取
 
 ## 要求
 
@@ -72,6 +74,7 @@ git clone https://github.com/Joe0708/V2EX.git
 
 ### 首页
 1. [x] 站内搜索(感谢 [SOV2EX](https://github.com/bynil/sov2ex/blob/master/API.md) 提供 API)
+2. [ ]Tab 可配置
 
 ### 主题
 1. [x] 主题回复
@@ -103,7 +106,7 @@ git clone https://github.com/Joe0708/V2EX.git
 ### 其他优化
 1. [x] 发布新主题时加入常用的 Markdown 语法快捷工具条（例如: 加粗，链接，代码..）
 2. [x] 注册（因验证限制，直接使用网页版）
-3. [x] 适配 iPad
+3. [x] 适配 iPad、iPhone X
 ...
 
 
