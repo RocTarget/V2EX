@@ -124,7 +124,6 @@ class CreateTopicViewController: BaseViewController, TopicService {
         super.viewDidLoad()
 
         title = "创建新主题"
-        edgesForExtendedLayout = []
         titleFieldView.becomeFirstResponder()
 
         /// 恢复草稿
@@ -191,7 +190,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
     override func setupConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
+            $0.left.right.equalToSuperview()
+            $0.top.equalToSuperview().offset(navigationController?.navigationBar.bottom ?? Constants.Metric.navigationHeight)
             $0.height.equalTo(40)
         }
         
@@ -291,6 +291,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 self?.bodyTextView.backgroundColor = theme.whiteColor
                 self?.bodyTextView.keyboardAppearance = theme == .day ? .default : .dark
                 self?.titleFieldView.keyboardAppearance = theme == .day ? .default : .dark
+                self?.selectNodeBtn.setTitleColor(theme.titleColor, for: .normal)
+                self?.selectNodeBtn.backgroundColor = theme.whiteColor
             }.disposed(by: rx.disposeBag)
     }
     

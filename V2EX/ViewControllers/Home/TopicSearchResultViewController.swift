@@ -11,7 +11,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.register(cellWithClass: TopicSearchResultCell.self)
         tableView.hideEmptyCells()
-        tableView.backgroundColor = Theme.Color.bgColor
+        tableView.backgroundColor = .clear
         tableView.contentInset = UIEdgeInsetsMake(0, 0, 50, 0)
         self.view.addSubview(tableView)
         return tableView
@@ -34,6 +34,11 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         edgesForExtendedLayout = [.bottom]
         
         status = .noSearchResult
+        
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+            }.disposed(by: rx.disposeBag)
     }
     
     override func setupSubviews() {

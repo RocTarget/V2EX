@@ -97,10 +97,10 @@ class AllNodesViewController: DataViewController, NodeService {
             .subscribeNext { [weak self] theme in
                 self?.tableView.separatorColor = theme.borderColor
                 self?.searchController.searchBar.barStyle = theme == .day ? .default : .black
+                self?.searchController.searchBar.keyboardAppearance = theme == .day ? .default : .dark
                 self?.searchController.searchBar.barTintColor = theme.bgColor
                 self?.searchController.searchBar.layer.borderColor = theme.bgColor.cgColor
-                self?.tableView.sectionIndexColor = theme.globalColor
-                self?.tableView.sectionIndexTrackingBackgroundColor = theme.globalColor
+                self?.tableView.sectionIndexTrackingBackgroundColor = theme.bgColor
             }.disposed(by: rx.disposeBag)
     }
 

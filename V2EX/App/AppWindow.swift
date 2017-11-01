@@ -17,7 +17,6 @@ public final class AppWindow {
     private init() {
         window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
-        window.setCornerRadius = 5
     }
 
     func prepare() {

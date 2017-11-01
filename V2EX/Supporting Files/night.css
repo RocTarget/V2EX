@@ -1,0 +1,28 @@
+h2 {
+    border-bottom: 1px solid #191A19;
+}
+
+hr {
+    color: #191A19;
+    background-color: #191A19;
+}
+
+pre {
+    background-color: #191A19;
+}
+
+a:link, a:visited, a:active {
+    color: rgba(29,161,242,0.7);
+}
+
+.subtle {
+    background-color: #243447;
+}
+
+.topic_content {
+    color: #818281;
+}
+
+body {
+    background-color: #191A19;
+}

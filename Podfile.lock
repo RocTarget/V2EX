@@ -23,7 +23,7 @@ PODS:
   - SKPhotoBrowser (5.0.0)
   - SnapKit (4.0.0)
   - StatefulViewController (3.0)
-  - Toaster (2.1.0)
+  - Toaster (2.1.1)
   - UIView+Positioning (1.5)
   - YYText (1.0.7)
 
@@ -80,7 +80,7 @@ SPEC CHECKSUMS:
   SKPhotoBrowser: fe936f878955a568c726bf05d14e1d2717d91ce0
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   StatefulViewController: 4803bf900d44de26074344998e10e041113b5931
-  Toaster: 8c3225dc465bef4aa57e147a288724576df8e439
+  Toaster: a6c9532de1ded8105e77376f7dffeb2e12b46dbb
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 

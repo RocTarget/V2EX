@@ -183,6 +183,7 @@ class StateView: BasePlaceholderView {
     }
 
     override func didMoveToSuperview() {
+        titleLabel.textColor = ThemeStyle.style.value.titleColor
         animate()
     }
 

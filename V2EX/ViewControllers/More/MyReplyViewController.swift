@@ -34,6 +34,15 @@ class MyReplyViewController: DataViewController, MemberService {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+        }.disposed(by: rx.disposeBag)
+    }
+    
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()

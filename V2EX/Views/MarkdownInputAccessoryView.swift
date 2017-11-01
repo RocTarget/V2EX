@@ -115,6 +115,14 @@ class MarkdownInputAccessoryView: UIView {
         backgroundColor = .white
 
         setupUI()
+        
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.backgroundColor = theme.whiteColor
+                self?.closeKeyboardBtn.backgroundColor = theme.whiteColor
+//                self?.layer.borderColor = theme.borderColor.cgColor
+                self?.layer.borderColor = (theme == .day ? theme.borderColor : UIColor.hex(0x49431A)).cgColor
+        }.disposed(by: rx.disposeBag)
     }
 
     required init?(coder aDecoder: NSCoder) {

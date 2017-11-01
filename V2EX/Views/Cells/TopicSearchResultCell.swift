@@ -59,6 +59,11 @@ class TopicSearchResultCell: BaseTableViewCell {
             contentLabel,
             desLabel
         )
+        
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.contentLabel.textColor = theme == .day ? UIColor.hex(0xD7D5D7) : theme.titleColor
+        }.disposed(by: rx.disposeBag)
     }
     
     override func setupConstraints() {

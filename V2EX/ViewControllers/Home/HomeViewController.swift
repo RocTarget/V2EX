@@ -119,6 +119,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 self?.searchController.searchBar.barStyle = theme == .day ? .default : .black
                 self?.searchController.searchBar.barTintColor = theme.bgColor
                 self?.searchController.searchBar.layer.borderColor = theme.bgColor.cgColor
+                self?.searchController.searchBar.keyboardAppearance = theme == .day ? .default : .dark
             }.disposed(by: rx.disposeBag)
     }
     

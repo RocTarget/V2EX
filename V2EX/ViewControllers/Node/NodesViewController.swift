@@ -92,9 +92,9 @@ class NodesViewController: DataViewController, NodeService {
         if let allNodeVC = childViewControllers.first,
             !allNodeVC.isViewLoaded {
             view.addSubview(allNodeVC.view)
-            allNodeVC.view.snp.makeConstraints {
-                $0.edges.equalTo(collectionView)
-            }
+            allNodeVC.view.frame = view.frame
+            allNodeVC.view.y += (navigationController?.navigationBar.bottom ?? Constants.Metric.navigationHeight)
+            allNodeVC.view.height -= (Constants.Metric.navigationHeight + Constants.Metric.tabbarHeight)
         }
 
         if segmentedControl.selectedSegmentIndex == 0 {

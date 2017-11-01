@@ -86,6 +86,15 @@ class TopicDetailHeaderView: UIView {
         
         setupConstraints()
         setupAction()
+        
+        webView.scrollView.rx.observe(CGSize.self, "contentSize")
+            .subscribeNext { [weak self] size in
+                guard let `self` = self,
+                    let height = size?.height else { return }
+                self.height = self.titleLabel.bottom + height + 15
+                self.webViewConstraint?.update(offset: height)
+                self.webLoadComplete?()
+        }.disposed(by: rx.disposeBag)
     }
 
     func setupAction() {
@@ -167,8 +176,12 @@ class TopicDetailHeaderView: UIView {
             timeLabel.isHidden = topic.publicTime.isEmpty
             
             do {
-                if let filePath = Bundle.main.path(forResource: "style", ofType: "css") {
-                    let cssString = try String(contentsOfFile: filePath)
+                let fileName = ThemeStyle.style.value == .day ? "day.css" : "night.css"
+                if let filePath = Bundle.main.path(forResource: "style", ofType: "css"),
+                    let themeFilePath = Bundle.main.path(forResource: fileName, ofType: "") {
+                    var cssString = try String(contentsOfFile: filePath)
+                    let themeCssString = try String(contentsOfFile: themeFilePath)
+                    cssString += themeCssString
                     let head = "<head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><style>\(cssString)</style></head>"
                     let body = "<body><div id=\"Wrapper\">\(topic.content)</div></body>"
                     let html = "<html>\(head)\(body)</html>"

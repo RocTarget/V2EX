@@ -36,7 +36,7 @@ enum Theme {
 
     var bgColor: UIColor {
         switch self {
-        case .day: return #colorLiteral(red: 0.9366690335, green: 0.9459429843, blue: 0.9459429843, alpha: 1)
+        case .day: return #colorLiteral(red: 0.937254902, green: 0.9450980392, blue: 0.9450980392, alpha: 1)
         case .night: return #colorLiteral(red: 0.09803921569, green: 0.1019607843, blue: 0.09803921569, alpha: 1)
         }
     }
@@ -65,7 +65,7 @@ enum Theme {
     var linkColor: UIColor {
         switch self {
         case .day: return #colorLiteral(red: 0.4666666667, green: 0.5019607843, blue: 0.5294117647, alpha: 1)
-        case .night: return #colorLiteral(red: 0.1137254902, green: 0.631372549, blue: 0.9490196078, alpha: 1)
+        case .night: return #colorLiteral(red: 0.1137254902, green: 0.631372549, blue: 0.9490196078, alpha: 0.698391967)
         }
     }
 

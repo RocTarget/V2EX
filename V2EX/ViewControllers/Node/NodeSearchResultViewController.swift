@@ -9,8 +9,8 @@ class NodeSearchResultViewController: DataViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.estimatedRowHeight = 120
         tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.backgroundColor = .clear
         tableView.hideEmptyCells()
-        tableView.backgroundColor = Theme.Color.bgColor
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         self.view.addSubview(tableView)
         return tableView
@@ -36,6 +36,11 @@ class NodeSearchResultViewController: DataViewController {
         edgesForExtendedLayout = []
         automaticallyAdjustsScrollViewInsets = false
         status = .noSearchResult
+        
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+            self?.tableView.separatorColor = theme.borderColor
+        }.disposed(by: rx.disposeBag)
     }
     
     override func setupSubviews() {
@@ -73,7 +78,7 @@ extension NodeSearchResultViewController: UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCell(withIdentifier: "NodesCell")
         if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "NodesCell")
+            cell = BaseTableViewCell(style: .default, reuseIdentifier: "NodesCell")
             cell?.separatorInset = .zero
         }
         cell?.textLabel?.text = searchResults[indexPath.row].title

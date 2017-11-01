@@ -2,9 +2,8 @@ h1 {
     font-size: 16px;
     font-weight: 500;
     line-height: 100%;
-    margin: 5px 0px 20px 0px;
+    margin: 5px 0px 15px 0px;
     padding: 0px;
-    word-wrap: break-word;
 }
 
 h2 {
@@ -42,7 +41,7 @@ pre {
     overflow-x: auto;
     overflow-y: auto;
     background-color: #f8f8f8;
-    padding: 5px;
+/*    padding: 5px;*/
 }
 
 pre a {
@@ -125,7 +124,6 @@ body {
 img {
     max-width: 100%;
 }
-
 .imgly {
     max-width: 100%;
 }

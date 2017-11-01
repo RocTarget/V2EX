@@ -1,0 +1,28 @@
+h2 {
+    border-bottom: 1px solid #EFF1F1;
+}
+
+hr {
+    color: #EFF1F1;
+    background-color: #EFF1F1;
+}
+
+pre {
+    background-color: #FFFFFF;
+}
+
+a:link, a:visited, a:active {
+    color: #778087;
+}
+
+.subtle {
+    background-color: #fffff9;
+}
+
+.topic_content {
+    color: #646464;
+}
+
+body {
+    background-color: #FFFFFF;
+}
