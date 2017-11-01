@@ -101,7 +101,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         return super.canPerformAction(action, withSender: sender)
     }
-    
+
     override func setupSubviews() {
         
         tableView.tableHeaderView = headerView
@@ -177,7 +177,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             let topicID = URL.path.lastPathComponent
             tapHandle(.topic(topicID))
         } else if URL.path.contains("/go/") {
-            tapHandle(.node(NodeModel(name: "", href: URL.path)))
+            tapHandle(.node(NodeModel(title: "", href: URL.path)))
         } else if link.hasPrefix("https://") || link.hasPrefix("http://"){
             tapHandle(.webpage(URL))
         }
@@ -200,7 +200,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             }
         }
     }
-    
+
     // MARK: States Handle
     
     override func hasContent() -> Bool {

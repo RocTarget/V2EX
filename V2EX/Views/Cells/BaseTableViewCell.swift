@@ -9,6 +9,7 @@ class BaseTableViewCell: UITableViewCell {
         //        textLabel?.textColor = Theme.Color.shallowBlack
         initialize()
         setupConstraints()
+        setupTheme()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -21,5 +22,16 @@ class BaseTableViewCell: UITableViewCell {
 
     func setupConstraints() {
         // Override point
+    }
+
+    func setupTheme() {
+
+        ThemeStyle.style
+            .asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.backgroundColor = theme.cellBackgroundColor
+                self?.textLabel?.textColor = theme.titleColor
+                self?.detailTextLabel?.textColor = theme.titleColor
+        }.disposed(by: rx.disposeBag)
     }
 }

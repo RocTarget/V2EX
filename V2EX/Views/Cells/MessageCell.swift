@@ -35,7 +35,6 @@ class MessageCell: BaseTableViewCell {
     override func initialize() {
 
         separatorInset = .zero
-        contentView.backgroundColor = .white
         selectionStyle = .none
 
         contentView.addSubviews(
@@ -90,8 +89,15 @@ class MessageCell: BaseTableViewCell {
             contentLabel.text = message.content
             timeLabel.text = message.time
             replyLabel.text = message.replyTypeStr
-            replyLabel.makeSubstringColor(member.username, color: .black)
-            replyLabel.makeSubstringColor(message.topic.title, color: Theme.Color.linkColor)
+//            replyLabel.makeSubstringColor(member.username, color: .black)
+//            replyLabel.makeSubstringColor(message.topic.title, color: Theme.Color.linkColor)
+
+            ThemeStyle.style.asObservable()
+                .subscribeNext { [weak self] theme in
+                    self?.replyLabel.makeSubstringColor(member.username, color: theme.titleColor)
+                    self?.replyLabel.makeSubstringColor(message.topic.title, color: theme.linkColor)
+                    self?.contentLabel.textColor = theme.titleColor
+                }.disposed(by: rx.disposeBag)
 
             if let username = AccountModel.current?.username {
                 contentLabel.makeSubstringColor("@" + username, color: Theme.Color.linkColor)

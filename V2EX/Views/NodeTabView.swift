@@ -141,14 +141,14 @@ extension NodeTabView {
 
         for (index, node) in nodes.enumerated() {
 
-            var titleW = toToSize(node.name) + style.titlePendingHorizontal * 2
+            var titleW = toToSize(node.title) + style.titlePendingHorizontal * 2
             titleW = max(titleW, 70)
             titleX = (titleLabels.last?.frame.maxX ?? 0 ) + style.titleMargin
             let rect = CGRect(x: titleX, y: coverY, width: titleW, height: coverH)
 
             let backLabel = UILabel()
             backLabel.tag = index
-            backLabel.text = node.name
+            backLabel.text = node.title
             backLabel.textColor = style.normalTitleColor
             backLabel.font = style.titleFont
             backLabel.textAlignment = .center
@@ -156,7 +156,7 @@ extension NodeTabView {
 
             let frontLabel = UILabel(frame: CGRect.zero)
             frontLabel.tag = index
-            frontLabel.text = node.name
+            frontLabel.text = node.title
             frontLabel.textColor = style.selectedTitleColor
             frontLabel.font = style.titleFont
             frontLabel.textAlignment = .center

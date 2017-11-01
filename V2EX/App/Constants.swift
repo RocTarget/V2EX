@@ -35,6 +35,8 @@ struct Constants {
         static let once = "once"
 
         static let nodeGroupCache = FileManager.caches.appendingPathComponent("nodeGroup")
+
+        static let themeStyle = "themeStyle"
     }
 
     struct Metric {

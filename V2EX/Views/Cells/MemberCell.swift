@@ -29,6 +29,7 @@ class MoreUserCell: BaseTableViewCell {
 
     override func initialize() {
         accessoryType = .disclosureIndicator
+        selectionStyle = .none
     }
 
     override func layoutSubviews() {

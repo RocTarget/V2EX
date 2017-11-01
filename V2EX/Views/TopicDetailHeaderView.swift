@@ -12,7 +12,7 @@ enum TapType {
     case topic(String)
 }
 
-class TopicDetailHeaderView: UIView{
+class TopicDetailHeaderView: UIView {
     
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
@@ -108,6 +108,14 @@ class TopicDetailHeaderView: UIView{
                 guard let node = self?.topic?.node else { return }
                 self?.tapHandle?(.node(node))
             }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.backgroundColor = theme.whiteColor
+                self?.titleLabel.textColor = theme.titleColor
+                self?.usernameLabel.textColor = theme.titleColor
+                self?.nodeLabel.backgroundColor = theme.bgColor
+            }.disposed(by: rx.disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -171,7 +179,7 @@ class TopicDetailHeaderView: UIView{
             }
             
             guard let node = topic.node else { return }
-            nodeLabel.text = node.name
+            nodeLabel.text = node.title
         }
     }
 }
@@ -228,7 +236,7 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
             } else if urlString.hasPrefix("/t/") {
                 tapHandle?(.topic(url.lastPathComponent))
             } else if urlString.hasPrefix("/go/") {
-                tapHandle?(.node(NodeModel(name: "", href: urlString)))
+                tapHandle?(.node(NodeModel(title: "", href: urlString)))
             }
         }
         decisionHandler(.allow)

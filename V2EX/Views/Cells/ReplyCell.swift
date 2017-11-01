@@ -31,6 +31,11 @@ class ReplyCell: BaseTableViewCell {
                 label.numberOfLines = 0
                 label.font = UIFont.systemFont(ofSize: 15)
         }
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.contentLabel.textColor = theme.titleColor
+            }.disposed(by: rx.disposeBag)
     }
     
     public var message: MessageModel? {

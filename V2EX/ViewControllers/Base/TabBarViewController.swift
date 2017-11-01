@@ -41,10 +41,15 @@ extension TabBarViewController {
     fileprivate func setAppearance() {
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor : UIColor.hex(0x8a8a8a)], for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor : Theme.Color.globalColor], for: .selected)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tabBar.barStyle = theme == .day ? .default : .black
+            }.disposed(by: rx.disposeBag)
     }
     
     fileprivate func setupTabBar() {
-        
+
         addChildViewController(childController: HomeViewController(),
                                title: "首页",
                                normalImage: #imageLiteral(resourceName: "list"),

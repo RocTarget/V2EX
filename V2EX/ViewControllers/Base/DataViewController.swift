@@ -52,15 +52,21 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
         errorView = customErrorView
         emptyView = customEmptyView
         setupInitialViewState()
-
-        view.backgroundColor = Theme.Color.bgColor
-
         setupSubviews()
+
         view.setNeedsUpdateConstraints()
+//        view.backgroundColor = Theme.Color.bgColor
 
         setupRx()
-
         loadData()
+        setupTheme()
+    }
+
+    func setupTheme() {
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.view.backgroundColor = theme.bgColor
+            }.disposed(by: rx.disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,7 +89,13 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
 
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .default
+        var style = UIStatusBarStyle.default
+        ThemeStyle.style
+            .asObservable()
+            .subscribeNext { theme in
+                style = theme.statusBarStyle
+        }.disposed(by: rx.disposeBag)
+        return style
     }
 
     // MARK: Layout Constraints

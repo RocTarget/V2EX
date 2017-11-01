@@ -219,12 +219,12 @@ extension TopicService {
             
             let nodes = nodePath.flatMap({ ele -> NodeModel? in
                 guard let href = ele["href"],
-                    let name = ele.content else {
+                    let title = ele.content else {
                         return nil
                 }
                 let isCurrent = ele.className == "tab_current"
                 
-                return NodeModel(name: name, href: href, isCurrent: isCurrent)
+                return NodeModel(title: title, href: href, isCurrent: isCurrent)
             })
             
             let topics = self.parseTopic(html: html, type: .index)
@@ -300,7 +300,7 @@ extension TopicService {
                 let userAvatar = userPath.xpath("./img").first?["src"],
                 let userhref = userPath["href"],
                 let nodeEle = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/a[2]").first,
-                let nodename = nodeEle.content,
+                let nodeTitle = nodeEle.content,
                 let nodeHref = nodeEle["href"],
                 let title = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/h1").first?.content else {
                     failure?("数据解析失败")
@@ -308,7 +308,7 @@ extension TopicService {
             }
             
             let member = MemberModel(username: userhref.lastPathComponent, url: userhref, avatar: userAvatar)
-            let node = NodeModel(name: nodename, href: nodeHref)
+            let node = NodeModel(title: nodeTitle, href: nodeHref)
             var topic = TopicModel(member: member, node: node, title: title, href: "")
             
             // 获取 token

@@ -18,7 +18,13 @@ class BaseViewController: UIViewController {
     
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .default
+        var style = UIStatusBarStyle.default
+        ThemeStyle.style
+            .asObservable()
+            .subscribeNext { theme in
+                style = theme.statusBarStyle
+        }.disposed(by: rx.disposeBag)
+        return style
     }
     
     // MARK: Layout Constraints
@@ -26,13 +32,22 @@ class BaseViewController: UIViewController {
     private(set) var didSetupConstraints = false
     
     override func viewDidLoad() {
-        view.backgroundColor = Theme.Color.bgColor
+//        view.backgroundColor = Theme.Color.bgColor
 
         setupSubviews()
         
         view.setNeedsUpdateConstraints()
         
         setupRx()
+
+        setupTheme()
+    }
+
+    func setupTheme() {
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.view.backgroundColor = theme.bgColor
+            }.disposed(by: rx.disposeBag)
     }
     
     override func updateViewConstraints() {

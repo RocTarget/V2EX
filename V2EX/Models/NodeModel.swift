@@ -24,18 +24,28 @@ public struct NodeCategoryModel: Codable {
 }
 
 public struct NodeModel: Codable {
-    var name: String
+    /// 节点标题
+    var title: String
+    /// 节点的路径名字，发布主题时使用 (eg: 沙盒 / sandbox)
+    var name: String?
+    /// 节点链接
     var href: String
+    /// 是否当前选择
     var isCurrent: Bool? = false
+    /// 节点图标
     var icon: String?
     var comments: String?
+    /// 节点简介
     var intro: String?
+    /// 节点下主题个数
     var topicNumber: Int?
+    /// 收藏的链接
     var favoriteHref: String?
+    /// 是否收藏
     var isFavorite: Bool? = false
 
     private enum CodingKeys: String, CodingKey {
-        case name = "title"
+        case name, title
         case href = "url"
         case intro = "header"
         case topicNumber = "topics"
@@ -65,14 +75,14 @@ public struct NodeModel: Codable {
         }
     }
 
-    init(name: String, href: String, isCurrent: Bool = false) {
-        self.name = name
+    init(title: String, href: String, isCurrent: Bool = false) {
+        self.title = title
         self.href = href
         self.isCurrent = isCurrent
     }
 
-    init(name: String, href: String, isCurrent: Bool = false, icon: String?, comments: String?) {
-        self.name = name
+    init(title: String, href: String, isCurrent: Bool = false, icon: String?, comments: String?) {
+        self.title = title
         self.href = href
         self.isCurrent = isCurrent
         self.icon = icon
@@ -80,8 +90,8 @@ public struct NodeModel: Codable {
     }
 
     
-    init(name: String, href: String, intro: String?, topicNumber: Int) {
-        self.name = name
+    init(title: String, href: String, intro: String?, topicNumber: Int) {
+        self.title = title
         self.href = href
         self.intro = intro
         self.topicNumber = topicNumber

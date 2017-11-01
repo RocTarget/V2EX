@@ -68,7 +68,7 @@ class CommentInputView: UIView {
     }
 
     func setup() {
-        borderTop = Border(size: 1,color: Theme.Color.borderColor)
+
         backgroundColor = .white
         
         textView.snp.makeConstraints {
@@ -94,6 +94,15 @@ class CommentInputView: UIView {
             .subscribeNext { [weak self] in
                 self?.uploadPictureHandle?()
         }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.backgroundColor = theme.whiteColor
+                self?.borderTop = Border(size: 1,color: theme.borderColor)
+                self?.textView.backgroundColor = theme == .day ? theme.bgColor : UIColor.hex(0x101014)
+                self?.textView.layer.borderColor = (theme == .day ? theme.borderColor : UIColor.hex(0x19171A)).cgColor
+                self?.textView.keyboardAppearance = theme == .day ? .default : .dark
+            }.disposed(by: rx.disposeBag)
     }
 
 }

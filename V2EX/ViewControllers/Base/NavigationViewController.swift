@@ -24,10 +24,17 @@ class NavigationViewController: UINavigationController {
 extension NavigationViewController {
     
     fileprivate func setAppearance() {
-        navigationBar.barTintColor = Theme.Color.navColor
-        navigationBar.tintColor = Theme.Color.globalColor
-        navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: Theme.Color.globalColor]
-        
+//        navigationBar.barTintColor = Theme.Color.navColor
+//        navigationBar.tintColor = Theme.Color.globalColor
+//        navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: Theme.Color.globalColor]
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+//                self?.navigationBar.barTintColor = theme.navColor
+//                self?.navigationBar.tintColor = theme.titleColor
+                self?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: theme.titleColor]
+                self?.navigationBar.barStyle = theme == .day ? .default : .black
+            }.disposed(by: rx.disposeBag)
     }
     
     /// 解决自定义backItem后手势失效的问题， 并修改为全屏返回

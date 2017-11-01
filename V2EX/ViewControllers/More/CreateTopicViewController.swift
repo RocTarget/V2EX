@@ -25,10 +25,13 @@ class CreateTopicViewController: BaseViewController, TopicService {
     
     private lazy var titleFieldView: UITextField = {
         let view = UITextField()
-        view.placeholder = "请输入主题标题(0~120)"
         view.addLeftTextPadding(15)
         view.font = UIFont.systemFont(ofSize: 15)
         view.backgroundColor = .white
+        view.attributedPlaceholder = NSAttributedString(
+            string: "请输入主题标题(0~120)",
+            attributes: [NSAttributedStringKey.foregroundColor: UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6)]
+        )
         return view
     }()
     
@@ -274,6 +277,22 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 }
             }.disposed(by: rx.disposeBag)
     }
+
+    override func setupTheme() {
+        super.setupTheme()
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.titleLabel.textColor = theme.titleColor
+                self?.bodyLabel.textColor = theme.titleColor
+                self?.titleLabel.backgroundColor = theme.whiteColor
+                self?.titleFieldView.backgroundColor = theme.whiteColor
+                self?.bodyLabel.backgroundColor = theme.whiteColor
+                self?.bodyTextView.backgroundColor = theme.whiteColor
+                self?.bodyTextView.keyboardAppearance = theme == .day ? .default : .dark
+                self?.titleFieldView.keyboardAppearance = theme == .day ? .default : .dark
+            }.disposed(by: rx.disposeBag)
+    }
     
     func postTopicHandle() {
 
@@ -356,9 +375,9 @@ class CreateTopicViewController: BaseViewController, TopicService {
         present(nav, animated: true, completion: nil)
 
         allNodeVC.didSelectedNodeHandle = { [weak self] node in
-            self?.selectNodeBtn.setTitle("  " + node.name, for: .normal)
+            self?.selectNodeBtn.setTitle("  " + node.title, for: .normal)
             self?.nodename = node.name
-            self?.view.becomeFirstResponder()
+            self?.bodyTextView.becomeFirstResponder()
         }
     }
 }

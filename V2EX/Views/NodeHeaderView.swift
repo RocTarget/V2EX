@@ -28,6 +28,13 @@ class NodeHeaderView: UICollectionReusableView {
             $0.left.equalToSuperview().offset(15)
             $0.centerY.equalToSuperview()
         }
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.backgroundColor = theme.whiteColor
+                self?.textLabel.textColor = theme.somberColor
+                self?.textLabel.borderLeft = Border(size: 3, color: theme.somberColor)
+            }.disposed(by: rx.disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {

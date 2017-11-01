@@ -10,7 +10,7 @@ class AllNodesViewController: DataViewController, NodeService {
         view.sectionIndexBackgroundColor = .clear
         view.sectionIndexTrackingBackgroundColor = Theme.Color.bgColor
         view.hideEmptyCells()
-        view.backgroundColor = Theme.Color.bgColor
+        view.backgroundColor = .clear
         view.tableHeaderView = searchController.searchBar
         self.view.addSubview(view)
         return view
@@ -42,12 +42,12 @@ class AllNodesViewController: DataViewController, NodeService {
         searchController.searchBar.layer.borderWidth = 0.5
         searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
         // TextField 边框颜色
-        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
-            searchField.layer.borderWidth = 0.5
-            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
-            searchField.layer.cornerRadius = 5.0
-            searchField.layer.masksToBounds = true
-        }
+//        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
+//            searchField.layer.borderWidth = 0.5
+//            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
+//            searchField.layer.cornerRadius = 5.0
+//            searchField.layer.masksToBounds = true
+//        }
         return searchController
     }()
 
@@ -75,12 +75,33 @@ class AllNodesViewController: DataViewController, NodeService {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, action: { [weak self] in
             self?.dismiss()
         })
+
+        if let callback = didSelectedNodeHandle {
+            searchResultVC.didSelectedNodeHandle = { [weak self] node in
+                self?.dismiss(animated: true, completion: {
+                    callback(node)
+                })
+            }
+        }
     }
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+
+    override func setupRx() {
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+                self?.searchController.searchBar.barStyle = theme == .day ? .default : .black
+                self?.searchController.searchBar.barTintColor = theme.bgColor
+                self?.searchController.searchBar.layer.borderColor = theme.bgColor.cgColor
+                self?.tableView.sectionIndexColor = theme.globalColor
+                self?.tableView.sectionIndexTrackingBackgroundColor = theme.globalColor
+            }.disposed(by: rx.disposeBag)
     }
 
     func fetchAllNode() {
@@ -125,9 +146,9 @@ extension AllNodesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.NodeCell)
         if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier.NodeCell)
+            cell = BaseTableViewCell(style: .default, reuseIdentifier: ReuseIdentifier.NodeCell)
         }
-        cell?.textLabel?.text = groups[indexPath.section].nodes[indexPath.row].name
+        cell?.textLabel?.text = groups[indexPath.section].nodes[indexPath.row].title
         return cell!
     }
 
@@ -142,7 +163,11 @@ extension AllNodesViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.tintColor = Theme.Color.bgColor
+        ThemeStyle.style.asObservable()
+            .subscribeNext { theme in
+                view.tintColor = theme.bgColor
+            }.disposed(by: rx.disposeBag)
+//        view.tintColor = Theme.Color.bgColor
         //        let header = view as! UITableViewHeaderFooterView
         //        header.textLabel?.textColor = UIColor.white
     }

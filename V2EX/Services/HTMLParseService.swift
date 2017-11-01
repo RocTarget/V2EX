@@ -84,7 +84,7 @@ extension HTMLParseService {
             if let nodePath = ele.xpath(".//td/span[@class='small fade']/a[@class='node']").first,
                 let nodename = nodePath.content,
                 let nodeHref = nodePath["href"] {
-                node = NodeModel(name: nodename, href: nodeHref)
+                node = NodeModel(title: nodename, href: nodeHref)
             }
 
             return TopicModel(member: member, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)
@@ -102,8 +102,8 @@ extension HTMLParseService {
         let nodeCategorys = nodesPath.flatMap { (ele) -> NodeCategoryModel? in
             guard let sectionName = ele.xpath("./td[1]/span").first?.content else { return nil }
             let nodes = ele.xpath("./td[2]/a").flatMap({ (ele) -> NodeModel? in
-                guard let name = ele.content, let href = ele["href"] else { return nil }
-                return NodeModel(name: name, href: href)
+                guard let title = ele.content, let href = ele["href"] else { return nil }
+                return NodeModel(title: title, href: href)
             })
             return NodeCategoryModel(id: 0, name: sectionName, nodes: nodes)
         }
@@ -197,7 +197,7 @@ extension HTMLParseService {
                 let textAttrString = NSMutableAttributedString(
                     string: content,
                     attributes: [
-                        NSAttributedStringKey.foregroundColor: UIColor.black,
+                        NSAttributedStringKey.foregroundColor: ThemeStyle.style.value.titleColor,
                         NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
                 )
                 attributedString.append(textAttrString)
@@ -333,9 +333,9 @@ extension HTMLParseService {
             var node: NodeModel?
 
             if let nodePath = ele.xpath(".//td/span[@class='small fade']/a[@class='node']").first,
-                let nodename = nodePath.content,
+                let nodeTitle = nodePath.content,
                 let nodeHref = nodePath["href"] {
-                node = NodeModel(name: nodename, href: nodeHref)
+                node = NodeModel(title: nodeTitle, href: nodeHref)
             }
 
             return TopicModel(member: member, node: node, title: topicTitle, href: topicHref, lastReplyTime: lastReplyAndTime, replyCount: replyCount)

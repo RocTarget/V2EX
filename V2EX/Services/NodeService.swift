@@ -73,8 +73,8 @@ extension NodeService {
             //            node.topicNumber = topicNumber
             
             var `node` = node
-            if let nodename = html.xpath("//*[@id='Wrapper']//div[@class='header']/text()[2]").first?.text?.trimmed {
-                node.name = nodename
+            if let title = html.xpath("//*[@id='Wrapper']//div[@class='header']/text()[2]").first?.text?.trimmed {
+                node.title = title
             }
             node.favoriteHref = html.xpath("//*[@id='Wrapper']//div[@class='header']/div/a").first?["href"]
             node.isFavorite = node.favoriteHref?.hasPrefix("/unfavorite") ?? false
@@ -91,11 +91,11 @@ extension NodeService {
             let nodes = html.xpath("//*[@id='MyNodes']/a/div").flatMap({ (ele) -> NodeModel? in
                 guard let imageSrc = ele.xpath("./img").first?["src"],
                     let comment = ele.xpath("./span").first?.content,
-                    let name = ele.parent?.xpath("./div/text()").first?.content,
+                    let title = ele.parent?.xpath("./div/text()").first?.content,
                     let href = ele.parent?["href"] else {
                         return nil
                 }
-                return NodeModel(name: name, href: href, icon: imageSrc, comments: comment)
+                return NodeModel(title: title, href: href, icon: imageSrc, comments: comment)
             })
             success?(nodes)
         }, failure: failure)
@@ -143,14 +143,14 @@ extension NodeService {
 
             var `nodes` = nodes
 
-            let tempInitial = nodes[0].name.pinYingString.firstLetter
+            let tempInitial = nodes[0].title.pinYingString.firstLetter
             let currentGroup = NodeCategoryModel(id: 0, name: tempInitial, nodes: [])
             var group: [NodeCategoryModel] = [currentGroup]
 
             var otherGroup = NodeCategoryModel(id: 0, name: "#", nodes: [])
 
             for node in nodes {
-                let initial = node.name.pinYingString.firstLetter
+                let initial = node.title.pinYingString.firstLetter
 
                 //  不放在其他组, 单独一组
                 if initial != "", !initial.isLetter() {

@@ -12,7 +12,7 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
 
     public var node: NodeModel {
         didSet {
-            title = node.name
+            title = node.title
             favoriteTopicItem.title = (node.isFavorite ?? false) ? "已收藏" : "收藏"
         }
     }
@@ -51,6 +51,11 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
                 let createTopicVC = CreateTopicViewController()
                 createTopicVC.nodename = self?.node.name
                 self?.navigationController?.pushViewController(createTopicVC, animated: true)
+            }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
             }.disposed(by: rx.disposeBag)
     }
 
@@ -112,7 +117,7 @@ extension NodeDetailViewController {
         favorite(href: href, success: { [weak self] in
             guard let `self` = self else { return }
             self.node.isFavorite = !self.node.isFavorite!
-            HUD.showText("已成功\(self.node.isFavorite! ? "收藏" : "取消收藏") \(self.node.name)")
+            HUD.showText("已成功\(self.node.isFavorite! ? "收藏" : "取消收藏") \(self.node.title)")
             self.favoriteTopicItem.title = self.node.isFavorite! ? "已收藏" : "收藏"
         }) { error in
             HUD.showText(error)

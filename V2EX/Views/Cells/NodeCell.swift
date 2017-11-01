@@ -14,7 +14,7 @@ class NodeCell: UICollectionViewCell {
         didSet {
             guard let `node` = node else { return }
             
-            textLabel.text = node.name
+            textLabel.text = node.title
         }
     }
     
@@ -23,11 +23,17 @@ class NodeCell: UICollectionViewCell {
         contentView.addSubview(textLabel)
         
         
-        backgroundColor = Theme.Color.bgColor
+//        backgroundColor = Theme.Color.bgColor
 
         textLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.backgroundColor = theme == .day ? theme.bgColor : theme.cellBackgroundColor
+                self?.textLabel.textColor = theme.somberColor
+            }.disposed(by: rx.disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {

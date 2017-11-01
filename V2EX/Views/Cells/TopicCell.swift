@@ -80,6 +80,13 @@ class TopicCell: BaseTableViewCell {
                 guard let node = self?.topic?.node else { return }
                 self?.tapHandle?(.node(node))
             }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.titleLabel.textColor = theme.titleColor
+                self?.nodeLabel.backgroundColor = theme.bgColor //theme == .day ? Theme.Color.bgColor : UIColor.hex(0x363146)
+                self?.usernameLabel.textColor = theme.titleColor
+            }.disposed(by: rx.disposeBag)
     }
     
     override func setupConstraints() {
@@ -125,7 +132,7 @@ class TopicCell: BaseTableViewCell {
             titleLabel.text = topic.title
             lastReplyLabel.text = topic.lastReplyTime
             replayCountLabel.setTitle(topic.replyCount, for: .normal)
-            nodeLabel.text = topic.node?.name
+            nodeLabel.text = topic.node?.title
             nodeLabel.isHidden = nodeLabel.text?.isEmpty ?? true
         }
     }

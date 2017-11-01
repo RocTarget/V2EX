@@ -36,12 +36,12 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         searchController.searchBar.layer.borderWidth = 0.5
         searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
         // TextField 边框颜色
-        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
-            searchField.layer.borderWidth = 0.5
-            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
-            searchField.layer.cornerRadius = 5.0
-            searchField.layer.masksToBounds = true
-        }
+//        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
+//            searchField.layer.borderWidth = 0.5
+//            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
+//            searchField.layer.cornerRadius = 5.0
+//            searchField.layer.masksToBounds = true
+//        }
         return searchController
     }()
 
@@ -111,6 +111,14 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 guard let `searchController` = searchController else { return }
                 guard let query = searchController.searchBar.text else { return }
                 searchResultVC?.search(query: query, selectedScope: searchController.searchBar.selectedScopeButtonIndex)
+            }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+                self?.searchController.searchBar.barStyle = theme == .day ? .default : .black
+                self?.searchController.searchBar.barTintColor = theme.bgColor
+                self?.searchController.searchBar.layer.borderColor = theme.bgColor.cgColor
             }.disposed(by: rx.disposeBag)
     }
     

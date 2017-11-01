@@ -49,7 +49,7 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             MoreItem(icon: #imageLiteral(resourceName: "myReply"), title: "我的回复", type: .myReply)
         ],
         [
-//            MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
+            MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
 //            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
             MoreItem(icon: #imageLiteral(resourceName: "cache"), title: "清除缓存", type: .clearCache),
             MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "意见反馈", type: .feedback),
@@ -74,6 +74,14 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             .subscribeNext { [weak self] _ in
                 self?.updateUserInfo()
         }.disposed(by: rx.disposeBag)
+
+//        212221
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+//                self?.view.backgroundColor = theme.bgColor
+            }.disposed(by: rx.disposeBag)
+
     }
 
     private func updateUserInfo() {
@@ -124,6 +132,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             cell.textLabel?.text = item.title
             cell.imageView?.image = item.icon
             cell.accessoryType = .disclosureIndicator
+            cell.selectionStyle = .none
             return cell
         }
 
@@ -132,26 +141,10 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         cell.imageView?.image = item.icon
         cell.imageView?.setImage(urlString: AccountModel.current?.avatarNormalSrc, placeholder: item.icon)
         return cell
-
-//        var cell = tableView.dequeueReusableCell(withIdentifier: "MoreItemCell")
-//        if cell == nil {
-//            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "MoreItemCell")
-//            cell?.accessoryType = .disclosureIndicator
-//        }
-//        let item = sections[indexPath.section][indexPath.row]
-//        if indexPath.section == 0 {
-//            cell?.textLabel?.text = AccountModel.current?.username ?? item.title
-//            cell?.imageView?.image = item.icon
-//            cell?.imageView?.setImage(urlString: AccountModel.current?.avatarNormalSrc, placeholder: item.icon)
-//        } else {
-//            cell?.textLabel?.text = item.title
-//            cell?.imageView?.image = item.icon
-//        }
-//
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        tableView.deselectRow(at: indexPath, animated: true)
 
         if indexPath.section == 0 || indexPath.section == 1,  !AccountModel.isLogin {
             presentLoginVC()
@@ -177,6 +170,8 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .myFavorites, .follow:
             let href = type == .myFavorites ? API.myFavorites.path : API.following.path
             viewController = BaseTopicsViewController(href: href)
+        case .nightMode:
+            ThemeStyle.update(style: ThemeStyle.style.value == .night ? .day : .night)
         case .clearCache:
             HUD.show()
             FileManager.clearCache(complete: { size in

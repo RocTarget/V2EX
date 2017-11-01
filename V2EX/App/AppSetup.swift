@@ -11,6 +11,7 @@ struct AppSetup {
         HUD.configureAppearance()
         setupFPS()
         setupCrashlytics()
+        setupTheme()
     }
 }
 
@@ -48,5 +49,9 @@ extension AppSetup {
 
     private static func setupCrashlytics() {
         Fabric.with([Crashlytics.self])
+    }
+
+    private static func setupTheme() {
+        ThemeStyle.update(style: UserDefaults.standard.bool(forKey: Constants.Keys.themeStyle) ? .night : .day)
     }
 }

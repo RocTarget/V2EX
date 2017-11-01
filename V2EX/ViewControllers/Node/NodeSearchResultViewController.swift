@@ -17,15 +17,18 @@ class NodeSearchResultViewController: DataViewController {
     }()
     
     public var originData: [NodeModel]?
-    
+
+    public var didSelectedNodeHandle:((NodeModel) -> Void)?
+
+    private var query: String?
+
     private var searchResults: [NodeModel] = [] {
         didSet {
             tableView.reloadData()
             endLoading()
         }
     }
-    
-    private var query: String?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,7 +76,7 @@ extension NodeSearchResultViewController: UITableViewDelegate, UITableViewDataSo
             cell = UITableViewCell(style: .default, reuseIdentifier: "NodesCell")
             cell?.separatorInset = .zero
         }
-        cell?.textLabel?.text = searchResults[indexPath.row].name
+        cell?.textLabel?.text = searchResults[indexPath.row].title
         if let `query` = query {
             cell?.textLabel?.makeSubstringColor(query, color: UIColor.hex(0xD33F3F))
         }
@@ -81,8 +84,16 @@ extension NodeSearchResultViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         let node = searchResults[indexPath.row]
+
+        if let callback = didSelectedNodeHandle {
+            dismiss(animated: true, completion: {
+                callback(node)
+            })
+            return
+        }
+
+        tableView.deselectRow(at: indexPath, animated: true)
         let nodeDetailVC = NodeDetailViewController(node: node)
         presentingViewController?.navigationController?.pushViewController(nodeDetailVC, animated: true)
     }
@@ -96,6 +107,6 @@ extension NodeSearchResultViewController: UISearchResultsUpdating {
                 return
         }
         self.query = query
-        searchResults = originData.filter { $0.name.lowercased().contains(query.lowercased()) }
+        searchResults = originData.filter { $0.title.lowercased().contains(query.lowercased()) }
     }
 }

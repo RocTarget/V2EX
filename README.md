@@ -100,7 +100,7 @@ git clone https://github.com/Joe0708/V2EX.git
 1. [x] 发布新主题
 2. [x] 将图片上传至图传(发布新主题、回复时使用, 感谢 [SM.MS](https://sm.ms/doc/) 提供 API)
 3. [x] 修改头像
-4. [ ] 夜间模式
+4. [x] 夜间模式
 5. [ ] 修改个人资料
 
 ### 其他优化

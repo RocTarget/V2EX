@@ -51,6 +51,14 @@ class BaseTopicsViewController: DataViewController, TopicService {
         }
     }
 
+    override func setupTheme() {
+        super.setupTheme()
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+            }.disposed(by: rx.disposeBag)
+    }
     // MARK: State Handle
 
     override func loadData() {

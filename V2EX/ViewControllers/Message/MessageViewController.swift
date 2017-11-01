@@ -63,6 +63,11 @@ class MessageViewController: DataViewController, AccountService {
             .subscribeNext { [weak self] _ in
                 self?.fetchNotifications()
             }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+            }.disposed(by: rx.disposeBag)
     }
     
     // MARK: States Handle

@@ -26,7 +26,6 @@ target 'V2EX' do
     pod 'UIView+Positioning'
     pod 'PKHUD'
     pod 'Toaster'
-#    pod 'Themes'
     pod 'StatefulViewController'
     pod 'YYText'
     pod 'SKPhotoBrowser'

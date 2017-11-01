@@ -64,7 +64,7 @@ class NodeCollectCell: UICollectionViewCell {
         didSet {
             guard let `node` = node else { return }
 
-            titleLabel.text = node.name
+            titleLabel.text = node.title
             iconView.setImage(urlString: node.iconFullURL)
             commentBtn.setTitle(node.comments, for: .normal)
         }

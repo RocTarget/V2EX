@@ -47,7 +47,7 @@
 		77D0DDF31F9F677500DDC366 /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0DDF21F9F677500DDC366 /* MemberCell.swift */; };
 		80BDADB66F39CEA2AACC3733 /* Pods_V2EXUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B6818F911EA9C433951F18 /* Pods_V2EXUITests.framework */; };
 		BF02A2C21F8F3E3800BEF85E /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2C11F8F3E3800BEF85E /* AppSetup.swift */; };
-		BF02A2CE1F8F3FE400BEF85E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CD1F8F3FE400BEF85E /* Theme.swift */; };
+		BF02A2CE1F8F3FE400BEF85E /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CD1F8F3FE400BEF85E /* AppTheme.swift */; };
 		BF02A2D21F8F42B600BEF85E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D11F8F425C00BEF85E /* UIColor+Extension.swift */; };
 		BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CC1F8F3F3E00BEF85E /* TabBarViewController.swift */; };
 		BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */; };
@@ -196,7 +196,7 @@
 		A3FD0254BCE3292D3FCA0608 /* Pods-V2EXUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXUITests/Pods-V2EXUITests.release.xcconfig"; sourceTree = "<group>"; };
 		BF02A2C11F8F3E3800BEF85E /* AppSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetup.swift; sourceTree = "<group>"; };
 		BF02A2CC1F8F3F3E00BEF85E /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
-		BF02A2CD1F8F3FE400BEF85E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		BF02A2CD1F8F3FE400BEF85E /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		BF02A2D11F8F425C00BEF85E /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		BF1B1D161FA6F25100544A11 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
@@ -387,7 +387,7 @@
 				BF65BDB71F8E12C80010B4C9 /* AppDelegate.swift */,
 				BF45E0061F9F03380001BEB2 /* AppWindow.swift */,
 				BF02A2C11F8F3E3800BEF85E /* AppSetup.swift */,
-				BF02A2CD1F8F3FE400BEF85E /* Theme.swift */,
+				BF02A2CD1F8F3FE400BEF85E /* AppTheme.swift */,
 				BFCB675D1F8F521D00D05A90 /* Constants.swift */,
 			);
 			path = App;
@@ -1169,7 +1169,7 @@
 				BF39FFE71F94421C00D6F8BD /* Binder+Extension.swift in Sources */,
 				BFE3947D1F90823D00D3ED1D /* TopicCommentCell.swift in Sources */,
 				BFCB67481F8F499600D05A90 /* BaseViewController.swift in Sources */,
-				BF02A2CE1F8F3FE400BEF85E /* Theme.swift in Sources */,
+				BF02A2CE1F8F3FE400BEF85E /* AppTheme.swift in Sources */,
 				BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */,
 				778AC6A01F9A29730072C6E9 /* SearchResultModel.swift in Sources */,
 				778AC6A81F9A2D540072C6E9 /* TopicSearchResultCell.swift in Sources */,

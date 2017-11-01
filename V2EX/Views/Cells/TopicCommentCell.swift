@@ -136,6 +136,13 @@ class TopicCommentCell: BaseTableViewCell {
             contentLabel,
             lineView
         )
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.contentLabel.textColor = theme.titleColor
+                self?.usernameLaebl.textColor = theme.titleColor
+                self?.lineView.backgroundColor = theme.borderColor
+            }.disposed(by: rx.disposeBag)
     }
 
     override func setupConstraints() {

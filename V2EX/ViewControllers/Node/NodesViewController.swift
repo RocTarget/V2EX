@@ -40,8 +40,10 @@ class NodesViewController: DataViewController, NodeService {
         
         definesPresentationContext = true
 
-        automaticallyAdjustsScrollViewInsets = false
-        edgesForExtendedLayout = []
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.collectionView.backgroundColor = theme.whiteColor
+            }.disposed(by: rx.disposeBag)
     }
 
     override func setupSubviews() {
@@ -89,8 +91,10 @@ class NodesViewController: DataViewController, NodeService {
     @objc private func segmentControlDidChangeHandle() {
         if let allNodeVC = childViewControllers.first,
             !allNodeVC.isViewLoaded {
-            allNodeVC.view.frame = collectionView.frame
             view.addSubview(allNodeVC.view)
+            allNodeVC.view.snp.makeConstraints {
+                $0.edges.equalTo(collectionView)
+            }
         }
 
         if segmentedControl.selectedSegmentIndex == 0 {
@@ -136,10 +140,7 @@ extension NodesViewController: UICollectionViewDelegate, UICollectionViewDataSou
 extension NodesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let node = nodeCategorys[indexPath.section].nodes[indexPath.row]
-        let w = node.name.toWidth(fontSize: 20)
+        let w = node.title.toWidth(fontSize: 20)
         return CGSize(width: w, height: 30)
     }
 }
-
-
-
