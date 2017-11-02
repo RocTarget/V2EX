@@ -2,15 +2,6 @@ import UIKit
 
 extension UITextField {
     
-    var fontSize: CGFloat {
-        get {
-            return self.font?.pointSize ?? 17
-        }
-        set {
-            self.font = UIFont.systemFont(ofSize: newValue)
-        }
-    }
-    
     /// Add left padding to the text in textfield
     public func addLeftTextPadding(_ blankSize: CGFloat) {
         let leftView = UIView()

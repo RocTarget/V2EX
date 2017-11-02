@@ -312,19 +312,45 @@ extension AccountService {
         Network.htmlRequest(target: .loginReward(once: once), success: { html in
 
             let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
-            guard let content = messagePath?.content, content.contains("已成功领取") else {
-                failure?("领取每日奖励失败")
+
+            // 有时会提示重新点击导致领取失败， 未知原因
+            // 如果包含， 代表没有领取成功， 再领一次
+            // if (messagePath?.content ?? "").contains("请重新点击一次以领取每日登录奖励"),
+            if (messagePath?.content ?? "").contains("/mission/daily/redeem"),
+                let comps = html.xpath("//*[@id='Wrapper']/div/div/div/input").first?["onclick"]?.components(separatedBy: "\'"),
+                comps.count >= 2 {
+                let href = comps[1]
+
+                Network.htmlRequest(target: .currency(href: href), success: { html in
+                    self.dailyRewardResultHandle(html: html, success: success, failure: failure)
+                }, failure: failure)
                 return
             }
 
-            if let days =  html.xpath("//*[@id='Wrapper']/div/div/div[last()]").first?.content {
-                success?("每日登录奖励已领取\n\(days)")
-                return
-            }
-
-            success?("每日登录奖励已领取")
+            self.dailyRewardResultHandle(html: html, success: success, failure: failure)
         }, failure: failure)
     }
+
+    private func dailyRewardResultHandle(
+        html: HTMLDocument,
+        success: ((String) -> Void)?,
+        failure: Failure?) {
+
+        let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
+
+        guard let content = messagePath?.content, content.contains("已成功领取") else {
+            failure?("领取每日奖励失败")
+            return
+        }
+
+        if let days =  html.xpath("//*[@id='Wrapper']/div/div/div[last()]").first?.content {
+            success?("每日登录奖励已领取\n\(days)")
+            return
+        }
+
+        success?("每日登录奖励已领取")
+    }
+
 
     func updateAvatar(
         localURL: String,

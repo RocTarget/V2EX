@@ -5,6 +5,7 @@ class TopicCell: BaseTableViewCell {
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
+        view.setCornerRadius = 5
         return view
     }()
     
@@ -127,7 +128,7 @@ class TopicCell: BaseTableViewCell {
         didSet {
             guard let `topic` = topic else { return }
             guard let user = topic.member else { return }
-            avatarView.setCornerRadiusImage(urlString: user.avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
+            avatarView.setImage(urlString: user.avatarSrc, placeholder: #imageLiteral(resourceName: "avatarRect"))
             usernameLabel.text = user.username
             titleLabel.text = topic.title
             lastReplyLabel.text = topic.lastReplyTime

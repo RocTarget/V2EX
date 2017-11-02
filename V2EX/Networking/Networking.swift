@@ -99,6 +99,7 @@ final class Networking {
                         self.responseHandle(target: target, success: success, failure: failure, dataResponse: dataResponse)
                     })
                 case .failure(let error):
+                    HUD.showTest(error.localizedDescription)
                     log.error(error.localizedDescription)
                 }
             })
@@ -145,6 +146,7 @@ extension Networking {
             success?(data)
         case .failure(let error):
             log.error("❌ FAILURE: \(message) \n \(error)", file: file, function: function, line: line)
+            HUD.showTest(error.localizedDescription)
             failure?(error.localizedDescription)
         }
     }

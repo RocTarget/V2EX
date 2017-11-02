@@ -18,6 +18,7 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
 
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
+        view.setCornerRadius = 40
         return view
     }()
     
@@ -103,7 +104,7 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         didSet {
             guard let `member` = member else { return }
 
-            avatarView.setRoundImage(urlString: member.avatarSrc)
+            avatarView.setImage(urlString: member.avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
             usernameLabel.text = member.username
             joinTimeLabel.text = member.joinTime
             headerView.image = avatarView.image

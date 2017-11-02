@@ -228,6 +228,8 @@ extension API: TargetType {
         switch self {
         case .signin, .forgot, .createTopic, .updateAvatar:
             headers["Referer"] = defaultURLString
+        case .loginReward:
+            headers["Referer"] = baseURL + "/mission/daily"
         default:
             break
         }

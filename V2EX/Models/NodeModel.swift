@@ -101,6 +101,7 @@ public struct NodeModel: Codable {
         do {
             return try JSONDecoder().decode([NodeModel].self, from: data)
         } catch {
+            HUD.showTest(error.localizedDescription)
             log.error(error)
             return nil
         }

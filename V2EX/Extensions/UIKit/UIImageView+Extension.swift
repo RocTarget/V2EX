@@ -49,14 +49,6 @@ extension UIImageView {
             completionHandler: completionHandler
         )
     }
-    
-    func setImage(localURL: URL?) {
-        guard let url = localURL else {
-            log.error("URL is Null")
-            return
-        }
-        setImage(with: url)
-    }
 }
 
 public extension UIImageView {
@@ -72,73 +64,11 @@ public extension UIImageView {
         }
     }
     
-    /// 原始图
     func setImage(urlString URLString: String?, placeholder: UIImage? = nil, animated: Bool = true) {
         guard let urlString = URLString, let URL = URL(string: urlString) else {
             log.error("URL wrong ", URLString ?? "")
             return
         }
         setImage(url: URL, placeholder: placeholder, animated: animated)
-    }
-
-    func setCornerRadiusImage(urlString URLString: String?, placeholder: UIImage? = nil , cornerRadiusRatio: CGFloat = 5, progressBlock:ImageDownloaderProgressBlock? = nil) {
-        guard let URLString = URLString, let URL = URL(string: URLString) else {
-            print("URL wrong")
-            return
-        }
-
-        let memoryImage = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey:URLString)
-        let diskImage = KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey:URLString)
-        guard let image = memoryImage ?? diskImage else {
-            let optionInfo: KingfisherOptionsInfo = [ .forceRefresh ]
-            KingfisherManager.shared.downloader.downloadImage(with: URL, options: optionInfo, progressBlock: progressBlock) { (image, error, imageURL, originalData) -> () in
-                if let image = image, let originalData = originalData {
-                    DispatchQueue.global(qos: .default).async {
-                        let roundedImage = image.roundWithCornerRadius(cornerRadiusRatio)
-                        KingfisherManager.shared.cache.store(roundedImage, original: originalData, forKey: URLString, toDisk: true, completionHandler: {
-                            self.setImage(urlString: URLString, placeholder: placeholder)
-                        })
-                    }
-                }
-            }
-            return
-        }
-        self.image = image
-    }
-
-    func setRoundImage(urlString URLString: String?, placeholder: UIImage? = nil, progressBlock: ImageDownloaderProgressBlock? = nil) {
-        guard let URLString = URLString, let URL = URL(string: URLString) else {
-            print("URL wrong")
-            return
-        }
-
-        let memoryImage = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey:URLString)
-        let diskImage = KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey:URLString)
-        guard let image = memoryImage ?? diskImage else {
-            let optionInfo: KingfisherOptionsInfo = [ .forceRefresh ]
-            KingfisherManager.shared.downloader.downloadImage(with: URL, options: optionInfo, progressBlock: progressBlock) { (image, error, imageURL, originalData) -> () in
-                if let image = image, let originalData = originalData {
-                    DispatchQueue.global(qos: .default).async {
-                        let roundedImage = image.roundWithCornerRadius(image.size.width * 0.5)
-                        KingfisherManager.shared.cache.store(roundedImage, original: originalData, forKey: URLString, toDisk: true, completionHandler: {
-                            self.setImage(urlString: URLString, placeholder: placeholder)
-                        })
-                    }
-                }
-            }
-            return
-        }
-        self.image = image
-    }
-}
-
-extension UIImage {
-    
-    func roundWithCornerRadius(_ cornerRadius: CGFloat) -> UIImage {
-        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: self.size)
-        UIGraphicsBeginImageContextWithOptions(self.size, false, 1)
-        UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).addClip()
-        draw(in: rect)
-        return UIGraphicsGetImageFromCurrentImageContext()!
     }
 }

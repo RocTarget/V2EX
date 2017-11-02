@@ -4,6 +4,7 @@ class MemberCell: BaseTableViewCell {
 
     override func initialize() {
         separatorInset = .zero
+        imageView?.setCornerRadius = 20
     }
     
     override func layoutSubviews() {

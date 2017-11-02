@@ -17,6 +17,7 @@ class TopicDetailHeaderView: UIView {
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
+        view.setCornerRadius = 5
         return view
     }()
     
@@ -87,14 +88,14 @@ class TopicDetailHeaderView: UIView {
         setupConstraints()
         setupAction()
         
-        webView.scrollView.rx.observe(CGSize.self, "contentSize")
-            .subscribeNext { [weak self] size in
-                guard let `self` = self,
-                    let height = size?.height else { return }
-                self.height = self.titleLabel.bottom + height + 15
-                self.webViewConstraint?.update(offset: height)
-                self.webLoadComplete?()
-        }.disposed(by: rx.disposeBag)
+//        webView.scrollView.rx.observe(CGSize.self, "contentSize")
+//            .subscribeNext { [weak self] size in
+//                guard let `self` = self,
+//                    let height = size?.height else { return }
+//                self.height = self.titleLabel.bottom + height + 15
+//                self.webViewConstraint?.update(offset: height)
+//                self.webLoadComplete?()
+//        }.disposed(by: rx.disposeBag)
     }
 
     func setupAction() {
@@ -169,7 +170,7 @@ class TopicDetailHeaderView: UIView {
         didSet {
             guard let `topic` = topic else { return }
             guard let user = topic.member else { return }
-            avatarView.setCornerRadiusImage(urlString: user.avatarSrc)
+            avatarView.setImage(urlString: user.avatarSrc, placeholder: #imageLiteral(resourceName: "avatarRect"))
             usernameLabel.text = user.username
             titleLabel.text = topic.title
             timeLabel.text = topic.publicTime
@@ -188,6 +189,7 @@ class TopicDetailHeaderView: UIView {
                     webView.loadHTMLString(html, baseURL: URL(string: "https://"))
                 }
             } catch {
+                HUD.showTest(error.localizedDescription)
                 log.error("CSS 加载失败")
             }
             

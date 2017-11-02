@@ -41,18 +41,34 @@ final class HUD {
         PKHUD.sharedHUD.hide()
     }
 
-//    class func showSuccess(_ text: String? = nil) {
-//        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
-//        PKHUD.HUD.flash(.labeledSuccess(title: nil, subtitle: text), onView: UIApplication.shared.windows.last, delay: 3)
-//    }
+    class func showSuccess(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(text, delay: delay, completionBlock: completionBlock)
+    }
+
+    class func showError(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(text, delay: delay, completionBlock: completionBlock)
+    }
+
+    class func showWarning(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(text, delay: delay, completionBlock: completionBlock)
+    }
+
+    /// 测试使用
+    class func showTest(_ text: String) {
+        #if DEBUG
+            Toast(text: "[Debug]: \(text)", delay: 0, duration: 3).show()
+        #endif
+    }
+
+    /// 测试使用
+    class func showTest(_ error: Error) {
+        showTest(error.localizedDescription)
+    }
 
     class func showText(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
         Toast(text: text, delay: 0, duration: delay).show()
         GCD.delay(delay) {
             completionBlock?()
         }
-        
-//        PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
-//        PKHUD.HUD.flash(.label(text), onView: UIApplication.shared.windows.last, delay: delay)
     }
 }

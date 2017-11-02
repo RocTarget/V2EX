@@ -7,6 +7,7 @@ class TopicCommentCell: BaseTableViewCell {
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
+        view.setCornerRadius = 5
         return view
     }()
 
@@ -71,7 +72,7 @@ class TopicCommentCell: BaseTableViewCell {
         didSet {
             guard let `comment` = comment else { return }
 
-            avatarView.setCornerRadiusImage(urlString: comment.member.avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
+            avatarView.setImage(urlString: comment.member.avatarSrc, placeholder: #imageLiteral(resourceName: "avatarRect"))
             usernameLaebl.text = comment.member.username
             floorLabel.text = comment.floor + " 楼"
             timeLabel.text =  comment.publicTime

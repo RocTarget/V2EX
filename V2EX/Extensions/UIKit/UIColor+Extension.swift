@@ -1,7 +1,7 @@
 import UIKit
 
 extension UIColor {
-    
+
     /// 快速构建rgb颜色
     ///
     /// - Parameters:

@@ -24,7 +24,7 @@ class ViewDialogViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 80
-        tableView.backgroundColor = Theme.Color.bgColor
+        tableView.backgroundColor = ThemeStyle.style.value.bgColor
         tableView.keyboardDismissMode = .onDrag
         tableView.register(cellWithClass: TopicCommentCell.self)
         

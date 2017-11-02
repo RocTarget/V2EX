@@ -1,9 +1,9 @@
 import UIKit
-import Marklight
 import RxSwift
 import RxCocoa
 import MobileCoreServices
 import SnapKit
+import YYText
 
 class CreateTopicViewController: BaseViewController, TopicService {
     
@@ -50,35 +50,26 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
-    private lazy var bodyTextView: UIPlaceholderTextView = {
-        let textContainer = NSTextContainer()
-        let layoutManager = NSLayoutManager()
-        textStorage.addLayoutManager(layoutManager)
-        layoutManager.addTextContainer(textContainer)
-        let view = UIPlaceholderTextView(frame: .zero, textContainer: textContainer)
-        view.placeholder = "请输入正文，如果标题能够表达完整内容，则正文可以为空(0~20000)"
-        view.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 15, right: 5)
+    private lazy var markdownParser: YYTextSimpleMarkdownParser = {
+        let view = YYTextSimpleMarkdownParser()
+        return view
+    }()
+
+    private lazy var bodyTextView: YYTextView = {
+        let view = YYTextView()
+        view.placeholderAttributedText = NSAttributedString(
+            string: "请输入正文，如果标题能够表达完整内容，则正文可以为空(0~20000)",
+            attributes: [NSAttributedStringKey.foregroundColor: UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6),
+                         NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
+        view.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 15, right: 5)
         view.returnKeyType = .done
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont.systemFont(ofSize: 15)
         view.keyboardDismissMode = .onDrag
-        view.delegate = self
+        view.textParser = markdownParser
         view.isEditable = true
         view.inputAccessoryView = markdownToolbar
         return view
-    }()
-
-    //    private var bodyText: String = ""
-
-    private lazy var textStorage: MarklightTextStorage = {
-        let textStorage = MarklightTextStorage()
-        textStorage.marklightTextProcessor.codeColor = .orange
-        textStorage.marklightTextProcessor.quoteColor = .darkGray
-        textStorage.marklightTextProcessor.syntaxColor = .blue
-        textStorage.marklightTextProcessor.codeFontName = "Courier"
-        textStorage.marklightTextProcessor.fontTextStyle = UIFontTextStyle.subheadline.rawValue
-        //        textStorage.marklightTextProcessor.hideSyntax = true
-        return textStorage
     }()
     
     private lazy var postTopicBarButton: UIBarButtonItem = {
@@ -134,7 +125,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
         if let body = UserDefaults.get(forKey: Constants.Keys.createTopicBodyDraft) as? String {
             bodyTextView.text = body
-            bodyTextView.rx.value.onNext(body)
+//            bodyTextView.rx.value.onNext(body)
         }
 
         if let nodename = UserDefaults.get(forKey: Constants.Keys.createTopicNodenameDraft) as? String {
@@ -163,16 +154,6 @@ class CreateTopicViewController: BaseViewController, TopicService {
     }
 
     override func setupSubviews() {
-        NotificationCenter.default.addObserver(forName: .UITextViewTextDidChange, object: textView, queue: .main) { notification in
-            if self.bodyTextView.textStorage.string.hasSuffix("\n") {
-                CATransaction.setCompletionBlock({ () -> Void in
-                    self.scrollToCaret(self.bodyTextView, animated: false)
-                })
-            } else {
-                self.scrollToCaret(self.bodyTextView, animated: false)
-            }
-        }
-
         view.addSubviews(
             titleLabel,
             titleFieldView,
@@ -228,13 +209,13 @@ class CreateTopicViewController: BaseViewController, TopicService {
             }.bind(to: postTopicBarButton.rx.isEnabled)
             .disposed(by: rx.disposeBag)
 
-        bodyTextView.rx
-            .text
-            .orEmpty
-            .map { $0.trimmed.isNotEmpty }
-            .bind(to: previewBarButton.rx.isEnabled)
-            .disposed(by: rx.disposeBag)
-        
+//        bodyTextView.rx
+//            .text
+//            .orEmpty
+//            .map { $0.trimmed.isNotEmpty }
+//            .bind(to: previewBarButton.rx.isEnabled)
+//            .disposed(by: rx.disposeBag)
+
         postTopicBarButton.rx
             .tap
             .subscribeNext { [weak self] in
@@ -287,12 +268,14 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 self?.bodyLabel.textColor = theme.titleColor
                 self?.titleLabel.backgroundColor = theme.whiteColor
                 self?.titleFieldView.backgroundColor = theme.whiteColor
+                self?.titleFieldView.textColor = theme == .day ? theme.titleColor : .white
                 self?.bodyLabel.backgroundColor = theme.whiteColor
                 self?.bodyTextView.backgroundColor = theme.whiteColor
                 self?.bodyTextView.keyboardAppearance = theme == .day ? .default : .dark
                 self?.titleFieldView.keyboardAppearance = theme == .day ? .default : .dark
                 self?.selectNodeBtn.setTitleColor(theme.titleColor, for: .normal)
                 self?.selectNodeBtn.backgroundColor = theme.whiteColor
+                theme == .day ? self?.markdownParser.setColorWithBrightTheme() : self?.markdownParser.setColorWithDarkTheme()
             }.disposed(by: rx.disposeBag)
     }
     
@@ -381,22 +364,6 @@ class CreateTopicViewController: BaseViewController, TopicService {
             self?.nodename = node.name
             self?.bodyTextView.becomeFirstResponder()
         }
-    }
-}
-
-
-// MARK: - Character limit
-extension CreateTopicViewController: UITextViewDelegate {
-
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
-        print("Should interact with: \(URL)")
-        return true
-    }
-
-    func scrollToCaret(_ textView: UITextView, animated: Bool) {
-        var rect = textView.caretRect(for: textView.selectedTextRange!.end)
-        rect.size.height = rect.size.height + textView.textContainerInset.bottom
-        textView.scrollRectToVisible(rect, animated: animated)
     }
 }
 

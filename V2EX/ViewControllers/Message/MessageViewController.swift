@@ -20,19 +20,7 @@ class MessageViewController: DataViewController, AccountService {
     private var messages: [MessageModel] = []
     
     private var page = 1, maxPage = 1
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        tableView.addHeaderRefresh { [weak self] in
-            self?.fetchNotifications()
-        }
-        
-        tableView.addFooterRefresh { [weak self] in
-            self?.fetchMoreNotifications()
-        }
-    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -49,7 +37,30 @@ class MessageViewController: DataViewController, AccountService {
         
         tableView.startHeaderRefresh()
     }
-    
+
+//    override func setupSubviews() {
+//        if #available(iOS 11.0, *) {
+//            navigationController?.navigationBar.prefersLargeTitles = true
+//        }
+//    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupRefreshView()
+    }
+
+    private func setupRefreshView() {
+
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchNotifications()
+        }
+
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreNotifications()
+        }
+    }
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -94,7 +105,7 @@ class MessageViewController: DataViewController, AccountService {
             self.endLoading()
             self.tableView.reloadData()
             self.tabBarItem.badgeValue = nil
-            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
+            self.tableView.endHeaderRefresh()
         }) { [weak self] error in
             self?.errorMessage = error
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
@@ -103,6 +114,11 @@ class MessageViewController: DataViewController, AccountService {
     }
     
     func fetchMoreNotifications() {
+        if self.page >= maxPage {
+            tableView.endRefresh(showNoMore: true)
+            return
+        }
+
         page += 1
         
         startLoading()
@@ -111,9 +127,9 @@ class MessageViewController: DataViewController, AccountService {
             guard let `self` = self else { return }
             self.messages.append(contentsOf: messages)
             self.tableView.reloadData()
-            self.tableView.endRefresh(showNoMore: self.page >= maxPage)
+            self.tableView.endRefresh(showNoMore: maxPage < self.page)
         }) { [weak self] error in
-            self?.tableView.endRefresh()
+            self?.tableView.endFooterRefresh()
             self?.page -= 1
         }
     }

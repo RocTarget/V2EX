@@ -120,6 +120,13 @@ class LoginViewController: BaseViewController, AccountService {
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
+    override func setupTheme() {
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.view.backgroundColor = theme == .day ? UIColor(patternImage: #imageLiteral(resourceName: "bj")) : theme.bgColor
+        }.disposed(by: rx.disposeBag)
+    }
+
     override func setupSubviews() {
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "close"), style: .plain) { [weak self] in

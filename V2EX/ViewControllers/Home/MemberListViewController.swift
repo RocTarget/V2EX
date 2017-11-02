@@ -35,6 +35,8 @@ class MemberListViewController: UITableViewController {
         tableView.allowsMultipleSelection = true
         tableView.setEditing(true, animated: true)
         tableView.tintColor = Theme.Color.globalColor
+        tableView.backgroundColor = ThemeStyle.style.value.bgColor
+        tableView.separatorColor = ThemeStyle.style.value.borderColor
         tableView.rowHeight = 55
         tableView.register(cellWithClass: MemberCell.self)
         
@@ -74,7 +76,7 @@ extension MemberListViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: MemberCell.self)!
         cell.textLabel?.text = members[indexPath.row].username
-        cell.imageView?.setCornerRadiusImage(urlString: members[indexPath.row].avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
+        cell.imageView?.setImage(urlString: members[indexPath.row].avatarSrc, placeholder: #imageLiteral(resourceName: "avatar"))
         return cell
     }
     

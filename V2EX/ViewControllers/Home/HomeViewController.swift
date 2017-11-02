@@ -89,8 +89,14 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     }
     
     private func setupSearchBar() {
-        tableView.tableHeaderView = searchController.searchBar
-        tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
+
+//        if #available(iOS 11.0, *) {
+//            navigationItem.hidesSearchBarWhenScrolling = true
+//            navigationItem.searchController = searchController
+//        } else {
+            tableView.tableHeaderView = searchController.searchBar
+            tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
+//        }
     }
 
     override func setupRx() {
@@ -172,6 +178,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         dailyReward(success: { days in
             HUD.showText(days)
         }) { error in
+            HUD.showTest(error)
             log.error(error)
         }
     }

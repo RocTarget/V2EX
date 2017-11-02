@@ -18,26 +18,24 @@ target 'V2EX' do
     pod 'NSObject+Rx'
     pod 'RxOptional'
 
-    # Parse
-    pod 'Kanna', '~> 2.1.0'
-
     # UI
     pod 'SnapKit'
     pod 'UIView+Positioning'
     pod 'PKHUD'
     pod 'Toaster'
     pod 'StatefulViewController'
-    pod 'YYText'
     pod 'SKPhotoBrowser'
     pod 'PullToRefreshKit', git: 'https://github.com/Joe0708/PullToRefreshKit.git'
 
-    # Markdown
-    pod 'Marklight'
+    # Parse
+    pod 'Kanna', '~> 2.1.0'
+
+    # Rich text
+    pod 'YYText'
     pod 'MarkdownView'
 
     # Misc
     pod 'IQKeyboardManagerSwift'
-    pod 'Carte'
 #    pod 'RxKeyboard'
 
     # Bug
@@ -61,11 +59,8 @@ end
 
 post_install do |installer|
 
-    pods_dir = File.dirname(installer.pods_project.path)
-    at_exit { `ruby #{pods_dir}/Carte/Sources/Carte/carte.rb configure` }
-
     # 需要指定编译版本的第三方库名称
-    swift3_targets = ['Kanna', 'Marklight']
+    swift3_targets = ['Kanna']
     installer.pods_project.targets.each do |target|
         if swift3_targets.include? target.name
             target.build_configurations.each do |config|

@@ -33,8 +33,9 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         view.font = UIFont.systemFont(ofSize: 16)
         view.addLeftTextPadding(10)
         view.clearButtonMode = .whileEditing
-        view.keyboardType = .asciiCapable
+        view.keyboardType = .numberPad
         view.delegate = self
+        view.becomeFirstResponder()
         return view
     }()
 
@@ -47,10 +48,6 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
     }()
 
     private var forgotForm: LoginForm?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -95,7 +92,6 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
             $0.left.right.equalTo(titleLabel)
             $0.height.equalTo(50)
             $0.top.equalToSuperview().offset(view.height * 0.4)
-            //            $0.top.equalTo(introLabel.snp.bottom).offset(120)
         }
 
         nextBtn.snp.makeConstraints {
@@ -114,15 +110,35 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         captchaTextField.rx
             .text
             .orEmpty
-            .map { $0.trimmed.isNotEmpty }
+            .map { $0.trimmed.isNotEmpty && $0.trimmed.count == 6 }
             .bind(to: nextBtn.rx.isEnableAlpha)
             .disposed(by: rx.disposeBag)
+
+        NotificationCenter.default.rx
+            .notification(.UIApplicationWillEnterForeground)
+            .subscribeNext { [weak self] noti in
+                guard let `self` = self,
+                    let pasteString = UIPasteboard.general.string,
+                    pasteString.count == 6,
+                    let _ = Int(pasteString) else { return }
+
+                self.captchaTextField.text = pasteString
+                self.captchaTextField.rx.value.onNext(pasteString)
+
+                HUD.showText("检测到剪贴板验证码，正在登录...",
+                             delay: 0.5) { [weak self] in
+                    self?.nextHandle()
+                }
+            }.disposed(by: rx.disposeBag)
     }
 
     func nextHandle() {
         view.endEditing(true)
 
-        guard let captcha = captchaTextField.text?.trimmed, captcha.isNotEmpty, captcha.count == 6 else {
+        guard let captcha = captchaTextField.text?.trimmed,
+            captcha.isNotEmpty,
+            captcha.count == 6,
+            let _ = Int(captcha) else {
             HUD.showText("请正确验证码", delay: 1.5)
             return
         }
@@ -136,9 +152,11 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
             NotificationCenter.default.post(.init(name: Notification.Name.V2.LoginSuccessName))
             self?.dismiss()
             HUD.dismiss()
+            HUD.showText("登录成功")
         }) { error in
             HUD.dismiss()
             HUD.showText(error)
+            self.captchaTextField.becomeFirstResponder()
         }
     }
 }

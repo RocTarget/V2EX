@@ -182,8 +182,9 @@ public class ShareSheetView: UIView {
     /// 修改样式
     override public func layoutSubviews() {
         super.layoutSubviews()
-        self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
-        self.shareSheetView.backgroundColor = UIColor(red: 0.937, green: 0.937, blue: 0.941, alpha: 0.90).withAlphaComponent(0.6)
+
+        backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        shareSheetView.backgroundColor = UIColor(red: 0.937, green: 0.937, blue: 0.941, alpha: 0.90).withAlphaComponent(0.6)
     }
     
     func imageWithColor(color:UIColor,size:CGSize) ->UIImage{

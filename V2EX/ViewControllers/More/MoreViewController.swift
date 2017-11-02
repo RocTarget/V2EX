@@ -1,5 +1,4 @@
 import UIKit
-import Carte
 import MessageUI
 import MobileCoreServices
 import Kingfisher
@@ -68,6 +67,12 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         }
     }
 
+    override func setupSubviews() {
+//        if #available(iOS 11.0, *) {
+//            navigationController?.navigationBar.prefersLargeTitles = true
+//        }
+    }
+
     override func setupRx() {
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.LoginSuccessName)
@@ -98,6 +103,7 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             HUD.dismiss()
         }) { error in
             HUD.dismiss()
+            HUD.showTest(error)
             log.error(error)
         }
 
@@ -131,8 +137,11 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withClass: BaseTableViewCell.self)!
             cell.textLabel?.text = item.title
             cell.imageView?.image = item.icon
-            cell.accessoryType = .disclosureIndicator
             cell.selectionStyle = .none
+            cell.rightType = item.type == .nightMode ? .switch : .arrow
+            if item.type == .nightMode {
+                cell.switchView.isOn = ThemeStyle.style.value == .night
+            }
             return cell
         }
 
@@ -144,7 +153,6 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
 
         if indexPath.section == 0 || indexPath.section == 1,  !AccountModel.isLogin {
             presentLoginVC()
@@ -172,6 +180,8 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             viewController = BaseTopicsViewController(href: href)
         case .nightMode:
             ThemeStyle.update(style: ThemeStyle.style.value == .night ? .day : .night)
+            let cell = tableView.cellForRow(at: indexPath) as? BaseTableViewCell
+            cell?.switchView.setOn(ThemeStyle.style.value == .night, animated: true)
         case .clearCache:
             HUD.show()
             FileManager.clearCache(complete: { size in
@@ -183,7 +193,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .sourceCode:
             viewController = SweetWebViewController(url: API.codeRepo.defaultURLString)
         case .libs:
-            viewController = CarteViewController()
+            viewController = LibrarysViewController()
         case .about:
             viewController = SweetWebViewController(url: API.about.defaultURLString)
         case .logout:

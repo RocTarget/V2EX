@@ -1,6 +1,5 @@
 PODS:
   - Alamofire (4.5.1)
-  - Carte (2.1.4)
   - Crashlytics (3.9.3):
     - Fabric (~> 1.7.2)
   - Fabric (1.7.2)
@@ -8,7 +7,6 @@ PODS:
   - Kanna (2.1.1)
   - Kingfisher (4.2.0)
   - MarkdownView (1.1.0)
-  - Marklight (1.3.0)
   - NSObject+Rx (4.2.0):
     - RxSwift (~> 4.0)
   - PKHUD (5.0.0)
@@ -29,14 +27,12 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
-  - Carte
   - Crashlytics
   - Fabric
   - IQKeyboardManagerSwift
   - Kanna (~> 2.1.0)
   - Kingfisher
   - MarkdownView
-  - Marklight
   - NSObject+Rx
   - PKHUD
   - PullToRefreshKit (from `https://github.com/Joe0708/PullToRefreshKit.git`)
@@ -62,14 +58,12 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  Carte: a19a62db8478426c406f40048d0c67e98a021c39
   Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
   IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
   Kingfisher: 9ee7e788d8ba07c3f21ce0d43f33cec310a4f781
   MarkdownView: 80db8e9a27a6c6cc22615e644e3e85c06065bab7
-  Marklight: 54432ea3e99f1712129037b3191d54615d6cbe6c
   NSObject+Rx: cbbc05e3cb3ad446cdbced3e00e39c9efaf02925
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   PullToRefreshKit: 537bd8152e2baba53ceb01874010026480e09e73
@@ -84,6 +78,6 @@ SPEC CHECKSUMS:
   UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: c8ccd5a0d82d751ad4d05fe5f68c548910a61c23
+PODFILE CHECKSUM: 5befb646eb55763a6b41926bd6cb811b744f1afa
 
 COCOAPODS: 1.3.1

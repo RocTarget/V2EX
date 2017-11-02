@@ -1,11 +1,3 @@
-//
-//  MemberModel.swift
-//  V2EX
-//
-//  Created by Joe-c on 2017/10/16.
-//  Copyright © 2017年 Joe. All rights reserved.
-//
-
 import Foundation
 
 struct MemberModel {

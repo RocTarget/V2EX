@@ -85,11 +85,6 @@ extension UILabel {
 
         attributedText = attributedString
     }
-
-    func makeTransparent() {
-        isOpaque = false
-        backgroundColor = .clear
-    }
 }
 
 extension UILabel {

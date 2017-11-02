@@ -111,7 +111,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         
         headerView.webLoadComplete = { [weak self] in
-//            self?.endLoading()
+            self?.endLoading()
             self?.headerView.isHidden = false
             self?.tableView.reloadData()
             self?.setupRefresh()
@@ -531,7 +531,7 @@ extension TopicDetailViewController {
             self.dataSources = comments
             self.tableView.endHeaderRefresh()
             self.maxPage = maxPage
-            self.endLoading()
+//            self.endLoading()
             }, failure: { [weak self] error in
                 self?.errorMessage = error
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))

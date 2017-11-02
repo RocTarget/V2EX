@@ -5,6 +5,7 @@ class MessageCell: BaseTableViewCell {
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
+        view.setCornerRadius = 5
         return view
     }()
 
@@ -85,7 +86,7 @@ class MessageCell: BaseTableViewCell {
             guard let `message` = message else { return }
             guard let member = message.member else { return }
 
-            avatarView.setCornerRadiusImage(urlString: member.avatarSrc)
+            avatarView.setImage(urlString: member.avatarSrc, placeholder: #imageLiteral(resourceName: "avatarRect"))
             contentLabel.text = message.content
             timeLabel.text = message.time
             replyLabel.text = message.replyTypeStr
