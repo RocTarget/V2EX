@@ -41,7 +41,7 @@ class BaseTopicsViewController: DataViewController, TopicService {
         registerForPreviewing(with: self, sourceView: tableView)
 
         tableView.addHeaderRefresh { [weak self] in
-            self?.fetchTopic()
+            self?.loadData()
         }
     }
 

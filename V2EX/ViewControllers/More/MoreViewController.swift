@@ -175,9 +175,10 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .myReply:
             guard let username = AccountModel.current?.username else { return }
             viewController = MyReplyViewController(username: username)
-        case .myFavorites, .follow:
-            let href = type == .myFavorites ? API.myFavorites.path : API.following.path
-            viewController = BaseTopicsViewController(href: href)
+        case .follow:
+            viewController = BaseTopicsViewController(href: API.following.path)
+        case .myFavorites:
+            viewController = TopicFavoriteViewController()
         case .nightMode:
             ThemeStyle.update(style: ThemeStyle.style.value == .night ? .day : .night)
             let cell = tableView.cellForRow(at: indexPath) as? BaseTableViewCell

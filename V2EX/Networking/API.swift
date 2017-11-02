@@ -55,7 +55,7 @@ enum API {
     case following
     
     // 我收藏的收藏
-    case myFavorites
+    case myFavorites(page: Int)
 
     // 关于
     case about
@@ -150,8 +150,8 @@ extension API: TargetType {
             return .get("/my/nodes")
         case .following:
             return .get("/my/following")
-        case .myFavorites:
-            return .get("/my/topics")
+        case .myFavorites(let page):
+            return .get("/my/topics?p=\(page)")
         case .about:
             return .get("/about")
         case .comment(let topicID, _):

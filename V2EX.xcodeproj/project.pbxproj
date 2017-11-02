@@ -46,6 +46,7 @@
 		77C8DF721F930B0E009DE52C /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF711F930B0E009DE52C /* LoginForm.swift */; };
 		77C8DF741F9316F1009DE52C /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C8DF731F9316F0009DE52C /* UITextField+Extension.swift */; };
 		77D0DDF31F9F677500DDC366 /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0DDF21F9F677500DDC366 /* MemberCell.swift */; };
+		77FD14F41FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77FD14F31FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift */; };
 		80BDADB66F39CEA2AACC3733 /* Pods_V2EXUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B6818F911EA9C433951F18 /* Pods_V2EXUITests.framework */; };
 		BF02A2C21F8F3E3800BEF85E /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2C11F8F3E3800BEF85E /* AppSetup.swift */; };
 		BF02A2CE1F8F3FE400BEF85E /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CD1F8F3FE400BEF85E /* AppTheme.swift */; };
@@ -191,6 +192,7 @@
 		77C8DF711F930B0E009DE52C /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		77C8DF731F9316F0009DE52C /* UITextField+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+Extension.swift"; sourceTree = "<group>"; };
 		77D0DDF21F9F677500DDC366 /* MemberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCell.swift; sourceTree = "<group>"; };
+		77FD14F31FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicFavoriteViewController.swift; sourceTree = "<group>"; };
 		79E9C346121D264309381B21 /* Pods-V2EXTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXTests/Pods-V2EXTests.release.xcconfig"; sourceTree = "<group>"; };
 		A06D4C2BE8DE9A7F928C74E5 /* Pods-V2EXTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXTests/Pods-V2EXTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A3FD0254BCE3292D3FCA0608 /* Pods-V2EXUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EXUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EXUITests/Pods-V2EXUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 				BF5A6B861F99D3D800CF6BA1 /* MyTopicsViewController.swift */,
 				BF5A6B881F99DBB600CF6BA1 /* MyReplyViewController.swift */,
 				BF4D779D1F9D896500FAEB7C /* MarkdownPreviewViewController.swift */,
+				77FD14F31FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -1099,6 +1102,7 @@
 				BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */,
 				BFCB674F1F8F4A4000D05A90 /* String+Extension.swift in Sources */,
 				BFBCE5AF1F90C14B000106D6 /* Observable+Operators.swift in Sources */,
+				77FD14F41FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift in Sources */,
 				BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */,
 				BF45FCCF1F906E74006B2C2F /* CommentModel.swift in Sources */,
 				779B17021F8FA8A900E912E7 /* TopicCell.swift in Sources */,
