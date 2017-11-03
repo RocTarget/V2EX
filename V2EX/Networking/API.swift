@@ -67,8 +67,8 @@ enum API {
     case deleteNotification(notifacationID: String, once: String)
     
     case memberHome(username: String)
-    case memberTopics(username: String)
-    case memberReplys(username: String)
+    case memberTopics(username: String, page: Int)
+    case memberReplys(username: String, page: Int)
     
     // 源码地址
     case codeRepo
@@ -162,10 +162,10 @@ extension API: TargetType {
             return .post("/delete/notification/\(notifacationID)?once=\(once)")
         case .memberHome(let username):
             return .get("/member/\(username)")
-        case .memberTopics(let username):
-            return .get("/member/\(username)/topics")
-        case .memberReplys(let username):
-            return .get("/member/\(username)/replies")
+        case .memberTopics(let username, let page):
+            return .get("/member/\(username)/topics?p=\(page)")
+        case .memberReplys(let username, let page):
+            return .get("/member/\(username)/replies?p=\(page)")
         case .createTopic(let nodename, _):
             return .post("/new/\(nodename)")
         case let .favoriteTopic(topicID, token):

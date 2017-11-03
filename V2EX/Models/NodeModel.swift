@@ -7,19 +7,29 @@ public struct NodeCategoryModel: Codable {
     var nodes: [NodeModel]
 
     static func save(_ groups: [NodeCategoryModel]) {
-        if let enc = try? JSONEncoder().encode(groups) {
-            FileManager.save(enc, savePath: Constants.Keys.nodeGroupCache)
+        do {
+            let enc = try JSONEncoder().encode(groups)
+            let error = FileManager.save(enc, savePath: Constants.Keys.nodeGroupCache)
+            if let `error` = error {
+                HUD.showTest(error)
+                log.error(error)
+            }
+        } catch {
+            HUD.showTest(error)
+            log.error(error)
         }
     }
 
     static func get() -> [NodeCategoryModel]? {
-        if FileManager.default.fileExists(atPath: Constants.Keys.nodeGroupCache),
-            let data = try? Data(contentsOf: URL(fileURLWithPath: Constants.Keys.nodeGroupCache)),
-            let model = try? JSONDecoder().decode([NodeCategoryModel].self, from: data),
-            model.count.boolValue {
-            return model
+        guard FileManager.default.fileExists(atPath: Constants.Keys.nodeGroupCache) else { return nil }
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: Constants.Keys.nodeGroupCache))
+            return try JSONDecoder().decode([NodeCategoryModel].self, from: data)
+        } catch {
+            HUD.showTest(error)
+            log.error(error)
+            return nil
         }
-        return nil
     }
 }
 
@@ -79,6 +89,7 @@ public struct NodeModel: Codable {
         self.title = title
         self.href = href
         self.isCurrent = isCurrent
+        self.name = href.lastPathComponent
     }
 
     init(title: String, href: String, isCurrent: Bool = false, icon: String?, comments: String?) {
@@ -87,14 +98,15 @@ public struct NodeModel: Codable {
         self.isCurrent = isCurrent
         self.icon = icon
         self.comments = comments
+        self.name = href.lastPathComponent
     }
 
-    
     init(title: String, href: String, intro: String?, topicNumber: Int) {
         self.title = title
         self.href = href
         self.intro = intro
         self.topicNumber = topicNumber
+        self.name = href.lastPathComponent
     }
     
     static func nodes(data: Data) -> [NodeModel]? {
@@ -104,6 +116,50 @@ public struct NodeModel: Codable {
             HUD.showTest(error.localizedDescription)
             log.error(error)
             return nil
+        }
+    }
+}
+
+// MARK: - Draft
+extension NodeModel {
+
+    /// 保存草稿
+    static func saveDraft(_ node: NodeModel) {
+        do {
+            let enc = try JSONEncoder().encode(node)
+            let error = FileManager.save(enc, savePath: Constants.Keys.createTopicNodenameDraft)
+            if let `error` = error {
+                HUD.showTest(error)
+                log.error(error)
+            }
+        } catch {
+            HUD.showTest(error)
+            log.error(error)
+        }
+    }
+
+    /// 读取草稿
+    static func getDraft() -> NodeModel? {
+        guard FileManager.default.fileExists(atPath: Constants.Keys.createTopicNodenameDraft) else { return nil }
+
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: Constants.Keys.createTopicNodenameDraft))
+            return try JSONDecoder().decode(NodeModel.self, from: data)
+        } catch {
+            HUD.showTest(error)
+            log.error(error)
+            return nil
+        }
+    }
+
+    /// 删除草稿
+    static func deleteDraft() {
+        guard FileManager.default.fileExists(atPath: Constants.Keys.createTopicNodenameDraft) else { return }
+        
+        let error = FileManager.delete(at: Constants.Keys.createTopicNodenameDraft)
+        if let `error` = error {
+            HUD.showTest(error)
+            log.error(error)
         }
     }
 }

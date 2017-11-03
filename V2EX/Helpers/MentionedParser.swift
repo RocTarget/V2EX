@@ -20,7 +20,7 @@ class MentionedParser: NSObject, YYTextParser{
                 let binding = YYTextBinding()
                 binding.deleteConfirm = true
                 text.yy_setTextBinding(binding, range: bindlingRange)
-                text.yy_setColor(Theme.Color.linkColor, range: bindlingRange)
+                text.yy_setColor(ThemeStyle.style.value.linkColor, range: bindlingRange)
         }
         
         return false;

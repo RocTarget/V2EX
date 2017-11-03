@@ -29,7 +29,7 @@ struct Constants {
         // 创建主题的草稿
         static let createTopicTitleDraft = "createTopicTitleDraft"
         static let createTopicBodyDraft = "createTopicBodyDraft"
-        static let createTopicNodenameDraft = "createTopicNodenameDraft"
+        static let createTopicNodenameDraft = FileManager.caches.appendingPathComponent("createTopicNodenameDraft")
 
         // Once
         static let once = "once"

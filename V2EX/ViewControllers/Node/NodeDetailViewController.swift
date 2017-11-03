@@ -3,17 +3,13 @@ import UIKit
 class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountService {
 
     private lazy var favoriteTopicItem: UIBarButtonItem = {
-        return UIBarButtonItem(title: nil, style: .plain)
-    }()
-
-    private lazy var newTopicItem: UIBarButtonItem = {
-        return UIBarButtonItem(title: "新主题", style: .plain)
+        return UIBarButtonItem(image: #imageLiteral(resourceName: "favoriteNav"), style: .plain)
     }()
 
     public var node: NodeModel {
         didSet {
             title = node.title
-            favoriteTopicItem.title = (node.isFavorite ?? false) ? "已收藏" : "收藏"
+            favoriteTopicItem.image = (node.isFavorite ?? false) ? #imageLiteral(resourceName: "unfavoriteNav") : #imageLiteral(resourceName: "favoriteNav")
         }
     }
 
@@ -35,6 +31,12 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
 
         guard AccountModel.isLogin else { return }
 
+        let newTopicItem = UIBarButtonItem(image: #imageLiteral(resourceName: "edit"), style: .plain, action: { [weak self] in
+            let createTopicVC = CreateTopicViewController()
+            createTopicVC.node = self?.node
+            self?.navigationController?.pushViewController(createTopicVC, animated: true)
+        })
+
         navigationItem.rightBarButtonItems = [newTopicItem, favoriteTopicItem]
     }
 
@@ -43,14 +45,6 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
             .tap
             .subscribeNext { [weak self] in
                 self?.favoriteHandle()
-            }.disposed(by: rx.disposeBag)
-
-        newTopicItem.rx
-            .tap
-            .subscribeNext { [weak self] in
-                let createTopicVC = CreateTopicViewController()
-                createTopicVC.nodename = self?.node.name
-                self?.navigationController?.pushViewController(createTopicVC, animated: true)
             }.disposed(by: rx.disposeBag)
 
         ThemeStyle.style.asObservable()
@@ -118,7 +112,7 @@ extension NodeDetailViewController {
             guard let `self` = self else { return }
             self.node.isFavorite = !self.node.isFavorite!
             HUD.showText("已成功\(self.node.isFavorite! ? "收藏" : "取消收藏") \(self.node.title)")
-            self.favoriteTopicItem.title = self.node.isFavorite! ? "已收藏" : "收藏"
+            self.favoriteTopicItem.image = self.node.isFavorite! ? #imageLiteral(resourceName: "unfavoriteNav") : #imageLiteral(resourceName: "favoriteNav")
         }) { error in
             HUD.showText(error)
         }

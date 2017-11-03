@@ -223,7 +223,7 @@ extension HTMLParseService {
                     let linkAttrString = NSMutableAttributedString(string: content,
                                                                    attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
                     linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),
-                                                       color: Theme.Color.linkColor,
+                                                       color: ThemeStyle.style.value.linkColor, // Theme.Color.linkColor,
                                                        backgroundColor: .clear,
                                                        userInfo: ["url": urlString],
                                                        tapAction: { _, attrString, range, _ in

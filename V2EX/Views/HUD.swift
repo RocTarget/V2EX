@@ -56,7 +56,7 @@ final class HUD {
     /// 测试使用
     class func showTest(_ text: String) {
         #if DEBUG
-            Toast(text: "[Debug]: \(text)", delay: 0, duration: 3).show()
+            Toast(text: "[Debug]: \(text ?? "")", delay: 0, duration: 3).show()
         #endif
     }
 

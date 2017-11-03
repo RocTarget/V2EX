@@ -107,7 +107,12 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
-    public var nodename: String?
+    public var node: NodeModel? {
+        didSet {
+            guard let `node` = node else { return }
+            selectNodeBtn.setTitle("  " + node.title, for: .normal)
+        }
+    }
 
     private var selectNodeBtnBottomConstranit: Constraint?
 
@@ -128,8 +133,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
 //            bodyTextView.rx.value.onNext(body)
         }
 
-        if let nodename = UserDefaults.get(forKey: Constants.Keys.createTopicNodenameDraft) as? String {
-            selectNodeBtn.setTitle("  " + nodename, for: .normal)
+        if self.node == nil, let `node` = NodeModel.getDraft() {
+            self.node = node
         }
 
         markdownToolbar.didSelectedItemHandle = { [weak self] type in
@@ -143,14 +148,16 @@ class CreateTopicViewController: BaseViewController, TopicService {
         view.endEditing(true)
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
+    deinit {
         UserDefaults.save(at: titleFieldView.text, forKey: Constants.Keys.createTopicTitleDraft)
         UserDefaults.save(at: bodyTextView.text, forKey: Constants.Keys.createTopicBodyDraft)
-        if let `nodename` = nodename {
-            UserDefaults.save(at: nodename, forKey: Constants.Keys.createTopicNodenameDraft)
+
+        if titleFieldView.text.isNotNilNotEmpty || bodyTextView.text.isNotEmpty,
+            let `node` = node {
+            NodeModel.saveDraft(node)
         }
+
+        log.verbose("DEINIT: \(className)")
     }
 
     override func setupSubviews() {
@@ -162,11 +169,6 @@ class CreateTopicViewController: BaseViewController, TopicService {
             selectNodeBtn
         )
         navigationItem.rightBarButtonItems = [postTopicBarButton, previewBarButton]
-
-        if let `nodename` = self.nodename {
-            selectNodeBtn.setTitle(nodename, for: .normal)
-            return
-        }
     }
 
     override func setupConstraints() {
@@ -290,18 +292,20 @@ class CreateTopicViewController: BaseViewController, TopicService {
             return
         }
 
-        guard let selectedNodename = nodename else {
+        guard let selectedNodename = node?.name else {
             selectNodeHandle()
             return
         }
-        
+
         createTopic(nodename: selectedNodename, title: title, body: bodyTextView.text, success: { [weak self] in
             HUD.showText("发布成功")
             self?.titleFieldView.text = nil
             self?.bodyTextView.text = nil
+            self?.node = nil
             UserDefaults.remove(forKey: Constants.Keys.createTopicTitleDraft)
             UserDefaults.remove(forKey: Constants.Keys.createTopicBodyDraft)
-            UserDefaults.remove(forKey: Constants.Keys.createTopicNodenameDraft)
+            NodeModel.deleteDraft()
+            self?.navigationController?.popViewController(animated: true)
         }) { error in
             HUD.showText(error)
         }
@@ -361,7 +365,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
         allNodeVC.didSelectedNodeHandle = { [weak self] node in
             self?.selectNodeBtn.setTitle("  " + node.title, for: .normal)
-            self?.nodename = node.name
+            self?.node = node
             self?.bodyTextView.becomeFirstResponder()
         }
     }

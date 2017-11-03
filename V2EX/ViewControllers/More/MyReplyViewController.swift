@@ -19,9 +19,21 @@ class MyReplyViewController: DataViewController, MemberService {
     
     public var username: String
 
+    private var page = 1, maxPage = 1
+
     private var replys: [MessageModel] = [] {
         didSet {
             tableView.reloadData()
+        }
+    }
+
+    override func setupSubviews() {
+        setupRefresh()
+    }
+
+    private func setupRefresh() {
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreReplys()
         }
     }
 
@@ -52,7 +64,6 @@ class MyReplyViewController: DataViewController, MemberService {
     // MARK: State Handle
 
     override func loadData() {
-
         fetchReplys()
     }
 
@@ -68,10 +79,12 @@ class MyReplyViewController: DataViewController, MemberService {
         fetchReplys()
     }
 
-    func fetchReplys() {
+    private func fetchReplys() {
+        page = 1
         startLoading()
-        memberReplys(username: username, success: { [weak self] replys in
+        memberReplys(username: username, page: page, success: { [weak self] replys, maxPage in
             self?.replys = replys
+            self?.maxPage = maxPage
             self?.endLoading()
         }) { [weak self] error in
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
@@ -79,6 +92,23 @@ class MyReplyViewController: DataViewController, MemberService {
         }
     }
 
+    private func fetchMoreReplys() {
+        if self.page >= maxPage {
+            tableView.endRefresh(showNoMore: true)
+            return
+        }
+        page += 1
+
+        memberReplys(username: username, page: page, success: { [weak self] replys, maxPage in
+            guard let `self` = self else { return }
+            self.replys.append(contentsOf: replys)
+            self.tableView.reloadData()
+            self.tableView.endRefresh(showNoMore: maxPage < self.page)
+        }) { [weak self] error in
+            self?.tableView.endFooterRefresh()
+            self?.page -= 1
+        }
+    }
 }
 
 extension MyReplyViewController: UITableViewDelegate, UITableViewDataSource {

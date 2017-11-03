@@ -3,14 +3,15 @@ import UIKit
 class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
 
 
-    override func setupSubviews() {
-        super.setupSubviews()
-        
+    override func setupRefresh() {
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchFavoriteTopic()
+        }
         tableView.addFooterRefresh { [weak self] in
             self?.fetchMoreFavoriteTopic()
         }
     }
-    
+
     override func loadData() {
         fetchFavoriteTopic()
     }
@@ -49,6 +50,7 @@ class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
             self.tableView.endRefresh(showNoMore: maxPage < self.page)
         }) { [weak self] error in
             self?.tableView.endFooterRefresh()
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self?.page -= 1
         }
     }

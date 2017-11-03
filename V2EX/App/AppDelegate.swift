@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  V2EX
-//
-//  Created by danxiao on 2017/10/11.
-//  Copyright © 2017年 Joe. All rights reserved.
-//
-
 import UIKit
 
 @UIApplicationMain

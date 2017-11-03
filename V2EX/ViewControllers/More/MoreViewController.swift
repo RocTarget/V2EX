@@ -40,7 +40,7 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
     private var sections: [[MoreItem]] = [
         [MoreItem(icon: #imageLiteral(resourceName: "avatar"), title: "请先登录", type: .user)],
         [
-            MoreItem(icon: #imageLiteral(resourceName: "createTopic"), title: "创作新主题", type: .createTopic),
+//            MoreItem(icon: #imageLiteral(resourceName: "createTopic"), title: "创作新主题", type: .createTopic),
             MoreItem(icon: #imageLiteral(resourceName: "nodeCollect"), title: "节点收藏", type: .nodeCollect),
             MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .myFavorites),
 //            MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
@@ -61,16 +61,23 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         ]
     ]
 
-    override func setupConstraints() {
-        tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
-
     override func setupSubviews() {
 //        if #available(iOS 11.0, *) {
 //            navigationController?.navigationBar.prefersLargeTitles = true
 //        }
+
+        guard AccountModel.isLogin else { return }
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "edit"), style: .plain, action: { [weak self] in
+            let viewController = CreateTopicViewController()
+            self?.navigationController?.pushViewController(viewController, animated: true)
+        })
+    }
+
+    override func setupConstraints() {
+        tableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
 
     override func setupRx() {

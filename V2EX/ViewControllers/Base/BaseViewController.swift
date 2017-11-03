@@ -18,7 +18,7 @@ class BaseViewController: UIViewController {
     
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        var style = UIStatusBarStyle.default
+        var style = ThemeStyle.style.value.statusBarStyle
         ThemeStyle.style
             .asObservable()
             .subscribeNext { theme in

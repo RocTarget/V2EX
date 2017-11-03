@@ -98,11 +98,11 @@ class MessageCell: BaseTableViewCell {
                     self?.replyLabel.makeSubstringColor(member.username, color: theme.titleColor)
                     self?.replyLabel.makeSubstringColor(message.topic.title, color: theme.linkColor)
                     self?.contentLabel.textColor = theme.titleColor
+                    if let username = AccountModel.current?.username {
+                        self?.contentLabel.makeSubstringColor("@" + username, color: theme.linkColor)
+                    }
                 }.disposed(by: rx.disposeBag)
 
-            if let username = AccountModel.current?.username {
-                contentLabel.makeSubstringColor("@" + username, color: Theme.Color.linkColor)
-            }
         }
     }
 }

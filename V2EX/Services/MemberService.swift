@@ -9,7 +9,8 @@ protocol MemberService: HTMLParseService {
     ///   - failure: 失败
     func memberTopics(
         username: String,
-        success: ((_ topics: [TopicModel]) -> Void)?,
+        page: Int,
+        success: ((_ topics: [TopicModel], _ maxPage: Int) -> Void)?,
         failure: Failure?)
     
     /// 获取会员的回复列表
@@ -20,7 +21,8 @@ protocol MemberService: HTMLParseService {
     ///   - failure: 失败
     func memberReplys(
         username: String,
-        success: ((_ messages: [MessageModel]) -> Void)?,
+        page: Int,
+        success: ((_ messages: [MessageModel], _ maxPage: Int) -> Void)?,
         failure: Failure?)
     
     func memberHome(
@@ -38,24 +40,28 @@ extension MemberService {
     
     func memberTopics(
         username: String,
-        success: ((_ topics: [TopicModel]) -> Void)?,
+        page: Int,
+        success: ((_ topics: [TopicModel], _ maxPage: Int) -> Void)?,
         failure: Failure?) {
-        Network.htmlRequest(target: .memberTopics(username: username), success: { html in
+        Network.htmlRequest(target: .memberTopics(username: username, page: page), success: { html in
             if let content = html.content, content.contains("主题列表被隐藏") {
                 failure?("该用户隐藏了 主题列表")
                 return
             }
             let topics = self.parseMemberTopics(html: html)
-            success?(topics)
+            let maxPage = self.parsePage(html: html).max
+            success?(topics, maxPage)
         }, failure: failure)
     }
     
     func memberReplys(
         username: String,
-        success: ((_ messages: [MessageModel]) -> Void)?,
+        page: Int,
+        success: ((_ messages: [MessageModel], _ maxPage: Int) -> Void)?,
         failure: Failure?) {
-        Network.htmlRequest(target: .memberReplys(username: username), success: { html in
-            success?(self.parseMemberReplys(html: html))
+        Network.htmlRequest(target: .memberReplys(username: username, page: page), success: { html in
+            let maxPage = self.parsePage(html: html).max
+            success?(self.parseMemberReplys(html: html), maxPage)
         }, failure: failure)
     }
     

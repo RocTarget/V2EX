@@ -36,9 +36,9 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="创意工作者们的社区" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ssB-zv-0UE">
-                                <rect key="frame" x="105" y="533" width="165.5" height="21.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="114.5" y="567.5" width="147" height="19.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="0.5" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -47,10 +47,10 @@
                             <constraint firstItem="hAj-gl-dVT" firstAttribute="trailing" secondItem="fiN-V3-L3b" secondAttribute="trailing" id="0jG-DG-nDr"/>
                             <constraint firstItem="ssB-zv-0UE" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="8zT-0p-4Cd"/>
                             <constraint firstItem="fiN-V3-L3b" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="BxM-8E-XW3"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ssB-zv-0UE" secondAttribute="bottom" constant="80" id="XI2-Cy-6IK"/>
                             <constraint firstItem="hAj-gl-dVT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="20" symbolic="YES" id="nOP-Qx-3tL"/>
                             <constraint firstItem="hAj-gl-dVT" firstAttribute="top" secondItem="fiN-V3-L3b" secondAttribute="bottom" id="vcH-KR-FdH"/>
                             <constraint firstItem="fiN-V3-L3b" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="vyw-4t-6tg"/>
-                            <constraint firstItem="ssB-zv-0UE" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" constant="200" id="wCZ-W0-ji0"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

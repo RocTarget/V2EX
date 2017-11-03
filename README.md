@@ -74,7 +74,7 @@ git clone https://github.com/Joe0708/V2EX.git
 
 ### 首页
 1. [x] 站内搜索(感谢 [SOV2EX](https://github.com/bynil/sov2ex/blob/master/API.md) 提供 API)
-2. [ ]Tab 可配置
+2. [ ] Tab 可配置
 
 ### 主题
 1. [x] 主题回复

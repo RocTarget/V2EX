@@ -26,6 +26,10 @@ class MemberListViewController: UITableViewController {
     deinit {
         log.verbose("DEINIT MemberListViewController")
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ThemeStyle.style.value.statusBarStyle
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -197,11 +197,6 @@ extension TopicService {
                         dailyHref == "/mission/daily" {
                         rewardable = true
                     }
-//                    /// 领取今日的登录奖励
-//                    if let dailyNode = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[1]/div[@class='inner']/a[@href='/mission/daily']").first,
-//                        dailyNode.content == "领取今日的登录奖励" {
-//
-//                    }
 
                     if let avatarNode = html.xpath("//*[@id='Top']/div/div/table/tr/td[3]/a[1]/img[1]").first,
                         let avatarPath = avatarNode["src"]?.replacingOccurrences(of: "s=24", with: "s=55"), // 修改图片尺寸

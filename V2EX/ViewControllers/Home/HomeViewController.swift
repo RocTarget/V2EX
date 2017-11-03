@@ -36,12 +36,12 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         searchController.searchBar.layer.borderWidth = 0.5
         searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
         // TextField 边框颜色
-//        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
-//            searchField.layer.borderWidth = 0.5
-//            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
-//            searchField.layer.cornerRadius = 5.0
-//            searchField.layer.masksToBounds = true
-//        }
+        //        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
+        //            searchField.layer.borderWidth = 0.5
+        //            searchField.layer.borderColor = Theme.Color.borderColor.cgColor
+        //            searchField.layer.cornerRadius = 5.0
+        //            searchField.layer.masksToBounds = true
+        //        }
         return searchController
     }()
 
@@ -52,10 +52,6 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         setupSearchBar()
         
         definesPresentationContext = true
-
-        tableView.addFooterRefresh { [weak self] in
-            self?.fetchMoreTopic()
-        }
 
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.TwoStepVerificationName)
@@ -77,6 +73,15 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         
         navigationItem.titleView = tabView
     }
+
+    override func setupRefresh() {
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchIndexData()
+        }
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreTopic()
+        }
+    }
     
     func tabChangebHandle() {
         tabView.valueChange = { [weak self] index in
@@ -90,13 +95,13 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     
     private func setupSearchBar() {
 
-//        if #available(iOS 11.0, *) {
-//            navigationItem.hidesSearchBarWhenScrolling = true
-//            navigationItem.searchController = searchController
-//        } else {
-            tableView.tableHeaderView = searchController.searchBar
-            tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
-//        }
+        //        if #available(iOS 11.0, *) {
+        //            navigationItem.hidesSearchBarWhenScrolling = true
+        //            navigationItem.searchController = searchController
+        //        } else {
+        tableView.tableHeaderView = searchController.searchBar
+        tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
+        //        }
     }
 
     override func setupRx() {
@@ -137,17 +142,19 @@ class HomeViewController: BaseTopicsViewController, AccountService {
 
             if rewardable { self.dailyRewardMission() }
 
-            self.nodes = nodes
+            if !self.topics.count.boolValue {
+                // 避免调用两次请求
+                self.nodes = nodes
+                self.tabChangebHandle()
+            }
+
             self.topics = topics
             self.endLoading()
-
-            // 避免调用两次请求
-            self.tabChangebHandle()
-            
+            self.tableView.endHeaderRefresh()
             }, failure: { [weak self] error in
-                HUD.dismiss()
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
                 self?.errorMessage = error
+                self?.tableView.endHeaderRefresh()
         })
     }
 
@@ -178,6 +185,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         dailyReward(success: { days in
             HUD.showText(days)
         }) { error in
+            // Optimize: 提示用户可以下拉刷新重新领取
             HUD.showTest(error)
             log.error(error)
         }

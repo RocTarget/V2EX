@@ -40,8 +40,12 @@ class BaseTopicsViewController: DataViewController, TopicService {
     override func setupSubviews() {
         registerForPreviewing(with: self, sourceView: tableView)
 
+        setupRefresh()
+    }
+
+    func setupRefresh() {
         tableView.addHeaderRefresh { [weak self] in
-            self?.loadData()
+            self?.fetchTopic()
         }
     }
 
