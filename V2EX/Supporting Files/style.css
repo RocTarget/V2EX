@@ -41,6 +41,7 @@ pre {
     overflow-x: auto;
     overflow-y: auto;
     background-color: #f8f8f8;
+    padding: 5px;
 /*    padding: 5px;*/
 }
 
@@ -98,7 +99,7 @@ ol {
 }
 
 .subtle {
-    background-color: #ffffff;
+    background-color: #fff;
     padding: 5px 5px 0px 5px;
     font-size: 12px;
     line-height: 120%;
@@ -119,13 +120,15 @@ ol {
 
 body {
     padding: 0px 15px 0px 15px;
-    margin: 0px;
+    margin: 0px 0px 5px;
     background-color: #ffffff;
 }
 
 img {
     max-width: 100%;
+    padding: 3px 0px;
 }
 .imgly {
     max-width: 100%;
+    padding: 3px 0px;
 }

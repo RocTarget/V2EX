@@ -165,6 +165,9 @@ extension NodeTabView {
             titleLabels.append(backLabel)
             scrollView.addSubview(backLabel)
             selectContent.addSubview(frontLabel)
+            
+            backLabel.autoresizingMask = .flexibleHeight
+            frontLabel.autoresizingMask = .flexibleHeight
 
             if index == nodes.count - 1 {
                 scrollView.contentSize.width = rect.maxX + style.titleMargin

@@ -281,6 +281,11 @@ extension TopicService {
                     failure?("访问被限制节点的内容之前，你的账号需要完成以下验证：\n\(error)")
                     return
                 }
+                // 被重定向到首页, 无法查看, 先这样处理
+                if html.title == "V2EX" {
+                    failure?("无法查看该主题，被重定向到首页")
+                    return
+                }
                 failure?("数据解析失败")
                 return
             }

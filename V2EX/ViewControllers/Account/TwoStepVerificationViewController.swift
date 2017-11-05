@@ -47,6 +47,12 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         return view
     }()
 
+    private lazy var blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        return blurView
+    }()
+    
     private var forgotForm: LoginForm?
 
     override func viewWillAppear(_ animated: Bool) {
@@ -61,12 +67,6 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "close"), style: .plain) { [weak self] in
             self?.dismiss()
         }
-        
-        view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
-
-        let blurEffect = UIBlurEffect(style: .light)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame.size = CGSize(width: view.frame.width, height: view.frame.height)
 
         view.addSubviews(
             blurView,
@@ -77,7 +77,19 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         )
     }
 
+    override func setupTheme() {
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.view.backgroundColor = theme == .day ? UIColor(patternImage: #imageLiteral(resourceName: "bj")) : theme.bgColor
+            }.disposed(by: rx.disposeBag)
+    }
+    
     override func setupConstraints() {
+        
+        blurView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         titleLabel.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(20)
             $0.top.equalToSuperview().offset(view.height * 0.2)
@@ -152,7 +164,6 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
             NotificationCenter.default.post(.init(name: Notification.Name.V2.LoginSuccessName))
             self?.dismiss()
             HUD.dismiss()
-            HUD.showText("登录成功")
         }) { error in
             HUD.dismiss()
             HUD.showText(error)

@@ -142,7 +142,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
 
             if rewardable { self.dailyRewardMission() }
 
-            if !self.topics.count.boolValue {
+            if !self.nodes.count.boolValue {
                 // 避免调用两次请求
                 self.nodes = nodes
                 self.tabChangebHandle()
@@ -206,5 +206,9 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             startLoading()
             fetchTopic()
         }
+    }
+    
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchIndexData()
     }
 }

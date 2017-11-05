@@ -320,7 +320,6 @@ class LoginViewController: BaseViewController, AccountService {
         form.captcha = captcha
         signin(loginForm: form, success: { [weak self] in
             HUD.dismiss()
-            HUD.showText("登录成功")
             AccountModel(username: username, url: API.memberHome(username: username).path, avatar: "").save()
             NotificationCenter.default.post(.init(name: Notification.Name.V2.LoginSuccessName))
             self?.dismiss()
