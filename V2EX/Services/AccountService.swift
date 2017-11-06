@@ -312,27 +312,20 @@ extension AccountService {
     func dailyReward(
         success: ((String) -> Void)?,
         failure: Failure?) {
-        guard let once = AccountModel.getOnce() else {
-            failure?("无法获取 once")
-            return
-        }
-        // TODO: 需优化, 获取实时 once 再去请求
-        Network.htmlRequest(target: .loginReward(once: once), success: { html in
+
+        // 第一次请求获取 token
+        Network.htmlRequest(target: .loginReward(once: ""), success: { html in
             
-            let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
-            
+            //            let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
+
             // 已经领取, 显示已连续登录多少天
             if (html.content ?? "").contains("奖励已领取"),
                 let days = html.xpath("//*[@id='Wrapper']/div/div/div[last()]").first?.content {
                 success?("每日登录奖励已领取\n\(days)")
                 return
             }
-            
-            // 有时会提示重新点击导致领取失败， 未知原因
-            // 如果包含， 代表没有领取成功， 再领一次
-            // if (messagePath?.content ?? "").contains("请重新点击一次以领取每日登录奖励"),
-            if (messagePath?.content ?? "").contains("请重新点击一次"),
-                let comps = html.xpath("//*[@id='Wrapper']/div/div/div/input").first?["onclick"]?.components(separatedBy: "\'"),
+
+            if let comps = html.xpath("//*[@id='Wrapper']/div/div/div/input").first?["onclick"]?.components(separatedBy: "\'"),
                 comps.count >= 2 {
                 let href = comps[1]
                 

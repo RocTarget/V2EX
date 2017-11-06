@@ -85,6 +85,7 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
                 self?.updateUserInfo()
+                self?.setupSubviews()
         }.disposed(by: rx.disposeBag)
 
 //        212221

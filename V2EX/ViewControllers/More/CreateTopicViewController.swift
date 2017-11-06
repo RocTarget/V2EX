@@ -297,7 +297,9 @@ class CreateTopicViewController: BaseViewController, TopicService {
             return
         }
 
+        HUD.show()
         createTopic(nodename: selectedNodename, title: title, body: bodyTextView.text, success: { [weak self] in
+            HUD.dismiss()
             HUD.showText("发布成功")
             self?.titleFieldView.text = nil
             self?.bodyTextView.text = nil
@@ -307,6 +309,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
             NodeModel.deleteDraft()
             self?.navigationController?.popViewController(animated: true)
         }) { error in
+            HUD.dismiss()
             HUD.showText(error)
         }
     }
