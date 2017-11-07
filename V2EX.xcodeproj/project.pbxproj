@@ -93,8 +93,6 @@
 		BF8062B91FB14CB00024BB37 /* Scheduler+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B11FB14CAF0024BB37 /* Scheduler+Rx.swift */; };
 		BF8062BA1FB14CB00024BB37 /* Swift+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */; };
 		BF8062BB1FB14CB00024BB37 /* UIBarButtonItem+ClosureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */; };
-		BF8062BC1FB14CB00024BB37 /* UIBindingObserver+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B41FB14CAF0024BB37 /* UIBindingObserver+Extension.swift */; };
-		BF8062BD1FB14CB00024BB37 /* UIScrollView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B51FB14CAF0024BB37 /* UIScrollView+Rx.swift */; };
 		BF8062BE1FB14CB00024BB37 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */; };
 		BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */; };
 		BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */; };
@@ -250,8 +248,6 @@
 		BF8062B11FB14CAF0024BB37 /* Scheduler+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Scheduler+Rx.swift"; sourceTree = "<group>"; };
 		BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Swift+Extension.swift"; sourceTree = "<group>"; };
 		BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+ClosureAction.swift"; sourceTree = "<group>"; };
-		BF8062B41FB14CAF0024BB37 /* UIBindingObserver+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBindingObserver+Extension.swift"; sourceTree = "<group>"; };
-		BF8062B51FB14CAF0024BB37 /* UIScrollView+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Rx.swift"; sourceTree = "<group>"; };
 		BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
 		BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectCell.swift; sourceTree = "<group>"; };
 		BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SweetWebViewController.swift; sourceTree = "<group>"; };
@@ -602,8 +598,6 @@
 				BF8062B11FB14CAF0024BB37 /* Scheduler+Rx.swift */,
 				BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */,
 				BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */,
-				BF8062B41FB14CAF0024BB37 /* UIBindingObserver+Extension.swift */,
-				BF8062B51FB14CAF0024BB37 /* UIScrollView+Rx.swift */,
 				BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */,
 			);
 			path = Rx;
@@ -1046,7 +1040,6 @@
 				778AC6B51F9AF07F0072C6E9 /* HighlightableContainer.swift in Sources */,
 				779064481F9B72C1001A5ABA /* UIViewChain.swift in Sources */,
 				BFC89B491FA0283800759577 /* TextParser.swift in Sources */,
-				BF8062BC1FB14CB00024BB37 /* UIBindingObserver+Extension.swift in Sources */,
 				773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */,
 				778AC6B91F9AF07F0072C6E9 /* String+Extensions.swift in Sources */,
 				BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */,
@@ -1080,7 +1073,6 @@
 				BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */,
 				BF45E00C1F9F0A400001BEB2 /* StateView.swift in Sources */,
 				77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */,
-				BF8062BD1FB14CB00024BB37 /* UIScrollView+Rx.swift in Sources */,
 				7756CCD01F924F7A00EF47B8 /* HTMLParseService.swift in Sources */,
 				776EFDD41F9BB9E70087AECC /* ShareSheetView.swift in Sources */,
 				BFCB674D1F8F4A2C00D05A90 /* Foundation+Extension.swift in Sources */,
