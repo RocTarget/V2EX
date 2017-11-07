@@ -187,7 +187,6 @@ class ReplyMessageViewController: BaseViewController, TopicService {
             return
         }
 
-        textView.text = nil
         HUD.show()
         comment(
             once: once,
@@ -197,6 +196,7 @@ class ReplyMessageViewController: BaseViewController, TopicService {
                 HUD.dismiss()
                 self?.view.endEditing(true)
                 self?.view.fadeOut()
+                self?.textView.text = nil
         }) { error in
             HUD.dismiss()
             HUD.showText(error)

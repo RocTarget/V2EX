@@ -17,10 +17,11 @@ enum API {
 
     case recentTopics(page: Int)
 
+    // 主题详情
     case topicDetail(topicID: String, page: Int)
-    
+
     case captcha(type: CaptchaType)
-    
+    // 获取验证码
     case captchaImageData(once: String)
 
     case once
@@ -59,15 +60,22 @@ enum API {
 
     // 关于
     case about
-    
+
+    // 发表主题回复
     case comment(topicID: String, dict: [String: String])
+    // 创建主题
     case createTopic(nodename: String, dict: [String: String])
-    
+
+    // 获取通知消息
     case notifications(page: Int)
+    // 删除通知
     case deleteNotification(notifacationID: String, once: String)
-    
+
+    // 会员首页
     case memberHome(username: String)
+    // 会员主题
     case memberTopics(username: String, page: Int)
+    // 会员回复
     case memberReplys(username: String, page: Int)
     
     // 源码地址

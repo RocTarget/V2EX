@@ -55,7 +55,6 @@
 		BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */; };
 		BF1B1D191FA6F2A500544A11 /* TwoStepVerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */; };
 		BF1B1D1B1FA7003400544A11 /* AllNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */; };
-		BF39FFE71F94421C00D6F8BD /* Binder+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF39FFE61F94421C00D6F8BD /* Binder+Extension.swift */; };
 		BF39FFE91F9442DA00D6F8BD /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */; };
 		BF3AB5C51F9756D500043269 /* CommentInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3AB5C41F9756D500043269 /* CommentInputView.swift */; };
 		BF3AB5C71F97672300043269 /* UIPlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3AB5C61F97672300043269 /* UIPlaceholderTextView.swift */; };
@@ -89,6 +88,14 @@
 		BF8043ED1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */; };
 		BF8043F11FA3007800AD3C49 /* VFooterRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043F01FA3007800AD3C49 /* VFooterRefresh.swift */; };
 		BF8043F31FA3369900AD3C49 /* ReplyMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043F21FA3369900AD3C49 /* ReplyMessageViewController.swift */; };
+		BF8062B71FB14CB00024BB37 /* Binder+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062AF1FB14CAF0024BB37 /* Binder+Extension.swift */; };
+		BF8062B81FB14CB00024BB37 /* Observable+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B01FB14CAF0024BB37 /* Observable+Operators.swift */; };
+		BF8062B91FB14CB00024BB37 /* Scheduler+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B11FB14CAF0024BB37 /* Scheduler+Rx.swift */; };
+		BF8062BA1FB14CB00024BB37 /* Swift+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */; };
+		BF8062BB1FB14CB00024BB37 /* UIBarButtonItem+ClosureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */; };
+		BF8062BC1FB14CB00024BB37 /* UIBindingObserver+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B41FB14CAF0024BB37 /* UIBindingObserver+Extension.swift */; };
+		BF8062BD1FB14CB00024BB37 /* UIScrollView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B51FB14CAF0024BB37 /* UIScrollView+Rx.swift */; };
+		BF8062BE1FB14CB00024BB37 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */; };
 		BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */; };
 		BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */; };
 		BF9EC8201F95C39A00E7AA02 /* MemberPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */; };
@@ -96,11 +103,6 @@
 		BF9EC8281F95D6EE00E7AA02 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC8251F95D6EE00E7AA02 /* EmptyView.swift */; };
 		BF9EC8291F95D6EE00E7AA02 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC8261F95D6EE00E7AA02 /* LoadingView.swift */; };
 		BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A21F90BB9E000106D6 /* HelperFunctions.swift */; };
-		BFBCE5AF1F90C14B000106D6 /* Observable+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A61F90C14B000106D6 /* Observable+Operators.swift */; };
-		BFBCE5B11F90C14B000106D6 /* Scheduler+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A81F90C14B000106D6 /* Scheduler+Rx.swift */; };
-		BFBCE5B21F90C14B000106D6 /* Swift+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5A91F90C14B000106D6 /* Swift+Extension.swift */; };
-		BFBCE5B31F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */; };
-		BFBCE5B61F90C14B000106D6 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */; };
 		BFBCE5B81F90C4FC000106D6 /* NodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCE5B71F90C4FC000106D6 /* NodesViewController.swift */; };
 		BFC89B491FA0283800759577 /* TextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC89B481FA0283800759577 /* TextParser.swift */; };
 		BFC89B4B1FA033CD00759577 /* FPSLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC89B4A1FA033CD00759577 /* FPSLabel.swift */; };
@@ -204,7 +206,6 @@
 		BF1B1D161FA6F25100544A11 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwoStepVerificationViewController.swift; sourceTree = "<group>"; };
 		BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNodesViewController.swift; sourceTree = "<group>"; };
-		BF39FFE61F94421C00D6F8BD /* Binder+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binder+Extension.swift"; sourceTree = "<group>"; };
 		BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingButton.swift; sourceTree = "<group>"; };
 		BF3AB5C41F9756D500043269 /* CommentInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputView.swift; sourceTree = "<group>"; };
 		BF3AB5C61F97672300043269 /* UIPlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPlaceholderTextView.swift; sourceTree = "<group>"; };
@@ -244,6 +245,14 @@
 		BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Refresh.swift"; sourceTree = "<group>"; };
 		BF8043F01FA3007800AD3C49 /* VFooterRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VFooterRefresh.swift; sourceTree = "<group>"; };
 		BF8043F21FA3369900AD3C49 /* ReplyMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyMessageViewController.swift; sourceTree = "<group>"; };
+		BF8062AF1FB14CAF0024BB37 /* Binder+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Binder+Extension.swift"; sourceTree = "<group>"; };
+		BF8062B01FB14CAF0024BB37 /* Observable+Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Operators.swift"; sourceTree = "<group>"; };
+		BF8062B11FB14CAF0024BB37 /* Scheduler+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Scheduler+Rx.swift"; sourceTree = "<group>"; };
+		BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Swift+Extension.swift"; sourceTree = "<group>"; };
+		BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+ClosureAction.swift"; sourceTree = "<group>"; };
+		BF8062B41FB14CAF0024BB37 /* UIBindingObserver+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBindingObserver+Extension.swift"; sourceTree = "<group>"; };
+		BF8062B51FB14CAF0024BB37 /* UIScrollView+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Rx.swift"; sourceTree = "<group>"; };
+		BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
 		BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectCell.swift; sourceTree = "<group>"; };
 		BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SweetWebViewController.swift; sourceTree = "<group>"; };
 		BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPageViewController.swift; sourceTree = "<group>"; };
@@ -251,11 +260,6 @@
 		BF9EC8251F95D6EE00E7AA02 /* EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BF9EC8261F95D6EE00E7AA02 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		BFBCE5A21F90BB9E000106D6 /* HelperFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperFunctions.swift; sourceTree = "<group>"; };
-		BFBCE5A61F90C14B000106D6 /* Observable+Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Operators.swift"; sourceTree = "<group>"; };
-		BFBCE5A81F90C14B000106D6 /* Scheduler+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Scheduler+Rx.swift"; sourceTree = "<group>"; };
-		BFBCE5A91F90C14B000106D6 /* Swift+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Swift+Extension.swift"; sourceTree = "<group>"; };
-		BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+ClosureAction.swift"; sourceTree = "<group>"; };
-		BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
 		BFBCE5B71F90C4FC000106D6 /* NodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodesViewController.swift; sourceTree = "<group>"; };
 		BFC89B481FA0283800759577 /* TextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextParser.swift; sourceTree = "<group>"; };
 		BFC89B4A1FA033CD00759577 /* FPSLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPSLabel.swift; sourceTree = "<group>"; };
@@ -448,7 +452,7 @@
 		BF02A2C61F8F3E6A00BEF85E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				BFBCE5A41F90C14B000106D6 /* Rx */,
+				BF8062AE1FB14CAF0024BB37 /* Rx */,
 				BFCB674B1F8F4A1D00D05A90 /* Foundation */,
 				BF02A2CF1F8F400B00BEF85E /* UIKit */,
 			);
@@ -590,6 +594,21 @@
 			path = Refresh;
 			sourceTree = "<group>";
 		};
+		BF8062AE1FB14CAF0024BB37 /* Rx */ = {
+			isa = PBXGroup;
+			children = (
+				BF8062AF1FB14CAF0024BB37 /* Binder+Extension.swift */,
+				BF8062B01FB14CAF0024BB37 /* Observable+Operators.swift */,
+				BF8062B11FB14CAF0024BB37 /* Scheduler+Rx.swift */,
+				BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */,
+				BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */,
+				BF8062B41FB14CAF0024BB37 /* UIBindingObserver+Extension.swift */,
+				BF8062B51FB14CAF0024BB37 /* UIScrollView+Rx.swift */,
+				BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */,
+			);
+			path = Rx;
+			sourceTree = "<group>";
+		};
 		BF9EC8231F95D6EE00E7AA02 /* PlaceholderViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -600,20 +619,6 @@
 				BF45E00B1F9F0A400001BEB2 /* StateView.swift */,
 			);
 			path = PlaceholderViews;
-			sourceTree = "<group>";
-		};
-		BFBCE5A41F90C14B000106D6 /* Rx */ = {
-			isa = PBXGroup;
-			children = (
-				BFBCE5A61F90C14B000106D6 /* Observable+Operators.swift */,
-				BFBCE5A81F90C14B000106D6 /* Scheduler+Rx.swift */,
-				BFBCE5A91F90C14B000106D6 /* Swift+Extension.swift */,
-				BFBCE5AA1F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift */,
-				BFBCE5AD1F90C14B000106D6 /* UIViewController+Rx.swift */,
-				BF39FFE61F94421C00D6F8BD /* Binder+Extension.swift */,
-			);
-			name = Rx;
-			path = ../../../Wear/Wear/Extensions/Rx;
 			sourceTree = "<group>";
 		};
 		BFBCE5BA1F90C506000106D6 /* Node */ = {
@@ -1041,21 +1046,22 @@
 				778AC6B51F9AF07F0072C6E9 /* HighlightableContainer.swift in Sources */,
 				779064481F9B72C1001A5ABA /* UIViewChain.swift in Sources */,
 				BFC89B491FA0283800759577 /* TextParser.swift in Sources */,
+				BF8062BC1FB14CB00024BB37 /* UIBindingObserver+Extension.swift in Sources */,
 				773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */,
 				778AC6B91F9AF07F0072C6E9 /* String+Extensions.swift in Sources */,
 				BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */,
 				BFFAFDE91F9F4428000EB91C /* MemberListViewController.swift in Sources */,
-				BFBCE5B21F90C14B000106D6 /* Swift+Extension.swift in Sources */,
+				BF8062BA1FB14CB00024BB37 /* Swift+Extension.swift in Sources */,
 				BF5A6B681F99834400CF6BA1 /* MessageViewController.swift in Sources */,
 				BFCB676A1F8F721700D05A90 /* TopicModel.swift in Sources */,
 				77507E6B1F9B176700D62286 /* NodeSearchResultViewController.swift in Sources */,
 				778AC6B41F9AF07F0072C6E9 /* Highlightable.swift in Sources */,
 				779B17081F8FB0AF00E912E7 /* UIImageView+Extension.swift in Sources */,
 				7756CCC81F92360F00EF47B8 /* NodeCell.swift in Sources */,
+				BF8062B91FB14CB00024BB37 /* Scheduler+Rx.swift in Sources */,
 				7756CCCA1F923D6100EF47B8 /* NodeHeaderView.swift in Sources */,
 				BF45FCCD1F906E0D006B2C2F /* TopicDetailViewController.swift in Sources */,
 				BFE8CB291FA051E2007E2F02 /* ViewDialogViewController.swift in Sources */,
-				BFBCE5B61F90C14B000106D6 /* UIViewController+Rx.swift in Sources */,
 				BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */,
 				BF3AB5C71F97672300043269 /* UIPlaceholderTextView.swift in Sources */,
 				7756CCCC1F92475F00EF47B8 /* NodeDetailViewController.swift in Sources */,
@@ -1068,13 +1074,13 @@
 				BF5A6B871F99D3D800CF6BA1 /* MyTopicsViewController.swift in Sources */,
 				BFCB675C1F8F51DD00D05A90 /* TargetType.swift in Sources */,
 				BF9EC8271F95D6EE00E7AA02 /* BasePlaceholderView.swift in Sources */,
-				BFBCE5B11F90C14B000106D6 /* Scheduler+Rx.swift in Sources */,
 				77C8DF721F930B0E009DE52C /* LoginForm.swift in Sources */,
 				77C8DF741F9316F1009DE52C /* UITextField+Extension.swift in Sources */,
 				779B17061F8FAF5A00E912E7 /* UILable+Extension.swift in Sources */,
 				BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */,
 				BF45E00C1F9F0A400001BEB2 /* StateView.swift in Sources */,
 				77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */,
+				BF8062BD1FB14CB00024BB37 /* UIScrollView+Rx.swift in Sources */,
 				7756CCD01F924F7A00EF47B8 /* HTMLParseService.swift in Sources */,
 				776EFDD41F9BB9E70087AECC /* ShareSheetView.swift in Sources */,
 				BFCB674D1F8F4A2C00D05A90 /* Foundation+Extension.swift in Sources */,
@@ -1089,6 +1095,7 @@
 				BFCB67511F8F4B2300D05A90 /* UIView+Extension.swift in Sources */,
 				BF5A6B6D1F99889400CF6BA1 /* MessageModel.swift in Sources */,
 				779B16FE1F8FA5DE00E912E7 /* AccountModel.swift in Sources */,
+				BF8062BB1FB14CB00024BB37 /* UIBarButtonItem+ClosureAction.swift in Sources */,
 				778AC6B61F9AF07F0072C6E9 /* Highlightables.swift in Sources */,
 				BFCB674A1F8F49EA00D05A90 /* Logger.swift in Sources */,
 				772A577B1F9786EB003FBE1A /* CreateTopicViewController.swift in Sources */,
@@ -1101,18 +1108,17 @@
 				7756CCC61F92354B00EF47B8 /* LeftAlignedCollectionViewFlowLayout.swift in Sources */,
 				BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */,
 				BFCB674F1F8F4A4000D05A90 /* String+Extension.swift in Sources */,
-				BFBCE5AF1F90C14B000106D6 /* Observable+Operators.swift in Sources */,
 				77FD14F41FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift in Sources */,
 				BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */,
 				BF45FCCF1F906E74006B2C2F /* CommentModel.swift in Sources */,
 				779B17021F8FA8A900E912E7 /* TopicCell.swift in Sources */,
 				BF701F201F98610900761E82 /* MarkdownInputAccessoryView.swift in Sources */,
-				BFBCE5B31F90C14B000106D6 /* UIBarButtonItem+ClosureAction.swift in Sources */,
 				BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */,
 				77B75DAC1F94EA8F00B7312B /* MemberModel.swift in Sources */,
 				BFCB67681F8F716600D05A90 /* NodeModel.swift in Sources */,
 				BF8043ED1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift in Sources */,
 				BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */,
+				BF8062BE1FB14CB00024BB37 /* UIViewController+Rx.swift in Sources */,
 				BFCB67461F8F498900D05A90 /* HomeViewController.swift in Sources */,
 				BFCB67641F8F666100D05A90 /* API.swift in Sources */,
 				BFBCE5B81F90C4FC000106D6 /* NodesViewController.swift in Sources */,
@@ -1120,12 +1126,13 @@
 				BF02A2D21F8F42B600BEF85E /* UIColor+Extension.swift in Sources */,
 				BF9EC8291F95D6EE00E7AA02 /* LoadingView.swift in Sources */,
 				BFC89B4B1FA033CD00759577 /* FPSLabel.swift in Sources */,
-				BF39FFE71F94421C00D6F8BD /* Binder+Extension.swift in Sources */,
 				BFE3947D1F90823D00D3ED1D /* TopicCommentCell.swift in Sources */,
 				BFCB67481F8F499600D05A90 /* BaseViewController.swift in Sources */,
 				BF02A2CE1F8F3FE400BEF85E /* AppTheme.swift in Sources */,
 				BFBCE5A31F90BB9E000106D6 /* HelperFunctions.swift in Sources */,
+				BF8062B71FB14CB00024BB37 /* Binder+Extension.swift in Sources */,
 				778AC6A01F9A29730072C6E9 /* SearchResultModel.swift in Sources */,
+				BF8062B81FB14CB00024BB37 /* Observable+Operators.swift in Sources */,
 				778AC6A81F9A2D540072C6E9 /* TopicSearchResultCell.swift in Sources */,
 				BF1B1D191FA6F2A500544A11 /* TwoStepVerificationViewController.swift in Sources */,
 				BF796F801FA46921002E1B5E /* ETNavBarTransparent.swift in Sources */,

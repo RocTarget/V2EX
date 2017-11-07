@@ -172,13 +172,6 @@ extension Networking {
                 AccountModel.saveOnce(once)
             }
 
-            // 误伤
-//            guard let content = html.content,
-//                !content.contains("Access Denied") else {
-//                failure?("Access Denied")
-//                return
-//            }
-
             success?(html)
         }, failure: failure)
     }
