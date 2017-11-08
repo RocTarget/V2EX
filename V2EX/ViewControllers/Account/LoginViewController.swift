@@ -98,6 +98,14 @@ class LoginViewController: BaseViewController, AccountService {
         return view
     }()
 
+    private lazy var googleLoginBtn: UIButton = {
+        let view = UIButton()
+        view.setTitle("使用 Google 账号登录", for: .normal)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        view.isHidden = true
+        return view
+    }()
+
     private lazy var blurView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .light)
         let blurView = UIVisualEffectView(effect: blurEffect)
@@ -110,6 +118,11 @@ class LoginViewController: BaseViewController, AccountService {
         super.viewDidLoad()
 
         fetchCode()
+
+        if #available(iOS 11.0, *) {
+            accountTextField.textContentType = .username
+            passwordTextField.textContentType = .password
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -144,7 +157,8 @@ class LoginViewController: BaseViewController, AccountService {
             captchaTextField,
             loginBtn,
             registerBtn,
-            forgetBtn
+            forgetBtn,
+            googleLoginBtn
         )
     }
     
@@ -194,6 +208,11 @@ class LoginViewController: BaseViewController, AccountService {
         registerBtn.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(forgetBtn.snp.bottom).offset(10)
+        }
+
+        googleLoginBtn.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(registerBtn.snp.bottom).offset(10)
         }
     }
     
@@ -274,8 +293,23 @@ class LoginViewController: BaseViewController, AccountService {
                 self?.navigationController?.pushViewController(webView, animated: true)
 //                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
             }.disposed(by: rx.disposeBag)
+
+        googleLoginBtn.rx
+            .tap
+            .subscribeNext { [weak self] in
+                // 暂时用网页代替
+                self?.googleLoginHandle()
+            }.disposed(by: rx.disposeBag)
     }
-    
+
+    private func googleLoginHandle() {
+        googleSignin(success: {
+        }) { error in
+            HUD.showText(error)
+            log.info(error)
+        }
+    }
+
     @objc func fetchCode() {
         captchaBtn.isLoading = true
         captchaBtn.setImage(UIImage(), for: .normal)

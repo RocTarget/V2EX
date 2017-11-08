@@ -142,6 +142,10 @@ class MessageViewController: DataViewController, AccountService {
         fetchNotifications()
     }
 
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchNotifications()
+    }
+
     override func hasContent() -> Bool {
         return messages.count.boolValue
     }

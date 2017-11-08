@@ -30,6 +30,8 @@ enum API {
 
     // 登录
     case signin(dict: [String: String])
+    // Google 登录
+    case googleSignin(once: String)
     // 两步验证
     case twoStepVerification(code: String, once: String)
     // 忘记密码
@@ -137,6 +139,8 @@ extension API: TargetType {
             return .get("/signin")
         case .signin:
             return .post("/signin")
+        case .googleSignin(let once):
+            return .get("/auth/google?once=\(once)")
         case .twoStepVerification:
             return .post("/2fa")
         case .forgot:

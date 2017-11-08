@@ -71,4 +71,8 @@ final class HUD {
             completionBlock?()
         }
     }
+
+    class func showText(_ error: Error, delay: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(error.localizedDescription, delay: delay, completionBlock: completionBlock)
+    }
 }

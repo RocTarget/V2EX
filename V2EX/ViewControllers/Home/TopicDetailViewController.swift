@@ -232,7 +232,7 @@ class TopicDetailViewController: DataViewController, TopicService {
                 let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double
                 self.inputViewBottomConstranit?.update(offset: -heightOffset)
                 
-                UIView.animate(withDuration: duration!) {
+                UIView.animate(withDuration: duration ?? 0.25) {
                     self.view.layoutIfNeeded()
                 }
                 //                self?.keyboardControl(notification)

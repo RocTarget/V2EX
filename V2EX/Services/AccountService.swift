@@ -16,7 +16,11 @@ protocol AccountService: HTMLParseService {
         loginForm: LoginForm,
         success: Action?,
         failure: ((_ error: String, _ loginForm: LoginForm?, _ is2Fa: Bool) -> Void)?)
-    
+
+    func googleSignin(
+        success: Action?,
+        failure: Failure?)
+
     func twoStepVerification(
         code: String,
         once: String,
@@ -159,7 +163,22 @@ extension AccountService {
             failure?(error, nil, false)
         })
     }
-    
+
+    func googleSignin(
+        success: Action?,
+        failure: Failure?) {
+
+        Network.htmlRequest(target: .once, success: { html in
+            guard let once = self.parseOnce(html: html) else {
+                failure?("无法解析 once")
+                return
+            }
+            Network.htmlRequest(target: .googleSignin(once: once), success: { html in
+
+            }, failure: failure)
+        }, failure: failure)
+    }
+
     func twoStepVerification(
         code: String,
         once: String,
