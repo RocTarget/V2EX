@@ -5,7 +5,7 @@ class TopicSearchResultCell: BaseTableViewCell {
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.numberOfLines = 0
-        view.textColor = UIColor.hex(0x606060)
+        view.textColor = .black
         view.font = UIFont.boldSystemFont(ofSize: 17)
         return view
     }()
@@ -13,7 +13,7 @@ class TopicSearchResultCell: BaseTableViewCell {
     private lazy var contentLabel: UILabel = {
         let view = UILabel()
         view.numberOfLines = 5
-        view.textColor = UIColor.hex(0xD7D5D7)
+        view.textColor = UIColor.hex(0x333333)
         view.font = UIFont.systemFont(ofSize: 14)
         return view
     }()
@@ -62,7 +62,7 @@ class TopicSearchResultCell: BaseTableViewCell {
         
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
-                self?.contentLabel.textColor = theme == .day ? UIColor.hex(0xD7D5D7) : theme.titleColor
+                self?.contentLabel.textColor = theme == .day ? UIColor.hex(0x333333) : theme.titleColor
         }.disposed(by: rx.disposeBag)
     }
     

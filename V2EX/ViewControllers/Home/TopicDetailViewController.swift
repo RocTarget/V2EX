@@ -710,7 +710,7 @@ extension TopicDetailViewController {
         
         let controller = UIActivityViewController(
             activityItems: [url, title, headerView.userAvatar ?? #imageLiteral(resourceName: "logo")],
-            applicationActivities: nil)
+            applicationActivities: BrowserActivity.compatibleActivities)
         
         controller.excludedActivityTypes = [
             .postToTwitter, .postToFacebook, .postToTencentWeibo, .postToWeibo,

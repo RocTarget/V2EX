@@ -80,6 +80,12 @@ extension NodeService {
             node.isFavorite = node.favoriteHref?.hasPrefix("/unfavorite") ?? false
             let topics = self.parseTopic(html: html, type: .nodeDetail)
             let page = self.parsePage(html: html).max
+
+            // 如果主题数量 == 0， 并且 title == 登录， 代表该节点需要登录才能查看
+            if !topics.count.boolValue, node.title == "登录" {
+                failure?("查看该节点需要先登录")
+                return
+            }
             success?(node, topics, page)
         }, failure: failure)
     }

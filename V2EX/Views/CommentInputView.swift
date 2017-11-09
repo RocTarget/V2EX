@@ -40,7 +40,7 @@ class CommentInputView: UIView {
 
     public var inputViewHeight: CGFloat {
         if #available(iOS 11.0, *) {
-            return KcommentInputViewHeight + safeAreaInsets.bottom
+            return KcommentInputViewHeight + AppWindow.shared.window.safeAreaInsets.bottom
         } else {
             return KcommentInputViewHeight
         }

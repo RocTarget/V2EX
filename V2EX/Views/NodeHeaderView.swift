@@ -20,7 +20,7 @@ class NodeHeaderView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .white
+        backgroundColor = .clear
         
         addSubview(textLabel)
         
@@ -31,7 +31,6 @@ class NodeHeaderView: UICollectionReusableView {
 
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
-                self?.backgroundColor = theme.whiteColor
                 self?.textLabel.textColor = theme.somberColor
                 self?.textLabel.borderLeft = Border(size: 3, color: theme.somberColor)
             }.disposed(by: rx.disposeBag)

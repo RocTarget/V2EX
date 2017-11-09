@@ -344,11 +344,9 @@ private extension SweetWebViewController {
     }
     
     @objc func activityDidClick(sender: AnyObject) {
-        guard let url = url else {
-            return
-        }
+        guard let url = url else { return }
         
-        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: BrowserActivity.compatibleActivities)
         present(activityViewController, animated: true, completion: nil)
     }
     

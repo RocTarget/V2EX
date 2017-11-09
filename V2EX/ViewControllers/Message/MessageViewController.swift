@@ -35,7 +35,7 @@ class MessageViewController: DataViewController, AccountService {
         /// 有未读通知, 主动刷新
         guard isLoad, let _ = tabBarItem.badgeValue else { return }
         
-        tableView.startHeaderRefresh()
+        fetchNotifications()
     }
 
 //    override func setupSubviews() {

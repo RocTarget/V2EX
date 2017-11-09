@@ -83,6 +83,13 @@ enum Theme {
         }
     }
 
+    var barStyle: UIBarStyle {
+        switch self {
+        case .day: return .default
+        case .night: return .black
+        }
+    }
+
     struct Color {
         static let globalColor = #colorLiteral(red: 0.2, green: 0.2, blue: 0.2666666667, alpha: 1) // 全局色
         static let navColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)//#colorLiteral(red: 0.1450980392, green: 0.1450980392, blue: 0.1764705882, alpha: 1)

@@ -43,6 +43,7 @@ public class ShareSheetView: UIView {
     private var title: String = ""     //标题
     private var sections: [[ShareItem]] = []    //按钮组
     private var cancelTitle: String = ""     //取消按钮
+    private var cancelButton: UIButton?
 
     var shareSheetHeight: CGFloat = 0
     public var shareSheetView: UIView = UIView()
@@ -67,11 +68,10 @@ public class ShareSheetView: UIView {
         singleTap.delegate = self
         self.addGestureRecognizer(singleTap)
         
-        
         setupUI()
     }
     
-    func initShareSheet() {
+    private func initShareSheet() {
         let btnCount = sections.count
         var tHeight:CGFloat = 0.0
         if title.isNotEmpty {
@@ -89,7 +89,7 @@ public class ShareSheetView: UIView {
         addSubview(shareSheetView)
     }
     
-    func setupUI() {
+    private func setupUI() {
         initShareSheet()
         
         //标题不为空，则添加标题
@@ -136,14 +136,15 @@ public class ShareSheetView: UIView {
         }
         
         guard cancelTitle.isNotEmpty else { return }
-        
+
         let button = UIButton()
         button.frame = CGRect(x: 0, y: Int(self.shareSheetView.bounds.size.height - Metric.buttonHeight), width: Int(Constants.Metric.screenWidth), height: Int(Metric.buttonHeight))
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.setTitle(cancelTitle, for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
-        button.addTarget(self, action: #selector(self.itemClick), for: .touchUpInside)
+        button.addTarget(self, action: #selector(itemClick), for: .touchUpInside)
+        cancelButton = button
         shareSheetView.addSubview(button)
     }
     
@@ -163,14 +164,23 @@ public class ShareSheetView: UIView {
             self.shareSheetView.backgroundColor = UIColor(red: 0.937, green: 0.937, blue: 0.941, alpha: 0.20)
         }) { _ in
             UIView.animate(withDuration: Metric.defaultDuration) {
-                self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3)
-                self.shareSheetView.y = Constants.Metric.screenHeight - self.shareSheetHeight
+                self.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+
+                if #available(iOS 11, *) {
+                    let margin = AppWindow.shared.window.safeAreaInsets.bottom
+                    self.shareSheetView.y = Constants.Metric.screenHeight - self.shareSheetHeight - margin
+                    self.cancelButton?.borderBottom = Border(size: margin, color: .white)
+                    self.cancelButton?.height += margin
+                    self.cancelButton?.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: margin, right: 0)
+                } else {
+                    self.shareSheetView.y = Constants.Metric.screenHeight - self.shareSheetHeight
+                }
             }
         }
     }
     
     /// 隐藏
-    func dismiss() {
+    public func dismiss() {
         UIView.animate(withDuration: Metric.defaultDuration, animations: {
             self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
             self.shareSheetView.y = Constants.Metric.screenHeight

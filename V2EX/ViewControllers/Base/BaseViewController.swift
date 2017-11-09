@@ -18,13 +18,12 @@ class BaseViewController: UIViewController {
     
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        var style = ThemeStyle.style.value.statusBarStyle
         ThemeStyle.style
             .asObservable()
             .subscribeNext { theme in
-                style = theme.statusBarStyle
-        }.disposed(by: rx.disposeBag)
-        return style
+                self.navigationController?.navigationBar.barStyle = theme.barStyle
+            }.disposed(by: rx.disposeBag)
+        return ThemeStyle.style.value.statusBarStyle
     }
     
     // MARK: Layout Constraints

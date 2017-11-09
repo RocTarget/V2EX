@@ -4,7 +4,8 @@ import PullToRefreshKit
 extension UIScrollView {
 
     func addHeaderRefresh(handle: @escaping Action) {
-        setUpHeaderRefresh(ElasticRefreshHeader(), action: handle)
+        setUpHeaderRefresh(handle)
+//        setUpHeaderRefresh(ElasticRefreshHeader(), action: handle)
     }
 
     func addFooterRefresh(handle: @escaping Action) {
@@ -34,7 +35,4 @@ extension UIScrollView {
         endFooterRefresh(showNoMore: showNoMore)
     }
 
-    func startHeaderRefresh() {
-        beginHeaderRefreshing()
-    }
 }

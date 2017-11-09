@@ -56,6 +56,14 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
     override func loadData() {
         fetchNodeDetail()
     }
+
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        loadData()
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        loadData()
+    }
 }
 
 extension NodeDetailViewController {

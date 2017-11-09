@@ -48,9 +48,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     // MARK: - View Life Cycle...
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupSearchBar()
-        
+
         definesPresentationContext = true
 
         NotificationCenter.default.rx
@@ -70,8 +68,9 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     
     override func setupSubviews() {
         super.setupSubviews()
-        
+
         navigationItem.titleView = tabView
+        setupSearchBar()
     }
 
     override func setupRefresh() {
@@ -99,6 +98,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         //            navigationItem.hidesSearchBarWhenScrolling = true
         //            navigationItem.searchController = searchController
         //        } else {
+        searchController.searchBar.isHidden = true
         tableView.tableHeaderView = searchController.searchBar
         tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
         //        }
@@ -146,6 +146,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 // 避免调用两次请求
                 self.nodes = nodes
                 self.tabChangebHandle()
+                self.searchController.searchBar.isHidden = false
             }
 
             self.topics = topics

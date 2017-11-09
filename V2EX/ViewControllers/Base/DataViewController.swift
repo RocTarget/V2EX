@@ -89,13 +89,12 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
 
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        var style = ThemeStyle.style.value.statusBarStyle
         ThemeStyle.style
             .asObservable()
             .subscribeNext { theme in
-                style = theme.statusBarStyle
+                self.navigationController?.navigationBar.barStyle = theme.barStyle
         }.disposed(by: rx.disposeBag)
-        return style
+        return ThemeStyle.style.value.statusBarStyle
     }
 
     // MARK: Layout Constraints

@@ -143,6 +143,17 @@ extension Networking {
                     return
                 }
             }
+
+            switch target {
+            case .signin(_), .once, .captcha(_):
+                break
+            default:
+                // 重定向到 signin ， 代表需要登录
+                if (dataResponse.response?.url?.absoluteString ?? "").contains(API.signin(dict: [:]).defaultURLString) {
+                    failure?("查看该主题需要登录")
+                    return
+                }
+            }
             success?(data)
         case .failure(let error):
             log.error("❌ FAILURE: \(message) \n \(error)", file: file, function: function, line: line)
