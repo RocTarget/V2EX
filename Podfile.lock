@@ -3,7 +3,7 @@ PODS:
   - Crashlytics (3.9.3):
     - Fabric (~> 1.7.2)
   - Fabric (1.7.2)
-  - IQKeyboardManagerSwift (5.0.4)
+  - IQKeyboardManagerSwift (5.0.6)
   - Kanna (2.1.1)
   - Kingfisher (4.2.0)
   - MarkdownView (1.1.0)
@@ -60,7 +60,7 @@ SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
-  IQKeyboardManagerSwift: a0592bb636b10a9a1cf75d2b2c61144226226c84
+  IQKeyboardManagerSwift: 02bfbb0dff71c66d0ab77d80d25dfce0c3717735
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
   Kingfisher: 9ee7e788d8ba07c3f21ce0d43f33cec310a4f781
   MarkdownView: 80db8e9a27a6c6cc22615e644e3e85c06065bab7

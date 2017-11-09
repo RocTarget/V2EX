@@ -1,9 +1,6 @@
 import UIKit
 import WebKit
 
-let estimatedProgressKeyPath = "estimatedProgress"
-let titleKeyPath = "title"
-
 import Foundation
 
 public enum BarButtonItemType {
@@ -41,16 +38,10 @@ public enum NavigationBarPosition {
 
 open class SweetWebViewController: UIViewController {
 
-    open var url: URL?
-    open var tintColor: UIColor?
-    open var delegate: SweetWebViewControllerDelegate?
-    open var bypassedSSLHosts: [String]?
-    
-    open var websiteTitleInNavigationBar = true
-    open var doneBarButtonItemPosition: NavigationBarPosition = .left
-    open var leftNavigaionBarItemTypes: [BarButtonItemType] = []
-    open var rightNavigaionBarItemTypes: [BarButtonItemType] = []
-    open var toolbarItemTypes: [BarButtonItemType] = [.back, .forward, .reload, .activity]
+    private struct Keys {
+        static let estimatedProgressKeyPath = "estimatedProgress"
+        static let titleKeyPath = "title"
+    }
     
     private lazy var webView: WKWebView = {
         let webConfiguration = WKWebViewConfiguration()
@@ -61,8 +52,24 @@ open class SweetWebViewController: UIViewController {
         webView.isMultipleTouchEnabled = true
         return webView
     }()
-    private var progressView: UIProgressView!
+
+    private lazy var progressView: UIProgressView = {
+        let progressView = UIProgressView(progressViewStyle: .default)
+        progressView.tintColor = Theme.Color.globalColor
+        return progressView
+    }()
     
+    open var url: URL?
+    open var tintColor: UIColor?
+    open var delegate: SweetWebViewControllerDelegate?
+    open var bypassedSSLHosts: [String]?
+    
+    open var websiteTitleInNavigationBar = true
+    open var doneBarButtonItemPosition: NavigationBarPosition = .left
+    open var leftNavigaionBarItemTypes: [BarButtonItemType] = []
+    open var rightNavigaionBarItemTypes: [BarButtonItemType] = []
+    open var toolbarItemTypes: [BarButtonItemType] = [.back, .forward, .reload, .activity]
+
     private var previousNavigationBarState: (tintColor: UIColor, hidden: Bool) = (Theme.Color.globalColor, false)
     private var previousToolbarState: (tintColor: UIColor, hidden: Bool) = (.black, false)
     
@@ -95,10 +102,13 @@ open class SweetWebViewController: UIViewController {
     }()
     
     deinit {
-        webView.removeObserver(self, forKeyPath: estimatedProgressKeyPath)
+        webView.removeObserver(self, forKeyPath: Keys.estimatedProgressKeyPath)
+        webView.navigationDelegate = nil
+        webView.uiDelegate = nil
         if websiteTitleInNavigationBar {
-            webView.removeObserver(self, forKeyPath: titleKeyPath)
+            webView.removeObserver(self, forKeyPath: Keys.titleKeyPath)
         }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
         log.info("DEINIT: SweetWebViewController")
     }
 
@@ -115,14 +125,8 @@ open class SweetWebViewController: UIViewController {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    override open func loadView() {
-
-        webView.addObserver(self, forKeyPath: estimatedProgressKeyPath, options: .new, context: nil)
-        if websiteTitleInNavigationBar {
-            webView.addObserver(self, forKeyPath: titleKeyPath, options: .new, context: nil)
-        }
-        
+    
+    open override func loadView() {
         view = webView
     }
     
@@ -130,8 +134,6 @@ open class SweetWebViewController: UIViewController {
         super.viewDidLoad()
 
         UIBarButtonItem.appearance().tintColor = Theme.Color.globalColor
-
-        // Do any additional setup after loading the view.
         navigationItem.title = navigationItem.title ?? url?.absoluteString
         
         if let navigationController = navigationController {
@@ -139,21 +141,21 @@ open class SweetWebViewController: UIViewController {
             previousToolbarState = (navigationController.toolbar.tintColor, navigationController.toolbar.isHidden)
         }
         
+        setUpState()
         setUpProgressView()
         addBarButtonItems()
         
-        if let url = url {
-            load(url)
+        webView.addObserver(self, forKeyPath: Keys.estimatedProgressKeyPath, options: .new, context: nil)
+        if websiteTitleInNavigationBar {
+            webView.addObserver(self, forKeyPath: Keys.titleKeyPath, options: .new, context: nil)
         }
-        else {
-            print("[SweetWebViewController][Error] Invalid url:", url as Any)
+
+        guard let url = url else {
+            log.error("[SweetWebViewController][Error] Invalid url:", self.url as Any)
+            return
         }
-    }
-    
-    override open func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        load(url)
         
-        setUpState()
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
@@ -164,22 +166,26 @@ open class SweetWebViewController: UIViewController {
     
     override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         switch keyPath {
-        case estimatedProgressKeyPath?:
-            progressView.alpha = 1
-            progressView.setProgress(Float(webView.estimatedProgress), animated: true)
-            
-            if(webView.estimatedProgress >= 1.0) {
-                UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
-                    self.progressView.alpha = 0
-                }, completion: {
-                    finished in
-                    self.progressView.setProgress(0, animated: false)
-                })
+        case Keys.estimatedProgressKeyPath?:
+            if let newValue = change?[NSKeyValueChangeKey.newKey] as? NSNumber {
+                progressChanged(newValue)
             }
-        case titleKeyPath?:
+        case Keys.titleKeyPath?:
             navigationItem.title = webView.title
         default:
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
+    
+    private func progressChanged(_ newValue: NSNumber) {
+        progressView.alpha = 1
+        progressView.setProgress(newValue.floatValue, animated: true)
+        if webView.estimatedProgress >= 1 {
+            UIView.animate(withDuration: 0.3, delay: 0.4, options: .curveEaseOut, animations: {
+                self.progressView.alpha = 0
+            }, completion: { _ in
+                self.progressView.setProgress(0, animated: false)
+            })
         }
     }
 }
@@ -198,13 +204,11 @@ public extension SweetWebViewController {
 
 // MARK: - Fileprivate Methods
 private extension SweetWebViewController {
+    
     func setUpProgressView() {
-        guard let navigationController = navigationController else {
-            return
-        }
+        guard let navigationController = navigationController else { return }
         
-        progressView = UIProgressView(progressViewStyle: .default)
-        progressView.frame = CGRect(x: 0, y: navigationController.navigationBar.frame.size.height - progressView.frame.size.height, width: navigationController.navigationBar.frame.size.width, height: progressView.frame.size.height)
+        progressView.frame = CGRect(x: 0, y: navigationController.navigationBar.frame.size.height - progressView.frame.size.height, width: navigationController.navigationBar.width, height: progressView.height)
         progressView.trackTintColor = UIColor(white: 1, alpha: 0)
     }
     
@@ -234,8 +238,7 @@ private extension SweetWebViewController {
             }
         }
         
-        navigationItem.leftBarButtonItems = leftNavigaionBarItemTypes.map {
-            barButtonItemType in
+        navigationItem.leftBarButtonItems = leftNavigaionBarItemTypes.map { barButtonItemType in
             if let barButtonItem = barButtonItems[barButtonItemType] {
                 return barButtonItem
             }
@@ -369,6 +372,8 @@ extension SweetWebViewController: WKUIDelegate {
 // MARK: - WKNavigationDelegate
 extension SweetWebViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
         updateBarButtonItems()
         if let url = webView.url {
             self.url = url
@@ -376,7 +381,8 @@ extension SweetWebViewController: WKNavigationDelegate {
         }
     }
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        
         updateBarButtonItems()
         if let url = webView.url {
             self.url = url

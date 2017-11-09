@@ -149,12 +149,12 @@ class TopicCommentCell: BaseTableViewCell {
     override func setupConstraints() {
         avatarView.snp.makeConstraints {
             $0.left.top.equalToSuperview().inset(15)
-            $0.size.equalTo(48)
+            $0.size.equalTo(40)
         }
 
         usernameLaebl.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
-            $0.top.equalTo(avatarView).offset(3)
+            $0.top.equalTo(avatarView).offset(1)
         }
 
         hostLabel.snp.makeConstraints {
@@ -164,7 +164,7 @@ class TopicCommentCell: BaseTableViewCell {
 
         floorLabel.snp.makeConstraints {
             $0.left.equalTo(usernameLaebl)
-            $0.bottom.equalTo(avatarView).inset(3)
+            $0.bottom.equalTo(avatarView).inset(1)
         }
 
         timeLabel.snp.makeConstraints {

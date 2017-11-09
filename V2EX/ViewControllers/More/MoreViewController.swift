@@ -299,7 +299,7 @@ extension MoreViewController: MFMailComposeViewControllerDelegate {
         let mailVC = MFMailComposeViewController()
         mailVC.setSubject("V2EX iOS 反馈")
         mailVC.setToRecipients([Constants.Config.receiverEmail])
-        mailVC.setMessageBody("\n\n\n\n[运行环境] \(UIDevice.phoneModel)-\(UIDevice.current.systemVersion)", isHTML: false)
+        mailVC.setMessageBody("\n\n\n\n[运行环境] \(UIDevice.phoneModel)(\(UIDevice.current.systemVersion))-\(UIApplication.appVersion())(\(UIApplication.appBundleName()))", isHTML: false)
         mailVC.mailComposeDelegate = self
         present(mailVC, animated: true, completion: nil)
     }
