@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>6</string>
+	<string>7</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -36,6 +36,11 @@
 	</dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>googlechrome</string>
+		<string>googlechromes</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -70,10 +75,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>googlechrome</string>
-        <string>googlechromes</string>
-    </array>
 </dict>
 </plist>

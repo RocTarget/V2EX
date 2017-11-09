@@ -20,14 +20,14 @@ class TopicCommentCell: BaseTableViewCell {
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
         view.font = UIFont.systemFont(ofSize: 12)
-        view.textColor = UIColor.hex(0xA3A3A3)
+        view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
 
     private lazy var floorLabel: UILabel = {
         let view = UILabel()
         view.font = UIFont.systemFont(ofSize: 12)
-        view.textColor = UIColor.hex(0xA3A3A3)
+        view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
 

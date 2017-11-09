@@ -140,6 +140,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
         markdownToolbar.didSelectedItemHandle = { [weak self] type in
             self?.toolbarClickHandle(type)
         }
+
+        EULAHandle()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -371,6 +373,30 @@ class CreateTopicViewController: BaseViewController, TopicService {
             self?.node = node
             self?.bodyTextView.becomeFirstResponder()
         }
+    }
+
+    private func EULAHandle() {
+
+        if let isAgreement = UserDefaults.get(forKey: Constants.Keys.agreementOfConsent) as? Bool, isAgreement {
+            return
+        }
+
+        let alert = UIAlertController(title: "社区指导原则", message:
+            """
+            尊重原创
+            请不要在 V2EX 发布任何盗版下载链接，包括软件、音乐、电影等等。V2EX 是创意工作者的社区，我们尊重原创。
+            禁止发布黄色、暴力内容。
+            友好互助
+            保持对陌生人的友善。用知识去帮助别人。
+            """, preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        alert.addAction(UIAlertAction(title: "同意", style: .default, handler: { _ in
+            UserDefaults.save(at: true, forKey: Constants.Keys.agreementOfConsent)
+        }))
+        present(alert, animated: true, completion: nil)
     }
 }
 

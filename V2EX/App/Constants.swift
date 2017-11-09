@@ -37,6 +37,8 @@ struct Constants {
         static let nodeGroupCache = FileManager.caches.appendingPathComponent("nodeGroup")
 
         static let themeStyle = "themeStyle"
+
+        static let agreementOfConsent = "agreementOfConsent"
     }
 
     struct Metric {

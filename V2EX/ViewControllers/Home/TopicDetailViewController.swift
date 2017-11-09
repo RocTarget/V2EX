@@ -370,6 +370,7 @@ extension TopicDetailViewController {
             
             section1.append(thankItem)
             section1.append(ShareItem(icon: #imageLiteral(resourceName: "ignore"), title: "忽略", type: .ignore))
+            section1.append(ShareItem(icon: #imageLiteral(resourceName: "report"), title: "举报", type: .report))
         }
         
         let section2 = [
@@ -403,6 +404,8 @@ extension TopicDetailViewController {
             thankTopicHandle()
         case .ignore:
             ignoreTopicHandle()
+        case .report:
+            reportHandle()
         case .copyLink:
             UIPasteboard.general.string = API.topicDetail(topicID: topicID, page: page).defaultURLString
             HUD.showText("链接已复制")
@@ -696,6 +699,36 @@ extension TopicDetailViewController {
         }) { error in
             HUD.showText(error)
         }
+    }
+
+    /// 举报主题， 主要是过审核用
+    private func reportHandle() {
+
+        let alert = UIAlertController(title: "举报", message: nil, preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { textView in
+            textView.placeholder = "请填写举报原因"
+        })
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+
+        alert.addAction(UIAlertAction(title: "确定举报", style: .destructive, handler: { _ in
+            guard let text = alert.textFields?.first?.text, text.isNotEmpty else {
+                HUD.showError("请输入举报原因")
+                self.reportHandle()
+                return
+            }
+            HUD.show()
+            
+            self.comment(
+                once: self.topic?.once ?? "",
+                topicID: self.topicID,
+                content: "@Livid " + text, success: {
+                    HUD.showText("举报成功")
+                    HUD.dismiss()
+            }) { error in
+                log.error(error)
+            }
+        }))
+        present(alert, animated: true, completion: nil)
     }
 }
 

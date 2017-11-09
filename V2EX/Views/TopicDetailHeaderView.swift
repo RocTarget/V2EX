@@ -30,7 +30,7 @@ class TopicDetailHeaderView: UIView {
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
         view.font = UIFont.systemFont(ofSize: 12)
-        view.textColor = UIColor.hex(0xA3A3A3)
+        view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
     
@@ -38,7 +38,7 @@ class TopicDetailHeaderView: UIView {
         let view = UIInsetLabel()
         view.font = UIFont.systemFont(ofSize: 13)
         view.textColor = UIColor.hex(0x999999)
-        view.backgroundColor = Theme.Color.bgColor
+        view.backgroundColor = UIColor.hex(0xf5f5f5)
         view.contentInsets = UIEdgeInsets(top: 2, left: 3, bottom: 2, right: 3)
         view.isUserInteractionEnabled = true
         return view
@@ -124,7 +124,7 @@ class TopicDetailHeaderView: UIView {
                 self?.backgroundColor = theme.whiteColor
                 self?.titleLabel.textColor = theme.titleColor
                 self?.usernameLabel.textColor = theme.titleColor
-                self?.nodeLabel.backgroundColor = theme.bgColor
+                self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : Theme.Color.bgColor
             }.disposed(by: rx.disposeBag)
     }
     

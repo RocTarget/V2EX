@@ -36,3 +36,4 @@ func showImageBrowser(imageType: PhotoBrowserType) {
     photoBrowser.showToolbar(bool: true)
     AppWindow.shared.window.rootViewController?.present(photoBrowser, animated: true, completion: nil)
 }
+

@@ -2,7 +2,7 @@ import UIKit
 
 public enum ShareItemType {
     case floor
-    case favorite, thank, ignore
+    case favorite, thank, ignore, report
     case copyLink, safari, refresh, share
     case cancel
 

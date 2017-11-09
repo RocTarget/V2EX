@@ -26,7 +26,7 @@ class TopicCell: BaseTableViewCell {
         let view = UIInsetLabel()
         view.font = UIFont.systemFont(ofSize: 13)
         view.textColor = UIColor.hex(0x999999)
-        view.backgroundColor = Theme.Color.bgColor
+        view.backgroundColor = UIColor.hex(0xf5f5f5)
         view.contentInsets = UIEdgeInsets(top: 2, left: 3, bottom: 2, right: 3)
         view.isUserInteractionEnabled = true
         return view
@@ -35,7 +35,7 @@ class TopicCell: BaseTableViewCell {
     private lazy var lastReplyLabel: UILabel = {
         let view = UILabel()
         view.font = UIFont.systemFont(ofSize: 12)
-        view.textColor = UIColor.hex(0x999999)
+        view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
     
@@ -85,7 +85,7 @@ class TopicCell: BaseTableViewCell {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.titleLabel.textColor = theme.titleColor
-                self?.nodeLabel.backgroundColor = theme.bgColor //theme == .day ? Theme.Color.bgColor : UIColor.hex(0x363146)
+                self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : Theme.Color.bgColor
                 self?.usernameLabel.textColor = theme.titleColor
             }.disposed(by: rx.disposeBag)
     }
