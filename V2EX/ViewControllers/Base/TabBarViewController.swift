@@ -75,7 +75,10 @@ extension TabBarViewController {
         childController.tabBarItem.image = normalImage?.withRenderingMode(.alwaysOriginal)
         childController.tabBarItem.selectedImage = selectedImageName?.withRenderingMode(.alwaysOriginal)
         childController.title = title
-        addChildViewController(NavigationViewController(rootViewController: childController))
+        let nav = NavigationViewController(rootViewController: childController)
+        nav.navigationBar.isTranslucent = false
+        tabBar.isTranslucent = false
+        addChildViewController(nav)
     }
     
     private func clickBackTop() {

@@ -175,8 +175,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
     override func setupConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.left.right.equalToSuperview()
-            $0.top.equalToSuperview().offset(navigationController?.navigationBar.bottom ?? Constants.Metric.navigationHeight)
+            $0.top.left.right.equalToSuperview()
             $0.height.equalTo(40)
         }
         

@@ -49,8 +49,8 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         ],
         [
             MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
-//            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
             MoreItem(icon: #imageLiteral(resourceName: "cache"), title: "清除缓存", type: .clearCache),
+            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
             MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "意见反馈", type: .feedback),
             MoreItem(icon: #imageLiteral(resourceName: "sourceCode"), title: "项目源码", type: .sourceCode),
             MoreItem(icon: #imageLiteral(resourceName: "libs"), title: "开源库", type: .libs),
@@ -197,6 +197,8 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
                 HUD.dismiss()
                 HUD.showText("成功清除 \(size)M 缓存")
             })
+        case .grade:
+            UIApplication.appReviewPage(with: Constants.Config.AppID)
         case .feedback:
             sendEmail()
         case .sourceCode:
@@ -212,8 +214,6 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             })
             presentLoginVC()
             tableView.reloadData()
-        default:
-            break
         }
         guard let vc = viewController else { return }
         
@@ -297,20 +297,24 @@ extension MoreViewController: MFMailComposeViewControllerDelegate {
         }
 
         let mailVC = MFMailComposeViewController()
-        mailVC.setSubject("V2EX iOS 反馈")
+        mailVC.setSubject("\(UIApplication.appDisplayName()) iOS 反馈")
         mailVC.setToRecipients([Constants.Config.receiverEmail])
-        mailVC.setMessageBody("\n\n\n\n[运行环境] \(UIDevice.phoneModel)(\(UIDevice.current.systemVersion))-\(UIApplication.appVersion())(\(UIApplication.appBundleName()))", isHTML: false)
+        mailVC.setMessageBody("\n\n\n\n[运行环境] \(UIDevice.phoneModel)(\(UIDevice.current.systemVersion))-\(UIApplication.appVersion())(\(UIApplication.appBuild()))", isHTML: false)
         mailVC.mailComposeDelegate = self
         present(mailVC, animated: true, completion: nil)
     }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         dismiss(animated: true, completion: nil)
-        
-        if result == .sent {
+
+        switch result {
+        case .sent:
             HUD.showText("感谢您的反馈，我会尽量给您答复。")
-        }else if result == .failed {
+        case .failed:
             HUD.showText("邮件发送失败: \(error?.localizedDescription ?? "Unkown")")
+        default:
+            break
         }
+
     }
 }

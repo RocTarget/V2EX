@@ -85,7 +85,7 @@ class TopicCell: BaseTableViewCell {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.titleLabel.textColor = theme.titleColor
-                self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : Theme.Color.bgColor
+                self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : theme.bgColor
                 self?.usernameLabel.textColor = theme.titleColor
             }.disposed(by: rx.disposeBag)
     }

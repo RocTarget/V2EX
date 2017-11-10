@@ -1,11 +1,3 @@
-//
-//  WindowManager.swift
-//  ToDo
-//
-//  Created by Sahil Kapoor on 24/08/17.
-//  Copyright © 2017 Sahil Kapoor. All rights reserved.
-//
-
 import UIKit
 
 public final class AppWindow {

@@ -114,13 +114,17 @@ public extension UIApplication {
     public class func appBundleName() -> String{
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
     }
-    
+
+    public class func appDisplayName() -> String{
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String
+    }
+
     public class func sendEmail(toAddress address: String) {
         guard address.isNotEmpty else { return }
         UIApplication.shared.openURL(URL(string: "mailto://\(address)")!)
     }
     
-    public class func AppReviewPage(withAppId appId: String) {
+    public class func appReviewPage(with appId: String) {
         guard appId.isNotEmpty else { return }
         
         UIApplication.shared.openURL(URL(string: "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=\(appId)")!)

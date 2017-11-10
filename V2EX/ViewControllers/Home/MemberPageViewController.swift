@@ -151,6 +151,9 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         replyVC.scrollViewDidScroll = { scrollView in
             self.scrollViewDidScroll(scrollView)
         }
+
+        followBtn.isHidden = !AccountModel.isLogin
+        blockBtn.isHidden = followBtn.isHidden
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {

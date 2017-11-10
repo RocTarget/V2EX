@@ -600,10 +600,12 @@ extension TopicDetailViewController {
             once: once,
             topicID: topicID,
             content: commentText, success: { [weak self] in
-                self?.fetchTopicDetail()
                 HUD.showText("回复成功")
                 HUD.dismiss()
-                self?.tableView.scrollToBottomAnimated()
+                self?.fetchTopicDetail()
+                GCD.delay(0.5, block: {
+                    self?.tableView.scrollToBottomAnimated()
+                })
         }) { [weak self] error in
             guard let `self` = self else { return }
             HUD.dismiss()

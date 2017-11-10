@@ -76,7 +76,7 @@ public class NodeTabView: UIControl {
         let x = gesture.location(in: self).x + scrollView.contentOffset.x
         for (i, label) in titleLabels.enumerated() {
             if x >= label.frame.minX && x <= label.frame.maxX {
-                setSelectIndex(index: i, animated: true)
+                setSelectIndex(i, animated: true)
                 break
             }
         }
@@ -87,7 +87,7 @@ public class NodeTabView: UIControl {
 //MARK: - public helper
 extension NodeTabView {
 
-    public func setSelectIndex(index: Int, animated: Bool = true) {
+    public func setSelectIndex(_ index: Int, animated: Bool = true) {
         guard index != selectIndex, index >= 0 , index < titleLabels.count else { return }
 
         let currentLabel = titleLabels[index]
@@ -193,6 +193,6 @@ extension NodeTabView {
         addGestureRecognizer(tapGesture)
 
         let selecteIndex = nodes.index(where: ({ $0.isCurrent ?? false }))
-        setSelectIndex(index: selecteIndex ?? 0, animated: false)
+        setSelectIndex(selecteIndex ?? 0, animated: false)
     }
 }

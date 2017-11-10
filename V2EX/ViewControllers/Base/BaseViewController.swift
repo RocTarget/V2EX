@@ -18,11 +18,6 @@ class BaseViewController: UIViewController {
     
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        ThemeStyle.style
-            .asObservable()
-            .subscribeNext { theme in
-                self.navigationController?.navigationBar.barStyle = theme.barStyle
-            }.disposed(by: rx.disposeBag)
         return ThemeStyle.style.value.statusBarStyle
     }
     
@@ -46,6 +41,7 @@ class BaseViewController: UIViewController {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.view.backgroundColor = theme.bgColor
+                self?.navigationController?.navigationBar.barStyle = theme.barStyle
             }.disposed(by: rx.disposeBag)
     }
     

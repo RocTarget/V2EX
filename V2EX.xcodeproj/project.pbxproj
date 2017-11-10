@@ -53,6 +53,9 @@
 		BF02A2D21F8F42B600BEF85E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D11F8F425C00BEF85E /* UIColor+Extension.swift */; };
 		BF02A2D31F8F42B800BEF85E /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2CC1F8F3F3E00BEF85E /* TabBarViewController.swift */; };
 		BF02A2D51F8F433C00BEF85E /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */; };
+		BF1A1EBA1FB58B3900DDBF67 /* SafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1A1EB71FB58B3900DDBF67 /* SafariActivity.swift */; };
+		BF1A1EBB1FB58B3900DDBF67 /* BrowserActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1A1EB81FB58B3900DDBF67 /* BrowserActivity.swift */; };
+		BF1A1EBC1FB58B3900DDBF67 /* GoogleChromeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1A1EB91FB58B3900DDBF67 /* GoogleChromeActivity.swift */; };
 		BF1B1D191FA6F2A500544A11 /* TwoStepVerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */; };
 		BF1B1D1B1FA7003400544A11 /* AllNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */; };
 		BF39FFE91F9442DA00D6F8BD /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */; };
@@ -75,9 +78,6 @@
 		BF5A6B871F99D3D800CF6BA1 /* MyTopicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5A6B861F99D3D800CF6BA1 /* MyTopicsViewController.swift */; };
 		BF5A6B891F99DBB600CF6BA1 /* MyReplyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5A6B881F99DBB600CF6BA1 /* MyReplyViewController.swift */; };
 		BF5A6B8B1F99E9DB00CF6BA1 /* ReplyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5A6B8A1F99E9DB00CF6BA1 /* ReplyCell.swift */; };
-		BF658FBF1FB4204B00D11B2E /* SafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF658FBC1FB4204B00D11B2E /* SafariActivity.swift */; };
-		BF658FC01FB4204B00D11B2E /* BrowserActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF658FBD1FB4204B00D11B2E /* BrowserActivity.swift */; };
-		BF658FC11FB4204B00D11B2E /* GoogleChromeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF658FBE1FB4204B00D11B2E /* GoogleChromeActivity.swift */; };
 		BF65BDB81F8E12C80010B4C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF65BDB71F8E12C80010B4C9 /* AppDelegate.swift */; };
 		BF65BDBF1F8E12C80010B4C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF65BDBE1F8E12C80010B4C9 /* Assets.xcassets */; };
 		BF65BDC21F8E12C80010B4C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF65BDC01F8E12C80010B4C9 /* LaunchScreen.storyboard */; };
@@ -204,6 +204,9 @@
 		BF02A2CD1F8F3FE400BEF85E /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		BF02A2D11F8F425C00BEF85E /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
+		BF1A1EB71FB58B3900DDBF67 /* SafariActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafariActivity.swift; sourceTree = "<group>"; };
+		BF1A1EB81FB58B3900DDBF67 /* BrowserActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserActivity.swift; sourceTree = "<group>"; };
+		BF1A1EB91FB58B3900DDBF67 /* GoogleChromeActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleChromeActivity.swift; sourceTree = "<group>"; };
 		BF1B1D161FA6F25100544A11 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwoStepVerificationViewController.swift; sourceTree = "<group>"; };
 		BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNodesViewController.swift; sourceTree = "<group>"; };
@@ -227,9 +230,6 @@
 		BF5A6B861F99D3D800CF6BA1 /* MyTopicsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTopicsViewController.swift; sourceTree = "<group>"; };
 		BF5A6B881F99DBB600CF6BA1 /* MyReplyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyReplyViewController.swift; sourceTree = "<group>"; };
 		BF5A6B8A1F99E9DB00CF6BA1 /* ReplyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyCell.swift; sourceTree = "<group>"; };
-		BF658FBC1FB4204B00D11B2E /* SafariActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafariActivity.swift; sourceTree = "<group>"; };
-		BF658FBD1FB4204B00D11B2E /* BrowserActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserActivity.swift; sourceTree = "<group>"; };
-		BF658FBE1FB4204B00D11B2E /* GoogleChromeActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleChromeActivity.swift; sourceTree = "<group>"; };
 		BF65BDB41F8E12C80010B4C9 /* V2EX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = V2EX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF65BDB71F8E12C80010B4C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF65BDBE1F8E12C80010B4C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -418,7 +418,7 @@
 		BF02A2C41F8F3E5900BEF85E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BF658FBB1FB4202300D11B2E /* BrowserActivity */,
+				BF1A1EB61FB587A200DDBF67 /* BrowserActivity */,
 				BF8043EF1FA3006400AD3C49 /* Refresh */,
 				BF9EC8231F95D6EE00E7AA02 /* PlaceholderViews */,
 				77D0DDF11F9F674600DDC366 /* Cells */,
@@ -522,6 +522,16 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
+		BF1A1EB61FB587A200DDBF67 /* BrowserActivity */ = {
+			isa = PBXGroup;
+			children = (
+				BF1A1EB81FB58B3900DDBF67 /* BrowserActivity.swift */,
+				BF1A1EB91FB58B3900DDBF67 /* GoogleChromeActivity.swift */,
+				BF1A1EB71FB58B3900DDBF67 /* SafariActivity.swift */,
+			);
+			path = BrowserActivity;
+			sourceTree = "<group>";
+		};
 		BF5A6B691F99834C00CF6BA1 /* Message */ = {
 			isa = PBXGroup;
 			children = (
@@ -529,16 +539,6 @@
 				BF8043F21FA3369900AD3C49 /* ReplyMessageViewController.swift */,
 			);
 			path = Message;
-			sourceTree = "<group>";
-		};
-		BF658FBB1FB4202300D11B2E /* BrowserActivity */ = {
-			isa = PBXGroup;
-			children = (
-				BF658FBD1FB4204B00D11B2E /* BrowserActivity.swift */,
-				BF658FBE1FB4204B00D11B2E /* GoogleChromeActivity.swift */,
-				BF658FBC1FB4204B00D11B2E /* SafariActivity.swift */,
-			);
-			name = BrowserActivity;
 			sourceTree = "<group>";
 		};
 		BF65BDAB1F8E12C80010B4C9 = {
@@ -1069,13 +1069,13 @@
 				779B17081F8FB0AF00E912E7 /* UIImageView+Extension.swift in Sources */,
 				7756CCC81F92360F00EF47B8 /* NodeCell.swift in Sources */,
 				BF8062B91FB14CB00024BB37 /* Scheduler+Rx.swift in Sources */,
-				BF658FC01FB4204B00D11B2E /* BrowserActivity.swift in Sources */,
+				BF1A1EBB1FB58B3900DDBF67 /* BrowserActivity.swift in Sources */,
 				7756CCCA1F923D6100EF47B8 /* NodeHeaderView.swift in Sources */,
 				BF45FCCD1F906E0D006B2C2F /* TopicDetailViewController.swift in Sources */,
 				BFE8CB291FA051E2007E2F02 /* ViewDialogViewController.swift in Sources */,
 				BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */,
 				BF3AB5C71F97672300043269 /* UIPlaceholderTextView.swift in Sources */,
-				BF658FC11FB4204B00D11B2E /* GoogleChromeActivity.swift in Sources */,
+				BF1A1EBC1FB58B3900DDBF67 /* GoogleChromeActivity.swift in Sources */,
 				7756CCCC1F92475F00EF47B8 /* NodeDetailViewController.swift in Sources */,
 				77B75DAE1F94FB8C00B7312B /* NodeCollectViewController.swift in Sources */,
 				BF5A6B8B1F99E9DB00CF6BA1 /* ReplyCell.swift in Sources */,
@@ -1162,7 +1162,7 @@
 				BF8043F11FA3007800AD3C49 /* VFooterRefresh.swift in Sources */,
 				779B17041F8FA8C100E912E7 /* BaseTableViewCell.swift in Sources */,
 				BF5A6B891F99DBB600CF6BA1 /* MyReplyViewController.swift in Sources */,
-				BF658FBF1FB4204B00D11B2E /* SafariActivity.swift in Sources */,
+				BF1A1EBA1FB58B3900DDBF67 /* SafariActivity.swift in Sources */,
 				BF3AB6B41FA1A61200ACA17A /* ImageAttachment.swift in Sources */,
 				BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */,
 				BFCB729D1FAB163900F1BDCA /* LibrarysViewController.swift in Sources */,

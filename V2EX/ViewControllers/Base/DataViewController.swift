@@ -66,9 +66,9 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.view.backgroundColor = theme.bgColor
+                self?.navigationController?.navigationBar.barStyle = theme.barStyle
             }.disposed(by: rx.disposeBag)
     }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -89,11 +89,6 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
 
     // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        ThemeStyle.style
-            .asObservable()
-            .subscribeNext { theme in
-                self.navigationController?.navigationBar.barStyle = theme.barStyle
-        }.disposed(by: rx.disposeBag)
         return ThemeStyle.style.value.statusBarStyle
     }
 
