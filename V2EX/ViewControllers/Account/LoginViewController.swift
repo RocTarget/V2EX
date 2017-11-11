@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import PasswordExtension
 
 class LoginViewController: BaseViewController, AccountService {
     
@@ -112,6 +113,15 @@ class LoginViewController: BaseViewController, AccountService {
         return blurView
     }()
 
+    private lazy var onePasswordBtn: UIButton = {
+        let view = UIButton()
+        view.setImage(#imageLiteral(resourceName: "onepassword-button-light"), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "onepassword-button-light"), for: .selected)
+        view.sizeToFit()
+        view.width = 50
+        return view
+    }()
+
     private var loginForm: LoginForm?
     
     override func viewDidLoad() {
@@ -123,6 +133,17 @@ class LoginViewController: BaseViewController, AccountService {
             accountTextField.textContentType = .username
             passwordTextField.textContentType = .password
         }
+
+        guard PasswordExtension.shared.isAvailable() else { return }
+
+        accountTextField.rightView = onePasswordBtn
+        accountTextField.rightViewMode = .always
+
+        onePasswordBtn.rx
+            .tap
+            .subscribeNext { [weak self] in
+                self?.findOnePassword()
+        }.disposed(by: rx.disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -300,6 +321,36 @@ class LoginViewController: BaseViewController, AccountService {
                 // 暂时用网页代替
                 self?.googleLoginHandle()
             }.disposed(by: rx.disposeBag)
+    }
+
+    private func findOnePassword() {
+        PasswordExtension.shared.findLoginDetails(
+            for: Constants.Config.baseURL.lastPathComponent,
+            viewController: self,
+            sender: nil) { [weak self] detail, error in
+                if let detail = detail {
+
+                    self?.accountTextField.text = detail.username
+                    self?.passwordTextField.text = detail.password
+
+                    // Rx 主动发送事件
+                    self?.accountTextField.becomeFirstResponder()
+                    self?.passwordTextField.becomeFirstResponder()
+
+                    // 如果填写了验证码 直接登录
+                    if (self?.captchaTextField.text ?? "").count >= 4 {
+                        self?.loginHandle()
+                    } else {
+                        self?.captchaTextField.becomeFirstResponder()
+                    }
+                    return
+                }
+                if let error = error {
+                    HUD.showError(error.localizedDescription)
+                } else {
+                    HUD.showError("密码获取失败")
+                }
+        }
     }
 
     private func googleLoginHandle() {

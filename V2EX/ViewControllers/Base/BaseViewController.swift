@@ -41,7 +41,7 @@ class BaseViewController: UIViewController {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.view.backgroundColor = theme.bgColor
-                self?.navigationController?.navigationBar.barStyle = theme.barStyle
+//                self?.navigationController?.navigationBar.barStyle = theme.barStyle
             }.disposed(by: rx.disposeBag)
     }
     

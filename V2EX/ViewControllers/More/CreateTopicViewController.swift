@@ -175,7 +175,12 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
     override func setupConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
+            if #available(iOS 11.0, *) {
+                $0.top.equalTo(view.safeAreaInsets.top)
+            } else {
+                $0.top.equalToSuperview()
+            }
+            $0.left.right.equalToSuperview()
             $0.height.equalTo(40)
         }
         

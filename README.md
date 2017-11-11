@@ -5,6 +5,7 @@
 
 可能是体验最好的掌上 V2EX 客户端，苦于在 iPhone 上一直没有找到一款 **好用的** V2EX 客户端，于是这个项目诞生了，该项目借鉴很多开源的 V2EX 客户端，在此表示感谢开源社区。由于目前开发周期较短，很多地方还不够完善，存在着很多问题和不合理的设计，如果你有任何意见或功能要求欢迎打开 **Issue** 或 **PR**，最后希望能得到您的喜欢，感谢 😊
 
+![App Store](http://apprcn.b0.upaiyun.com/badge_appstore-lrg.svg)
 
 ## 截图
 
@@ -40,13 +41,19 @@
 ### 更多
 1. 创作新主题（支持 Markdown 编辑、预览、上传图片）
 2. 查看我的
-     - 节点收藏
-     - 主题收藏
-     - 我的主题
-     - 我的回复
+- 节点收藏
+- 主题收藏
+- 我的主题
+- 我的回复
 3. 修改头像
 4. 两步验证
 5. 每日奖励自动领取
+
+### 其他
+1. 支持 横竖屏（横屏目前优化不是特别好）
+2. 支持 iPad
+3. 支持 夜间模式
+4. 支持 密码管理工具（1Password、LastPass...)
 
 ## 要求
 
@@ -66,7 +73,7 @@ git clone https://github.com/Joe0708/V2EX.git
 2. 在项目根目录安装依赖库
 
 ```
- pod install 
+pod install
 ```
 3. 打开 `V2EX.xcworkspace` 运行
 
@@ -93,3 +100,4 @@ git clone https://github.com/Joe0708/V2EX.git
 ## License
 
 V2EX is available under the MIT license. See the [LICENSE file](https://github.com/Joe0708/V2EX/blob/master/LICENSE) for more info.
+

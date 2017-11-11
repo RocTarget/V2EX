@@ -76,8 +76,6 @@ extension TabBarViewController {
         childController.tabBarItem.selectedImage = selectedImageName?.withRenderingMode(.alwaysOriginal)
         childController.title = title
         let nav = NavigationViewController(rootViewController: childController)
-        nav.navigationBar.isTranslucent = false
-        tabBar.isTranslucent = false
         addChildViewController(nav)
     }
     
