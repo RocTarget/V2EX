@@ -4,32 +4,32 @@ import PullToRefreshKit
 extension UIScrollView {
 
     func addHeaderRefresh(handle: @escaping Action) {
-        setUpHeaderRefresh(handle)
-//        setUpHeaderRefresh(ElasticRefreshHeader(), action: handle)
+        configRefreshHeader(with: DefaultRefreshHeader.header(), action: handle)
+//        configRefreshHeader(with: ElasticRefreshHeader(), action: handle)
     }
 
     func addFooterRefresh(handle: @escaping Action) {
-        setUpFooterRefresh(VFooterRefresh(), action: handle)
+        configRefreshFooter(with: VFooterRefresh(), action: handle)
     }
 
     func endHeaderRefresh() {
-        endHeaderRefreshing()
-        resetFooterToDefault()
+        switchRefreshHeader(to: HeaderRefresherState.normal(.none, 0))
+        switchRefreshFooter(to: .normal)
     }
 
     func endFooterRefresh(showNoMore: Bool = false) {
-        endFooterRefreshing()
+        switchRefreshFooter(to: .normal)
         
         if showNoMore {
-            endFooterRefreshingWithNoMoreData()
+            switchRefreshFooter(to: .noMoreData)
         }
     }
 
     func endRefresh(showNoMore: Bool = false) {
 
         guard showNoMore else {
-            endHeaderRefreshing()
-            endFooterRefreshing()
+            switchRefreshHeader(to: HeaderRefresherState.normal(.none, 0))
+            switchRefreshFooter(to: .normal)
             return
         }
         endFooterRefresh(showNoMore: showNoMore)

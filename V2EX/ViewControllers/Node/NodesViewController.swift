@@ -63,6 +63,7 @@ class NodesViewController: DataViewController, NodeService {
     // MARK: State Handle
 
     override func loadData() {
+        guard segmentedControl.selectedSegmentIndex == 0 else { return }
         fetchNodeNav()
     }
 

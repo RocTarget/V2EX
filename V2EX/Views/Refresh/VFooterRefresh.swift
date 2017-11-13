@@ -30,9 +30,8 @@ class VFooterRefresh: UIView, RefreshableFooter {
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    /// 触发动作的距离，对于header/footer来讲，就是视图的高度；对于left/right来讲，就是视图的宽度
-    func heightForRefreshingState() -> CGFloat {
+    
+    func heightForFooter() -> CGFloat {
         return 50
     }
 

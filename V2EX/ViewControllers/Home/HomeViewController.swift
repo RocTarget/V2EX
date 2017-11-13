@@ -250,7 +250,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 self.navigationController?.navigationBar.y -= navHeight
                 setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black)
             }else { //显示
-                self.tabBarController?.tabBar.y = self.tableView.height - tabBarHeight
+                self.tabBarController?.tabBar.y = Constants.Metric.screenHeight - tabBarHeight
                 self.navigationController?.navigationBar.y = UIApplication.shared.statusBarFrame.height
                 setStatusBarBackground(.clear)
             }
