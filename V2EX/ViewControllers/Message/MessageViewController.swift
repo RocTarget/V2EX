@@ -107,9 +107,13 @@ class MessageViewController: DataViewController, AccountService {
             self.tabBarItem.badgeValue = nil
             self.tableView.endHeaderRefresh()
         }) { [weak self] error in
-            self?.errorMessage = error
-            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            self?.tableView.endHeaderRefresh()
+            guard let `self` = self else { return }
+            self.errorMessage = error
+            self.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            self.tableView.endHeaderRefresh()
+            if !self.messages.count.boolValue {
+                self.status = .empty
+            }
         }
     }
     

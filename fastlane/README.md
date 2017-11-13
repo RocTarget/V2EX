@@ -51,7 +51,7 @@ Deploy a new version to the App Store
 ```
 fastlane ios upload_dsyms
 ```
-
+Upload DSYM file to Crashlytics
 
 ----
 

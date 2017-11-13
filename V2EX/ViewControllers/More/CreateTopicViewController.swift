@@ -178,7 +178,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
             if #available(iOS 11.0, *) {
                 $0.top.equalTo(view.safeAreaInsets.top)
             } else {
-                $0.top.equalToSuperview()
+                $0.top.equalTo(self.topLayoutGuide.snp.bottom)
             }
             $0.left.right.equalToSuperview()
             $0.height.equalTo(40)

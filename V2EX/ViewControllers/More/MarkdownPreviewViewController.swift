@@ -34,7 +34,8 @@ class MarkdownPreviewViewController: BaseViewController {
 
         title = "预览"
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel) { [weak self] in
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "取消", style: .plain) { [weak self] in
             self?.dismiss()
         }
 

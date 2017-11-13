@@ -49,7 +49,7 @@ enum MarkdownItemType: Int, EnumCollection {
         switch self {
         case .bold: return "****"
         case .italic: return "**"
-        case .heading: return "# "
+        case .heading: return "#"
         case .quote: return "> "
         case .codeBlock: return "\n```\n\n```"
         case .genericList: return "* "

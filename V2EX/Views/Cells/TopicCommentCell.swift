@@ -143,6 +143,7 @@ class TopicCommentCell: BaseTableViewCell {
                 self?.contentLabel.textColor = theme.titleColor
                 self?.usernameLaebl.textColor = theme.titleColor
                 self?.lineView.backgroundColor = theme.borderColor
+                self?.timeLabel.textColor = theme.dateColor
             }.disposed(by: rx.disposeBag)
     }
 

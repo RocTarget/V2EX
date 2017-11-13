@@ -19,7 +19,7 @@ class MessageCell: BaseTableViewCell {
 
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
-        view.textColor = UIColor.hex(0xe2e2e2)
+        view.textColor = UIColor.hex(0xCCCCCC)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -101,6 +101,7 @@ class MessageCell: BaseTableViewCell {
                     if let username = AccountModel.current?.username {
                         self?.contentLabel.makeSubstringColor("@" + username, color: theme.linkColor)
                     }
+                    self?.timeLabel.textColor = theme.dateColor
                 }.disposed(by: rx.disposeBag)
 
         }

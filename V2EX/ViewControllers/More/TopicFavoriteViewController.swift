@@ -20,7 +20,6 @@ class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
         page = 1
         startLoading()
         
-        
         myFavorite(page: page, success: { [weak self] topics, maxPage in
             self?.maxPage = maxPage
             self?.topics = topics
@@ -53,5 +52,13 @@ class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self?.page -= 1
         }
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchFavoriteTopic()
+    }
+
+    override  func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchFavoriteTopic()
     }
 }

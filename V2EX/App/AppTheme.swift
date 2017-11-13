@@ -76,6 +76,13 @@ enum Theme {
         }
     }
 
+    var dateColor: UIColor {
+        switch self {
+        case .day: return #colorLiteral(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
+        case .night: return #colorLiteral(red: 0.3921568627, green: 0.3921568627, blue: 0.3921568627, alpha: 1)
+        }
+    }
+
     var statusBarStyle: UIStatusBarStyle {
         switch self {
         case .day: return .default
@@ -110,3 +117,4 @@ public struct ThemeStyle {
         UserDefaults.save(at: style != .day, forKey: Constants.Keys.themeStyle)
     }
 }
+

@@ -22,7 +22,7 @@ target 'V2EX' do
     pod 'SnapKit'
     pod 'UIView+Positioning'
     pod 'PKHUD'
-    pod 'Toaster'
+    pod 'Toaster', git: 'https://github.com/Joe0708/Toaster.git'
     pod 'StatefulViewController'
     pod 'SKPhotoBrowser'
     pod 'PullToRefreshKit', git: 'https://github.com/Joe0708/PullToRefreshKit.git'

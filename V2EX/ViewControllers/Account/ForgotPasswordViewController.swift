@@ -96,6 +96,20 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
         // 点击忘记密码，用户名直接获取登录时输入的用户名（如果有）
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navBarBgAlpha = 0
+    }
+
+
+    override func setupTheme() {
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.view.backgroundColor = theme == .day ? UIColor(patternImage: #imageLiteral(resourceName: "bj")) : theme.bgColor
+            }.disposed(by: rx.disposeBag)
+    }
+
     override func setupSubviews() {
         view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
 
@@ -272,3 +286,4 @@ extension ForgotPasswordViewController: UITextFieldDelegate {
         return false
     }
 }
+

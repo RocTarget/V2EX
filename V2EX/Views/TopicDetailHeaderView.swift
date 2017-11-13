@@ -125,6 +125,7 @@ class TopicDetailHeaderView: UIView {
                 self?.titleLabel.textColor = theme.titleColor
                 self?.usernameLabel.textColor = theme.titleColor
                 self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : theme.bgColor
+                self?.timeLabel.textColor = theme.dateColor
             }.disposed(by: rx.disposeBag)
     }
     

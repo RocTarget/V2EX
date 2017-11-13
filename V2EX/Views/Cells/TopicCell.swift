@@ -87,6 +87,7 @@ class TopicCell: BaseTableViewCell {
                 self?.titleLabel.textColor = theme.titleColor
                 self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : theme.bgColor
                 self?.usernameLabel.textColor = theme.titleColor
+                self?.lastReplyLabel.textColor = theme.dateColor
             }.disposed(by: rx.disposeBag)
     }
     
@@ -132,7 +133,7 @@ class TopicCell: BaseTableViewCell {
             usernameLabel.text = user.username
             titleLabel.text = topic.title
             lastReplyLabel.text = topic.lastReplyTime
-            replayCountLabel.setTitle(topic.replyCount, for: .normal)
+            replayCountLabel.setTitle(" " + topic.replyCount, for: .normal)
             nodeLabel.text = topic.node?.title
             nodeLabel.isHidden = nodeLabel.text?.isEmpty ?? true
         }

@@ -205,7 +205,8 @@ extension TopicService {
                         
                         AccountModel(username: username, url: href, avatar: avatarPath).save()
                     }
-
+                } else {
+                    AccountModel.delete()
                 }
             }
             

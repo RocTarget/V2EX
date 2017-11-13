@@ -12,6 +12,7 @@ struct AppSetup {
         setupFPS()
         setupCrashlytics()
         setupTheme()
+        setupLog()
     }
 }
 
@@ -53,5 +54,13 @@ extension AppSetup {
 
     private static func setupTheme() {
         ThemeStyle.update(style: UserDefaults.standard.bool(forKey: Constants.Keys.themeStyle) ? .night : .day)
+    }
+
+    private static func setupLog() {
+        #if DEBUG
+            Logger.logLevel = .debug
+        #else
+            Logger.logLevel = .warning
+        #endif
     }
 }

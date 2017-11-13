@@ -27,12 +27,10 @@ class ViewDialogViewController: UITableViewController {
         tableView.backgroundColor = ThemeStyle.style.value.bgColor
         tableView.keyboardDismissMode = .onDrag
         tableView.register(cellWithClass: TopicCommentCell.self)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .cancel,
-            action: { [weak self] in
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "取消", style: .plain) { [weak self] in
             self?.dismiss(animated: true, completion: nil)
-        })
+        }
 
         let headerView = UILabel().hand.config { headerView in
             headerView.text = "下拉关闭查看"

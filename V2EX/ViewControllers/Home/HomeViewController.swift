@@ -4,7 +4,7 @@ import RxSwift
 import RxCocoa
 
 class HomeViewController: BaseTopicsViewController, AccountService {
-    
+
     private lazy var tabView: NodeTabView = {
         let view = NodeTabView(
             frame: CGRect(x: 0,
@@ -14,18 +14,18 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             nodes: nodes)
         return view
     }()
-    
+
     var nodes: [NodeModel] = [] {
         didSet {
             tabView.nodes = nodes
         }
     }
-    
+
     private lazy var searchResultVC: TopicSearchResultViewController = {
         let view = TopicSearchResultViewController()
         return view
     }()
-    
+
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: searchResultVC)
         searchController.searchBar.placeholder = "搜索主题"
@@ -65,7 +65,12 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 self?.dailyRewardMission()
             }.disposed(by: rx.disposeBag)
     }
-    
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        setTabBarHiddn(false)
+    }
+
     override func setupSubviews() {
         super.setupSubviews()
 
@@ -81,7 +86,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             self?.fetchMoreTopic()
         }
     }
-    
+
     func tabChangebHandle() {
         tabView.valueChange = { [weak self] index in
             guard let `self` = self else { return }
@@ -91,7 +96,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             self.fetchTopic()
         }
     }
-    
+
     private func setupSearchBar() {
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController
@@ -103,7 +108,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     }
 
     override func setupRx() {
-        
+
         searchController.searchBar.rx.text.orEmpty
             .debounce(0.5, scheduler: MainScheduler.instance)
             .distinctUntilChanged()
@@ -111,7 +116,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 guard let `searchController` = searchController else { return }
                 searchResultVC?.search(query: query, selectedScope: searchController.searchBar.selectedScopeButtonIndex)
             }).disposed(by: rx.disposeBag)
-        
+
         searchController.searchBar.rx
             .selectedScopeButtonIndex
             .distinctUntilChanged()
@@ -119,6 +124,8 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             .subscribeNext { [weak searchResultVC, weak searchController] index in
                 guard let `searchController` = searchController else { return }
                 guard let query = searchController.searchBar.text else { return }
+
+                searchController.searchBar.resignFirstResponder()
                 searchResultVC?.search(query: query, selectedScope: searchController.searchBar.selectedScopeButtonIndex)
             }.disposed(by: rx.disposeBag)
 
@@ -131,7 +138,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
                 self?.searchController.searchBar.keyboardAppearance = theme == .day ? .default : .dark
             }.disposed(by: rx.disposeBag)
     }
-    
+
     private func fetchIndexData() {
         startLoading()
 
@@ -180,7 +187,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
 
     private func dailyRewardMission() {
         guard AccountModel.isLogin else { return }
-        
+
         dailyReward(success: { days in
             HUD.showText(days)
         }) { error in
@@ -193,7 +200,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     override func loadData() {
         fetchIndexData()
     }
-    
+
     override func hasContent() -> Bool {
         return nodes.count.boolValue
     }
@@ -206,8 +213,48 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             fetchTopic()
         }
     }
-    
+
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
         fetchIndexData()
     }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
+        //获取到拖拽的速度 >0 向下拖动 <0 向上拖动
+        let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView).y
+        if (velocity < -5) {
+            //向上拖动，隐藏导航栏
+            setTabBarHiddn(true)
+        }else if (velocity > 5) {
+            //向下拖动，显示导航栏
+            setTabBarHiddn(false)
+        }else if (velocity == 0) {
+            //停止拖拽
+        }
+    }
+
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        setTabBarHiddn(false)
+        return true
+    }
+
+    private func setTabBarHiddn(_ hidden: Bool) {
+
+        guard let navHeight = navigationController?.navigationBar.height,
+            let tabBarHeight = tabBarController?.tabBar.height else { return }
+
+        UIView.animate(withDuration: 0.3, animations: {
+            if hidden {
+                self.tabBarController?.tabBar.y = Constants.Metric.screenHeight
+                self.navigationController?.navigationBar.y -= navHeight
+                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black)
+            }else { //显示
+                self.tabBarController?.tabBar.y = self.tableView.height - tabBarHeight
+                self.navigationController?.navigationBar.y = UIApplication.shared.statusBarFrame.height
+                setStatusBarBackground(.clear)
+            }
+        })
+    }
 }
+

@@ -8,6 +8,8 @@ public struct Logger {
 
     /// Enabled or not
     public static var isEnabled: Bool = true
+    /// THE log level
+    public static var logLevel: LogType = .debug
     /// The log AttributedString.
     public static var logAttrString = NSMutableAttributedString()
     /// The detailed log string.
@@ -15,10 +17,14 @@ public struct Logger {
     /// Did Add Log
     public static var didAddLog: (() -> Void)?
 
-    private enum LogType {
-        case warning, error, debug, info, verbose
+    public enum LogType: Int {
+        case debug   = 100
+        case verbose = 200
+        case info    = 300
+        case warning = 400
+        case error   = 500
 
-        var level: String {
+        var string: String {
             switch self {
             case .error: return "❌[ERROR]"
             case .warning: return "⚠️[WARNING]"
@@ -43,8 +49,9 @@ public struct Logger {
 
     private static func log(_ items: [Any], file: StaticString = #file, function: StaticString = #function, line: UInt = #line, type: LogType) {
         guard self.isEnabled else { return }
+        guard logLevel.rawValue <= type.rawValue else { return }
 
-        var _message = type.level + " " + message(from: items)
+        var _message = type.string + " " + message(from: items)
         if _message.hasSuffix("\n") == false {
             _message += "\n"
         }

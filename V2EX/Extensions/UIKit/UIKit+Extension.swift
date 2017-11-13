@@ -21,17 +21,17 @@ public extension FloatLiteralType {
 
 
 extension CGFloat {
-    
+
     public var half: CGFloat {
         return self * 0.5
     }
-    
+
     public var double: CGFloat {
         return self * 2
     }
-    
+
     public static var max = CGFloat.greatestFiniteMagnitude
-    
+
     public static var min = CGFloat.leastNormalMagnitude
 
 }
@@ -47,7 +47,7 @@ extension Bool {
     public var reverse: Bool {
         return !self
     }
-    
+
     public var intValue: Int {
         return self ? 1 : 0
     }
@@ -62,11 +62,11 @@ extension UserDefaults {
         UserDefaults.standard.set(value, forKey: key)
         UserDefaults.standard.synchronize()
     }
-    
+
     static func get(forKey key: String) -> Any? {
         return UserDefaults.standard.object(forKey: key)
     }
-    
+
     static func remove(forKey key: String) {
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.synchronize()
@@ -77,31 +77,31 @@ extension UserDefaults {
 
 // MARK: - UIApplication
 public extension UIApplication {
-    
+
     /// App版本
     public class func appVersion() -> String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }
-    
+
     /// App构建版本
     public class func appBuild() -> String {
         return Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as! String
     }
-    
+
     public class var iconFilePath: String {
         let iconFilename = Bundle.main.object(forInfoDictionaryKey: "CFBundleIconFile")
         let iconBasename = (iconFilename as! NSString).deletingPathExtension
         let iconExtension = (iconFilename as! NSString).pathExtension
         return Bundle.main.path(forResource: iconBasename, ofType: iconExtension)!
     }
-    
+
     public class func iconImage() -> UIImage? {
         guard let image = UIImage(contentsOfFile:self.iconFilePath) else {
             return nil
         }
         return image
     }
-    
+
     public class func versionDescription() -> String {
         let version = appVersion()
         #if DEBUG
@@ -110,7 +110,7 @@ public extension UIApplication {
             return "Release - \(version)"
         #endif
     }
-    
+
     public class func appBundleName() -> String{
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
     }
@@ -123,20 +123,25 @@ public extension UIApplication {
         guard address.isNotEmpty else { return }
         UIApplication.shared.openURL(URL(string: "mailto://\(address)")!)
     }
-    
+
     public class func appReviewPage(with appId: String) {
         guard appId.isNotEmpty else { return }
-        
-        UIApplication.shared.openURL(URL(string: "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=\(appId)")!)
+        var urlString = "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=\(appId)"
+        if #available(iOS 11, *) {
+            //            urlString = "itms-apps://itunes.apple.com/cn/app/id\(appId)?mt=8&action=write-review"
+            //            urlString = "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=\(appId)"
+            urlString = "itms-apps://itunes.apple.com/cn/app/v2er/id\(appId)?mt=8&action=write-review"
+        }
+        UIApplication.shared.openURL(URL(string: urlString)!)
     }
-    
+
 }
 
 
 // MARK: - UIDevice
 
 extension UIDevice {
-    
+
     /// MARK: - 获取设备型号
     public static var phoneModel: String {
         var systemInfo = utsname()
@@ -146,7 +151,7 @@ extension UIDevice {
             guard let value = element.value as? Int8 , value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        
+
         switch identifier {
         case "iPod5,1":                                 return "iPod Touch 5"
         case "iPod7,1":                                 return "iPod Touch 6"
@@ -174,28 +179,31 @@ extension UIDevice {
         case "iPad4,4", "iPad4,5", "iPad4,6":           return "iPad Mini 2"
         case "iPad4,7", "iPad4,8", "iPad4,9":           return "iPad Mini 3"
         case "iPad5,1", "iPad5,2":                      return "iPad Mini 4"
+        case "iPad6,3", "iPad6,4":                      return "iPad Pro 9.7 Inch"
         case "iPad6,7", "iPad6,8":                      return "iPad Pro"
+        case "iPad7,1", "iPad7,2":                      return "iPad Pro 12.9 Inch 2. Generation"
+        case "iPad7,3", "iPad7,4":                      return "iPad Pro 10.5 Inch"
         case "AppleTV5,3":                              return "Apple TV"
         case "i386", "x86_64":                          return "Simulator"
         default:                                        return identifier
         }
     }
-    
+
     /// 判断是不是模拟器
     public static var isSimulator: Bool {
         return UIDevice.phoneModel == "Simulator"
     }
-    
+
     public static var isiPad: Bool {
         return UIDevice.current.userInterfaceIdiom == .pad
     }
-    
+
     /// 返回当前屏幕的一个像素的点大小
     public class var onePixel: CGFloat {
         return CGFloat(1.0) / UIScreen.main.scale
     }
-    
-    
+
+
     /// 将浮动值返回到当前屏幕的最近像素
     static public func roundFloatToPixel(_ value: CGFloat) -> CGFloat {
         return round(value * UIScreen.main.scale) / UIScreen.main.scale
@@ -219,9 +227,9 @@ extension NSRange {
 
 // MARK: - 切换调试器
 extension UIViewController {
-    
+
     func toggleDebugger() {
-        
+
         #if DEBUG
             let overlayClass = NSClassFromString("UIDebuggingInformationOverlay") as? UIWindow.Type
             _ = overlayClass?.perform(NSSelectorFromString("prepareDebuggingOverlay"))
@@ -230,3 +238,4 @@ extension UIViewController {
         #endif
     }
 }
+

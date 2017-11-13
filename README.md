@@ -54,6 +54,7 @@
 2. 支持 iPad
 3. 支持 夜间模式
 4. 支持 密码管理工具（1Password、LastPass...)
+5. 支持 Google 账号登录
 
 ## 要求
 

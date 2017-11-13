@@ -260,6 +260,11 @@ extension MoreViewController {
         alertView.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { action in
             log.info("Cancle")
         }))
+
+        if let avatarCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) {
+            alertView.popoverPresentationController?.sourceView = avatarCell
+            alertView.popoverPresentationController?.sourceRect = avatarCell.bounds
+        }
         present(alertView, animated: true, completion: nil)
     }
 
@@ -292,7 +297,7 @@ extension MoreViewController: MFMailComposeViewControllerDelegate {
     private func sendEmail() {
         
         guard MFMailComposeViewController.canSendMail() else {
-            HUD.showText("操作失败，请先在系统邮件中设置个人邮箱账号。")
+            HUD.showError("操作失败，请先在系统邮件中设置个人邮箱账号。\n或直接通过邮箱向我反馈 email: \(Constants.Config.receiverEmail)", delay: 3)
             return
         }
 
