@@ -131,23 +131,29 @@ extension FileManager {
         return mm
     }
 
-    class func clearCache(complete: ((Int) -> Void)) {
-        let size = fileSizeOfCache()
+    class func clearCache(complete: @escaping ((Int) -> Void)) {
+        GCD.runOnBackgroundThread {
+            let size = fileSizeOfCache()
 
-        // 取出文件夹下所有文件数组
-        guard let fileArr = FileManager.default.subpaths(atPath: FileManager.caches) else { return }
-        // 遍历删除
-        for file in fileArr {
-            let path = FileManager.caches.appendingPathComponent(file)
-            if FileManager.default.fileExists(atPath: path) {
-                do {
-                    try FileManager.default.removeItem(atPath: path)
-                } catch {
-                    print(error)
+            // 取出文件夹下所有文件数组
+            guard let fileArr = FileManager.default.subpaths(atPath: FileManager.caches) else { return }
+            // 遍历删除
+            for file in fileArr {
+                let path = FileManager.caches.appendingPathComponent(file)
+                if FileManager.default.fileExists(atPath: path) {
+                    do {
+                        try FileManager.default.removeItem(atPath: path)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
+            GCD.runOnMainThread {
+                GCD.delay(0.2, block: {
+                    complete(size)
+                })
+            }
         }
-        complete(size)
     }
 
 }

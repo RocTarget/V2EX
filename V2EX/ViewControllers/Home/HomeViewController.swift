@@ -189,7 +189,9 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         guard AccountModel.isLogin else { return }
 
         dailyReward(success: { days in
-            HUD.showText(days)
+            GCD.delay(0.3, block: {
+                HUD.showText(days)
+            })
         }) { error in
             // Optimize: 提示用户可以下拉刷新重新领取
             HUD.showTest(error)

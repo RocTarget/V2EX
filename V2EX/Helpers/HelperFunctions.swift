@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import SKPhotoBrowser
+import SafariServices
 
 public typealias JSONArray = [[String : Any]]
 public typealias JSONDictionary = [String : Any]
@@ -48,4 +49,38 @@ func setStatusBarBackground(_ color: UIColor) {
     if statusBar.responds(to:#selector(setter: UIView.backgroundColor)) {
         statusBar.backgroundColor = color
     }
+}
+
+/// 打开浏览器 （内置 或 Safari）
+///
+/// - Parameter url: url
+func openWebView(url: URL?) {
+    guard let `url` = url else { return }
+
+    let openWithSafariBrowser = (UserDefaults.get(forKey: Constants.Keys.openWithSafariBrowser) as? Bool ?? false)
+
+    if openWithSafariBrowser {
+
+        let safariVC = SFSafariViewController(url: url, entersReaderIfAvailable: true) //SFSafariViewController(url: url)
+        if #available(iOS 10.0, *) {
+            safariVC.preferredControlTintColor = Theme.Color.globalColor
+        } else {
+            safariVC.navigationController?.navigationBar.tintColor = Theme.Color.globalColor
+        }
+        AppWindow.shared.window.rootViewController?.present(safariVC, animated: true, completion: nil)
+        return
+    }
+    if let nav = AppWindow.shared.window.rootViewController?.currentViewController().navigationController {
+        let webView = SweetWebViewController()
+        webView.url = url
+        nav.pushViewController(webView, animated: true)
+    } else {
+        let safariVC = SFSafariViewController(url: url)
+        AppWindow.shared.window.rootViewController?.present(safariVC, animated: true, completion: nil)
+    }
+}
+
+func openWebView(url: String) {
+    guard let `url` = URL(string: url) else { return }
+    openWebView(url: url)
 }

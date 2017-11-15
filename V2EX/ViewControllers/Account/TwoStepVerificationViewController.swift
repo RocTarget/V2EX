@@ -138,7 +138,7 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
                 self.captchaTextField.rx.value.onNext(pasteString)
 
                 HUD.showText("检测到剪贴板验证码，正在登录...",
-                             delay: 0.5) { [weak self] in
+                             duration: 0.5) { [weak self] in
                     self?.nextHandle()
                 }
             }.disposed(by: rx.disposeBag)
@@ -151,7 +151,7 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
             captcha.isNotEmpty,
             captcha.count == 6,
             let _ = Int(captcha) else {
-            HUD.showText("请正确验证码", delay: 1.5)
+            HUD.showText("请正确验证码", duration: 1.5)
             return
         }
 

@@ -66,7 +66,6 @@ extension LibrarysViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = dataSource[indexPath.row]
-        let webView = SweetWebViewController(url: item.link)
-        navigationController?.pushViewController(webView, animated: true)
+        openWebView(url: item.link)
     }
 }

@@ -94,9 +94,14 @@ class NodesViewController: DataViewController, NodeService {
             !allNodeVC.isViewLoaded {
             view.addSubview(allNodeVC.view)
             allNodeVC.view.snp.makeConstraints {
-                $0.edges.equalToSuperview()
+                $0.left.right.equalToSuperview()
+                if #available(iOS 11.0, *) {
+                    $0.top.bottom.equalTo(view.safeAreaInsets)
+                } else {
+                    $0.top.equalTo(self.topLayoutGuide.snp.bottom)
+                    $0.bottom.equalTo(self.bottomLayoutGuide.snp.top)
+                }
             }
-//            allNodeVC.view.frame = view.frame
         }
 
         if segmentedControl.selectedSegmentIndex == 0 {

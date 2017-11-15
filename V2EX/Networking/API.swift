@@ -39,7 +39,7 @@ enum API {
     // 注册
     case signup(dict: [String: String])
     // 登录奖励
-    case loginReward(once: String)
+    case loginReward(once: String?)
     // 上传头像
     case updateAvatar(localURL: String, once: String)
     // 账号信息
@@ -148,7 +148,11 @@ extension API: TargetType {
         case .signup:
             return .post("/signup")
         case .loginReward(let once):
-            return .get("/mission/daily/redeem?once=\(once)")
+            var url = "/mission/daily/redeem"
+            if let `once` = once {
+                url.append("?once=\(once)")
+            }
+            return .get(url)
         case .updateAvatar:
             return .post("/settings/avatar")
         case .memberIntro(let username):

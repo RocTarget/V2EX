@@ -373,8 +373,7 @@ extension TopicDetailViewController {
     private func tapHandle(_ type: TapType) {
         switch type {
         case .webpage(let url):
-            let webView = SweetWebViewController(url: url)
-            self.navigationController?.pushViewController(webView, animated: true)
+            openWebView(url: url)
         case .member(let member):
             let memberPageVC = MemberPageViewController(memberName: member.username)
             self.navigationController?.pushViewController(memberPageVC, animated: true)

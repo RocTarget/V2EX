@@ -1,10 +1,10 @@
 import UIKit
 
-class BaseTableViewCell: UITableViewCell {
+enum RightType {
+    case none, arrow, `switch`
+}
 
-    enum RightType {
-        case normal, arrow, `switch`
-    }
+class BaseTableViewCell: UITableViewCell {
 
     public lazy var switchView: UISwitch = {
         let view = UISwitch()

@@ -41,16 +41,20 @@ final class HUD {
         PKHUD.sharedHUD.hide()
     }
 
-    class func showSuccess(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(text, delay: delay, completionBlock: completionBlock)
+    class func showSuccess(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(text, duration: duration, completionBlock: completionBlock)
     }
 
-    class func showError(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(text, delay: delay, completionBlock: completionBlock)
+    class func showError(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(text, duration: duration, completionBlock: completionBlock)
     }
 
-    class func showWarning(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(text, delay: delay, completionBlock: completionBlock)
+    class func showError(_ error: Error, duration: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(error.localizedDescription, duration: duration, completionBlock: completionBlock)
+    }
+
+    class func showWarning(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(text, duration: duration, completionBlock: completionBlock)
     }
 
     /// 测试使用
@@ -65,14 +69,14 @@ final class HUD {
         showTest(error.localizedDescription)
     }
 
-    class func showText(_ text: String, delay: TimeInterval = 3, completionBlock: Action? = nil) {
-        Toast(text: text, delay: 0, duration: delay).show()
-        GCD.delay(delay) {
+    class func showText(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
+        Toast(text: text, delay: 0, duration: duration).show()
+        GCD.delay(duration) {
             completionBlock?()
         }
     }
 
-    class func showText(_ error: Error, delay: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(error.localizedDescription, delay: delay, completionBlock: completionBlock)
+    class func showText(_ error: Error, duration: TimeInterval = 3, completionBlock: Action? = nil) {
+        showText(error.localizedDescription, duration: duration, completionBlock: completionBlock)
     }
 }

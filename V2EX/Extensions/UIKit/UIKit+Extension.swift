@@ -132,7 +132,9 @@ public extension UIApplication {
             //            urlString = "itms-apps://itunes.apple.com/app/viewContentsUserReviews?id=\(appId)"
             urlString = "itms-apps://itunes.apple.com/cn/app/v2er/id\(appId)?mt=8&action=write-review"
         }
-        UIApplication.shared.openURL(URL(string: urlString)!)
+        if let url = URL(string: urlString) {
+            UIApplication.shared.openURL(url)
+        }
     }
 
 }
@@ -237,5 +239,36 @@ extension UIViewController {
             _ = overlay?.perform(NSSelectorFromString("toggleVisibility"))
         #endif
     }
+
+    /// SO: http://stackoverflow.com/questions/24825123/get-the-current-view-controller-from-the-app-delegate
+    public func currentViewController() -> UIViewController {
+        func findBestViewController(_ controller: UIViewController?) -> UIViewController? {
+            if let presented = controller?.presentedViewController { // Presented界面
+                return findBestViewController(presented)
+            } else {
+                switch controller {
+                case is UISplitViewController: // Return right hand side
+                    let split = controller as? UISplitViewController
+                    guard split?.viewControllers.isEmpty ?? true else {
+                        return findBestViewController(split?.viewControllers.last)
+                    }
+                case is UINavigationController: // Return top view
+                    let navigation = controller as? UINavigationController
+                    guard navigation?.viewControllers.isEmpty ?? true else {
+                        return findBestViewController(navigation?.topViewController)
+                    }
+                case is UITabBarController: // Return visible view
+                    let tab = controller as? UITabBarController
+                    guard tab?.viewControllers?.isEmpty ?? true else {
+                        return findBestViewController(tab?.selectedViewController)
+                    }
+                default: break
+                }
+            }
+            return controller
+        }
+        return findBestViewController(UIApplication.shared.keyWindow?.rootViewController)! // 假定永远有
+    }
+
 }
 

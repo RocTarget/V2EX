@@ -38,16 +38,27 @@ struct Constants {
 
         static let nodeGroupCache = FileManager.caches.appendingPathComponent("nodeGroup")
 
+        // 主题
         static let themeStyle = "themeStyle"
 
+        // 同意协议
         static let agreementOfConsent = "agreementOfConsent"
+
+        // 是否使用 App 内置浏览器打开
+        static let openWithSafariBrowser = "openWithSafariBrowser"
+
+        // 阅读字体大小的比例
+        static let webViewFontScale = "webViewFontScale"
+
+        // 全屏返回手势
+        static let fullScreenBack = "fullScreenBack"
     }
 
     struct Metric {
         /// TODO: iPhone X 适配
         static let navigationHeight: CGFloat = 64
         static let tabbarHeight: CGFloat = 49
-
+        
         static let screenWidth: CGFloat = UIScreen.main.bounds.width
         static let screenHeight: CGFloat = UIScreen.main.bounds.height
     }

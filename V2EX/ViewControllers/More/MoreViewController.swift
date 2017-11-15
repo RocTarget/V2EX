@@ -3,19 +3,19 @@ import MessageUI
 import MobileCoreServices
 import Kingfisher
 
-enum MoreItemType {
-    case user
-    case createTopic, nodeCollect, myFavorites, follow, myTopic, myReply
-    case nightMode, grade, sourceCode, clearCache, feedback, about, libs
-    case logout
-}
-struct MoreItem {
-    var icon: UIImage
-    var title: String
-    var type: MoreItemType
-}
-
 class MoreViewController: BaseViewController, AccountService, MemberService {
+
+
+    enum MoreItemType {
+        case user
+        case createTopic, nodeCollect, myFavorites, follow, myTopic, myReply
+        case about, setting
+    }
+    struct MoreItem {
+        var icon: UIImage
+        var title: String
+        var type: MoreItemType
+    }
     
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .grouped)
@@ -43,23 +43,21 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
 //            MoreItem(icon: #imageLiteral(resourceName: "createTopic"), title: "创作新主题", type: .createTopic),
             MoreItem(icon: #imageLiteral(resourceName: "nodeCollect"), title: "节点收藏", type: .nodeCollect),
             MoreItem(icon: #imageLiteral(resourceName: "topicCollect"), title: "主题收藏", type: .myFavorites),
-//            MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
+            MoreItem(icon: #imageLiteral(resourceName: "concern"), title: "特别关注", type: .follow),
             MoreItem(icon: #imageLiteral(resourceName: "topic"), title: "我的主题", type: .myTopic),
             MoreItem(icon: #imageLiteral(resourceName: "myReply"), title: "我的回复", type: .myReply)
         ],
         [
-            MoreItem(icon: #imageLiteral(resourceName: "nightMode"), title: "夜间模式", type: .nightMode),
-            MoreItem(icon: #imageLiteral(resourceName: "cache"), title: "清除缓存", type: .clearCache),
-            MoreItem(icon: #imageLiteral(resourceName: "grade"), title: "给我评分", type: .grade),
-            MoreItem(icon: #imageLiteral(resourceName: "feedback"), title: "意见反馈", type: .feedback),
-            MoreItem(icon: #imageLiteral(resourceName: "sourceCode"), title: "项目源码", type: .sourceCode),
-            MoreItem(icon: #imageLiteral(resourceName: "libs"), title: "开源库", type: .libs),
-            MoreItem(icon: #imageLiteral(resourceName: "about"), title: "关于 V2EX", type: .about)
-        ],
-        [
-            MoreItem(icon: #imageLiteral(resourceName: "logout"), title: "退出登录", type: .logout)
+            MoreItem(icon: #imageLiteral(resourceName: "setting"), title: "设置", type: .setting),
+            MoreItem(icon: #imageLiteral(resourceName: "about"), title: "关于", type: .about)
         ]
     ]
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        tableView.reloadData()
+    }
 
     override func setupSubviews() {
 //        if #available(iOS 11.0, *) {
@@ -68,10 +66,11 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
 
         guard AccountModel.isLogin else { return }
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "edit"), style: .plain, action: { [weak self] in
+        let createTopicItem = UIBarButtonItem(image: #imageLiteral(resourceName: "edit"), style: .plain, action: { [weak self] in
             let viewController = CreateTopicViewController()
             self?.navigationController?.pushViewController(viewController, animated: true)
         })
+        navigationItem.rightBarButtonItem = createTopicItem
     }
 
     override func setupConstraints() {
@@ -114,24 +113,13 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             HUD.showTest(error)
             log.error(error)
         }
-
-        // 有缓冲，数据更新不及时， 废弃
-//        userIntro(username: username, success: { [weak self] account in
-//            self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
-//            log.info(account)
-//            HUD.dismiss()
-//        }) { error in
-//            HUD.dismiss()
-//            log.error(error)
-//        }
     }
 }
 
-
+// MARK: - UITableViewDelegate, UITableViewDataSource
 extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        // 没有登录 不显示 退出登录 cell
-        return AccountModel.isLogin ? sections.count : sections.count - 1
+        return sections.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -146,10 +134,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             cell.textLabel?.text = item.title
             cell.imageView?.image = item.icon
             cell.selectionStyle = .none
-            cell.rightType = item.type == .nightMode ? .switch : .arrow
-            if item.type == .nightMode {
-                cell.switchView.isOn = ThemeStyle.style.value == .night
-            }
+            cell.rightType = .arrow
             return cell
         }
 
@@ -187,33 +172,10 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             viewController = BaseTopicsViewController(href: API.following.path)
         case .myFavorites:
             viewController = TopicFavoriteViewController()
-        case .nightMode:
-            ThemeStyle.update(style: ThemeStyle.style.value == .night ? .day : .night)
-            let cell = tableView.cellForRow(at: indexPath) as? BaseTableViewCell
-            cell?.switchView.setOn(ThemeStyle.style.value == .night, animated: true)
-        case .clearCache:
-            HUD.show()
-            FileManager.clearCache(complete: { size in
-                HUD.dismiss()
-                HUD.showText("成功清除 \(size)M 缓存")
-            })
-        case .grade:
-            UIApplication.appReviewPage(with: Constants.Config.AppID)
-        case .feedback:
-            sendEmail()
-        case .sourceCode:
-            viewController = SweetWebViewController(url: API.codeRepo.defaultURLString)
-        case .libs:
-            viewController = LibrarysViewController()
+        case .setting:
+            viewController = SettingViewController()
         case .about:
-            viewController = SweetWebViewController(url: API.about.defaultURLString)
-        case .logout:
-            AccountModel.delete()
-            HTTPCookieStorage.shared.cookies?.forEach({ cookie in
-                HTTPCookieStorage.shared.deleteCookie(cookie)
-            })
-            presentLoginVC()
-            tableView.reloadData()
+            viewController = AbountViewController()
         }
         guard let vc = viewController else { return }
         
@@ -244,7 +206,9 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: - Upload Avatar
 extension MoreViewController {
+
     private func updateAvatarHandle() {
         let alertView = UIAlertController(title: "修改头像", message: nil, preferredStyle: .actionSheet)
         alertView.addAction(UIAlertAction(title: "拍照", style: .default, handler: { action in
@@ -279,6 +243,7 @@ extension MoreViewController {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
 extension MoreViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         dismiss(animated: true, completion: nil)
@@ -292,34 +257,4 @@ extension MoreViewController: UIImagePickerControllerDelegate, UINavigationContr
     }
 }
 
-extension MoreViewController: MFMailComposeViewControllerDelegate {
-    
-    private func sendEmail() {
-        
-        guard MFMailComposeViewController.canSendMail() else {
-            HUD.showError("操作失败，请先在系统邮件中设置个人邮箱账号。\n或直接通过邮箱向我反馈 email: \(Constants.Config.receiverEmail)", delay: 3)
-            return
-        }
 
-        let mailVC = MFMailComposeViewController()
-        mailVC.setSubject("\(UIApplication.appDisplayName()) iOS 反馈")
-        mailVC.setToRecipients([Constants.Config.receiverEmail])
-        mailVC.setMessageBody("\n\n\n\n[运行环境] \(UIDevice.phoneModel)(\(UIDevice.current.systemVersion))-\(UIApplication.appVersion())(\(UIApplication.appBuild()))", isHTML: false)
-        mailVC.mailComposeDelegate = self
-        present(mailVC, animated: true, completion: nil)
-    }
-    
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-        dismiss(animated: true, completion: nil)
-
-        switch result {
-        case .sent:
-            HUD.showText("感谢您的反馈，我会尽量给您答复。")
-        case .failed:
-            HUD.showText("邮件发送失败: \(error?.localizedDescription ?? "Unkown")")
-        default:
-            break
-        }
-
-    }
-}

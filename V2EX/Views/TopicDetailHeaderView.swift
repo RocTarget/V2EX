@@ -13,7 +13,37 @@ enum TapType {
 }
 
 class TopicDetailHeaderView: UIView {
-    
+
+
+    enum HTMLTag: EnumCollection {
+        case h1, h2, h3, pre, bigger, small, subtle, topicContent
+        var key: String {
+            switch self {
+            case .h1: return "{h1FontSize}"
+            case .h2: return "{h2FontSize}"
+            case .h3: return "{h3FontSize}"
+            case .pre: return "{preFontSize}"
+            case .bigger: return "{biggerFontSize}"
+            case .small: return "{smallFontSize}"
+            case .subtle: return "{subtleFontSize}"
+            case .topicContent: return "{topicContentFontSize}"
+            }
+        }
+
+        var fontSize: Int {
+            switch self {
+            case .h1: return 16
+            case .h2: return 16
+            case .h3: return 16
+            case .pre: return 13
+            case .bigger: return 16
+            case .small: return 11
+            case .subtle: return 12
+            case .topicContent: return 15
+            }
+        }
+    }
+
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
@@ -61,6 +91,12 @@ class TopicDetailHeaderView: UIView {
         view.navigationDelegate = self
         return view
     }()
+
+    public var titleFontSize: CGFloat = 16 {
+        didSet {
+            titleLabel.font = UIFont.systemFont(ofSize: titleFontSize)
+        }
+    }
 
     private var webViewConstraint: Constraint?
 
@@ -176,12 +212,18 @@ class TopicDetailHeaderView: UIView {
             titleLabel.text = topic.title
             timeLabel.text = topic.publicTime
             timeLabel.isHidden = topic.publicTime.isEmpty
-            
+
             do {
                 let fileName = ThemeStyle.style.value == .day ? "day.css" : "night.css"
                 if let filePath = Bundle.main.path(forResource: "style", ofType: "css"),
                     let themeFilePath = Bundle.main.path(forResource: fileName, ofType: "") {
                     var cssString = try String(contentsOfFile: filePath)
+
+                    let scale = (UserDefaults.get(forKey: Constants.Keys.webViewFontScale) as? Float) ?? 1
+                    for tag in HTMLTag.allValues {
+                        let fontpx = scale * Float(tag.fontSize)
+                        cssString = cssString.replacingOccurrences(of: tag.key, with: "\(fontpx)px")
+                    }
                     let themeCssString = try String(contentsOfFile: themeFilePath)
                     cssString += themeCssString
                     let head = "<head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><style>\(cssString)</style></head>"
@@ -196,6 +238,7 @@ class TopicDetailHeaderView: UIView {
             
             guard let node = topic.node else { return }
             nodeLabel.text = node.title
+            nodeLabel.isHidden = node.title.isEmpty
         }
     }
 }

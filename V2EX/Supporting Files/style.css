@@ -1,5 +1,5 @@
 h1 {
-    font-size: 16px;
+    font-size: {h1FontSize};
     font-weight: 500;
     line-height: 100%;
     margin: 5px 0px 15px 0px;
@@ -7,7 +7,7 @@ h1 {
 }
 
 h2 {
-    font-size: 16px;
+    font-size: {h2FontSize};
     font-weight: 500;
     line-height: 100%;
     margin: 20px 0px 20px 0px;
@@ -16,7 +16,7 @@ h2 {
 }
 
 h3 {
-    font-size: 16px;
+    font-size: {h3FontSize};
     font-weight: 500;
     line-height: 100%;
     margin: 5px 0px 20px 0px;
@@ -34,7 +34,7 @@ hr {
 pre {
     font-family: 'Consolas', 'Panic Sans', 'Consolas', 'DejaVu Sans Mono',
     'Bitstream Vera Sans Mono', 'Menlo', 'Microsoft Yahei', monospace;
-    font-size: 13px;
+    font-size: {preFontSize};
     letter-spacing: 0.015em;
     line-height: 120%;
     white-space: pre;
@@ -42,7 +42,6 @@ pre {
     overflow-y: auto;
     background-color: #f8f8f8;
     padding: 5px;
-/*    padding: 5px;*/
 }
 
 pre a {
@@ -85,11 +84,11 @@ ol {
 }
 
 .bigger {
-    font-size: 16px;
+    font-size: {biggerFontSize};
 }
 
 .small {
-    font-size: 11px;
+    font-size: {smallFontSize};
 }
 
 .content {
@@ -101,13 +100,13 @@ ol {
 .subtle {
     background-color: #fff;
     padding: 5px 5px 0px 5px;
-    font-size: 12px;
+    font-size: {subtleFontSize};
     line-height: 120%;
     text-align: left;
 }
 
 .topic_content {
-    font-size: 15px;
+    font-size: {topicContentFontSize};
     line-height: 1.6;
     color: #000000;
     word-wrap: break-word;

@@ -86,6 +86,9 @@
 		BF6C76BC1FA1E57A00E4D418 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C76BB1FA1E57900E4D418 /* UIImage+Extension.swift */; };
 		BF701F201F98610900761E82 /* MarkdownInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */; };
 		BF796F801FA46921002E1B5E /* ETNavBarTransparent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF796F7F1FA46921002E1B5E /* ETNavBarTransparent.swift */; };
+		BF7AF1B81FBC02D1005427D0 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7AF1B71FBC02D1005427D0 /* SettingViewController.swift */; };
+		BF7AF1BA1FBC0C35005427D0 /* AdjustFontViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7AF1B91FBC0C35005427D0 /* AdjustFontViewController.swift */; };
+		BF7AF1BC1FBC2CA5005427D0 /* AbountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7AF1BB1FBC2CA5005427D0 /* AbountViewController.swift */; };
 		BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11171F91E473003815C1 /* UIInsetLabel.swift */; };
 		BF7B111A1F91E5A3003815C1 /* HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B11191F91E5A3003815C1 /* HUD.swift */; };
 		BF8043ED1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */; };
@@ -244,6 +247,9 @@
 		BF6C76BB1FA1E57900E4D418 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		BF701F1F1F98610900761E82 /* MarkdownInputAccessoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownInputAccessoryView.swift; sourceTree = "<group>"; };
 		BF796F7F1FA46921002E1B5E /* ETNavBarTransparent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ETNavBarTransparent.swift; sourceTree = "<group>"; };
+		BF7AF1B71FBC02D1005427D0 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		BF7AF1B91FBC0C35005427D0 /* AdjustFontViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustFontViewController.swift; sourceTree = "<group>"; };
+		BF7AF1BB1FBC2CA5005427D0 /* AbountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbountViewController.swift; sourceTree = "<group>"; };
 		BF7B11171F91E473003815C1 /* UIInsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInsetLabel.swift; sourceTree = "<group>"; };
 		BF7B11191F91E5A3003815C1 /* HUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUD.swift; sourceTree = "<group>"; };
 		BF8043EC1FA2FD7C00AD3C49 /* UIScrollView+Refresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Refresh.swift"; sourceTree = "<group>"; };
@@ -370,6 +376,9 @@
 				BF5A6B881F99DBB600CF6BA1 /* MyReplyViewController.swift */,
 				BF4D779D1F9D896500FAEB7C /* MarkdownPreviewViewController.swift */,
 				77FD14F31FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift */,
+				BF7AF1BB1FBC2CA5005427D0 /* AbountViewController.swift */,
+				BF7AF1B71FBC02D1005427D0 /* SettingViewController.swift */,
+				BF7AF1B91FBC0C35005427D0 /* AdjustFontViewController.swift */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -1113,6 +1122,7 @@
 				BFCB674A1F8F49EA00D05A90 /* Logger.swift in Sources */,
 				772A577B1F9786EB003FBE1A /* CreateTopicViewController.swift in Sources */,
 				778AC6B81F9AF07F0072C6E9 /* NSAttributedString+Extensions.swift in Sources */,
+				BF7AF1BC1FBC2CA5005427D0 /* AbountViewController.swift in Sources */,
 				BF39FFE91F9442DA00D6F8BD /* LoadingButton.swift in Sources */,
 				77ABB3811FA36D8300F376DA /* MemberService.swift in Sources */,
 				BF45E0051F9EFEE30001BEB2 /* EnumCollection.swift in Sources */,
@@ -1124,6 +1134,7 @@
 				77FD14F41FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift in Sources */,
 				BF7B11181F91E473003815C1 /* UIInsetLabel.swift in Sources */,
 				BF45FCCF1F906E74006B2C2F /* CommentModel.swift in Sources */,
+				BF7AF1B81FBC02D1005427D0 /* SettingViewController.swift in Sources */,
 				779B17021F8FA8A900E912E7 /* TopicCell.swift in Sources */,
 				BF701F201F98610900761E82 /* MarkdownInputAccessoryView.swift in Sources */,
 				BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */,
@@ -1157,6 +1168,7 @@
 				77C8DF701F9305F8009DE52C /* AccountService.swift in Sources */,
 				BFCB67661F8F709F00D05A90 /* TopicService.swift in Sources */,
 				BFCE8E081F904CA80026F100 /* NodeTabView.swift in Sources */,
+				BF7AF1BA1FBC0C35005427D0 /* AdjustFontViewController.swift in Sources */,
 				BF65BDB81F8E12C80010B4C9 /* AppDelegate.swift in Sources */,
 				BF3AB5C91F976D7100043269 /* UIView+Border.swift in Sources */,
 				BF02A2C21F8F3E3800BEF85E /* AppSetup.swift in Sources */,

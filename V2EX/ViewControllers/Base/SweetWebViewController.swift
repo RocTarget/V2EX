@@ -27,13 +27,17 @@ public enum NavigationBarPosition {
 
 
 @objc public protocol SweetWebViewControllerDelegate {
-    @objc optional func SweetWebViewController(_ controller: SweetWebViewController, canDismiss url: URL) -> Bool
+    @objc optional func sweetWebViewController(_ controller: SweetWebViewController, canDismiss url: URL) -> Bool
 
-    @objc optional func SweetWebViewController(_ controller: SweetWebViewController, didStart url: URL)
-    @objc optional func SweetWebViewController(_ controller: SweetWebViewController, didFinish url: URL)
-    @objc optional func SweetWebViewController(_ controller: SweetWebViewController, didFail url: URL, withError error: Error)
-    @objc optional func SweetWebViewController(_ controller: SweetWebViewController, decidePolicy url: URL, navigationType: NavigationType) -> Bool
+    @objc optional func sweetWebViewController(_ controller: SweetWebViewController, didStart url: URL)
+    @objc optional func sweetWebViewController(_ controller: SweetWebViewController, didFinish url: URL)
+    @objc optional func sweetWebViewController(_ controller: SweetWebViewController, didFail url: URL, withError error: Error)
+    @objc optional func sweetWebViewController(_ controller: SweetWebViewController, decidePolicy url: URL, navigationType: NavigationType) -> Bool
 }
+
+let estimatedProgressKeyPath = "estimatedProgress"
+let titleKeyPath = "title"
+let cookieKey = "Cookie"
 
 open class SweetWebViewController: UIViewController {
 
@@ -42,31 +46,20 @@ open class SweetWebViewController: UIViewController {
         static let titleKeyPath = "title"
     }
 
-    private lazy var webView: WKWebView = {
-        let webConfiguration = WKWebViewConfiguration()
-        let webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        webView.navigationDelegate = self
-        webView.allowsBackForwardNavigationGestures = true
-        webView.isMultipleTouchEnabled = true
-        return webView
-    }()
-
-    private lazy var progressView: UIProgressView = {
-        let progressView = UIProgressView(progressViewStyle: .default)
-        progressView.tintColor = Theme.Color.globalColor
-        return progressView
-    }()
-
     open var url: URL?
     open var tintColor: UIColor?
     open var delegate: SweetWebViewControllerDelegate?
     open var bypassedSSLHosts: [String]?
+    open var cookies: [HTTPCookie]?
 
     open var websiteTitleInNavigationBar = true
     open var doneBarButtonItemPosition: NavigationBarPosition = .left
     open var leftNavigaionBarItemTypes: [BarButtonItemType] = []
     open var rightNavigaionBarItemTypes: [BarButtonItemType] = []
     open var toolbarItemTypes: [BarButtonItemType] = [.back, .forward, .reload, .activity]
+
+    fileprivate var webView: WKWebView!
+    fileprivate var progressView: UIProgressView!
 
     open var webViewdidFinish: ((WKWebView, URL) -> Void)?
 
@@ -102,33 +95,31 @@ open class SweetWebViewController: UIViewController {
     }()
 
     deinit {
-        webView.removeObserver(self, forKeyPath: Keys.estimatedProgressKeyPath)
-        webView.navigationDelegate = nil
+        webView.removeObserver(self, forKeyPath: estimatedProgressKeyPath)
         if websiteTitleInNavigationBar {
-            webView.removeObserver(self, forKeyPath: Keys.titleKeyPath)
+            webView.removeObserver(self, forKeyPath: titleKeyPath)
         }
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         log.info("DEINIT: SweetWebViewController")
     }
 
-    public init(url: String) {
-        self.url = URL(string: url)
-        super.init(nibName: nil, bundle: nil)
-    }
+    override open func loadView() {
+        let webConfiguration = WKWebViewConfiguration()
+        webView = WKWebView(frame: .zero, configuration: webConfiguration)
 
-    public init(url: URL) {
-        self.url = url
-        super.init(nibName: nil, bundle: nil)
-    }
+        webView.navigationDelegate = self
 
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+        webView.allowsBackForwardNavigationGestures = true
+        webView.isMultipleTouchEnabled = true
 
-    open override func loadView() {
+        webView.addObserver(self, forKeyPath: estimatedProgressKeyPath, options: .new, context: nil)
+        if websiteTitleInNavigationBar {
+            webView.addObserver(self, forKeyPath: titleKeyPath, options: .new, context: nil)
+        }
+
         view = webView
     }
-
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
 
@@ -140,14 +131,8 @@ open class SweetWebViewController: UIViewController {
             previousToolbarState = (navigationController.toolbar.tintColor, navigationController.toolbar.isHidden)
         }
 
-        setUpState()
         setUpProgressView()
         addBarButtonItems()
-
-        webView.addObserver(self, forKeyPath: Keys.estimatedProgressKeyPath, options: .new, context: nil)
-        if websiteTitleInNavigationBar {
-            webView.addObserver(self, forKeyPath: Keys.titleKeyPath, options: .new, context: nil)
-        }
 
         guard let url = url else {
             log.error("[SweetWebViewController][Error] Invalid url:", self.url as Any)
@@ -155,6 +140,12 @@ open class SweetWebViewController: UIViewController {
         }
         load(url)
 
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        setUpState()
     }
 
     override open func viewWillDisappear(_ animated: Bool) {
@@ -203,10 +194,36 @@ public extension SweetWebViewController {
 
 // MARK: - Fileprivate Methods
 private extension SweetWebViewController {
+    var availableCookies: [HTTPCookie]? {
+        return cookies?.filter {
+            cookie in
+            var result = true
+            if let host = url?.host, !cookie.domain.hasSuffix(host) {
+                result = false
+            }
+            if cookie.isSecure && url?.scheme != "https" {
+                result = false
+            }
+
+            return result
+        }
+    }
+
+    func createRequest(url: URL) -> URLRequest {
+        var request = URLRequest(url: url)
+
+        // Set up Cookies
+        if let cookies = availableCookies {
+            request.setValue(HTTPCookie.requestHeaderFields(with: cookies)[cookieKey], forHTTPHeaderField: cookieKey)
+        }
+
+        return request
+    }
 
     func setUpProgressView() {
         guard let navigationController = navigationController else { return }
 
+        progressView = UIProgressView(progressViewStyle: .default)
         progressView.frame = CGRect(x: 0, y: navigationController.navigationBar.frame.size.height - progressView.frame.size.height, width: navigationController.navigationBar.width, height: progressView.height)
         progressView.trackTintColor = UIColor(white: 1, alpha: 0)
     }
@@ -244,8 +261,7 @@ private extension SweetWebViewController {
             return UIBarButtonItem()
         }
 
-        navigationItem.rightBarButtonItems = rightNavigaionBarItemTypes.map {
-            barButtonItemType in
+        navigationItem.rightBarButtonItems = rightNavigaionBarItemTypes.map { barButtonItemType in
             if let barButtonItem = barButtonItems[barButtonItemType] {
                 return barButtonItem
             }
@@ -335,8 +351,7 @@ private extension SweetWebViewController {
         webView.stopLoading()
         if webView.url != nil {
             webView.reload()
-        }
-        else if let url = url {
+        } else if let url = url {
             load(url)
         }
     }
@@ -356,7 +371,7 @@ private extension SweetWebViewController {
     @objc func doneDidClick(sender: AnyObject) {
         var canDismiss = true
         if let url = url {
-            canDismiss = delegate?.SweetWebViewController?(self, canDismiss: url) ?? true
+            canDismiss = delegate?.sweetWebViewController?(self, canDismiss: url) ?? true
         }
         if canDismiss {
             dismiss(animated: true, completion: nil)
@@ -372,7 +387,7 @@ extension SweetWebViewController: WKNavigationDelegate {
         updateBarButtonItems()
         if let url = webView.url {
             self.url = url
-            delegate?.SweetWebViewController?(self, didStart: url)
+            delegate?.sweetWebViewController?(self, didStart: url)
         }
     }
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -385,7 +400,7 @@ extension SweetWebViewController: WKNavigationDelegate {
                 webViewdidFinish(webView, url)
                 return
             }
-            delegate?.SweetWebViewController?(self, didFinish: url)
+            delegate?.sweetWebViewController?(self, didFinish: url)
         }
     }
 
@@ -402,7 +417,7 @@ extension SweetWebViewController: WKNavigationDelegate {
         updateBarButtonItems()
         if let url = webView.url {
             self.url = url
-            delegate?.SweetWebViewController?(self, didFail: url, withError: error)
+            delegate?.sweetWebViewController?(self, didFail: url, withError: error)
         }
 
         guard let url = url, UIApplication.shared.canOpenURL(url) else { return }
@@ -419,8 +434,41 @@ extension SweetWebViewController: WKNavigationDelegate {
     }
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        guard let url = navigationAction.request.url else {
+            decisionHandler(.allow)
+            return
+        }
         var actionPolicy: WKNavigationActionPolicy = .allow
-        if let url = navigationAction.request.url, let navigationType = NavigationType(rawValue: navigationAction.navigationType.rawValue), let result = delegate?.SweetWebViewController?(self, decidePolicy: url, navigationType: navigationType) {
+        if url.host == self.url?.host, let cookies = availableCookies, cookies.count > 0 {
+            if let headerFields = navigationAction.request.allHTTPHeaderFields, let cookieString = headerFields[cookieKey] {
+                let requestCookies = cookieString.components(separatedBy: ";").map {
+                    cookie in
+                    return cookie.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "=")
+                }
+                var lost = false
+                for cookie in cookies {
+                    lost = requestCookies.filter {
+                        requestCookie in
+                        return requestCookie[0] == cookie.name && requestCookie[1] == cookie.value
+                        }.count <= 0
+                    if lost {
+                        break
+                    }
+                }
+                actionPolicy = (lost) ? .cancel : .allow
+            }
+            else {
+                actionPolicy = .cancel
+            }
+
+            if actionPolicy == .cancel {
+                load(url)
+                decisionHandler(actionPolicy)
+                return
+            }
+        }
+
+        if let navigationType = NavigationType(rawValue: navigationAction.navigationType.rawValue), let result = delegate?.sweetWebViewController?(self, decidePolicy: url, navigationType: navigationType) {
             actionPolicy = result ? .allow : .cancel
         }
 
