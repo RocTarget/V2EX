@@ -381,9 +381,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
     private func EULAHandle() {
 
-        if let isAgreement = UserDefaults.get(forKey: Constants.Keys.agreementOfConsent) as? Bool, isAgreement {
-            return
-        }
+        if Preference.shared.agreementOfConsent { return }
 
         let alert = UIAlertController(title: "社区指导原则", message:
             """
@@ -398,7 +396,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
             self.navigationController?.popViewController(animated: true)
         }))
         alert.addAction(UIAlertAction(title: "同意", style: .default, handler: { _ in
-            UserDefaults.save(at: true, forKey: Constants.Keys.agreementOfConsent)
+            Preference.shared.agreementOfConsent = true
         }))
         present(alert, animated: true, completion: nil)
     }

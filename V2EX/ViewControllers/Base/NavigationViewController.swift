@@ -83,8 +83,7 @@ extension NavigationViewController: UIGestureRecognizerDelegate {
         let offset = panGestureRecognizer.translation(in: panGestureRecognizer.view)
         //        let ret = 0 < offset.x && location.x <= 40 // x < 40 可以响应返回手势
         //        let ret =  0 < offset.x && location.x < view.width // 全屏返回手势
-        let isFullScreenGesture = (UserDefaults.get(forKey: Constants.Keys.fullScreenBack) as? Bool) ?? true
-        let area = isFullScreenGesture ? view.width : 50
+        let area = Preference.shared.enableFullScreenGesture ? view.width : 50
         let ret =  0 < offset.x && location.x < area
         return ret
     }

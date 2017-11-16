@@ -100,6 +100,8 @@
 		BF8062BA1FB14CB00024BB37 /* Swift+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */; };
 		BF8062BB1FB14CB00024BB37 /* UIBarButtonItem+ClosureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */; };
 		BF8062BE1FB14CB00024BB37 /* UIViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */; };
+		BF9554D71FBD653E0054FC50 /* ReuseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9554D61FBD653E0054FC50 /* ReuseCell.swift */; };
+		BF9554DB1FBD73EE0054FC50 /* Preference.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9554DA1FBD73EE0054FC50 /* Preference.swift */; };
 		BF9EC81C1F95928E00E7AA02 /* NodeCollectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */; };
 		BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */; };
 		BF9EC8201F95C39A00E7AA02 /* MemberPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */; };
@@ -261,6 +263,8 @@
 		BF8062B21FB14CAF0024BB37 /* Swift+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Swift+Extension.swift"; sourceTree = "<group>"; };
 		BF8062B31FB14CAF0024BB37 /* UIBarButtonItem+ClosureAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+ClosureAction.swift"; sourceTree = "<group>"; };
 		BF8062B61FB14CAF0024BB37 /* UIViewController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Rx.swift"; sourceTree = "<group>"; };
+		BF9554D61FBD653E0054FC50 /* ReuseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseCell.swift; sourceTree = "<group>"; };
+		BF9554DA1FBD73EE0054FC50 /* Preference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preference.swift; sourceTree = "<group>"; };
 		BF9EC81B1F95928E00E7AA02 /* NodeCollectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCollectCell.swift; sourceTree = "<group>"; };
 		BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SweetWebViewController.swift; sourceTree = "<group>"; };
 		BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPageViewController.swift; sourceTree = "<group>"; };
@@ -457,6 +461,7 @@
 				BFBCE5A21F90BB9E000106D6 /* HelperFunctions.swift */,
 				BFC89B481FA0283800759577 /* TextParser.swift */,
 				BF3AB6B31FA1A61200ACA17A /* ImageAttachment.swift */,
+				BF9554DA1FBD73EE0054FC50 /* Preference.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -527,6 +532,7 @@
 				773CD8F71F9B141200D5578F /* UIScrollView+Extension.swift */,
 				77507E681F9B168800D62286 /* String+PinYin.swift */,
 				779064471F9B72C1001A5ABA /* UIViewChain.swift */,
+				BF9554D61FBD653E0054FC50 /* ReuseCell.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1103,6 +1109,7 @@
 				BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */,
 				BF45E00C1F9F0A400001BEB2 /* StateView.swift in Sources */,
 				77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */,
+				BF9554DB1FBD73EE0054FC50 /* Preference.swift in Sources */,
 				7756CCD01F924F7A00EF47B8 /* HTMLParseService.swift in Sources */,
 				776EFDD41F9BB9E70087AECC /* ShareSheetView.swift in Sources */,
 				BFCB674D1F8F4A2C00D05A90 /* Foundation+Extension.swift in Sources */,
@@ -1119,6 +1126,7 @@
 				779B16FE1F8FA5DE00E912E7 /* AccountModel.swift in Sources */,
 				BF8062BB1FB14CB00024BB37 /* UIBarButtonItem+ClosureAction.swift in Sources */,
 				778AC6B61F9AF07F0072C6E9 /* Highlightables.swift in Sources */,
+				BF9554D71FBD653E0054FC50 /* ReuseCell.swift in Sources */,
 				BFCB674A1F8F49EA00D05A90 /* Logger.swift in Sources */,
 				772A577B1F9786EB003FBE1A /* CreateTopicViewController.swift in Sources */,
 				778AC6B81F9AF07F0072C6E9 /* NSAttributedString+Extensions.swift in Sources */,

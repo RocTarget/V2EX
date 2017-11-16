@@ -2,6 +2,22 @@ import UIKit
 
 extension UIView {
 
+    var layoutGuide: UILayoutGuide {
+        if #available(iOS 11, *) {
+            return safeAreaLayoutGuide
+        } else {
+            return layoutMarginsGuide
+        }
+    }
+
+    var layoutInsets: UIEdgeInsets {
+        if #available(iOS 11, *) {
+            return safeAreaInsets
+        } else {
+            return layoutMargins
+        }
+    }
+
     /// 给View加上圆角
     @IBInspectable var setCornerRadius: CGFloat {
         get {
@@ -102,39 +118,5 @@ extension UIView {
         UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
             self.alpha = 1.0
         }, completion: completion)
-    }
-
-    public func addShadow(with color: UIColor) {
-        layer.shadowColor = color.cgColor
-        layer.shadowRadius = 8
-        layer.shadowOpacity = 0.7
-        layer.shadowOffset = CGSize(width: 0, height: 5)
-    }
-
-    /// Removes specified set of constraints from the views in the receiver's subtree and from the receiver itself.
-    ///
-    /// - parameter constraints: A set of constraints that need to be removed.
-    public func removeConstraintsFromSubtree(_ constraints: Set<NSLayoutConstraint>) {
-        var constraintsToRemove = [NSLayoutConstraint]()
-        
-        for constraint in self.constraints {
-            if constraints.contains(constraint) {
-                constraintsToRemove.append(constraint)
-            }
-        }
-        
-        self.removeConstraints(constraintsToRemove)
-        
-        for view in self.subviews {
-            view.removeConstraintsFromSubtree(constraints)
-        }
-    }
-    
-    /// Helper method to instantiate a nib file.
-    ///
-    /// - Parameter bundle: The bundle where the nib is located, by default we'll use the main bundle.
-    /// - Returns: Returns an instance of the nib as a UIView.
-    class func instanceFromNib<T: UIView>(bundle: Bundle = .main) -> T {
-        return UINib(nibName: String(describing: T.self), bundle: bundle).instantiate(withOwner: nil, options: nil)[0] as! T
     }
 }

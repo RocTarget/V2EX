@@ -123,18 +123,24 @@ class TopicDetailHeaderView: UIView {
         
         setupConstraints()
         setupAction()
-        
-//        webView.scrollView.rx.observe(CGSize.self, "contentSize")
-//            .subscribeNext { [weak self] size in
-//                guard let `self` = self,
-//                    let height = size?.height else { return }
-//                self.height = self.titleLabel.bottom + height + 15
-//                self.webViewConstraint?.update(offset: height)
-//                self.webLoadComplete?()
-//        }.disposed(by: rx.disposeBag)
+
+        webView.scrollView.rx
+            .observe(CGSize.self, "contentSize")
+            .distinctUntilChanged()
+            .filterNil()
+            .filter { $0.height >= 100 }
+            .subscribeNext { [weak self] size in
+                self?.updateWebViewHeight(size.height)
+        }.disposed(by: rx.disposeBag)
     }
 
-    func setupAction() {
+    private func updateWebViewHeight(_ htmlHeight: CGFloat) {
+        webViewConstraint?.update(offset: htmlHeight)
+        height = titleLabel.bottom + htmlHeight + 15
+        webLoadComplete?()
+    }
+
+    private func setupAction() {
         let avatarTapGesture = UITapGestureRecognizer()
         avatarView.addGestureRecognizer(avatarTapGesture)
 
@@ -219,7 +225,7 @@ class TopicDetailHeaderView: UIView {
                     let themeFilePath = Bundle.main.path(forResource: fileName, ofType: "") {
                     var cssString = try String(contentsOfFile: filePath)
 
-                    let scale = (UserDefaults.get(forKey: Constants.Keys.webViewFontScale) as? Float) ?? 1
+                    let scale = Preference.shared.webViewFontScale
                     for tag in HTMLTag.allValues {
                         let fontpx = scale * Float(tag.fontSize)
                         cssString = cssString.replacingOccurrences(of: tag.key, with: "\(fontpx)px")
@@ -230,6 +236,7 @@ class TopicDetailHeaderView: UIView {
                     let body = "<body><div id=\"Wrapper\">\(topic.content)</div></body>"
                     let html = "<html>\(head)\(body)</html>"
                     webView.loadHTMLString(html, baseURL: URL(string: "https://"))
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = true
                 }
             } catch {
                 HUD.showTest(error.localizedDescription)
@@ -244,13 +251,12 @@ class TopicDetailHeaderView: UIView {
 }
 
 extension TopicDetailHeaderView: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.evaluateJavaScript("document.body.scrollHeight") { result, error in
-            guard let htmlHeight = result as? CGFloat else { return }
 
-            self.webViewConstraint?.update(offset: htmlHeight)
-            self.height = self.titleLabel.bottom + htmlHeight + 15
-            self.webLoadComplete?()
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
+            guard let htmlHeight = result as? CGFloat else { return }
+            self?.updateWebViewHeight(htmlHeight)
         }
         let script = """
             var imgs = document.getElementsByTagName('img');

@@ -229,8 +229,8 @@ extension HTMLParseService {
                                                        tapAction: { _, attrString, range, _ in
                         guard let highlight = attrString.yy_attribute(YYTextHighlightAttributeName, at: UInt(range.location)),
                             let url = (highlight as AnyObject).userInfo["url"] as? String else { return }
-
-                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
+                                                    clickCommentLinkHandle(urlString: url)
+//                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
 
                     }, longPressAction: nil)
 

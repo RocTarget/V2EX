@@ -33,6 +33,7 @@ func showImageBrowser(imageType: PhotoBrowserType) {
     SKPhotoBrowserOptions.bounceAnimation = true
     SKPhotoBrowserOptions.enableSingleTapDismiss = true
     SKPhotoBrowserOptions.displayCloseButton = false
+    SKPhotoBrowserOptions.displayStatusbar = false
     let photoBrowser = SKPhotoBrowser(photos: [photoItem])
     photoBrowser.initializePageIndex(0)
     photoBrowser.showToolbar(bool: true)
@@ -57,9 +58,12 @@ func setStatusBarBackground(_ color: UIColor) {
 func openWebView(url: URL?) {
     guard let `url` = url else { return }
 
-    let openWithSafariBrowser = (UserDefaults.get(forKey: Constants.Keys.openWithSafariBrowser) as? Bool ?? false)
+    var currentVC = AppWindow.shared.window.rootViewController?.currentViewController()
+    if currentVC == nil {
+        currentVC = AppWindow.shared.window.rootViewController
+    }
 
-    if openWithSafariBrowser {
+    if Preference.shared.useSafariBrowser {
 
         let safariVC = SFSafariViewController(url: url, entersReaderIfAvailable: true) //SFSafariViewController(url: url)
         if #available(iOS 10.0, *) {
@@ -67,16 +71,16 @@ func openWebView(url: URL?) {
         } else {
             safariVC.navigationController?.navigationBar.tintColor = Theme.Color.globalColor
         }
-        AppWindow.shared.window.rootViewController?.present(safariVC, animated: true, completion: nil)
+        currentVC?.present(safariVC, animated: true, completion: nil)
         return
     }
-    if let nav = AppWindow.shared.window.rootViewController?.currentViewController().navigationController {
+    if let nav = currentVC?.navigationController {
         let webView = SweetWebViewController()
         webView.url = url
         nav.pushViewController(webView, animated: true)
     } else {
         let safariVC = SFSafariViewController(url: url)
-        AppWindow.shared.window.rootViewController?.present(safariVC, animated: true, completion: nil)
+        currentVC?.present(safariVC, animated: true, completion: nil)
     }
 }
 
@@ -84,3 +88,27 @@ func openWebView(url: String) {
     guard let `url` = URL(string: url) else { return }
     openWebView(url: url)
 }
+
+func clickCommentLinkHandle(urlString: String) {
+    guard let URL = URL(string: urlString) else { return }
+    let link = URL.absoluteString
+
+    if URL.path.contains("/member/") {
+        let href = URL.path
+        let name = href.lastPathComponent
+        let member = MemberModel(username: name, url: href, avatar: "")
+        let memberPageVC = MemberPageViewController(memberName: member.username)
+        AppWindow.shared.window.rootViewController?.currentViewController().navigationController?.pushViewController(memberPageVC, animated: true)
+    } else if URL.path.contains("/t/") {
+        let topicID = URL.path.lastPathComponent
+        let topicDetailVC = TopicDetailViewController(topicID: topicID)
+        AppWindow.shared.window.rootViewController?.currentViewController().navigationController?.pushViewController(topicDetailVC, animated: true)
+    } else if URL.path.contains("/go/") {
+        let nodeDetailVC = NodeDetailViewController(node: NodeModel(title: "", href: URL.path))
+        AppWindow.shared.window.rootViewController?.currentViewController().navigationController?.pushViewController(nodeDetailVC, animated: true)
+    } else if link.hasPrefix("https://") || link.hasPrefix("http://"){
+        openWebView(url: URL)
+    }
+}
+
+

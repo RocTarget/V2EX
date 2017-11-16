@@ -47,7 +47,7 @@ class AdjustFontViewController: BaseViewController {
         view.maximumValue = 2.0
         view.addTarget(self, action: #selector(sliderValueDidChange), for: .valueChanged)
         view.tintColor = Theme.Color.globalColor
-        view.value = (UserDefaults.get(forKey: Constants.Keys.webViewFontScale) as? Float) ?? 1.0
+        view.value = Preference.shared.webViewFontScale
         return view
     }()
 
@@ -147,6 +147,6 @@ class AdjustFontViewController: BaseViewController {
     @objc func sliderValueDidChange() {
         contentLabel.font = UIFont.systemFont(ofSize: CGFloat(sliderView.value) * 15.f)
 
-        UserDefaults.save(at: sliderView.value, forKey: Constants.Keys.webViewFontScale)
+        Preference.shared.webViewFontScale = sliderView.value
     }
 }

@@ -46,7 +46,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     private var topic: TopicModel? {
         didSet {
             guard let topic = topic else { return }
-            self.title = topic.title
+            title = topic.title
             headerView.topic = topic
         }
     }
@@ -148,13 +148,13 @@ class TopicDetailViewController: DataViewController, TopicService {
                 self?.moreHandle()
         })
 
-        NotificationCenter.default.rx
-            .notification(Notification.Name.V2.HighlightTextClickName)
-            .subscribeNext { [weak self] noti in
-                guard let urlString = noti.object as? String,
-                    let url = URL(string: urlString) else { return }
-                self?.interactHook(url)
-            }.disposed(by: rx.disposeBag)
+//        NotificationCenter.default.rx
+//            .notification(Notification.Name.V2.HighlightTextClickName)
+//            .subscribeNext { [weak self] noti in
+//                guard let urlString = noti.object as? String,
+//                    let url = URL(string: urlString) else { return }
+//                self?.interactHook(url)
+//            }.disposed(by: rx.disposeBag)
 
         title = "加载中..."
     }
@@ -359,6 +359,7 @@ extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigati
 
         let path = FileManager.document.appendingPathComponent("smfile.png")
         _ = FileManager.save(data, savePath: path)
+
         uploadPictureHandle(path)
     }
 }
@@ -381,7 +382,9 @@ extension TopicDetailViewController {
             atMember(member.atUsername)
         case .imageURL(let src):
             showImageBrowser(imageType: .imageURL(src))
+            setStatusBarBackground(.clear)
         case .image(let image):
+            setStatusBarBackground(.clear)
             showImageBrowser(imageType: .image(image))
         case .node(let node):
             let nodeDetailVC = NodeDetailViewController(node: node)
@@ -389,7 +392,6 @@ extension TopicDetailViewController {
         case .topic(let topicID):
             let topicDetailVC = TopicDetailViewController(topicID: topicID)
             self.navigationController?.pushViewController(topicDetailVC, animated: true)
-            log.info()
         }
     }
 
@@ -481,6 +483,7 @@ extension TopicDetailViewController {
         if commentInputView.textView.text.last != " " {
             atUsername.insert(" ", at: commentInputView.textView.text.startIndex)
         }
+        atUsername = Preference.shared.atMemberAddFloor ? atUsername + "#" + (selectComment?.floor ?? "") + " " : atUsername
         commentInputView.textView.insertText(atUsername)
     }
 
@@ -513,9 +516,11 @@ extension TopicDetailViewController {
     }
 
     @objc private func replyCommentAction() {
-        guard let atUsername = selectComment?.member.atUsername else { return }
-        commentInputView.textView.text = atUsername
-        commentInputView.textView.becomeFirstResponder()
+//        guard let atUsername = selectComment?.member.atUsername else { return }
+//        commentInputView.textView.text = atUsername
+//        commentInputView.textView.becomeFirstResponder()
+        commentInputView.textView.text = ""
+        atMember(selectComment?.member.atUsername)
     }
 
     @objc private func thankCommentAction() {
@@ -568,7 +573,7 @@ extension TopicDetailViewController {
 extension TopicDetailViewController {
 
     /// 获取主题详情
-    func fetchTopicDetail() {
+    func fetchTopicDetail(complete: (() -> Void)? = nil) {
         page = 1
 
         startLoading()
@@ -579,11 +584,14 @@ extension TopicDetailViewController {
             self.dataSources = comments
             self.tableView.endHeaderRefresh()
             self.maxPage = maxPage
+
+            complete?()
             //            self.endLoading()
             }, failure: { [weak self] error in
                 self?.errorMessage = error
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
                 self?.tableView.endHeaderRefresh()
+                self?.title = "加载失败"
         })
     }
 
@@ -645,11 +653,15 @@ extension TopicDetailViewController {
             once: once,
             topicID: topicID,
             content: commentText, success: { [weak self] in
+                guard let `self` = self else { return }
                 HUD.showText("回复成功")
                 HUD.dismiss()
-                self?.fetchTopicDetail()
-                GCD.delay(0.5, block: {
-                    self?.tableView.scrollToBottomAnimated()
+
+                // Optimize: 如果当前不是第一页，无法滚到回复位置
+                self.fetchTopicDetail(complete: { [weak self] in
+                    guard let `self` = self else { return }
+                    self.tableView.scrollToRow(at: IndexPath(row: self.dataSources.count - 2, section: 0), at: .bottom, animated: true)
+                    self.setTabBarHiddn(true)
                 })
         }) { [weak self] error in
             guard let `self` = self else { return }
@@ -663,9 +675,10 @@ extension TopicDetailViewController {
     // 上传配图请求
     private func uploadPictureHandle(_ fileURL: String) {
         HUD.show()
+
         uploadPicture(localURL: fileURL, success: { [weak self] url in
             log.info(url)
-            self?.commentInputView.textView.insertText(url)
+            self?.commentInputView.textView.insertText(url + " ")
             HUD.dismiss()
         }) { error in
             HUD.dismiss()

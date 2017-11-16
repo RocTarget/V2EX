@@ -52,6 +52,9 @@ struct Constants {
 
         // 全屏返回手势
         static let fullScreenBack = "fullScreenBack"
+
+        // At 用户时添加楼层
+        static let atMemberAddFloor = "atMemberAddFloor"
     }
 
     struct Metric {

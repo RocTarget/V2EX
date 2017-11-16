@@ -55,7 +55,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Toaster:
-    :commit: 4bfbf0c8d6b6f6371f7831307f9a58e193335549
+    :commit: 10b44e13e1a4e58913320cd39b3e7fae9b9d6f59
     :git: https://github.com/Joe0708/Toaster.git
 
 SPEC CHECKSUMS:

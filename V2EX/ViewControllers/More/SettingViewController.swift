@@ -5,6 +5,7 @@ class SettingViewController: UITableViewController {
 
     enum SettingItemType {
         case browser, nightMode, fontSize, logout, fullScreenBack
+        case floor
     }
     struct SettingItem {
         var title: String
@@ -18,6 +19,9 @@ class SettingViewController: UITableViewController {
             SettingItem(title: "全屏返回手势", type: .fullScreenBack, rightType: .switch),
             SettingItem(title: "夜间模式", type: .nightMode, rightType: .switch),
             SettingItem(title: "调节字体", type: .fontSize, rightType: .arrow),
+        ],
+        [
+            SettingItem(title: "@用户时带楼层号(@devjoe #1)", type: .floor, rightType: .switch),
         ],
         [
             SettingItem(title: "退出账号", type: .logout, rightType: .none)
@@ -68,13 +72,16 @@ extension SettingViewController {
         cell.textLabel?.text = item.title
         cell.rightType = item.rightType
         cell.textLabel?.textAlignment = item.type == .logout ? .center : .left
+        cell.textLabel?.textColor = item.type == .logout ? .red : ThemeStyle.style.value.titleColor
         switch item.type {
         case .browser:
-            cell.switchView.isOn = (UserDefaults.get(forKey: Constants.Keys.openWithSafariBrowser) as? Bool) ?? false
+            cell.switchView.isOn = Preference.shared.useSafariBrowser
         case .fullScreenBack:
-            cell.switchView.isOn = (UserDefaults.get(forKey: Constants.Keys.fullScreenBack) as? Bool) ?? true
+            cell.switchView.isOn = Preference.shared.enableFullScreenGesture
         case .nightMode:
             cell.switchView.isOn = ThemeStyle.style.value == .night
+        case .floor:
+            cell.switchView.isOn = Preference.shared.atMemberAddFloor
         default:
             break
         }
@@ -88,9 +95,9 @@ extension SettingViewController {
 
         switch item.type {
         case .browser:
-            UserDefaults.save(at: cell.switchView.isOn, forKey: Constants.Keys.openWithSafariBrowser)
+            Preference.shared.useSafariBrowser = cell.switchView.isOn
         case .fullScreenBack:
-            UserDefaults.save(at: cell.switchView.isOn, forKey: Constants.Keys.fullScreenBack)
+            Preference.shared.enableFullScreenGesture = cell.switchView.isOn
         case .nightMode:
             ThemeStyle.update(style: ThemeStyle.style.value == .night ? .day : .night)
         case .fontSize:
@@ -103,6 +110,8 @@ extension SettingViewController {
             })
             presentLoginVC()
             tableView.reloadData()
+        case .floor:
+            Preference.shared.atMemberAddFloor = cell.switchView.isOn
         }
 
     }
