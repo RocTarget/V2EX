@@ -175,7 +175,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         case .setting:
             viewController = SettingViewController()
         case .about:
-            viewController = AbountViewController()
+            viewController = AboutViewController()
         }
         guard let vc = viewController else { return }
         

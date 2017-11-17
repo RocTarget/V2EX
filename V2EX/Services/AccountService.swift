@@ -138,7 +138,9 @@ extension AccountService {
                 }
 
                 UserDefaults.save(at: loginForm.username, forKey: Constants.Keys.loginAccount)
-
+                if let account = self.parseLoginUser(html: html) {
+                    account.save()
+                }
                 success?()
                 return
             }
@@ -170,6 +172,9 @@ extension AccountService {
             if let errorMessage = html.xpath("//*[@id='Wrapper']//div[@class='message']").first?.content {
                 failure?(errorMessage)
                 return
+            }
+            if let account = self.parseLoginUser(html: html) {
+                account.save()
             }
             success?()
         }, failure: failure)

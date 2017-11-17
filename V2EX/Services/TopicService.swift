@@ -198,12 +198,8 @@ extension TopicService {
                         rewardable = true
                     }
 
-                    if let avatarNode = html.xpath("//*[@id='Top']/div/div/table/tr/td[3]/a[1]/img[1]").first,
-                        let avatarPath = avatarNode["src"]?.replacingOccurrences(of: "s=24", with: "s=55"), // 修改图片尺寸
-                        let href = avatarNode.parent?["href"] {
-                        let username = href.lastPathComponent
-                        
-                        AccountModel(username: username, url: href, avatar: avatarPath).save()
+                    if let account = self.parseLoginUser(html: html) {
+                        account.save()
                     }
                 } else {
                     AccountModel.delete()

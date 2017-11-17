@@ -27,6 +27,8 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     private var size = 20
     
     private var query: String?
+
+    private var sortType: SearchSortType = .sumup
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,11 +45,32 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     
     override func setupSubviews() {
         startLoading()
+
+        tableView.addFooterRefresh { [weak self] in
+            self?.fecthResult()
+        }
     }
     
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+    }
+
+    private func fecthResult() {
+        guard let `query` = query else { return }
+
+        search(query: query, offset: offset, size: size, sortType: sortType, success: { [weak self] results in
+            guard let `self` = self else { return }
+            self.searchResults.append(contentsOf: results)
+            self.endLoading()
+            self.tableView.endFooterRefresh()
+
+            self.offset += self.size
+        }) { [weak self] error in
+            self?.endLoading()
+            self?.tableView.endFooterRefresh()
+            HUD.showText(error)
         }
     }
 
@@ -71,16 +94,17 @@ class TopicSearchResultViewController: DataViewController, TopicService {
 
     public func search(query: String?, selectedScope: Int) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
-        
+
+        let previousType = self.sortType
         self.query = query
-        let sortType: SearchSortType = selectedScope == 0 ? .sumup : .created
-        search(query: query, offset: offset, size: size, sortType: sortType, success: { [weak self] results in
-            self?.searchResults = results
-            self?.endLoading()
-        }) { [weak self] error in
-            self?.endLoading()
-            HUD.showText(error)
+        self.sortType = selectedScope == 0 ? .sumup : .created
+
+        if previousType != sortType {
+            offset = 0
+            searchResults.removeAll()
         }
+
+        fecthResult()
     }
 }
 

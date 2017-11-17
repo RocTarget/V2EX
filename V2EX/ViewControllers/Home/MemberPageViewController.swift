@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class MemberPageViewController: DataViewController, MemberService, AccountService {
+class MemberPageViewController: BaseViewController, MemberService, AccountService {
 
     private lazy var headerView: UIImageView = {
         let view = UIImageView()
@@ -139,7 +139,7 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         replyViewController = replyVC
         scrollViewDidEndScrollingAnimation(scrollView)
 
-        navBarBgAlpha = 0
+
         navBarTintColor = .white
 
         lastOffsetY = -200
@@ -154,6 +154,20 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
 
         followBtn.isHidden = !AccountModel.isLogin
         blockBtn.isHidden = followBtn.isHidden
+
+        loadData()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navBarBgAlpha = 0
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        navBarBgAlpha = 1
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -165,27 +179,27 @@ class MemberPageViewController: DataViewController, MemberService, AccountServic
         headerView.addSubviews(blurView, avatarView, usernameLabel, joinTimeLabel, followBtn, blockBtn)
     }
     
-    override func loadData() {
-        startLoading()
+    func loadData() {
+//        startLoading()
         memberHome(memberName: memberName, success: { [weak self] member, topics, replys in
             self?.topics = topics
             self?.replys = replys
             self?.member = member
-            self?.endLoading()
+//            self?.endLoading()
         }) { [weak self] error in
-            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            self?.errorMessage = error
+//            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+//            self?.errorMessage = error
         }
     }
     
-    override func hasContent() -> Bool {
-        return member != nil
-    }
-    
-    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-        loadData()
-    }
-    
+//    override func hasContent() -> Bool {
+//        return member != nil
+//    }
+//
+//    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+//        loadData()
+//    }
+
     override func setupConstraints() {
         
         headerView.snp.makeConstraints {
@@ -289,11 +303,14 @@ extension MemberPageViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = scrollView.contentOffset.y
+        guard contentOffsetY > 30 else { return }
+
         let showNavBarOffsetY = 200 - topLayoutGuide.length
 
         let delta = contentOffsetY - lastOffsetY
 
         let headOffset = 200 - delta
+
 
         if contentOffsetY > 200 {
             headerViewTopConstraint?.update(inset: -200)
@@ -317,7 +334,7 @@ extension MemberPageViewController: UIScrollViewDelegate {
             }
         }else{
             navBarBgAlpha = 0
-            navBarTintColor = UIColor.white
+            navBarTintColor = .white
             statusBarShouldLight = true
         }
         setNeedsStatusBarAppearanceUpdate()

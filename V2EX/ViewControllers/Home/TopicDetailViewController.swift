@@ -798,20 +798,15 @@ extension TopicDetailViewController {
     /// 打开系统分享
     func systemShare() {
 
-        guard let url = API.topicDetail(topicID: topicID, page: page).url,
-            let title = topic?.title else { return }
+        guard let url = API.topicDetail(topicID: topicID, page: page).url else { return }
 
         let controller = UIActivityViewController(
-            activityItems: [url, title, headerView.userAvatar ?? #imageLiteral(resourceName: "logo")],
+            activityItems: [url],
             applicationActivities: BrowserActivity.compatibleActivities)
 
-        controller.excludedActivityTypes = [
-            .postToTwitter, .postToFacebook, .postToTencentWeibo, .postToWeibo,
-            .postToFlickr, .postToVimeo, .message, .mail, .addToReadingList,
-            .print, .copyToPasteboard, .assignToContact, .saveToCameraRoll,
-        ]
-
+        controller.excludedActivityTypes = [.postToFlickr, .postToVimeo, .message, .print, .copyToPasteboard, .assignToContact, .saveToCameraRoll]
         controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+
         present(controller, animated: true, completion: nil)
     }
 

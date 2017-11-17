@@ -21,6 +21,7 @@ protocol HTMLParseService {
     func parseMemberTopics(html: HTMLDocument) -> [TopicModel]
     func parseMemberProfile(html: HTMLDocument) -> MemberModel?
     func parsePage(html: HTMLDocument) -> (current: Int, max: Int)
+    func parseLoginUser(html: HTMLDocument) -> AccountModel?
 }
 
 extension HTMLParseService {
@@ -358,5 +359,17 @@ extension HTMLParseService {
         let currentPage = pageComponents?.first?.int ?? 1
         let maxPage = pageComponents?.last?.int ?? 1
         return (currentPage, maxPage)
+    }
+
+    func parseLoginUser(html: HTMLDocument) -> AccountModel? {
+        if let avatarNode = html.xpath("//*[@id='Top']/div/div/table/tr/td[3]/a[1]/img[1]").first,
+            let avatarPath = avatarNode["src"]?.replacingOccurrences(of: "s=24", with: "s=55"), // 修改图片尺寸
+            let href = avatarNode.parent?["href"] {
+            let username = href.lastPathComponent
+
+            return AccountModel(username: username, url: href, avatar: avatarPath)
+        }
+
+        return nil
     }
 }

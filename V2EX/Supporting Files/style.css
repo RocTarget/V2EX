@@ -32,8 +32,6 @@ hr {
 }
 
 pre {
-    font-family: 'Consolas', 'Panic Sans', 'Consolas', 'DejaVu Sans Mono',
-    'Bitstream Vera Sans Mono', 'Menlo', 'Microsoft Yahei', monospace;
     font-size: {preFontSize};
     letter-spacing: 0.015em;
     line-height: 120%;
@@ -47,11 +45,6 @@ pre {
 pre a {
     color: inherit;
     text-decoration: underline;
-}
-
-code {
-    font-family: 'Consolas', 'Panic Sans', 'DejaVu Sans Mono',
-    'Bitstream Vera Sans Mono', 'Menlo', 'Microsoft Yahei', monospace;
 }
 
 a:link, a:visited, a:hover, a:active {
@@ -118,9 +111,10 @@ ol {
 }
 
 body {
+    font-family: 'PingFangSC-Regular', monospace;
     padding: 0px 15px 0px 15px;
     margin: 0px 0px 5px;
-    background-color: #ffffff;
+    background-color: #fff;
 }
 
 img {
