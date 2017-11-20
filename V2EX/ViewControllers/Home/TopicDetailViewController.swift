@@ -24,7 +24,6 @@ class TopicDetailViewController: DataViewController, TopicService {
 
     private lazy var imagePicker: UIImagePickerController = {
         let view = UIImagePickerController()
-        view.allowsEditing = true
         view.mediaTypes = [kUTTypeImage as String]
         view.sourceType = .photoLibrary
         view.delegate = self
@@ -60,11 +59,9 @@ class TopicDetailViewController: DataViewController, TopicService {
 
     public var topicID: String
 
-    private var dataSources: [CommentModel] = [] {
-        didSet {
-            comments = dataSources
-        }
-    }
+    private var dataSources: [CommentModel] = []
+    
+    // 原始数据
     private var comments: [CommentModel] = []
 
     private var commentText: String = ""
@@ -353,13 +350,16 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         dismiss(animated: true, completion: nil)
-        guard var image = info[UIImagePickerControllerEditedImage] as? UIImage else { return }
+        guard var image = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
         image = image.resized(by: 0.7)
         guard let data = UIImageJPEGRepresentation(image, 0.5) else { return }
 
         let path = FileManager.document.appendingPathComponent("smfile.png")
-        _ = FileManager.save(data, savePath: path)
-
+        let error = FileManager.save(data, savePath: path)
+        if let err = error {
+            HUD.showTest(err)
+            log.error(err)
+        }
         uploadPictureHandle(path)
     }
 }
@@ -582,6 +582,7 @@ extension TopicDetailViewController {
             guard let `self` = self else { return }
             self.topic = topic
             self.dataSources = comments
+            self.comments = comments
             self.tableView.endHeaderRefresh()
             self.maxPage = maxPage
 
@@ -679,6 +680,7 @@ extension TopicDetailViewController {
         uploadPicture(localURL: fileURL, success: { [weak self] url in
             log.info(url)
             self?.commentInputView.textView.insertText(url + " ")
+            self?.commentInputView.textView.becomeFirstResponder()
             HUD.dismiss()
         }) { error in
             HUD.dismiss()

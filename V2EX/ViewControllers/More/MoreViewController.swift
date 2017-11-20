@@ -252,7 +252,11 @@ extension MoreViewController: UIImagePickerControllerDelegate, UINavigationContr
         guard let data = UIImageJPEGRepresentation(image, 0.5) else { return }
 
         let path = FileManager.document.appendingPathComponent("smfile.png")
-        _ = FileManager.save(data, savePath: path)
+        let error = FileManager.save(data, savePath: path)
+        if let err = error {
+            HUD.showTest(err)
+            log.error(err)
+        }
         uploadAvatarHandle(path)
     }
 }

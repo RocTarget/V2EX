@@ -84,6 +84,17 @@ class AllNodesViewController: DataViewController, NodeService {
             }
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if let _ = didSelectedNodeHandle {
+            self.searchController.isActive = true
+            GCD.delay(0.2) {
+                self.searchController.searchBar.becomeFirstResponder()
+            }
+        }
+    }
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {

@@ -84,7 +84,6 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
     private lazy var imagePicker: UIImagePickerController = {
         let view = UIImagePickerController()
-        view.allowsEditing = true
         view.mediaTypes = [kUTTypeImage as String]
         view.sourceType = .photoLibrary
         view.delegate = self
@@ -356,7 +355,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
     private func uploadPictureHandle(_ fileURL: String) {
         HUD.show()
         uploadPicture(localURL: fileURL, success: { [weak self] url in
-            self?.bodyTextView.insertText("![V2EX](\(url))")
+            self?.bodyTextView.insertText("![V2er](\(url))")
             self?.bodyTextView.becomeFirstResponder()
             HUD.dismiss()
         }) { error in
@@ -405,12 +404,16 @@ class CreateTopicViewController: BaseViewController, TopicService {
 extension CreateTopicViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         dismiss(animated: true, completion: nil)
-        guard var image = info[UIImagePickerControllerEditedImage] as? UIImage else { return }
+        guard var image = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
         image = image.resized(by: 0.7)
         guard let data = UIImageJPEGRepresentation(image, 0.5) else { return }
 
         let path = FileManager.document.appendingPathComponent("smfile.png")
-        _ = FileManager.save(data, savePath: path)
+        let error = FileManager.save(data, savePath: path)
+        if let err = error {
+            HUD.showTest(err)
+            log.error(err)
+        }
         uploadPictureHandle(path)
     }
 
