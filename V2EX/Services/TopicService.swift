@@ -2,7 +2,9 @@ import Foundation
 import Kanna
 
 protocol TopicService: HTMLParseService {
-    
+
+    func homeNodes() -> [NodeModel]
+
     /// 获取 首页 数据
     ///
     /// - Parameters:
@@ -178,6 +180,30 @@ protocol TopicService: HTMLParseService {
 }
 
 extension TopicService {
+
+    /// 首页节点
+    /// 到时候会添加自定义节点的功能
+    /// 所有暂时先这么做
+    func homeNodes() -> [NodeModel] {
+        var nodes = [
+            NodeModel(title: "全部", href: "/?tab=all"),
+            NodeModel(title: "最热", href: "/?tab=hot"),
+            NodeModel(title: "技术", href: "/?tab=tech"),
+            NodeModel(title: "创意", href: "/?tab=creative"),
+            NodeModel(title: "好玩", href: "/?tab=play"),
+            NodeModel(title: "Apple", href: "/?tab=apple"),
+            NodeModel(title: "城市", href: "/?tab=city"),
+            NodeModel(title: "问与答", href: "/?tab=qna"),
+            NodeModel(title: "节点", href: "/?tab=nodes"),
+            NodeModel(title: "R2", href: "/?tab=r2"),
+            NodeModel(title: "交易", href: "/?tab=deals"),
+            NodeModel(title: "酷工作", href: "/?tab=jobs")
+        ]
+        if AccountModel.isLogin {
+            nodes.append(NodeModel(title: "关注", href: "/?tab=members"))
+        }
+        return nodes
+    }
     
     func index(
         success: ((_ nodes: [NodeModel], _ topics: [TopicModel], _ rewardable: Bool) -> Void)?,
@@ -321,7 +347,7 @@ extension TopicService {
                     topic.isThank = thankStr != "感谢"
                 }
             }
-            
+            topic.lastReplyTime = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[3]/div/span/text()").first?.content?.trimmed
             topic.once = self.parseOnce(html: html)
             topic.content = content
             topic.publicTime = html.xpath("//*[@id='Wrapper']/div/div[1]/div[1]/small/text()[2]").first?.content ?? ""

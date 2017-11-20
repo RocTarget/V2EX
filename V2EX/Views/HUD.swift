@@ -1,6 +1,9 @@
 import Foundation
 import PKHUD
 import Toaster
+import RxSwift
+import RxCocoa
+import NSObject_Rx
 
 private class CustomHUD: PKHUDRotatingImageView {
 
@@ -24,6 +27,7 @@ private class CustomHUD: PKHUDRotatingImageView {
 final class HUD {
     
     class func configureAppearance() {
+        // Optimize: 页面模式变 白低黑字
         let appearance = ToastView.appearance()
         appearance.font = .boldSystemFont(ofSize: 16)
         appearance.textInsets = UIEdgeInsets(top: 15, left: 20, bottom: 15, right: 20)

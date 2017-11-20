@@ -1,7 +1,7 @@
 import UIKit
 import StatefulViewController
 
-class DataViewController: UIViewController, StatefulViewController, ErrorViewDelegate, EmptyViewDelegate {
+class DataViewController: ViewController, StatefulViewController, ErrorViewDelegate, EmptyViewDelegate {
 
     // MARK: - Default Views
 
@@ -51,7 +51,8 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
         loadingView = LoadingView()
         errorView = customErrorView
         emptyView = customEmptyView
-        setupInitialViewState()
+
+
         setupSubviews()
 
         view.setNeedsUpdateConstraints()
@@ -59,6 +60,7 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
 
         setupRx()
         loadData()
+        setupInitialViewState()
         setupTheme()
     }
 
@@ -138,4 +140,5 @@ class DataViewController: UIViewController, StatefulViewController, ErrorViewDel
     func hasContent() -> Bool {
         fatalError("Must be overriden in subclass")
     }
+
 }

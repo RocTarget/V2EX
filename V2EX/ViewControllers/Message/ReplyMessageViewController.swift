@@ -226,6 +226,7 @@ extension ReplyMessageViewController: UIImagePickerControllerDelegate, UINavigat
 extension ReplyMessageViewController: UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
+        textView.resignFirstResponder()
         view.fadeOut()
     }
 

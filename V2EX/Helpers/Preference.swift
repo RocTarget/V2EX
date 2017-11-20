@@ -54,5 +54,23 @@ class Preference {
             return (UserDefaults.get(forKey: Constants.Keys.webViewFontScale) as? Float) ?? 1.0
         }
     }
+
+    var nightModel: Bool {
+        set {
+            ThemeStyle.update(style: newValue ? .night : .day)
+        }
+        get {
+            return ThemeStyle.style.value == .night
+        }
+    }
+
+    var shakeFeedback: Bool {
+        set {
+            UserDefaults.save(at: newValue, forKey: Constants.Keys.shareFeedback)
+        }
+        get {
+            return (UserDefaults.get(forKey: Constants.Keys.shareFeedback) as? Bool) ?? false
+        }
+    }
 }
 

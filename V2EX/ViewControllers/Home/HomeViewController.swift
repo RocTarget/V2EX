@@ -3,13 +3,13 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-class HomeViewController: BaseTopicsViewController, AccountService {
+class HomeViewController: BaseViewController, AccountService, TopicService {
 
     private lazy var tabView: NodeTabView = {
         let view = NodeTabView(
             frame: CGRect(x: 0,
                           y: 0,
-                          width: Constants.Metric.screenWidth,
+                          width: Constants.Metric.screenWidth - 50,
                           height: self.navigationController!.navigationBar.height),
             nodes: nodes)
         return view
@@ -20,6 +20,18 @@ class HomeViewController: BaseTopicsViewController, AccountService {
             tabView.nodes = nodes
         }
     }
+
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView(frame: view.bounds)
+//        scrollView.frame = self.view.bounds
+        scrollView.isPagingEnabled = true
+        scrollView.bounces = false
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.delegate = self
+        view.addSubview(scrollView)
+        return scrollView
+    }()
 
     private lazy var searchResultVC: TopicSearchResultViewController = {
         let view = TopicSearchResultViewController()
@@ -35,6 +47,7 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         // SearchBar 边框颜色
         searchController.searchBar.layer.borderWidth = 0.5
         searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
+        searchController.searchBar.sizeToFit()
         // TextField 边框颜色
         //        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
         //            searchField.layer.borderWidth = 0.5
@@ -49,139 +62,43 @@ class HomeViewController: BaseTopicsViewController, AccountService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        definesPresentationContext = true
-
-        NotificationCenter.default.rx
-            .notification(Notification.Name.V2.TwoStepVerificationName)
-            .subscribeNext { [weak self] _ in
-                let twoStepVer = TwoStepVerificationViewController()
-                let nav = NavigationViewController(rootViewController: twoStepVer)
-                self?.present(nav, animated: true, completion: nil)
-            }.disposed(by: rx.disposeBag)
-
-        NotificationCenter.default.rx
-            .notification(Notification.Name.V2.LoginSuccessName)
-            .subscribeNext { [weak self] _ in
-                self?.dailyRewardMission()
-            }.disposed(by: rx.disposeBag)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        setTabBarHiddn(false)
+        listenNotification()
+        fetchData()
     }
 
     override func setupSubviews() {
         super.setupSubviews()
 
         navigationItem.titleView = tabView
-        setupSearchBar()
-    }
-
-    override func setupRefresh() {
-        tableView.addHeaderRefresh { [weak self] in
-            self?.fetchIndexData()
-        }
-        tableView.addFooterRefresh { [weak self] in
-            self?.fetchMoreTopic()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "search"), style: .plain) { [weak self] in
+            let nav = NavigationViewController(rootViewController: TopicSearchResultViewController())
+            self?.present(nav, animated: true, completion: nil)
         }
     }
 
     func tabChangebHandle() {
         tabView.valueChange = { [weak self] index in
             guard let `self` = self else { return }
-            self.tableView.scrollToTop()
-            let node = self.nodes[index]
-            self.href = node.href
-            self.fetchTopic()
+            var offset = self.scrollView.contentOffset
+            let offsetX = self.scrollView.width * index.f
+            offset.x = offsetX
+            self.scrollView.setContentOffset(offset, animated: true)
         }
     }
 
-    private func setupSearchBar() {
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = searchController
-        } else {
-            searchController.searchBar.isHidden = true
-            tableView.tableHeaderView = searchController.searchBar
-            tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.height)
+    private func fetchData() {
+
+        nodes = homeNodes()
+        tabChangebHandle()
+
+        scrollView.contentSize = CGSize(width: nodes.count.f * scrollView.width, height: scrollView.contentSize.height)
+        for node in nodes {
+            let topicVC = BaseTopicsViewController()
+            topicVC.href = node.href
+            addChildViewController(topicVC)
         }
-    }
-
-    override func setupRx() {
-
-        searchController.searchBar.rx.text.orEmpty
-            .debounce(0.5, scheduler: MainScheduler.instance)
-            .distinctUntilChanged()
-            .subscribeNext({ [weak searchResultVC, weak searchController] query in
-                guard let `searchController` = searchController else { return }
-                searchResultVC?.search(query: query, selectedScope: searchController.searchBar.selectedScopeButtonIndex)
-            }).disposed(by: rx.disposeBag)
-
-        searchController.searchBar.rx
-            .selectedScopeButtonIndex
-            .distinctUntilChanged()
-            .filter { _ in (self.searchController.searchBar.text ?? "").trimmed.isNotEmpty }
-            .subscribeNext { [weak searchResultVC, weak searchController] index in
-                guard let `searchController` = searchController else { return }
-                guard let query = searchController.searchBar.text else { return }
-
-                searchController.searchBar.resignFirstResponder()
-                searchResultVC?.search(query: query, selectedScope: searchController.searchBar.selectedScopeButtonIndex)
-            }.disposed(by: rx.disposeBag)
-
-        ThemeStyle.style.asObservable()
-            .subscribeNext { [weak self] theme in
-                self?.tableView.separatorColor = theme.borderColor
-                self?.searchController.searchBar.barStyle = theme == .day ? .default : .black
-                self?.searchController.searchBar.barTintColor = theme.bgColor
-                self?.searchController.searchBar.layer.borderColor = theme.bgColor.cgColor
-                self?.searchController.searchBar.keyboardAppearance = theme == .day ? .default : .dark
-            }.disposed(by: rx.disposeBag)
-    }
-
-    private func fetchIndexData() {
-        startLoading()
-
-        index(success: { [weak self] nodes, topics, rewardable in
-            guard let `self` = self else { return }
-
-            if rewardable { self.dailyRewardMission() }
-
-            if !self.nodes.count.boolValue {
-                // 避免调用两次请求
-                self.nodes = nodes
-                self.tabChangebHandle()
-                self.searchController.searchBar.isHidden = false
-            }
-
-            self.topics = topics
-            self.endLoading()
-            self.tableView.endHeaderRefresh()
-            }, failure: { [weak self] error in
-                self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-                self?.errorMessage = error
-                self?.tableView.endHeaderRefresh()
-        })
-    }
-
-    private func fetchMoreTopic() {
-        let href = nodes[tabView.selectIndex].href
-        let allHref = "/?tab=all"
-        let isAllowRefresh = href.hasPrefix(allHref)
-        if isAllowRefresh == false {
-            tableView.endFooterRefresh(showNoMore: !isAllowRefresh)
-        }
-
-        guard isAllowRefresh else { return }
-
-        recentTopics(page: page, success: { [weak self] topics, maxPage in
-            guard let `self` = self else { return }
-            self.page += 1
-            self.maxPage = maxPage
-            self.topics.append(contentsOf: topics)
-            self.tableView.endFooterRefresh(showNoMore: self.page >= maxPage)
-        }) { [weak self] error in
-            self?.tableView.endFooterRefresh()
+        GCD.delay(0.05) {
+            self.scrollViewDidEndScrollingAnimation(self.scrollView)
         }
     }
 
@@ -199,64 +116,52 @@ class HomeViewController: BaseTopicsViewController, AccountService {
         }
     }
 
-    override func loadData() {
-        fetchIndexData()
-    }
+    private func listenNotification() {
 
-    override func hasContent() -> Bool {
-        return nodes.count.boolValue
-    }
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.TwoStepVerificationName)
+            .subscribeNext { [weak self] _ in
+                let twoStepVer = TwoStepVerificationViewController()
+                let nav = NavigationViewController(rootViewController: twoStepVer)
+                self?.present(nav, animated: true, completion: nil)
+            }.disposed(by: rx.disposeBag)
 
-    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-        if nodes.count == 0 {
-            fetchIndexData()
-        } else {
-            startLoading()
-            fetchTopic()
-        }
-    }
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.LoginSuccessName)
+            .subscribeNext { [weak self] _ in
+                self?.dailyRewardMission()
+            }.disposed(by: rx.disposeBag)
 
-    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
-        fetchIndexData()
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
-        //获取到拖拽的速度 >0 向下拖动 <0 向上拖动
-        let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView).y
-        if (velocity < -5) {
-            //向上拖动，隐藏导航栏
-            setTabBarHiddn(true)
-        }else if (velocity > 5) {
-            //向下拖动，显示导航栏
-            setTabBarHiddn(false)
-        }else if (velocity == 0) {
-            //停止拖拽
-        }
-    }
-
-    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
-        setTabBarHiddn(false)
-        return true
-    }
-
-    private func setTabBarHiddn(_ hidden: Bool) {
-
-        guard let navHeight = navigationController?.navigationBar.height,
-            let tabBarHeight = tabBarController?.tabBar.height else { return }
-
-        UIView.animate(withDuration: 0.3, animations: {
-            if hidden {
-                self.tabBarController?.tabBar.y = Constants.Metric.screenHeight
-                self.navigationController?.navigationBar.y -= navHeight
-                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black)
-            }else { //显示
-                self.tabBarController?.tabBar.y = Constants.Metric.screenHeight - tabBarHeight
-                self.navigationController?.navigationBar.y = UIApplication.shared.statusBarFrame.height
-                setStatusBarBackground(.clear)
-            }
-        })
+        NotificationCenter.default.rx
+            .notification(Notification.Name.V2.DidSelectedHomeTabbarItemName)
+            .subscribeNext { [weak self] _ in
+                guard let `self` = self else { return }
+                let willShowVC = self.childViewControllers[self.tabView.selectIndex]
+                if let scrollView = willShowVC.view.subviews.first as? UIScrollView {
+                    scrollView.scrollToTop()
+                }
+            }.disposed(by: rx.disposeBag)
     }
 }
 
+
+
+extension HomeViewController: UIScrollViewDelegate {
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        let offsetX = scrollView.contentOffset.x
+        let index = Int(offsetX / scrollView.width)
+
+        tabView.setSelectIndex(index)
+
+        let willShowVC = childViewControllers[index]
+
+        if willShowVC.isViewLoaded { return }
+        willShowVC.view.frame = scrollView.bounds
+        scrollView.addSubview(willShowVC.view)
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollViewDidEndScrollingAnimation(scrollView)
+    }
+}

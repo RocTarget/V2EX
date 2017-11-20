@@ -54,7 +54,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         guard let selectIndexPath = tableView.indexPathForSelectedRow else {
             return nil
         }
-        return comments[selectIndexPath.row]
+        return dataSources[selectIndexPath.row]
     }
 
     public var topicID: String
@@ -292,19 +292,6 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         menuVC.setMenuVisible(true, animated: true)
 
     }
-
-    //    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    //        return "全部回复"
-    //    }
-    //
-    //    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    //        guard let header = view as? UITableViewHeaderFooterView else { return }
-    //        header.tintColor = .white
-    //    }
-    //
-    //    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-    //        return  50
-    //    }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
@@ -550,7 +537,7 @@ extension TopicDetailViewController {
 
     @objc private func viewDialogAction() {
         guard let `selectComment` = selectComment else { return }
-        let dialogs = CommentModel.atUsernameComments(comments: comments, currentComment: selectComment)
+        let dialogs = CommentModel.atUsernameComments(comments: dataSources, currentComment: selectComment)
 
         guard dialogs.count.boolValue else {
             HUD.showText("没有找到与该用户有关的对话")
@@ -658,7 +645,8 @@ extension TopicDetailViewController {
                 HUD.showText("回复成功")
                 HUD.dismiss()
 
-                // Optimize: 如果当前不是第一页，无法滚到回复位置
+                // TODO: 如果当前不是第一页，无法滚到回复位置, 并且会奔溃， 暂时处理只在第一页才滚动
+                guard self.page == 1 else { return }
                 self.fetchTopicDetail(complete: { [weak self] in
                     guard let `self` = self else { return }
                     self.tableView.scrollToRow(at: IndexPath(row: self.dataSources.count - 2, section: 0), at: .bottom, animated: true)

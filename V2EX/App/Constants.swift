@@ -55,6 +55,8 @@ struct Constants {
 
         // At 用户时添加楼层
         static let atMemberAddFloor = "atMemberAddFloor"
+
+        static let shareFeedback = "shareFeedback"
     }
 
     struct Metric {
@@ -84,6 +86,8 @@ extension Notification.Name {
 
         /// 两步验证通知
         static let TwoStepVerificationName = Notification.Name("TwoStepVerificationName")
+
+        static let DidSelectedHomeTabbarItemName = Notification.Name("DidSelectedHomeTabbarItemName")
     }
 }
 

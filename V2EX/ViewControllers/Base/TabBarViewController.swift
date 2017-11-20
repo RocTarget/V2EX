@@ -96,6 +96,10 @@ extension TabBarViewController {
     
     
     private func scrollToTop(_ viewController: UIViewController) {
+        if viewController.isKind(of: HomeViewController.self) {
+            NotificationCenter.default.post(.init(name: Notification.Name.V2.DidSelectedHomeTabbarItemName))
+            return
+        }
         if let navigationController = viewController as? UINavigationController {
             let topViewController = navigationController.topViewController
             let firstViewController = navigationController.viewControllers.first

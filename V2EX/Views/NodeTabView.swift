@@ -3,9 +3,9 @@ import UIKit
 public struct NodeTabViewStyle {
 
     public var indicatorColor = Theme.Color.globalColor
-    public var titleMargin: CGFloat = 10
-    public var titlePendingHorizontal: CGFloat = 14
-    public var titlePendingVertical: CGFloat = 14
+    public var titleMargin: CGFloat = 5
+    public var titlePendingHorizontal: CGFloat = 10
+    public var titlePendingVertical: CGFloat = 12
     public var titleFont = UIFont.systemFont(ofSize: 15)
     public var normalTitleColor = UIColor.hex(0x6C7273)
     public var selectedTitleColor = UIColor.white

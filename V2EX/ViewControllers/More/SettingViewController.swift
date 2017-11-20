@@ -4,7 +4,7 @@ import UIKit
 class SettingViewController: UITableViewController {
 
     enum SettingItemType {
-        case browser, nightMode, fontSize, logout, fullScreenBack
+        case browser, nightMode, fontSize, logout, fullScreenBack, shakeFeedback
         case floor
     }
     struct SettingItem {
@@ -18,9 +18,10 @@ class SettingViewController: UITableViewController {
             SettingItem(title: "使用 Safari 浏览网页", type: .browser, rightType: .switch),
             SettingItem(title: "全屏返回手势", type: .fullScreenBack, rightType: .switch),
             SettingItem(title: "夜间模式", type: .nightMode, rightType: .switch),
-            SettingItem(title: "调节字体", type: .fontSize, rightType: .arrow),
+            SettingItem(title: "摇一摇反馈", type: .shakeFeedback, rightType: .switch)
         ],
         [
+            SettingItem(title: "调节字体", type: .fontSize, rightType: .arrow),
             SettingItem(title: "@用户时带楼层号(@devjoe #1)", type: .floor, rightType: .switch),
         ],
         [
@@ -79,7 +80,9 @@ extension SettingViewController {
         case .fullScreenBack:
             cell.switchView.isOn = Preference.shared.enableFullScreenGesture
         case .nightMode:
-            cell.switchView.isOn = ThemeStyle.style.value == .night
+            cell.switchView.isOn = Preference.shared.nightModel
+        case .shakeFeedback:
+            cell.switchView.isOn = Preference.shared.shakeFeedback
         case .floor:
             cell.switchView.isOn = Preference.shared.atMemberAddFloor
         default:
@@ -99,7 +102,9 @@ extension SettingViewController {
         case .fullScreenBack:
             Preference.shared.enableFullScreenGesture = cell.switchView.isOn
         case .nightMode:
-            ThemeStyle.update(style: ThemeStyle.style.value == .night ? .day : .night)
+            Preference.shared.nightModel = cell.switchView.isOn
+        case .shakeFeedback:
+            Preference.shared.shakeFeedback = cell.switchView.isOn
         case .fontSize:
             let adjustFontVC = AdjustFontViewController()
             navigationController?.pushViewController(adjustFontVC, animated: true)

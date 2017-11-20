@@ -1,6 +1,22 @@
 import UIKit
+import RxSwift
+import RxCocoa
 
 class TopicSearchResultViewController: DataViewController, TopicService {
+
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "搜索主题"
+        searchBar.scopeButtonTitles = ["权重", "时间"]
+        searchBar.tintColor = Theme.Color.globalColor
+        searchBar.barTintColor = ThemeStyle.style.value.bgColor
+        searchBar.delegate = self
+        searchBar.showsCancelButton = true
+        searchBar.showsScopeBar = true
+        searchBar.sizeToFit()
+        return searchBar
+    }()
+
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -22,6 +38,8 @@ class TopicSearchResultViewController: DataViewController, TopicService {
             tableView.reloadData()
         }
     }
+
+    private var isSearched = false
     
     private var offset = 0
     private var size = 20
@@ -33,18 +51,15 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        edgesForExtendedLayout = [.bottom]
-        
+        navigationItem.titleView = searchBar
         status = .noSearchResult
-        
-        ThemeStyle.style.asObservable()
-            .subscribeNext { [weak self] theme in
-                self?.tableView.separatorColor = theme.borderColor
-            }.disposed(by: rx.disposeBag)
+
+        definesPresentationContext = true
+
+        searchBar.becomeFirstResponder()
     }
     
     override func setupSubviews() {
-        startLoading()
 
         tableView.addFooterRefresh { [weak self] in
             self?.fecthResult()
@@ -55,6 +70,45 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+
+    override func setupRx() {
+
+        searchBar.rx.text.orEmpty
+            .debounce(0.5, scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .subscribeNext { [weak self] query in
+                guard let `self` = self else { return }
+                self.search(query: query, selectedScope: self.searchBar.selectedScopeButtonIndex)
+        }.disposed(by: rx.disposeBag)
+
+        searchBar.rx
+            .selectedScopeButtonIndex
+            .distinctUntilChanged()
+            .filter { _ in (self.searchBar.text ?? "").trimmed.isNotEmpty }
+            .subscribeNext { [weak self] index in
+                guard let `self` = self else { return }
+                guard let query = self.searchBar.text else { return }
+
+                self.searchBar.resignFirstResponder()
+                self.search(query: query, selectedScope: self.searchBar.selectedScopeButtonIndex)
+            }.disposed(by: rx.disposeBag)
+
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.tableView.separatorColor = theme.borderColor
+//                self?.searchBar.barTintColor = theme.bgColor
+                self?.searchBar.tintColor = theme.globalColor
+                self?.searchBar.barStyle = theme == .day ? .default : .black
+                self?.searchBar.keyboardAppearance = theme == .day ? .default : .dark
+            }.disposed(by: rx.disposeBag)
+
+        Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
+                      NotificationCenter.default.rx.notification(.UIKeyboardDidHide)).merge()
+            .subscribeNext { [weak self] notification in
+                guard let `self` = self else { return }
+                self.searchBar.subviews.flatMap({$0.subviews}).forEach({ ($0 as? UIButton)?.isEnabled = true })
+            }.disposed(by: rx.disposeBag)
     }
 
     private func fecthResult() {
@@ -77,7 +131,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     // MARK: State Handle
 
     override func hasContent() -> Bool {
-        return searchResults.count.boolValue
+        return isSearched ? searchResults.count.boolValue : true
     }
 
     override func loadData() {
@@ -87,13 +141,17 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
 
     }
-    
+
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
-        
+
     }
 
     public func search(query: String?, selectedScope: Int) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
+
+        searchResults.removeAll()
+        isSearched = true
+        startLoading()
 
         let previousType = self.sortType
         self.query = query
@@ -124,6 +182,19 @@ extension TopicSearchResultViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let id = searchResults[indexPath.row].id else { return }
         let topicDetailVC = TopicDetailViewController(topicID: id)
-        presentingViewController?.navigationController?.pushViewController(topicDetailVC, animated: true)
+//        presentingViewController?.navigationController?.pushViewController(topicDetailVC, animated: true)
+        navigationController?.pushViewController(topicDetailVC, animated: true)
+    }
+}
+
+extension TopicSearchResultViewController : UISearchBarDelegate {
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        dismiss()
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
 }

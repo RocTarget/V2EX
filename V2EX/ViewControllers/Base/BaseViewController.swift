@@ -1,14 +1,9 @@
 import UIKit
 import RxSwift
 
-class BaseViewController: UIViewController {
+class BaseViewController: ViewController {
 
     var interactivePopDisabled: Bool = false
-
-//    // MARK: Properties
-//    lazy private(set) var className: String = {
-//        return type(of: self).description().components(separatedBy: ".").last ?? ""
-//    }()
 
     // MARK: Initializing
 

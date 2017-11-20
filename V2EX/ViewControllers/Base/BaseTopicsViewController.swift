@@ -47,6 +47,10 @@ class BaseTopicsViewController: DataViewController, TopicService {
         tableView.addHeaderRefresh { [weak self] in
             self?.fetchTopic()
         }
+
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreTopic()
+        }
     }
 
     override func setupConstraints() {
@@ -95,6 +99,28 @@ class BaseTopicsViewController: DataViewController, TopicService {
                 self?.errorMessage = error
         })
     }
+
+    private func fetchMoreTopic() {
+        let allHref = "/?tab=all"
+        let isAllowRefresh = href.hasPrefix(allHref)
+        if isAllowRefresh == false {
+            tableView.endFooterRefresh(showNoMore: !isAllowRefresh)
+        }
+
+        guard isAllowRefresh else { return }
+
+        recentTopics(page: page, success: { [weak self] topics, maxPage in
+            guard let `self` = self else { return }
+            self.page += 1
+            self.maxPage = maxPage
+            self.topics.append(contentsOf: topics)
+            self.tableView.endFooterRefresh(showNoMore: self.page >= maxPage)
+        }) { [weak self] error in
+            self?.tableView.endFooterRefresh()
+            HUD.showError(error)
+        }
+    }
+
 
     func tapHandle(_ type: TapType) {
         switch type {
