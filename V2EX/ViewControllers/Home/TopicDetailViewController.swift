@@ -187,7 +187,8 @@ class TopicDetailViewController: DataViewController, TopicService {
 
     override func setupConstraints() {
         tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.left.right.bottom.equalToSuperview()
+            $0.top.equalToSuperview().offset(0.5)
         }
 
         var inputViewHeight = KcommentInputViewHeight

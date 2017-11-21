@@ -88,7 +88,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
         ThemeStyle.style.asObservable()
             .subscribeNext { theme in
-                segmentV.backgroundColor = theme.whiteColor
+                segmentV.backgroundColor = theme == .day ? .white : .black
                 segmentV.borderBottom = Border(color: theme.borderColor)
         }.disposed(by: rx.disposeBag)
     }

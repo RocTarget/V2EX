@@ -140,6 +140,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
                 self?.searchTextField.backgroundColor = theme == .day ? theme.bgColor : UIColor.hex(0x101014)
 //                self?.textView.layer.borderColor = (theme == .day ? theme.borderColor : UIColor.hex(0x19171A)).cgColor
                 self?.searchTextField.textColor = theme.titleColor
+                self?.containerView.borderBottom = Border(color: theme.borderColor)
             }.disposed(by: rx.disposeBag)
     }
 

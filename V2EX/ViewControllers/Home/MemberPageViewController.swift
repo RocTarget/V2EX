@@ -162,12 +162,21 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
         super.viewWillAppear(animated)
         //        navigationController?.navigationBar.shadowImage = UIImage()
         navBarBgAlpha = 0
+        navigationController?.navigationBar.isTranslucent = true
+//        navBarTintColor = UIColor.defaultNavBarTintColor
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         navBarBgAlpha = 1
+        navigationController?.navigationBar.isTranslucent = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isTranslucent = false
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
