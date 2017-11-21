@@ -42,6 +42,8 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         listenNotification()
         setupSegmentView()
         fetchData()
+        
+        navigationItem.title = "V2EX"
     }
 
 

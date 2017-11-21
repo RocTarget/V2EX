@@ -82,6 +82,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         super.viewWillAppear(animated)
 
         navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
     }
 
     override func setupSubviews() {

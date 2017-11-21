@@ -28,7 +28,7 @@ extension NavigationViewController {
 //        navigationBar.tintColor = Theme.Color.globalColor
 //        navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: Theme.Color.globalColor]
         
-        navigationBar.isTranslucent = false
+//        navigationBar.isTranslucent = false
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
 //                self?.navigationBar.barTintColor = theme.navColor

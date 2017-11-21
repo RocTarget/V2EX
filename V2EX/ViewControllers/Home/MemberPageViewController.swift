@@ -165,6 +165,15 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
         navigationController?.navigationBar.isTranslucent = true
 //        navBarTintColor = UIColor.defaultNavBarTintColor
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //        navigationController?.navigationBar.shadowImage = UIImage()
+        navBarBgAlpha = 0
+        navigationController?.navigationBar.isTranslucent = true
+        //        navBarTintColor = UIColor.defaultNavBarTintColor
+    }
+
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -176,6 +185,7 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        navBarBgAlpha = 1
         navigationController?.navigationBar.isTranslucent = false
     }
 
