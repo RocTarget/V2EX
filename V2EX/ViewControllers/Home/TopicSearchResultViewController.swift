@@ -4,19 +4,34 @@ import RxCocoa
 
 class TopicSearchResultViewController: DataViewController, TopicService {
 
-    private lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "搜索主题"
-        searchBar.scopeButtonTitles = ["权重", "时间"]
-        searchBar.tintColor = Theme.Color.globalColor
-        searchBar.barTintColor = ThemeStyle.style.value.bgColor
-        searchBar.delegate = self
-        searchBar.showsCancelButton = true
-        searchBar.showsScopeBar = true
-        searchBar.sizeToFit()
-        return searchBar
+    private lazy var searchTextField: UITextField = {
+        let view = UITextField()
+        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
+        view.placeholder = "搜索主题"
+//        view.backgroundColor = UIColor.groupTableViewBackground
+        view.layer.cornerRadius = 17.5
+        view.layer.masksToBounds = true
+        view.font = UIFont.systemFont(ofSize: 15)
+        view.leftView = UIImageView(image: #imageLiteral(resourceName: "searchSmall"))
+        view.leftViewMode = .always
+        return view
     }()
 
+    private lazy var segmentView: UISegmentedControl = {
+        let view = UISegmentedControl(items: ["权重", "时间"])
+        view.tintColor = Theme.Color.globalColor
+        view.selectedSegmentIndex = 0
+        self.containerView.addSubview(view)
+        return view
+    }()
+
+    private lazy var containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.borderBottom = Border(color: ThemeStyle.style.value.borderColor)
+        self.view.addSubview(view)
+        return view
+    }()
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -51,14 +66,24 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.titleView = searchBar
+        navigationItem.titleView = searchTextField
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, action: { [weak self] in
+            self?.dismiss()
+        })
         status = .noSearchResult
 
         definesPresentationContext = true
+        searchTextField.becomeFirstResponder()
 
-        searchBar.becomeFirstResponder()
+//        searchBar.becomeFirstResponder()
     }
-    
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+
     override func setupSubviews() {
 
         tableView.addFooterRefresh { [weak self] in
@@ -67,47 +92,54 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     }
     
     override func setupConstraints() {
+
+        containerView.snp.makeConstraints {
+            $0.left.top.right.equalToSuperview()
+            $0.height.equalTo(40)
+        }
+
+        segmentView.snp.makeConstraints {
+            $0.left.right.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
+            $0.height.equalTo(30)
+        }
+
         tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.left.bottom.right.equalToSuperview()
+            $0.top.equalTo(containerView.snp.bottom)
         }
     }
 
     override func setupRx() {
 
-        searchBar.rx.text.orEmpty
+        searchTextField.rx.text.orEmpty
             .debounce(0.5, scheduler: MainScheduler.instance)
             .distinctUntilChanged()
             .subscribeNext { [weak self] query in
                 guard let `self` = self else { return }
-                self.search(query: query, selectedScope: self.searchBar.selectedScopeButtonIndex)
+                self.search(query: query)
         }.disposed(by: rx.disposeBag)
 
-        searchBar.rx
-            .selectedScopeButtonIndex
+        segmentView.rx
+            .selectedSegmentIndex
             .distinctUntilChanged()
-            .filter { _ in (self.searchBar.text ?? "").trimmed.isNotEmpty }
+            .filter { _ in (self.searchTextField.text ?? "").trimmed.isNotEmpty }
             .subscribeNext { [weak self] index in
                 guard let `self` = self else { return }
-                guard let query = self.searchBar.text else { return }
+                guard let query = self.searchTextField.text else { return }
 
-                self.searchBar.resignFirstResponder()
-                self.search(query: query, selectedScope: self.searchBar.selectedScopeButtonIndex)
+                self.searchTextField.resignFirstResponder()
+                self.search(query: query)
             }.disposed(by: rx.disposeBag)
 
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.tableView.separatorColor = theme.borderColor
-//                self?.searchBar.barTintColor = theme.bgColor
-                self?.searchBar.tintColor = theme.globalColor
-                self?.searchBar.barStyle = theme == .day ? .default : .black
-                self?.searchBar.keyboardAppearance = theme == .day ? .default : .dark
-            }.disposed(by: rx.disposeBag)
-
-        Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
-                      NotificationCenter.default.rx.notification(.UIKeyboardDidHide)).merge()
-            .subscribeNext { [weak self] notification in
-                guard let `self` = self else { return }
-                self.searchBar.subviews.flatMap({$0.subviews}).forEach({ ($0 as? UIButton)?.isEnabled = true })
+                self?.containerView.backgroundColor = theme.whiteColor
+                self?.searchTextField.keyboardAppearance = theme == .day ? .default : .dark
+                self?.searchTextField.backgroundColor = theme == .day ? theme.bgColor : UIColor.hex(0x101014)
+//                self?.textView.layer.borderColor = (theme == .day ? theme.borderColor : UIColor.hex(0x19171A)).cgColor
+                self?.searchTextField.textColor = theme.titleColor
             }.disposed(by: rx.disposeBag)
     }
 
@@ -146,7 +178,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
 
     }
 
-    public func search(query: String?, selectedScope: Int) {
+    public func search(query: String?) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
 
         searchResults.removeAll()
@@ -155,7 +187,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
 
         let previousType = self.sortType
         self.query = query
-        self.sortType = selectedScope == 0 ? .sumup : .created
+        self.sortType = segmentView.selectedSegmentIndex == 0 ? .sumup : .created
 
         if previousType != sortType {
             offset = 0

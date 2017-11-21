@@ -326,7 +326,7 @@ extension AccountService {
             // 已经领取, 显示已连续登录多少天
             if (html.content ?? "").contains("奖励已领取"),
                 let days = html.xpath("//*[@id='Wrapper']/div/div/div[last()]").first?.content {
-                success?("每日登录奖励已领取\n\(days)")
+//                success?("每日登录奖励已领取\n\(days)")
                 return
             }
 

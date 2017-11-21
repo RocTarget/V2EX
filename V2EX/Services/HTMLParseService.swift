@@ -133,7 +133,7 @@ extension HTMLParseService {
                     let href = srcText.replacingOccurrences(of: "src", with: "href")
                     let urlString = srcText.replacingOccurrences(of: "src=", with: "").replacingOccurrences(of: "\"", with: "")
                     let a = "<a \(href)>\(urlString)</a>"
-                    content = text.replacingOccurrences(of: iframe, with: a)
+                    content = content.replacingOccurrences(of: iframe, with: a)
                 }
             }
         }

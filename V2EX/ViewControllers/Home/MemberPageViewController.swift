@@ -160,7 +160,7 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        //        navigationController?.navigationBar.shadowImage = UIImage()
         navBarBgAlpha = 0
     }
 
@@ -186,9 +186,10 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
             self?.replys = replys
             self?.member = member
 //            self?.endLoading()
-        }) { [weak self] error in
+        }) { error in
 //            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
 //            self?.errorMessage = error
+            log.info(error)
         }
     }
     

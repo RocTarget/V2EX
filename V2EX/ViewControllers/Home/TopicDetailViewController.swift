@@ -316,14 +316,14 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 
     private func setTabBarHiddn(_ hidden: Bool) {
         //        commentInputView.layoutIfNeeded()
-        guard let navHeight = navigationController?.navigationBar.height else { return }
+//        guard let navHeight = navigationController?.navigationBar.height else { return }
 
         UIView.animate(withDuration: 0.3, animations: {
             if hidden {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()
-                self.navigationController?.navigationBar.y -= navHeight
-                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black)
+//                self.navigationController?.navigationBar.y -= navHeight
+//                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black)
             }else { //显示
                 self.inputViewBottomConstranit?.update(inset: 0)
                 self.view.layoutIfNeeded()
