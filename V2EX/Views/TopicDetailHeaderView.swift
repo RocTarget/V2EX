@@ -80,6 +80,10 @@ class TopicDetailHeaderView: UIView {
         view.font = UIFont.boldSystemFont(ofSize: 17)
         view.clickCopyable = true
         view.isUserInteractionEnabled = true
+        view.font = .preferredFont(forTextStyle: .headline)
+        if #available(iOS 10, *) {
+            view.adjustsFontForContentSizeCategory = true
+        }
         return view
     }()
     
@@ -92,9 +96,9 @@ class TopicDetailHeaderView: UIView {
         return view
     }()
 
-    public var titleFontSize: CGFloat = 16 {
+    private var htmlHeight: CGFloat = 0 {
         didSet {
-            titleLabel.font = UIFont.systemFont(ofSize: titleFontSize)
+            updateWebViewHeight()
         }
     }
 
@@ -111,7 +115,7 @@ class TopicDetailHeaderView: UIView {
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth, height: 130))
         backgroundColor = .white
-
+        
         addSubviews(
             avatarView,
             usernameLabel,
@@ -130,14 +134,22 @@ class TopicDetailHeaderView: UIView {
             .filterNil()
             .filter { $0.height >= 100 }
             .subscribeNext { [weak self] size in
-                self?.updateWebViewHeight(size.height)
+                self?.htmlHeight = size.height
+        }.disposed(by: rx.disposeBag)
+
+        NotificationCenter.default.rx
+            .notification(.UIContentSizeCategoryDidChange)
+            .subscribeNext { [weak self] _ in
+                self?.updateWebViewHeight()
         }.disposed(by: rx.disposeBag)
     }
 
-    private func updateWebViewHeight(_ htmlHeight: CGFloat) {
+    private func updateWebViewHeight() {
         webViewConstraint?.update(offset: htmlHeight)
         height = titleLabel.bottom + htmlHeight + 15
         webLoadComplete?()
+
+        log.info(titleLabel.frame)
     }
 
     private func setupAction() {
@@ -256,7 +268,7 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
             guard let htmlHeight = result as? CGFloat else { return }
-            self?.updateWebViewHeight(htmlHeight)
+            self?.htmlHeight = htmlHeight
         }
         let script = """
             var imgs = document.getElementsByTagName('img');

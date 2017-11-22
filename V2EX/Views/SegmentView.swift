@@ -36,13 +36,13 @@ public class SegmentView: UIControl {
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.showsHorizontalScrollIndicator = false
-        view.bounces = true
+        view.bounces = false
         view.isPagingEnabled = false
         view.scrollsToTop = false
         view.isScrollEnabled = true
-        view.contentInset = UIEdgeInsets.zero
-        view.contentOffset = CGPoint.zero
-        view.scrollsToTop = false
+        view.contentInset = .zero
+        view.contentOffset = .zero
+        view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         return view
     }()
 
@@ -72,6 +72,8 @@ public class SegmentView: UIControl {
         addSubview(UIView()) // fix automaticallyAdjustsScrollViewInsets bug
         addSubview(scrollView)
         reloadData()
+
+        autoresizingMask = [.flexibleWidth]
     }
 
 

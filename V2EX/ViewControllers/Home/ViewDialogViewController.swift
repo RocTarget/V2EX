@@ -61,13 +61,13 @@ extension ViewDialogViewController {
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        (tableView.tableHeaderView as? UILabel)?.text = scrollView.contentOffset.y <= -50 ? "松开关闭查看" : "下拉关闭查看"
+        (tableView.tableHeaderView as? UILabel)?.text = scrollView.contentOffset.y <= -100 ? "松开关闭查看" : "下拉关闭查看"
     }
     
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         // 下拉关闭
-        if scrollView.contentOffset.y <= -50 {
+        if scrollView.contentOffset.y <= -100 {
             // 让scrollView 不弹跳回来
             scrollView.contentInset = UIEdgeInsetsMake(-1 * scrollView.contentOffset.y, 0, 0, 0)
             scrollView.isScrollEnabled = false

@@ -4,6 +4,7 @@ import UIKit
 class SettingViewController: UITableViewController {
 
     enum SettingItemType {
+        case accounts
         case browser, nightMode, fontSize, logout, fullScreenBack, shakeFeedback
         case floor
     }
@@ -52,6 +53,11 @@ class SettingViewController: UITableViewController {
                 self?.tableView.backgroundColor = theme.bgColor
                 self?.tableView.separatorColor = theme.borderColor
         }.disposed(by: rx.disposeBag)
+
+//        if AccountModel.isLogin {
+//            let section = [SettingItem(title: "账号管理", type: .accounts, rightType: .arrow)]
+//            sections.insert(section, at: 0)
+//        }
     }
 
 }
@@ -97,6 +103,8 @@ extension SettingViewController {
         let item = sections[indexPath.section][indexPath.row]
 
         switch item.type {
+        case .accounts:
+            navigationController?.pushViewController(AccountsViewController(), animated: true)
         case .browser:
             Preference.shared.useSafariBrowser = cell.switchView.isOn
         case .fullScreenBack:
@@ -118,6 +126,21 @@ extension SettingViewController {
         case .floor:
             Preference.shared.atMemberAddFloor = cell.switchView.isOn
         }
+    }
 
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 20
+    }
+
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return UIView()
+    }
+
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return UIView()
     }
 }

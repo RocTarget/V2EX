@@ -39,10 +39,18 @@ class NodesViewController: DataViewController, NodeService {
         super.viewDidLoad()
         
         definesPresentationContext = true
+    }
 
+    override func setupRx() {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.collectionView.backgroundColor = theme.whiteColor
+            }.disposed(by: rx.disposeBag)
+
+        NotificationCenter.default.rx
+            .notification(.UIContentSizeCategoryDidChange)
+            .subscribeNext { [weak self] _ in
+                self?.collectionView.reloadData()
             }.disposed(by: rx.disposeBag)
     }
 
@@ -147,7 +155,7 @@ extension NodesViewController: UICollectionViewDelegate, UICollectionViewDataSou
 extension NodesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let node = nodeCategorys[indexPath.section].nodes[indexPath.row]
-        let w = node.title.toWidth(fontSize: 20)
+        let w = node.title.toWidth(fontSize: UIFont.preferredFont(forTextStyle: .body).pointSize + 5)
         return CGSize(width: w, height: 30)
     }
 }

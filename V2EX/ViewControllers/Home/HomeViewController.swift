@@ -42,19 +42,26 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         listenNotification()
         setupSegmentView()
         fetchData()
-        
-        navigationItem.title = "V2EX"
     }
 
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+//        setTabBarHiddn(false)
     }
 
     override func setupSubviews() {
         super.setupSubviews()
+
+        navigationItem.title = "V2EX"
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "search"), style: .plain) { [weak self] in
             let resultVC = TopicSearchResultViewController()
@@ -85,7 +92,13 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         scrollView.width = view.width
         scrollView.snp.makeConstraints {
             $0.top.equalTo(segmentV.snp.bottom)
-            $0.bottom.left.right.equalToSuperview()
+            $0.left.right.equalToSuperview()
+
+            if #available(iOS 11.0, *) {
+                $0.bottom.equalTo(view.safeAreaInsets)
+            } else {
+                $0.bottom.equalTo(bottomLayoutGuide.snp.top)
+            }
         }
 
         ThemeStyle.style.asObservable()
@@ -94,7 +107,6 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
                 segmentV.borderBottom = Border(color: theme.borderColor)
         }.disposed(by: rx.disposeBag)
     }
-
 
     private func fetchData() {
         dailyRewardMission()
@@ -122,6 +134,13 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         }
     }
 
+    private func loginHandle() {
+//        guard AccountModel.isLogin, let account = AccountModel.current else { return }
+
+        
+//        Keychain().set(<#T##value: Data##Data#>, forKey: <#T##String#>)
+    }
+
     private func listenNotification() {
 
         NotificationCenter.default.rx
@@ -136,17 +155,27 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
                 self?.dailyRewardMission()
+                self?.loginHandle()
             }.disposed(by: rx.disposeBag)
 
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.DidSelectedHomeTabbarItemName)
             .subscribeNext { [weak self] _ in
-                guard let `self` = self, let `tabView` = self.segmentView else { return }
-                let willShowVC = self.childViewControllers[tabView.selectIndex]
-                if let scrollView = willShowVC.view.subviews.first as? UIScrollView {
-                    scrollView.scrollToTop()
+                guard let `self` = self, let `segmentView` = self.segmentView else { return }
+                let willShowVC = self.childViewControllers[segmentView.selectIndex]
+                if let tableView = willShowVC.view.subviews.first as? UITableView, tableView.numberOfRows(inSection: 0) > 0 {
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                 }
             }.disposed(by: rx.disposeBag)
+    }
+
+    override func setupRx() {
+//        NotificationCenter.default.rx
+//            .notification(.UIDeviceOrientationDidChange)
+//            .subscribeNext { [weak self] noti in
+//                guard let `self` = self else { return }
+//        }.disposed(by: rx.disposeBag)
     }
 }
 

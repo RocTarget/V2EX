@@ -29,7 +29,11 @@ class ReplyCell: BaseTableViewCell {
             }
             .hand.config { label in
                 label.numberOfLines = 0
-                label.font = UIFont.systemFont(ofSize: 15)
+//                label.font = UIFont.systemFont(ofSize: 15)
+                label.font = .preferredFont(forTextStyle: .body)
+                if #available(iOS 10, *) {
+                    label.adjustsFontForContentSizeCategory = true
+                }
         }
 
         ThemeStyle.style.asObservable()

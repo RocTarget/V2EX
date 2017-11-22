@@ -17,8 +17,11 @@ class TopicCell: BaseTableViewCell {
     
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 17)
         view.numberOfLines = 0
+        view.font = .preferredFont(forTextStyle: .body)
+        if #available(iOS 10, *) {
+            view.adjustsFontForContentSizeCategory = true
+        }
         return view
     }()
     

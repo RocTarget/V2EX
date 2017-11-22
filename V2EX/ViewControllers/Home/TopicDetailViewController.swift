@@ -18,6 +18,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         view.backgroundColor = .clear
         view.keyboardDismissMode = .onDrag
         view.register(cellWithClass: TopicCommentCell.self)
+        view.contentInset = UIEdgeInsetsMake(navigationController?.navigationBar.height ?? 64, view.contentInset.left, view.contentInset.bottom, view.contentInset.right)
         self.view.addSubview(view)
         return view
     }()
@@ -99,8 +100,22 @@ class TopicDetailViewController: DataViewController, TopicService {
         return super.canPerformAction(action, withSender: sender)
     }
 
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//
+//        navigationController?.navigationBar.isTranslucent = true
+//    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        setTabBarHiddn(false)
+//        navigationController?.navigationBar.isTranslucent = false
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
         setTabBarHiddn(false)
     }
 
@@ -167,7 +182,6 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
     }
 
-
     func interactHook(_ URL: URL) {
         let link = URL.absoluteString
         if URL.path.contains("/member/") {
@@ -188,7 +202,8 @@ class TopicDetailViewController: DataViewController, TopicService {
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
-            $0.top.equalToSuperview().offset(0.5)
+//            $0.top.equalToSuperview().offset(0.5)
+            $0.top.equalToSuperview().offset(-(tableView.contentInset.top - 0.5))
         }
 
         var inputViewHeight = KcommentInputViewHeight
@@ -316,20 +331,22 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     private func setTabBarHiddn(_ hidden: Bool) {
-        //        commentInputView.layoutIfNeeded()
-//        guard let navHeight = navigationController?.navigationBar.height else { return }
+        guard tableView.contentSize.height > view.height else { return }
+        guard let navHeight = navigationController?.navigationBar.height else { return }
 
         UIView.animate(withDuration: 0.3, animations: {
             if hidden {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()
-//                self.navigationController?.navigationBar.y -= navHeight
-//                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black)
+                self.navigationController?.navigationBar.y -= navHeight
+                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black, borderColor: ThemeStyle.style.value.borderColor)
+//                self.tableView.y = -navHeight
+                self.tableView.height = Constants.Metric.screenHeight
             }else { //显示
                 self.inputViewBottomConstranit?.update(inset: 0)
                 self.view.layoutIfNeeded()
                 self.navigationController?.navigationBar.y = UIApplication.shared.statusBarFrame.height
-                setStatusBarBackground(.clear)
+                setStatusBarBackground(.clear, borderColor: .clear)
             }
         })
     }
@@ -385,6 +402,7 @@ extension TopicDetailViewController {
 
     /// 点击更多处理
     private func moreHandle() {
+        view.endEditing(true)
 
         /// 切换 是否显示楼主
         let floorItem = isShowOnlyFloor ?
@@ -424,6 +442,7 @@ extension TopicDetailViewController {
 
     // 点击导航栏右侧的 更多
     func shareSheetDidSelectedHandle(_ type: ShareItemType) {
+
         // 需要授权的操作
         if type.needAuth, !AccountModel.isLogin{
             HUD.showText("请先登录")
@@ -650,7 +669,12 @@ extension TopicDetailViewController {
                 guard self.page == 1 else { return }
                 self.fetchTopicDetail(complete: { [weak self] in
                     guard let `self` = self else { return }
-                    self.tableView.scrollToRow(at: IndexPath(row: self.dataSources.count - 2, section: 0), at: .bottom, animated: true)
+
+                    if self.tableView.numberOfRows(inSection: 0) > 2 {
+                        self.tableView.scrollToRow(at: IndexPath(row: self.dataSources.count - 2, section: 0), at: .bottom, animated: true)
+                    } else {
+                        self.tableView.scrollToBottomAnimated()
+                    }
                     self.setTabBarHiddn(true)
                 })
         }) { [weak self] error in
@@ -823,4 +847,3 @@ extension TopicDetailViewController {
         UIApplication.shared.openURL(url)
     }
 }
-

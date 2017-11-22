@@ -43,13 +43,23 @@ func showImageBrowser(imageType: PhotoBrowserType) {
 /// 设置状态栏背景颜色
 /// 需要设置的页面需要重载此方法
 /// - Parameter color: 颜色
-func setStatusBarBackground(_ color: UIColor) {
-    
-    let statusBarWindow : UIView = UIApplication.shared.value(forKey: "statusBarWindow") as! UIView
-    let statusBar : UIView = statusBarWindow.value(forKey: "statusBar") as! UIView
-    if statusBar.responds(to:#selector(setter: UIView.backgroundColor)) {
-        statusBar.backgroundColor = color
-    }
+func setStatusBarBackground(_ color: UIColor, borderColor: UIColor = .clear) {
+
+    guard let statusBarWindow = UIApplication.shared.value(forKey: "statusBarWindow") as? UIView,
+        let statusBar = statusBarWindow.value(forKey: "statusBar") as? UIView,
+        statusBar.responds(to:#selector(setter: UIView.backgroundColor)) else { return }
+
+    statusBar.backgroundColor = color
+    statusBar.borderBottom = Border(color: borderColor)
+
+//    DispatchQueue.once(token: "com.v2er.statusBar") {
+//        statusBar.layer.shadowColor = UIColor.black.cgColor
+//        statusBar.layer.shadowOpacity = 0.09
+//        statusBar.layer.shadowRadius = 3
+//        // 阴影向下偏移 6
+//        statusBar.layer.shadowOffset = CGSize(width: 0, height: 6)
+//        statusBar.clipsToBounds = false
+//    }
 }
 
 /// 打开浏览器 （内置 或 Safari）

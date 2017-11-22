@@ -36,6 +36,8 @@ class LibrarysViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "开源库"
+        
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
             self?.tableView.separatorColor = theme.borderColor

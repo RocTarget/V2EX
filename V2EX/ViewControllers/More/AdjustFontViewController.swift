@@ -20,7 +20,7 @@ class AdjustFontViewController: BaseViewController {
 
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
-        view.text = "如果调节主题详情内容的字体大小？"
+        view.text = "如果调节字体大小？"
         view.numberOfLines = 0
         view.font = UIFont.boldSystemFont(ofSize: 17)
         return view
@@ -28,8 +28,9 @@ class AdjustFontViewController: BaseViewController {
 
     private lazy var contentLabel: UILabel = {
         let view = UILabel()
-        view.text = "试试滑动下方的滑块来调节字体大小。"
+        view.text = "通过滑动下方的滑块可调节主题详情的字体大小。\n通过系统内的【设置】->【显示与亮度】->【文字大小】可修改 App 整体字体大小"
         view.numberOfLines = 0
+        view.setLineHeight(5)
         view.font = UIFont.systemFont(ofSize: CGFloat(sliderView.value) * 15.f)
         return view
     }()
@@ -96,7 +97,7 @@ class AdjustFontViewController: BaseViewController {
         previewContainerView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
             $0.height.equalTo(200)
-            $0.top.equalToSuperview().offset(120)
+            $0.top.equalToSuperview().offset(50)
         }
 
         avatarView.snp.makeConstraints {
@@ -122,7 +123,7 @@ class AdjustFontViewController: BaseViewController {
 
         // MARK : - Slider ContainerView
         sliderContainerView.snp.makeConstraints {
-            $0.top.equalTo(previewContainerView.snp.bottom).offset(80)
+            $0.top.equalTo(previewContainerView.snp.bottom).offset(155)
             $0.left.right.equalToSuperview()
             $0.bottom.equalTo(sliderView)
         }

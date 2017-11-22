@@ -14,7 +14,11 @@ class TopicSearchResultCell: BaseTableViewCell {
         let view = UILabel()
         view.numberOfLines = 5
         view.textColor = UIColor.hex(0x333333)
-        view.font = UIFont.systemFont(ofSize: 14)
+//        view.font = UIFont.systemFont(ofSize: 14)
+        view.font = .preferredFont(forTextStyle: .body)
+        if #available(iOS 10, *) {
+            view.adjustsFontForContentSizeCategory = true
+        }
         return view
     }()
     

@@ -58,6 +58,8 @@
 		BF1A1EBC1FB58B3900DDBF67 /* GoogleChromeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1A1EB91FB58B3900DDBF67 /* GoogleChromeActivity.swift */; };
 		BF1B1D191FA6F2A500544A11 /* TwoStepVerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */; };
 		BF1B1D1B1FA7003400544A11 /* AllNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */; };
+		BF2C54D01FC536EA00B944FB /* AccountsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C54CF1FC536EA00B944FB /* AccountsViewController.swift */; };
+		BF2C54D21FC53BF500B944FB /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C54D11FC53BF500B944FB /* Keychain.swift */; };
 		BF39FFE91F9442DA00D6F8BD /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */; };
 		BF3AB5C51F9756D500043269 /* CommentInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3AB5C41F9756D500043269 /* CommentInputView.swift */; };
 		BF3AB5C71F97672300043269 /* UIPlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3AB5C61F97672300043269 /* UIPlaceholderTextView.swift */; };
@@ -216,6 +218,8 @@
 		BF1B1D161FA6F25100544A11 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		BF1B1D181FA6F2A500544A11 /* TwoStepVerificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwoStepVerificationViewController.swift; sourceTree = "<group>"; };
 		BF1B1D1A1FA7003400544A11 /* AllNodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNodesViewController.swift; sourceTree = "<group>"; };
+		BF2C54CF1FC536EA00B944FB /* AccountsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsViewController.swift; sourceTree = "<group>"; };
+		BF2C54D11FC53BF500B944FB /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		BF39FFE81F9442DA00D6F8BD /* LoadingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingButton.swift; sourceTree = "<group>"; };
 		BF3AB5C41F9756D500043269 /* CommentInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputView.swift; sourceTree = "<group>"; };
 		BF3AB5C61F97672300043269 /* UIPlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPlaceholderTextView.swift; sourceTree = "<group>"; };
@@ -384,6 +388,7 @@
 				77FD14F31FAB51ED00F2FFF4 /* TopicFavoriteViewController.swift */,
 				BF7AF1BB1FBC2CA5005427D0 /* AboutViewController.swift */,
 				BF7AF1B71FBC02D1005427D0 /* SettingViewController.swift */,
+				BF2C54CF1FC536EA00B944FB /* AccountsViewController.swift */,
 				BF7AF1B91FBC0C35005427D0 /* AdjustFontViewController.swift */,
 			);
 			path = More;
@@ -455,6 +460,7 @@
 		BF02A2C51F8F3E5E00BEF85E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				BF2C54D11FC53BF500B944FB /* Keychain.swift */,
 				BFE8CB2C1FA09A9D007E2F02 /* MentionedParser.swift */,
 				BFC89B4A1FA033CD00759577 /* FPSLabel.swift */,
 				7756CCC51F92354B00EF47B8 /* LeftAlignedCollectionViewFlowLayout.swift */,
@@ -1078,6 +1084,7 @@
 				779064481F9B72C1001A5ABA /* UIViewChain.swift in Sources */,
 				BFC89B491FA0283800759577 /* TextParser.swift in Sources */,
 				773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */,
+				BF2C54D01FC536EA00B944FB /* AccountsViewController.swift in Sources */,
 				778AC6B91F9AF07F0072C6E9 /* String+Extensions.swift in Sources */,
 				BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */,
 				BFFAFDE91F9F4428000EB91C /* MemberListViewController.swift in Sources */,
@@ -1109,6 +1116,7 @@
 				77C8DF721F930B0E009DE52C /* LoginForm.swift in Sources */,
 				77C8DF741F9316F1009DE52C /* UITextField+Extension.swift in Sources */,
 				779B17061F8FAF5A00E912E7 /* UILable+Extension.swift in Sources */,
+				BF2C54D21FC53BF500B944FB /* Keychain.swift in Sources */,
 				BFE8CB2D1FA09A9D007E2F02 /* MentionedParser.swift in Sources */,
 				BF45E00C1F9F0A400001BEB2 /* StateView.swift in Sources */,
 				77C8DF6B1F92FD8F009DE52C /* MoreViewController.swift in Sources */,

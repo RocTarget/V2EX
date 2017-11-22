@@ -172,7 +172,6 @@ extension HTMLParseService {
             wrapperAttributedString(attributedString, node: contentNode)
             let textContainer = YYTextContainer(size: CGSize(width: Constants.Metric.screenWidth - 30, height: CGFloat.max))
             let textLayout = YYTextLayout(container: textContainer, text: attributedString)
-
             let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
             let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
             let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
@@ -199,7 +198,7 @@ extension HTMLParseService {
                     string: content,
                     attributes: [
                         NSAttributedStringKey.foregroundColor: ThemeStyle.style.value.titleColor,
-                        NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
+                        NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .body)]
                 )
                 attributedString.append(textAttrString)
                 attributedString.yy_lineSpacing = 5
@@ -222,7 +221,7 @@ extension HTMLParseService {
 
                 if content.count.boolValue {
                     let linkAttrString = NSMutableAttributedString(string: content,
-                                                                   attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)])
+                                                                   attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .body)])
                     linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),
                                                        color: ThemeStyle.style.value.linkColor, // Theme.Color.linkColor,
                                                        backgroundColor: .clear,
@@ -246,7 +245,7 @@ extension HTMLParseService {
 
     func wrapperImageAttachment(_ url: URL?) -> NSMutableAttributedString {
         let imageAttachment = ImageAttachment(url: url)
-        let imageAttrString = NSMutableAttributedString.yy_attachmentString(withContent: imageAttachment, contentMode: .scaleAspectFit, attachmentSize: CGSize(width: 80, height: 80), alignTo: UIFont.systemFont(ofSize: 15), alignment: .bottom)
+        let imageAttrString = NSMutableAttributedString.yy_attachmentString(withContent: imageAttachment, contentMode: .scaleAspectFit, attachmentSize: CGSize(width: 80, height: 80), alignTo: UIFont.preferredFont(forTextStyle: .body), alignment: .bottom)
         return imageAttrString
     }
 

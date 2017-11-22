@@ -27,7 +27,12 @@ class MessageCell: BaseTableViewCell {
     private lazy var contentLabel: UILabel = {
         let view = UILabel()
         view.numberOfLines = 0
-        view.font = UIFont.systemFont(ofSize: 15)
+//        view.font = UIFont.systemFont(ofSize: 15)
+        view.font = .preferredFont(forTextStyle: .body)
+
+        if #available(iOS 10, *) {
+            view.adjustsFontForContentSizeCategory = true
+        }
         return view
     }()
 

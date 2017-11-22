@@ -4,9 +4,13 @@ class NodeCell: UICollectionViewCell {
 
     private lazy var textLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 15)
+//        view.font = UIFont.systemFont(ofSize: 15)
         view.textAlignment = .center
         view.textColor = Theme.Color.globalColor
+        view.font = .preferredFont(forTextStyle: .body)
+        if #available(iOS 10, *) {
+            view.adjustsFontForContentSizeCategory = true
+        }
         return view
     }()
     
