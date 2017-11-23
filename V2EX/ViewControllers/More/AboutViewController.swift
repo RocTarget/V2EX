@@ -25,6 +25,7 @@ class AboutViewController: UITableViewController {
         let view = UILabel()
         view.text = "\(UIApplication.appDisplayName()) v\(UIApplication.appVersion()) (\(UIApplication.appBuild()))"
         view.textColor = ThemeStyle.style.value.dateColor
+        view.font = UIFont.systemFont(ofSize: 15)
         return view
     }()
 
@@ -111,7 +112,7 @@ extension AboutViewController {
             HUD.show()
             FileManager.clearCache(complete: { size in
                 HUD.dismiss()
-                HUD.showText("成功清除 \(size)M 缓存", duration: 1)
+                HUD.showText("缓存清理成功", duration: 2)
             })
         case .about:
             openWebView(url: API.about.url)

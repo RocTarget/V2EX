@@ -36,7 +36,7 @@ class LibrarysViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "开源库"
+        title = "致谢"
         
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in

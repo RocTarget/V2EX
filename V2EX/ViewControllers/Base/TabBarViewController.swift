@@ -46,6 +46,8 @@ extension TabBarViewController {
             .subscribeNext { [weak self] theme in
                 self?.tabBar.barStyle = theme == .day ? .default : .black
             }.disposed(by: rx.disposeBag)
+        
+        tabBar.isTranslucent = false
     }
     
     fileprivate func setupTabBar() {
@@ -94,7 +96,6 @@ extension TabBarViewController {
             })
             .disposed(by: rx.disposeBag)
     }
-    
     
     private func scrollToTop(_ viewController: UIViewController) {
         if viewController.isKind(of: HomeViewController.self) {

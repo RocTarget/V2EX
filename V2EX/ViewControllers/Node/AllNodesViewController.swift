@@ -85,6 +85,17 @@ class AllNodesViewController: DataViewController, NodeService {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isTranslucent = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isTranslucent = false
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -95,7 +106,7 @@ class AllNodesViewController: DataViewController, NodeService {
             }
         }
     }
-
+    
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -112,6 +123,7 @@ class AllNodesViewController: DataViewController, NodeService {
                 self?.searchController.searchBar.barTintColor = theme.bgColor
                 self?.searchController.searchBar.layer.borderColor = theme.bgColor.cgColor
                 self?.tableView.sectionIndexTrackingBackgroundColor = theme.bgColor
+                self?.tableView.subviews.filter { $0.className == UIView.description() }.first?.backgroundColor = theme.bgColor
             }.disposed(by: rx.disposeBag)
     }
 
@@ -125,6 +137,11 @@ class AllNodesViewController: DataViewController, NodeService {
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self?.errorMessage = error
         }
+    }
+    
+    // 当 HeaderView = Search 会多出一个UIView, 在夜间模式下颜色无法适配, 故修改
+    private func fixColor() {
+        tableView.subviews.filter { $0.className == UIView.description() }.first?.backgroundColor = ThemeStyle.style.value.bgColor
     }
 
     override func hasContent() -> Bool {

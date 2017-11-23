@@ -5,7 +5,7 @@ PODS:
   - Fabric (1.7.2)
   - IQKeyboardManagerSwift (5.0.6)
   - Kanna (2.1.1)
-  - Kingfisher (4.3.0)
+  - Kingfisher (4.3.1)
   - MarkdownView (1.1.0)
   - NSObject+Rx (4.2.0):
     - RxSwift (~> 4.0)
@@ -23,7 +23,7 @@ PODS:
   - SnapKit (4.0.0)
   - StatefulViewController (3.0)
   - Toaster (2.1.1)
-  - UIView+Positioning (1.5)
+  - UIView+Positioning (1.6)
   - YYText (1.0.7)
 
 DEPENDENCIES:
@@ -57,7 +57,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PullToRefreshKit:
-    :commit: 2358630e61d8ca4a150164016b502f263c0139af
+    :commit: b66ac2d183f4af9da897126f1927f9a0cee65339
     :git: https://github.com/Joe0708/PullToRefreshKit.git
   Toaster:
     :commit: 10b44e13e1a4e58913320cd39b3e7fae9b9d6f59
@@ -69,7 +69,7 @@ SPEC CHECKSUMS:
   Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
   IQKeyboardManagerSwift: 02bfbb0dff71c66d0ab77d80d25dfce0c3717735
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
-  Kingfisher: 475df87bb7196e51a8e9a48b667a5388a4709241
+  Kingfisher: 75541c4b62f02e1fde6f9772303de3d9ebe8f5b3
   MarkdownView: 80db8e9a27a6c6cc22615e644e3e85c06065bab7
   NSObject+Rx: cbbc05e3cb3ad446cdbced3e00e39c9efaf02925
   PasswordExtension: 80a57bdae651d04437c8d2e07d90d5f18fe73180
@@ -83,7 +83,7 @@ SPEC CHECKSUMS:
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   StatefulViewController: 4803bf900d44de26074344998e10e041113b5931
   Toaster: 683521465d8d4d684baca3b55cd248030b51e813
-  UIView+Positioning: 20dd76cee61a0be663c42c24304a0baf4eebe7f7
+  UIView+Positioning: 6e7236a429053ade11051fab7ff9053af36c77a8
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
 PODFILE CHECKSUM: 88e98f99082aaba659324d61c4d16d5e78cd3f45
