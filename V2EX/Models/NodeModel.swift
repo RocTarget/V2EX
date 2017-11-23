@@ -33,7 +33,7 @@ public struct NodeCategoryModel: Codable {
     }
 }
 
-public struct NodeModel: Codable {
+struct NodeModel: Codable {
     /// 节点标题
     var title: String
     /// 节点的路径名字，发布主题时使用 (eg: 沙盒 / sandbox)
@@ -161,5 +161,16 @@ extension NodeModel {
             HUD.showTest(error)
             log.error(error)
         }
+    }
+}
+
+
+extension NodeModel: Hashable {
+    static func ==(lhs: NodeModel, rhs: NodeModel) -> Bool {
+        return lhs.title == rhs.title && lhs.href == rhs.href
+    }
+
+    var hashValue: Int {
+        return title.hashValue ^ href.hashValue
     }
 }

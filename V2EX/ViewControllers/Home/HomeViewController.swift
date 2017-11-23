@@ -76,10 +76,10 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         
         let segmentV = SegmentView(frame: CGRect(x: 0, y: 0, width: view.width, height: 40),
                                         titles: nodes.flatMap { $0.title })
-
         segmentV.backgroundColor = .white
         segmentView = segmentV
         view.addSubview(segmentV)
+        
         segmentV.valueChange = { [weak self] index in
             guard let `self` = self else { return }
             var offset = self.scrollView.contentOffset
@@ -88,7 +88,10 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
             self.scrollView.setContentOffset(offset, animated: true)
         }
 
-//        scrollView.frame = CGRect(x: 0, y: segmentV.bottom, width: view.width, height: (tabBarController?.tabBar.top)! - segmentV.bottom)
+        segmentV.snp.makeConstraints {
+            $0.left.top.right.equalToSuperview()
+            $0.height.equalTo(40)
+        }
         scrollView.width = view.width
         scrollView.snp.makeConstraints {
             $0.top.equalTo(segmentV.snp.bottom)
