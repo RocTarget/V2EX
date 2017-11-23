@@ -86,6 +86,10 @@ class BaseTopicsViewController: DataViewController, TopicService {
         fetchData()
     }
 
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchData()
+    }
+
     func fetchTopic() {
         page = 1
 
@@ -113,7 +117,14 @@ class BaseTopicsViewController: DataViewController, TopicService {
             guard let `self` = self else { return }
             self.page += 1
             self.maxPage = maxPage
-            self.topics.append(contentsOf: topics)
+
+            // 数据去重
+            let ts = topics.filter({ rhs -> Bool in
+                !self.topics.contains(where: { lhs -> Bool in
+                    return lhs.title == rhs.title
+                })
+            })
+            self.topics.append(contentsOf: ts)
             self.tableView.endFooterRefresh(showNoMore: self.page >= maxPage)
         }) { [weak self] error in
             self?.tableView.endFooterRefresh()

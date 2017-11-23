@@ -550,9 +550,31 @@ extension TopicDetailViewController {
 
     @objc private func copyCommentAction() {
         guard let content = selectComment?.content else { return }
-        UIPasteboard.general.string = content
 
-        log.info(content)
+        let result = TextParser.extractLinkAndAt(content)
+
+        if result.count == 0 {
+            UIPasteboard.general.string = content
+            return
+        }
+
+        let alertVC = UIAlertController(title: "提取文本", message: nil, preferredStyle: .actionSheet)
+
+        let action: ((UIAlertAction) -> Void) = { UIPasteboard.general.string = $0.title }
+
+        alertVC.addAction(
+            UIAlertAction(
+                title: content.deleteOccurrences(target: "\r").deleteOccurrences(target: "\n"),
+                style: .default,
+                handler: action)
+        )
+
+        for item in result {
+            alertVC.addAction(UIAlertAction(title: item, style: .default, handler: action))
+        }
+
+        alertVC.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        present(alertVC, animated: true, completion: nil)
     }
 
     @objc private func viewDialogAction() {
@@ -670,12 +692,15 @@ extension TopicDetailViewController {
                 self.fetchTopicDetail(complete: { [weak self] in
                     guard let `self` = self else { return }
 
-                    if self.tableView.numberOfRows(inSection: 0) > 2 {
-                        self.tableView.scrollToRow(at: IndexPath(row: self.dataSources.count - 2, section: 0), at: .bottom, animated: true)
+                    if self.dataSources.count > 0 {
+                        GCD.delay(0.1, block: {
+                            let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
+                            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                            self.setTabBarHiddn(true)
+                        })
                     } else {
                         self.tableView.scrollToBottomAnimated()
                     }
-                    self.setTabBarHiddn(true)
                 })
         }) { [weak self] error in
             guard let `self` = self else { return }

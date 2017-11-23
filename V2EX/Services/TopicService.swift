@@ -276,12 +276,12 @@ extension TopicService {
         
         Network.htmlRequest(target: .topics(href: href), success: { html in
             let topics = self.parseTopic(html: html, type: .index)
-            
-            guard topics.count > 0 else {
-                failure?("获取节点信息失败")
-                return
-            }
-            
+            // Optimize: 区分数据解析失败 还是 没有数据
+//            guard topics.count > 0 else {
+//                failure?("获取节点信息失败")
+//                return
+//            }
+
             success?(topics)
         }, failure: failure)
     }

@@ -36,6 +36,28 @@ struct TextParser {
         let regex: String = "(((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+([-A-Z0-9a-z_\\$\\.\\+!\\*\\(\\)/,:;@&=\\?~#%]*)*)\\s|@(\\S+)\\s"
         return try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
     }
+
+    /// 匹配链接和@ 不带空格
+    static var linkAndAtNoBlank: NSRegularExpression? {
+        let regex: String = "(((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+([-A-Z0-9a-z_\\$\\.\\+!\\*\\(\\)/,:;@&=\\?~#%]*)*)|@(\\S+)"
+        return try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
+    }
+}
+
+extension TextParser {
+
+    /// 提取文本中的 链接 和 @
+    ///
+    /// - Parameter str: 文本
+    /// - Returns: 结果集
+    static func extractLinkAndAt(_ str: String) -> [String] {
+        var urls = [String]()
+        guard let res = TextParser.linkAndAtNoBlank?.matches(in: str, options: [.withoutAnchoringBounds], range: NSRange(location: 0, length: str.count)) else { return []}
+        for checkingRes in res {
+            urls.append((str.NSString).substring(with: checkingRes.range))
+        }
+        return urls
+    }
 }
 
 private extension String {
