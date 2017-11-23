@@ -148,8 +148,6 @@ class TopicDetailHeaderView: UIView {
         webViewConstraint?.update(offset: htmlHeight)
         height = titleLabel.bottom + htmlHeight + 15
         webLoadComplete?()
-
-        log.info(titleLabel.frame)
     }
 
     private func setupAction() {

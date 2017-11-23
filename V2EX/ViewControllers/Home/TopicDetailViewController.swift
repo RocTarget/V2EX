@@ -220,6 +220,13 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
     }
 
+    override func setupRx() {
+        ThemeStyle.style.asObservable()
+            .subscribeNext { theme in
+                setStatusBarBackground(theme == .day ? .white : .black, borderColor: .clear)
+        }.disposed(by: rx.disposeBag)
+    }
+    
     // MARK: States Handle
 
     override func hasContent() -> Bool {
@@ -342,11 +349,11 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
                 setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black, borderColor: ThemeStyle.style.value.borderColor)
 //                self.tableView.y = -navHeight
                 self.tableView.height = Constants.Metric.screenHeight
-            }else { //显示
+            } else { //显示
                 self.inputViewBottomConstranit?.update(inset: 0)
                 self.view.layoutIfNeeded()
                 self.navigationController?.navigationBar.y = UIApplication.shared.statusBarFrame.height
-                setStatusBarBackground(.clear, borderColor: .clear)
+                setStatusBarBackground(.clear)
             }
         })
     }

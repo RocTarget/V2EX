@@ -45,6 +45,10 @@ class ViewDialogViewController: UITableViewController {
         tableView.tableHeaderView = headerView
         tableView.contentInset = UIEdgeInsetsMake(-44, 0, 0, 0)
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ThemeStyle.style.value.statusBarStyle
+    }
 }
 
 extension ViewDialogViewController {

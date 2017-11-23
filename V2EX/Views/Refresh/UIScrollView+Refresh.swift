@@ -4,8 +4,8 @@ import PullToRefreshKit
 extension UIScrollView {
 
     func addHeaderRefresh(handle: @escaping Action) {
-        configRefreshHeader(with: DefaultRefreshHeader.header(), action: handle)
-//        configRefreshHeader(with: ElasticRefreshHeader(), action: handle)
+//        configRefreshHeader(with: DefaultRefreshHeader.header(), action: handle)
+        configRefreshHeader(with: ElasticRefreshHeader(), action: handle)
     }
 
     func addFooterRefresh(handle: @escaping Action) {

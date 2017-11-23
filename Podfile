@@ -25,7 +25,7 @@ target 'V2EX' do
     pod 'Toaster', git: 'https://github.com/Joe0708/Toaster.git'
     pod 'StatefulViewController'
     pod 'SKPhotoBrowser'
-    pod 'PullToRefreshKit'# , git: 'https://github.com/Joe0708/PullToRefreshKit.git'
+    pod 'PullToRefreshKit' , git: 'https://github.com/Joe0708/PullToRefreshKit.git'
 
     # Parse
     pod 'Kanna', '~> 2.1.0'

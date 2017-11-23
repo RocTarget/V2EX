@@ -237,7 +237,7 @@ extension HTMLParseService {
                     attributedString.append(linkAttrString)
                 }
             } else if let content = ele.content {
-                let contentAttrString = NSAttributedString(string: content, attributes: [NSAttributedStringKey.foregroundColor: UIColor.black])
+                let contentAttrString = NSAttributedString(string: content, attributes: [NSAttributedStringKey.foregroundColor: ThemeStyle.style.value.titleColor])
                 attributedString.append(contentAttrString)
             }
         }
