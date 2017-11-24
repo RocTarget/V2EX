@@ -56,7 +56,7 @@ class BaseTopicsViewController: DataViewController, TopicService {
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
-            $0.top.equalToSuperview().offset(0.5)
+            $0.top.equalToSuperview().offset(0.5).priority(.high)
         }
     }
 

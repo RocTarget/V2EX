@@ -72,8 +72,8 @@ class CommentInputView: UIView {
         backgroundColor = .white
         
         textView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.left.equalToSuperview().inset(15)
+            $0.top.equalToSuperview().inset(10).priority(.high)
+            $0.left.equalToSuperview().inset(15).priority(.high)
             $0.right.equalTo(uploadPictureBtn.snp.left).inset(-15)
 
             if #available(iOS 11.0, *) {

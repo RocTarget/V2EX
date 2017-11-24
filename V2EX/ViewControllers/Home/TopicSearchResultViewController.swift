@@ -14,6 +14,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         view.font = UIFont.systemFont(ofSize: 15)
         view.leftView = UIImageView(image: #imageLiteral(resourceName: "searchSmall"))
         view.leftViewMode = .always
+        view.clearButtonMode = .whileEditing
         return view
     }()
 

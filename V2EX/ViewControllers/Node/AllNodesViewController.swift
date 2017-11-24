@@ -125,9 +125,17 @@ class AllNodesViewController: DataViewController, NodeService {
                 self?.tableView.sectionIndexTrackingBackgroundColor = theme.bgColor
                 self?.tableView.subviews.filter { $0.className == UIView.description() }.first?.backgroundColor = theme.bgColor
             }.disposed(by: rx.disposeBag)
+
+        searchController.searchBar.rx
+            .textDidEndEditing
+            .subscribeNext { [weak self] in
+                GCD.delay(0.5, block: {
+                    self?.fixColor()
+                })
+        }.disposed(by: rx.disposeBag)
     }
 
-    func fetchAllNode() {
+    private func fetchAllNode() {
         startLoading()
 
         nodes(success: { [weak self] groups in

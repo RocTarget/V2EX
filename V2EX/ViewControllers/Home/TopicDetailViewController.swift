@@ -341,13 +341,12 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         guard tableView.contentSize.height > view.height else { return }
         guard let navHeight = navigationController?.navigationBar.height else { return }
 
-        UIView.animate(withDuration: 0.3, animations: {
+        UIView.animate(withDuration: 0.1, animations: {
             if hidden {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()
                 self.navigationController?.navigationBar.y -= navHeight
                 setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black, borderColor: ThemeStyle.style.value.borderColor)
-//                self.tableView.y = -navHeight
                 self.tableView.height = Constants.Metric.screenHeight
             } else { //显示
                 self.inputViewBottomConstranit?.update(inset: 0)

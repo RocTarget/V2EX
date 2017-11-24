@@ -105,10 +105,11 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         }
 
         ThemeStyle.style.asObservable()
-            .subscribeNext { theme in
+            .subscribeNext { [weak self] theme in
                 segmentV.backgroundColor = theme == .day ? .white : .black
-//                segmentV.borderBottom = Border(color: theme.borderColor)
                 AppWindow.shared.window.backgroundColor = theme.whiteColor
+                UIApplication.shared.statusBarStyle = theme.statusBarStyle
+                self?.setNeedsStatusBarAppearanceUpdate()
         }.disposed(by: rx.disposeBag)
     }
 

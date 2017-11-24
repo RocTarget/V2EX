@@ -31,6 +31,9 @@ final class HUD {
         let appearance = ToastView.appearance()
         appearance.font = .boldSystemFont(ofSize: 16)
         appearance.textInsets = UIEdgeInsets(top: 15, left: 20, bottom: 15, right: 20)
+        let marginTop:CGFloat = 60
+        ToastView.appearance().bottomOffsetPortrait = marginTop //max(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - marginTop
+        ToastView.appearance().bottomOffsetLandscape = marginTop //min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - marginTop
     }
     
     class func show() {
