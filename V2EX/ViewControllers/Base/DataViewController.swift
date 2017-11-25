@@ -25,7 +25,7 @@ class DataViewController: ViewController, StatefulViewController, ErrorViewDeleg
             customErrorView.set(status)
         }
     }
-    
+
     public var emptyMessage: String? {
         didSet {
             status = .empty
@@ -56,7 +56,7 @@ class DataViewController: ViewController, StatefulViewController, ErrorViewDeleg
         setupSubviews()
 
         view.setNeedsUpdateConstraints()
-//        view.backgroundColor = Theme.Color.bgColor
+        //        view.backgroundColor = Theme.Color.bgColor
 
         setupRx()
         loadData()
@@ -68,7 +68,7 @@ class DataViewController: ViewController, StatefulViewController, ErrorViewDeleg
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.view.backgroundColor = theme.bgColor
-//                self?.navigationController?.navigationBar.barStyle = theme.barStyle
+                //                self?.navigationController?.navigationBar.barStyle = theme.barStyle
             }.disposed(by: rx.disposeBag)
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -119,17 +119,21 @@ class DataViewController: ViewController, StatefulViewController, ErrorViewDeleg
     func dismiss() {
         dismiss(animated: true, completion: nil)
     }
-    
+
     // MARK: - Required Overrides
 
     // EmptyViewDelegate
     func emptyView(_: EmptyView, didTapActionButton _: UIButton) {
-        assertionFailure("Must be overriden in subclass")
+        #if DEBUG
+            assertionFailure("Must be overriden in subclass")
+        #endif
     }
 
     // ErrorViewDelegate
     func errorView(_: ErrorView, didTapActionButton _: UIButton) {
-        assertionFailure("Must be overriden in subclass")
+        #if DEBUG
+            assertionFailure("Must be overriden in subclass")
+        #endif
     }
 
     // StatefulViewController
@@ -142,3 +146,4 @@ class DataViewController: ViewController, StatefulViewController, ErrorViewDeleg
     }
 
 }
+

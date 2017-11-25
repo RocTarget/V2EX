@@ -61,7 +61,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     public var topicID: String
 
     private var dataSources: [CommentModel] = []
-    
+
     // 原始数据
     private var comments: [CommentModel] = []
 
@@ -100,17 +100,17 @@ class TopicDetailViewController: DataViewController, TopicService {
         return super.canPerformAction(action, withSender: sender)
     }
 
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//        navigationController?.navigationBar.isTranslucent = true
-//    }
+    //    override func viewWillAppear(_ animated: Bool) {
+    //        super.viewWillAppear(animated)
+    //
+    //        navigationController?.navigationBar.isTranslucent = true
+    //    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         setTabBarHiddn(false)
-//        navigationController?.navigationBar.isTranslucent = false
+        //        navigationController?.navigationBar.isTranslucent = false
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -160,13 +160,13 @@ class TopicDetailViewController: DataViewController, TopicService {
                 self?.moreHandle()
         })
 
-//        NotificationCenter.default.rx
-//            .notification(Notification.Name.V2.HighlightTextClickName)
-//            .subscribeNext { [weak self] noti in
-//                guard let urlString = noti.object as? String,
-//                    let url = URL(string: urlString) else { return }
-//                self?.interactHook(url)
-//            }.disposed(by: rx.disposeBag)
+        //        NotificationCenter.default.rx
+        //            .notification(Notification.Name.V2.HighlightTextClickName)
+        //            .subscribeNext { [weak self] noti in
+        //                guard let urlString = noti.object as? String,
+        //                    let url = URL(string: urlString) else { return }
+        //                self?.interactHook(url)
+        //            }.disposed(by: rx.disposeBag)
 
         title = "加载中..."
     }
@@ -202,7 +202,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
-//            $0.top.equalToSuperview().offset(0.5)
+            //            $0.top.equalToSuperview().offset(0.5)
             $0.top.equalToSuperview().offset(-(tableView.contentInset.top - 0.5))
         }
 
@@ -224,9 +224,9 @@ class TopicDetailViewController: DataViewController, TopicService {
         ThemeStyle.style.asObservable()
             .subscribeNext { theme in
                 setStatusBarBackground(theme == .day ? .white : .black, borderColor: .clear)
-        }.disposed(by: rx.disposeBag)
+            }.disposed(by: rx.disposeBag)
     }
-    
+
     // MARK: States Handle
 
     override func hasContent() -> Bool {
@@ -529,9 +529,9 @@ extension TopicDetailViewController {
     }
 
     @objc private func replyCommentAction() {
-//        guard let atUsername = selectComment?.member.atUsername else { return }
-//        commentInputView.textView.text = atUsername
-//        commentInputView.textView.becomeFirstResponder()
+        //        guard let atUsername = selectComment?.member.atUsername else { return }
+        //        commentInputView.textView.text = atUsername
+        //        commentInputView.textView.becomeFirstResponder()
         commentInputView.textView.text = ""
         atMember(selectComment?.member.atUsername)
     }
@@ -559,7 +559,7 @@ extension TopicDetailViewController {
 
         let result = TextParser.extractLinkAndAt(content)
 
-        if result.count == 0 {
+        if result.count <= 1 {
             UIPasteboard.general.string = content
             return
         }
@@ -878,3 +878,4 @@ extension TopicDetailViewController {
         UIApplication.shared.openURL(url)
     }
 }
+

@@ -9,7 +9,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-//        scrollView.frame = self.view.bounds
+        //        scrollView.frame = self.view.bounds
         scrollView.isPagingEnabled = true
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
@@ -19,19 +19,19 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         return scrollView
     }()
 
-//    private lazy var searchTextField: UITextField = {
-//        let view = UITextField()
-//        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
-//        view.placeholder = "搜索主题"
-//        view.backgroundColor = UIColor.groupTableViewBackground
-//        view.layer.cornerRadius = 10
-//        view.layer.masksToBounds = true
-//        view.font = UIFont.systemFont(ofSize: 15)
-//        view.leftView = UIImageView(image: #imageLiteral(resourceName: "search"))
-//        view.leftViewMode = .always
-//        view.delegate = self
-//        return view
-//    }()
+    //    private lazy var searchTextField: UITextField = {
+    //        let view = UITextField()
+    //        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
+    //        view.placeholder = "搜索主题"
+    //        view.backgroundColor = UIColor.groupTableViewBackground
+    //        view.layer.cornerRadius = 10
+    //        view.layer.masksToBounds = true
+    //        view.font = UIFont.systemFont(ofSize: 15)
+    //        view.leftView = UIImageView(image: #imageLiteral(resourceName: "search"))
+    //        view.leftViewMode = .always
+    //        view.delegate = self
+    //        return view
+    //    }()
 
     private var nodes: [NodeModel] = []
 
@@ -54,8 +54,8 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-//        setTabBarHiddn(false)
+
+        //        setTabBarHiddn(false)
     }
 
     override func setupSubviews() {
@@ -66,20 +66,20 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "search"), style: .plain) { [weak self] in
             let resultVC = TopicSearchResultViewController()
             let nav = NavigationViewController(rootViewController: resultVC)
-            //        navigationController?.pushViewController(resultVC, animated: true)
+            nav.modalTransitionStyle = .crossDissolve
             self?.present(nav, animated: true, completion: nil)
         }
     }
 
     func setupSegmentView() {
         nodes = homeNodes()
-        
+
         let segmentV = SegmentView(frame: CGRect(x: 0, y: 0, width: view.width, height: 40),
-                                        titles: nodes.flatMap { $0.title })
+                                   titles: nodes.flatMap { $0.title })
         segmentV.backgroundColor = .white
         segmentView = segmentV
         view.addSubview(segmentV)
-        
+
         segmentV.valueChange = { [weak self] index in
             guard let `self` = self else { return }
             var offset = self.scrollView.contentOffset
@@ -110,7 +110,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
                 AppWindow.shared.window.backgroundColor = theme.whiteColor
                 UIApplication.shared.statusBarStyle = theme.statusBarStyle
                 self?.setNeedsStatusBarAppearanceUpdate()
-        }.disposed(by: rx.disposeBag)
+            }.disposed(by: rx.disposeBag)
     }
 
     private func fetchData() {
@@ -140,10 +140,10 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
     }
 
     private func loginHandle() {
-//        guard AccountModel.isLogin, let account = AccountModel.current else { return }
+        //        guard AccountModel.isLogin, let account = AccountModel.current else { return }
 
-        
-//        Keychain().set(<#T##value: Data##Data#>, forKey: <#T##String#>)
+
+        //        Keychain().set(<#T##value: Data##Data#>, forKey: <#T##String#>)
     }
 
     private func listenNotification() {
@@ -173,15 +173,29 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
                     tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                 }
             }.disposed(by: rx.disposeBag)
+
+        NotificationCenter.default.rx
+            .notification(.UIApplicationWillEnterForeground)
+            .subscribeNext { [weak self] _ in
+                guard Preference.shared.recognizeClipboardLink,
+                    let content = UIPasteboard.general.string,
+                    let url = try? content.asURL(),
+                    let host = url.host,
+                    host.lowercased().contains("v2ex.com")
+                    else { return }
+
+                let alertVC = UIAlertController(title: "提示", message: "检测到剪切板 V2EX 链接，是否打开？\n\(content)", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+                alertVC.addAction(UIAlertAction(title: "打开", style: .default, handler: { alert in
+                    clickCommentLinkHandle(urlString: content)
+                }))
+                alertVC.addAction(UIAlertAction(title: "关闭该功能", style: .destructive, handler: { alert in
+                    Preference.shared.recognizeClipboardLink = false
+                }))
+                self?.present(alertVC, animated: true, completion: nil)
+            }.disposed(by: rx.disposeBag)
     }
 
-    override func setupRx() {
-//        NotificationCenter.default.rx
-//            .notification(.UIDeviceOrientationDidChange)
-//            .subscribeNext { [weak self] noti in
-//                guard let `self` = self else { return }
-//        }.disposed(by: rx.disposeBag)
-    }
 }
 
 
@@ -205,3 +219,4 @@ extension HomeViewController: UIScrollViewDelegate {
         scrollViewDidEndScrollingAnimation(scrollView)
     }
 }
+

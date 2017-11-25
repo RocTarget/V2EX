@@ -56,7 +56,11 @@ struct Constants {
         // At 用户时添加楼层
         static let atMemberAddFloor = "atMemberAddFloor"
 
+        // 摇一摇
         static let shareFeedback = "shareFeedback"
+
+        // 识别剪切板链接
+        static let recognizeClipboardLink = "recognizeClipboardLink"
     }
 
     struct Metric {

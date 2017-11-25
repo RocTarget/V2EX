@@ -55,6 +55,7 @@ class Preference {
         }
     }
 
+    /// 夜间模式
     var nightModel: Bool {
         set {
             ThemeStyle.update(style: newValue ? .night : .day)
@@ -64,12 +65,23 @@ class Preference {
         }
     }
 
+    /// 摇一摇反馈
     var shakeFeedback: Bool {
         set {
             UserDefaults.save(at: newValue, forKey: Constants.Keys.shareFeedback)
         }
         get {
             return (UserDefaults.get(forKey: Constants.Keys.shareFeedback) as? Bool) ?? false
+        }
+    }
+
+    /// 识别剪切板链接
+    var recognizeClipboardLink: Bool {
+        set {
+            UserDefaults.save(at: newValue, forKey: Constants.Keys.recognizeClipboardLink)
+        }
+        get {
+            return (UserDefaults.get(forKey: Constants.Keys.recognizeClipboardLink) as? Bool) ?? true
         }
     }
 }

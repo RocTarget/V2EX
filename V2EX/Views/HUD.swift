@@ -25,17 +25,17 @@ private class CustomHUD: PKHUDRotatingImageView {
 }
 
 final class HUD {
-    
+
     class func configureAppearance() {
         // Optimize: 页面模式变 白低黑字
         let appearance = ToastView.appearance()
         appearance.font = .boldSystemFont(ofSize: 16)
         appearance.textInsets = UIEdgeInsets(top: 15, left: 20, bottom: 15, right: 20)
-        let marginTop:CGFloat = 60
+        let marginTop:CGFloat = 70
         ToastView.appearance().bottomOffsetPortrait = marginTop //max(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - marginTop
         ToastView.appearance().bottomOffsetLandscape = marginTop //min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - marginTop
     }
-    
+
     class func show() {
         PKHUD.sharedHUD.dimsBackground = true
         PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
@@ -43,11 +43,11 @@ final class HUD {
 
         PKHUD.sharedHUD.show(onView: UIApplication.shared.keyWindow)
         //        PKHUD.sharedHUD.show(onView: UIApplication.shared.windows.last)
-//        PKHUD.sharedHUD.show(onView: UIApplication.shared.windows[UIApplication.shared.windows.count - 1])
+        //        PKHUD.sharedHUD.show(onView: UIApplication.shared.windows[UIApplication.shared.windows.count - 1])
     }
 
     class func dismiss() {
-//        PKHUD.sharedHUD.hide(false)
+        //        PKHUD.sharedHUD.hide(false)
         PKHUD.sharedHUD.hide()
     }
 
@@ -90,3 +90,4 @@ final class HUD {
         showText(error.localizedDescription, duration: duration, completionBlock: completionBlock)
     }
 }
+

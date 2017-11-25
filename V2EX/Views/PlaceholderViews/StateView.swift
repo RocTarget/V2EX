@@ -39,7 +39,7 @@ enum StatusType {
         switch self {
         case .noAuth:
             return "点击登录"
-        case .noSearchResult, .empty:
+        case .noSearchResult:
             return nil
         default:
             return "重试"
@@ -191,3 +191,4 @@ class StateView: BasePlaceholderView {
         fatalError("Should be overriden in subclass")
     }
 }
+

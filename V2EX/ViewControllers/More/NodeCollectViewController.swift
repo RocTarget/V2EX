@@ -18,7 +18,7 @@ class NodeCollectViewController: DataViewController, NodeService {
     }()
 
     private var nodes: [NodeModel] = []
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,6 +42,10 @@ class NodeCollectViewController: DataViewController, NodeService {
     }
 
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchNodes()
+    }
+
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
         fetchNodes()
     }
 
@@ -77,3 +81,4 @@ extension NodeCollectViewController: UICollectionViewDelegate, UICollectionViewD
         navigationController?.pushViewController(nodeDetailVC, animated: true)
     }
 }
+
