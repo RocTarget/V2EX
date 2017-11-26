@@ -46,13 +46,13 @@ struct TextParser {
 
 extension TextParser {
 
-    /// 提取文本中的 链接 和 @
+    /// 提取文本中的 链接
     ///
     /// - Parameter str: 文本
     /// - Returns: 结果集
-    static func extractLinkAndAt(_ str: String) -> [String] {
+    static func extractLink(_ str: String) -> [String] {
         var urls = [String]()
-        guard let res = TextParser.linkAndAtNoBlank?.matches(in: str, options: [.withoutAnchoringBounds], range: NSRange(location: 0, length: str.count)) else { return []}
+        guard let res = TextParser.link?.matches(in: str, options: [.withoutAnchoringBounds], range: NSRange(location: 0, length: str.count)) else { return []}
         for checkingRes in res {
             urls.append((str.NSString).substring(with: checkingRes.range))
         }

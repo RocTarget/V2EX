@@ -41,6 +41,7 @@ class AllNodesViewController: DataViewController, NodeService {
         // SearchBar 边框颜色
         searchController.searchBar.layer.borderWidth = 0.5
         searchController.searchBar.layer.borderColor = Theme.Color.bgColor.cgColor
+        searchController.searchBar.isUserInteractionEnabled = false
         // TextField 边框颜色
 //        if let searchField = searchController.searchBar.value(forKey: "_searchField") as? UITextField {
 //            searchField.layer.borderWidth = 0.5
@@ -141,6 +142,7 @@ class AllNodesViewController: DataViewController, NodeService {
         nodes(success: { [weak self] groups in
             self?.groups = groups
             self?.endLoading()
+            self?.searchController.searchBar.isUserInteractionEnabled = true
         }) { [weak self] error in
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self?.errorMessage = error

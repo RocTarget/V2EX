@@ -14,6 +14,13 @@ class MessageViewController: DataViewController, AccountService {
         view.hideEmptyCells()
         return view
     }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        activityIndicator.activityIndicatorViewStyle = UIDevice.isiPad ? .whiteLarge : .white
+        activityIndicator.color = .gray
+        return activityIndicator
+    }()
 
     private weak var replyMessageViewController: ReplyMessageViewController?
 
@@ -36,6 +43,7 @@ class MessageViewController: DataViewController, AccountService {
         guard isLoad, let _ = tabBarItem.badgeValue else { return }
 
         fetchNotifications()
+        activityIndicator.startAnimating()
     }
 
     //    override func setupSubviews() {
@@ -48,6 +56,10 @@ class MessageViewController: DataViewController, AccountService {
         super.viewDidLoad()
 
         setupRefreshView()
+    }
+
+    override func setupSubviews() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
     }
 
     private func setupRefreshView() {
@@ -104,11 +116,13 @@ class MessageViewController: DataViewController, AccountService {
             self.maxPage = maxPage
             self.endLoading()
             self.tableView.reloadData()
-            self.tabBarItem.badgeValue = nil
             self.tableView.endHeaderRefresh()
             if self.status == .noAuth {
                 self.status = .empty
             }
+            // 目前只有在badge不为空时才有动画提示
+            // 下拉刷新时, 如果有新数据, 可以根据最后一条的时间来对比
+            self.notificationAnimation(self.tabBarItem.badgeValue)
         }) { [weak self] error in
             guard let `self` = self else { return }
             self.errorMessage = error
@@ -119,8 +133,31 @@ class MessageViewController: DataViewController, AccountService {
             }
         }
     }
+    
+    private func notificationAnimation(_ badgeValue: String?) {
+        guard let count = badgeValue?.int,
+            count.boolValue,
+            tableView.numberOfRows(inSection: 0) >= count else {
+            return
+        }
+        tabBarItem.badgeValue = nil
+//        HUD.showText("\(count) 条新消息")
+        activityIndicator.stopAnimating()
+        var indexPaths: [IndexPath] = []
+        for i in 0..<count {
+            indexPaths.append(IndexPath(row: i, section: 0))
+        }
+        
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear,  animations: {
+            indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3) }
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
+                indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor }
+            })
+        })
+    }
 
-    func fetchMoreNotifications() {
+    private func fetchMoreNotifications() {
         if self.page >= maxPage {
             tableView.endRefresh(showNoMore: true)
             return

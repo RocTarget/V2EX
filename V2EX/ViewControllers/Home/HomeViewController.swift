@@ -192,7 +192,9 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
                 alertVC.addAction(UIAlertAction(title: "关闭该功能", style: .destructive, handler: { alert in
                     Preference.shared.recognizeClipboardLink = false
                 }))
-                self?.present(alertVC, animated: true, completion: nil)
+                GCD.delay(0.5, block: {
+                    self?.currentViewController().present(alertVC, animated: true, completion: nil)
+                })
             }.disposed(by: rx.disposeBag)
     }
 

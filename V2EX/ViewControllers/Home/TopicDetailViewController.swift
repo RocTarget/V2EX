@@ -60,6 +60,7 @@ class TopicDetailViewController: DataViewController, TopicService {
 
     public var topicID: String
 
+    // 加工数据
     private var dataSources: [CommentModel] = []
 
     // 原始数据
@@ -225,6 +226,12 @@ class TopicDetailViewController: DataViewController, TopicService {
             .subscribeNext { theme in
                 setStatusBarBackground(theme == .day ? .white : .black, borderColor: .clear)
             }.disposed(by: rx.disposeBag)
+        
+        NotificationCenter.default.rx
+            .notification(.UIApplicationWillEnterForeground)
+            .subscribeNext { _ in
+                setStatusBarBackground(.clear)
+            }.disposed(by: rx.disposeBag)
     }
 
     // MARK: States Handle
@@ -270,6 +277,11 @@ class TopicDetailViewController: DataViewController, TopicService {
 extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isShowOnlyFloor {
+            dataSources = comments.filter { $0.member.username == topic?.member?.username }
+        } else {
+            dataSources = comments
+        }
         return dataSources.count
     }
 
@@ -557,9 +569,11 @@ extension TopicDetailViewController {
     @objc private func copyCommentAction() {
         guard let content = selectComment?.content else { return }
 
-        let result = TextParser.extractLinkAndAt(content)
+        let result = TextParser.extractLink(content)
 
-        if result.count <= 1 {
+        // 如果没有识别到链接, 或者 结果只有一个并且与本身内容一样
+        // 则直接复制到剪切板
+        if result.count == 0 || result.count == 1 && result[0] == content {
             UIPasteboard.general.string = content
             return
         }
@@ -580,12 +594,13 @@ extension TopicDetailViewController {
         }
 
         alertVC.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        setStatusBarBackground(.clear)
         present(alertVC, animated: true, completion: nil)
     }
 
     @objc private func viewDialogAction() {
         guard let `selectComment` = selectComment else { return }
-        let dialogs = CommentModel.atUsernameComments(comments: dataSources, currentComment: selectComment)
+        let dialogs = CommentModel.atUsernameComments(comments: comments, currentComment: selectComment)
 
         guard dialogs.count.boolValue else {
             HUD.showText("没有找到与该用户有关的对话")
@@ -643,6 +658,7 @@ extension TopicDetailViewController {
         topicMoreComment(topicID: topicID, page: page, success: { [weak self] comments in
             guard let `self` = self else { return }
             self.dataSources.append(contentsOf: comments)
+            self.comments.append(contentsOf: comments)
             self.tableView.reloadData()
             self.tableView.endFooterRefresh(showNoMore: self.page >= self.maxPage)
             }, failure: { [weak self] error in
@@ -703,6 +719,15 @@ extension TopicDetailViewController {
                             let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
                             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
                             self.setTabBarHiddn(true)
+                        
+                            // 提醒动画, 如果滚动距离较远可能没有动画, 延迟也没有用, 暂时不知原因
+                            UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveLinear,  animations: {
+                                self.tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3)
+                            }, completion: { _ in
+                                UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
+                                    self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
+                                })
+                            })
                         })
                     } else {
                         self.tableView.scrollToBottomAnimated()
@@ -858,14 +883,14 @@ extension TopicDetailViewController {
 
     /// 是否只看楼主
     func showOnlyFloorHandle() {
-        if isShowOnlyFloor {
-            dataSources = comments
-        } else {
-            let result = comments.filter { $0.member.username == topic?.member?.username }
-            dataSources = result
-        }
-        tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+//        if isShowOnlyFloor {
+//            dataSources = comments
+//        } else {
+//            let result = comments.filter { $0.member.username == topic?.member?.username }
+//            dataSources = result
+//        }
         isShowOnlyFloor = !isShowOnlyFloor
+        tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 
     /// 从系统 Safari 浏览器中打开

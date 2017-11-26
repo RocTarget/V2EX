@@ -50,7 +50,9 @@ func setStatusBarBackground(_ color: UIColor, borderColor: UIColor = .clear) {
         statusBar.responds(to:#selector(setter: UIView.backgroundColor)) else { return }
 
     statusBar.backgroundColor = color
-    statusBar.borderBottom = Border(color: borderColor)
+    statusBar.layer.borderColor = borderColor.cgColor
+    statusBar.layer.borderWidth = 0.5
+//    statusBar.borderBottom = Border(color: borderColor)
 
 //    DispatchQueue.once(token: "com.v2er.statusBar") {
 //        statusBar.layer.shadowColor = UIColor.black.cgColor
