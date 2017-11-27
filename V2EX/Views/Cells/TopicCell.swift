@@ -47,6 +47,7 @@ class TopicCell: BaseTableViewCell {
         view.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         view.setImage(#imageLiteral(resourceName: "message"), for: .normal)
         view.setTitleColor(UIColor.hex(0xBCB8BD), for: .normal)
+        view.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
         return view
     }()
 
@@ -136,7 +137,7 @@ class TopicCell: BaseTableViewCell {
             usernameLabel.text = user.username
             titleLabel.text = topic.title
             lastReplyLabel.text = topic.lastReplyTime
-            replayCountLabel.setTitle(" " + topic.replyCount, for: .normal)
+            replayCountLabel.setTitle(topic.replyCount, for: .normal)
             nodeLabel.text = topic.node?.title
             nodeLabel.isHidden = nodeLabel.text?.isEmpty ?? true
         }

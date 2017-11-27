@@ -43,6 +43,16 @@ class TopicDetailViewController: DataViewController, TopicService {
         return view
     }()
 
+    private lazy var backTopBtn: UIButton = {
+        let view = UIButton()
+        view.setImage(#imageLiteral(resourceName: "backTop"), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "backTop"), for: .selected)
+        view.sizeToFit()
+        view.isHidden = true
+        self.view.addSubview(view)
+        return view
+    }()
+
     private var topic: TopicModel? {
         didSet {
             guard let topic = topic else { return }
@@ -219,6 +229,11 @@ class TopicDetailViewController: DataViewController, TopicService {
             self.inputViewBottomConstranit = $0.bottom.equalToSuperview().constraint
             self.inputViewHeightConstraint = $0.height.equalTo(inputViewHeight).constraint
         }
+
+        backTopBtn.snp.makeConstraints {
+            $0.right.equalToSuperview().inset(20)
+            $0.bottom.equalTo(commentInputView.snp.top).offset(-20)
+        }
     }
 
     override func setupRx() {
@@ -232,6 +247,13 @@ class TopicDetailViewController: DataViewController, TopicService {
             .subscribeNext { _ in
                 setStatusBarBackground(.clear)
             }.disposed(by: rx.disposeBag)
+
+        backTopBtn.rx.tap
+            .subscribeNext { [weak self] in
+                guard let `self` = self else { return }
+                self.setTabBarHiddn(false)
+                self.tableView.scrollToTop()
+        }.disposed(by: rx.disposeBag)
     }
 
     // MARK: States Handle
@@ -329,6 +351,8 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        backTopBtn.isHidden = scrollView.contentOffset.y < 2000
+
         if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
 
         //获取到拖拽的速度 >0 向下拖动 <0 向上拖动
