@@ -593,6 +593,12 @@ extension TopicDetailViewController {
             alertVC.addAction(UIAlertAction(title: item, style: .default, handler: action))
         }
 
+        if let indexPath = tableView.indexPathForSelectedRow,
+            let cell = tableView.cellForRow(at: indexPath) {
+            alertVC.popoverPresentationController?.sourceView = cell
+            alertVC.popoverPresentationController?.sourceRect = cell.bounds
+        }
+
         alertVC.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
         setStatusBarBackground(.clear)
         present(alertVC, animated: true, completion: nil)
