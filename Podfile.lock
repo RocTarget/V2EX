@@ -47,13 +47,15 @@ DEPENDENCIES:
   - StatefulViewController
   - Toaster (from `https://github.com/Joe0708/Toaster.git`)
   - UIView+Positioning
-  - YYText
+  - YYText (from `https://github.com/sablib/YYText.git`)
 
 EXTERNAL SOURCES:
   PullToRefreshKit:
     :git: https://github.com/Joe0708/PullToRefreshKit.git
   Toaster:
     :git: https://github.com/Joe0708/Toaster.git
+  YYText:
+    :git: https://github.com/sablib/YYText.git
 
 CHECKOUT OPTIONS:
   PullToRefreshKit:
@@ -62,6 +64,9 @@ CHECKOUT OPTIONS:
   Toaster:
     :commit: 10b44e13e1a4e58913320cd39b3e7fae9b9d6f59
     :git: https://github.com/Joe0708/Toaster.git
+  YYText:
+    :commit: 7bd2aa41414736f6451241725778509fe75860b5
+    :git: https://github.com/sablib/YYText.git
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
@@ -86,6 +91,6 @@ SPEC CHECKSUMS:
   UIView+Positioning: 6e7236a429053ade11051fab7ff9053af36c77a8
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 215075d10162a633e6346ee4c47e28ce8af069f5
+PODFILE CHECKSUM: a5f4f70f25bdae79b48605ef8acbb65e1feaaa42
 
 COCOAPODS: 1.3.1

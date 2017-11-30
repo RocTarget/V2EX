@@ -31,7 +31,7 @@ target 'V2EX' do
     pod 'Kanna', '~> 2.1.0'
 
     # Rich text
-    pod 'YYText'
+    pod 'YYText', git: 'https://github.com/Joe0708/YYText'
     pod 'MarkdownView'
 
     # Misc
