@@ -30,11 +30,6 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
         setupSegmentView()
         fetchData()
-
-        // 请求评分
-        GCD.delay(1) {
-            RequestReview().showReview()
-        }
     }
 
 

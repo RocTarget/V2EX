@@ -187,7 +187,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         title = "加载中..."
     }
 
-    func setupRefresh() {
+    private func setupRefresh() {
 
         tableView.addHeaderRefresh { [weak self] in
             self?.fetchTopicDetail()
@@ -198,7 +198,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
     }
 
-    func interactHook(_ URL: URL) {
+    private func interactHook(_ URL: URL) {
         let link = URL.absoluteString
         if URL.path.contains("/member/") {
             let href = URL.path
@@ -762,6 +762,11 @@ extension TopicDetailViewController {
                         })
                     } else {
                         self.tableView.scrollToBottomAnimated()
+                    }
+
+                    // 请求评分
+                    GCD.delay(2) {
+                        RequestReview().showReview()
                     }
                 })
         }) { [weak self] error in

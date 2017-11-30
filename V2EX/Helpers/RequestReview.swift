@@ -25,10 +25,11 @@ struct RequestReview {
         let runs = getRunCounts()
 
         log.info("请求显示评分")
-        // 运行次数 大于 10， 并且 运行次数 % 30 == 0
+        // 运行次数 大于 10， 并且 运行次数 % 20 == 0
         // 第一次请求时机是第十次运行
-        // 之后每运行 30 次请求一次
-        if (runs > Keys.minimumRunCount && runs % 30 == 0) {
+        // 之后每运行 20 次请求一次
+        // 但不一定触发
+        if (runs > Keys.minimumRunCount && runs % 20 == 0) {
             if #available(iOS 10.3, *) {
 //                 #if !DEBUG
                     log.info("已请求评分")
