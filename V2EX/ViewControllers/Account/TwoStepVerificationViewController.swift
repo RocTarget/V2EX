@@ -52,8 +52,12 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         let blurView = UIVisualEffectView(effect: blurEffect)
         return blurView
     }()
-    
+
+    // MARK: - Propertys
+
     private var forgotForm: LoginForm?
+
+    // MARK: - View Life Cycle
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -62,6 +66,8 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "close"), style: .plain) { [weak self] in
@@ -143,6 +149,10 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
                 }
             }.disposed(by: rx.disposeBag)
     }
+}
+
+// MARK: - Actions
+extension TwoStepVerificationViewController {
 
     func nextHandle() {
         view.endEditing(true)
@@ -151,8 +161,8 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
             captcha.isNotEmpty,
             captcha.count == 6,
             let _ = Int(captcha) else {
-            HUD.showText("请正确验证码", duration: 1.5)
-            return
+                HUD.showText("请正确验证码", duration: 1.5)
+                return
         }
 
         HUD.show()
@@ -172,6 +182,7 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension TwoStepVerificationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

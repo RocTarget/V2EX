@@ -3,6 +3,8 @@ import MarkdownView
 
 class MarkdownPreviewViewController: BaseViewController {
 
+    // MARK: - UI
+
     private lazy var markdownView: MarkdownView = {
         let view = MarkdownView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -18,7 +20,12 @@ class MarkdownPreviewViewController: BaseViewController {
         return activityIndicator
     }()
 
+    // MARK: - Propertys
+
     public var markdownString: String
+
+
+    // MARK: - View Life Cycle
 
     init(markdownString: String) {
         self.markdownString = markdownString
@@ -46,6 +53,8 @@ class MarkdownPreviewViewController: BaseViewController {
         }
     }
 
+    // MARK: - Setup
+
     override func setupSubviews() {
         loadHTML()
     }
@@ -56,6 +65,8 @@ class MarkdownPreviewViewController: BaseViewController {
         }
     }
 
+    /// MARK: - Actions
+    
     private func loadHTML() {
         activityIndicator.startAnimating()
         markdownView.load(markdown: markdownString, enableImage: true)

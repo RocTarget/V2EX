@@ -8,26 +8,23 @@ enum CaptchaType: String {
 
 // V2EX js
 // https://www.v2ex.com/static/js/v2ex.js?v=2658dbd9f54ebdeb51d27a0611b2ba96
+//
+// 定义所有的请求接口
 
 enum API {
 
+    // 通用
     case currency(href: String)
 
-    case topics(href: String?)
+    // 获取 once
+    case once
 
-    case recentTopics(page: Int)
+    // MARK: - 登录注册相关接口
 
-    // 主题详情
-    case topicDetail(topicID: String, page: Int)
-
+    // 获取验证码
     case captcha(type: CaptchaType)
     // 获取验证码
     case captchaImageData(once: String)
-
-    case once
-
-    // MARK: - 个人账号相关接口
-
     // 登录
     case signin(dict: [String: String])
     // Google 登录
@@ -38,40 +35,35 @@ enum API {
     case forgot(dict: [String: String])
     // 注册
     case signup(dict: [String: String])
+
+    // MARK: - 用户操作相关接口
+
     // 登录奖励
     case loginReward(once: String?)
     // 上传头像
     case updateAvatar(localURL: String, once: String)
     // 账号信息
     case memberIntro(username: String)
-
-    // 我的节点
-    case myNodes
-    
-    // 全部节点
-    case nodes
-
-    /// 节点详情
-    case nodeDetail(href: String, page: Int)
-
     // 特别关注
     case following
-    
     // 我收藏的收藏
     case myFavorites(page: Int)
-
-    // 关于
-    case about
-
-    // 发表主题回复
-    case comment(topicID: String, dict: [String: String])
-    // 创建主题
-    case createTopic(nodename: String, dict: [String: String])
-
     // 获取通知消息
     case notifications(page: Int)
     // 删除通知
     case deleteNotification(notifacationID: String, once: String)
+
+    // MARK: - 节点操作相关接口
+
+    // 我的节点
+    case myNodes
+    // 全部节点
+    case nodes
+    /// 节点详情
+    case nodeDetail(href: String, page: Int)
+
+
+    // MARK: - 会员相关接口
 
     // 会员首页
     case memberHome(username: String)
@@ -79,13 +71,20 @@ enum API {
     case memberTopics(username: String, page: Int)
     // 会员回复
     case memberReplys(username: String, page: Int)
-    
-    // 源码地址
-    case codeRepo
-    
+    // 最近的主题
+    case recentTopics(page: Int)
+
+    // MARK: - 主题相关接口
+    // 主题列表
+    case topics(href: String?)
+    // 主题详情
+    case topicDetail(topicID: String, page: Int)
+    // 发表主题回复
+    case comment(topicID: String, dict: [String: String])
+    // 创建主题
+    case createTopic(nodename: String, dict: [String: String])
     // 搜索主题
     case search(query: String, offset: Int, size: Int, sortType: String)
-    
     // 收藏主题
     case favoriteTopic(topicID: String, token: String)
     // 取消收藏主题
@@ -101,8 +100,17 @@ enum API {
     // 预览 Markdown
     case previewTopic(md: String, once: String)
 
+
+    // MARK: - 其他
+
+    // 关于
+    case about
+
     // 上传图片
     case uploadPicture(localURL: String)
+
+    // 源码地址
+    case codeRepo
 }
 
 extension API: TargetType {

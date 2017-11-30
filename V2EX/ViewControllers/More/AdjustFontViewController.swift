@@ -2,6 +2,8 @@ import UIKit
 
 class AdjustFontViewController: BaseViewController {
 
+    // MARK: - UI
+
     private lazy var previewContainerView: UIView = {
         let view = UIView()
         return view
@@ -66,6 +68,8 @@ class AdjustFontViewController: BaseViewController {
         return view
     }()
 
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -84,6 +88,8 @@ class AdjustFontViewController: BaseViewController {
                 self?.maxLabel.textColor = theme.titleColor
             }.disposed(by: rx.disposeBag)
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
         view.addSubviews(previewContainerView, sliderContainerView)
@@ -145,6 +151,7 @@ class AdjustFontViewController: BaseViewController {
         }
     }
 
+    /// MARK: - Actions
     @objc func sliderValueDidChange() {
         contentLabel.font = UIFont.systemFont(ofSize: CGFloat(sliderView.value) * 15.f)
 

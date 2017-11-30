@@ -85,7 +85,10 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
         return view
     }()
 
+    // MARK: - Propertys
     private var forgotForm: LoginForm?
+
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,7 +105,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
         navBarBgAlpha = 0
     }
 
-
+    // MARK: - Setup
     override func setupTheme() {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
@@ -207,7 +210,12 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
                 self?.nextHandle()
             }.disposed(by: rx.disposeBag)
     }
+}
 
+// MARK: - Actions
+extension ForgotPasswordViewController {
+
+    /// 找回密码
     func nextHandle() {
         view.endEditing(true)
 
@@ -253,6 +261,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
         }
     }
 
+    /// 获取验证码
     @objc func fetchCode() {
         captchaBtn.isLoading = true
         captchaBtn.setImage(UIImage(), for: .normal)
@@ -269,6 +278,7 @@ class ForgotPasswordViewController: BaseViewController, AccountService {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension ForgotPasswordViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

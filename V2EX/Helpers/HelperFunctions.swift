@@ -9,6 +9,7 @@ public typealias Action = () -> Void
 
 //typealias L10n = R.string.localizable
 
+/// Present 登录
 func presentLoginVC() {
     let nav = NavigationViewController(rootViewController: LoginViewController())
     AppWindow.shared.window.rootViewController?.present(nav, animated: true, completion: nil)
@@ -19,6 +20,7 @@ enum PhotoBrowserType {
     case imageURL(String)
 }
 
+/// 预览图片
 func showImageBrowser(imageType: PhotoBrowserType) {
 
     var photo: SKPhoto?

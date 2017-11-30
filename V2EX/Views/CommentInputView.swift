@@ -97,9 +97,9 @@ class CommentInputView: UIView {
 
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
-                self?.backgroundColor = theme.whiteColor
-                self?.borderTop = Border(size: 1,color: theme == .day ? theme.borderColor : UIColor.hex(0x19171A))
-                self?.textView.backgroundColor = theme == .day ? theme.bgColor : UIColor.hex(0x101014)
+                self?.backgroundColor = theme.navColor
+                self?.borderTop = Border(size: 1 ,color: theme == .day ? theme.borderColor : UIColor.hex(0x19171A))
+                self?.textView.backgroundColor = theme.bgColor
                 self?.textView.layer.borderColor = (theme == .day ? theme.borderColor : UIColor.hex(0x19171A)).cgColor
                 self?.textView.keyboardAppearance = theme == .day ? .default : .dark
                 self?.textView.textColor = theme.titleColor

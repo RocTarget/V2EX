@@ -9,20 +9,25 @@
 import UIKit
 
 class MemberListViewController: UITableViewController {
+
+    // MARK: - Propertys
     
     public var members: [MemberModel] = []
     
     public var callback: (([MemberModel]) -> Void)?
     
+
+    // MARK: - View Life Cycle
+
     init(members: [MemberModel]) {
         super.init(style: .plain)
         self.members = members
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     deinit {
         log.verbose("DEINIT MemberListViewController")
     }
@@ -30,7 +35,6 @@ class MemberListViewController: UITableViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return ThemeStyle.style.value.statusBarStyle
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -72,6 +76,7 @@ class MemberListViewController: UITableViewController {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension MemberListViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return members.count

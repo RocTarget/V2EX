@@ -14,6 +14,8 @@ class SettingViewController: UITableViewController {
         var rightType: RightType
     }
 
+    // MARK: - Propertys
+
     private var sections: [[SettingItem]] = [
         [
             SettingItem(title: "使用 Safari 浏览网页", type: .browser, rightType: .switch),
@@ -29,6 +31,8 @@ class SettingViewController: UITableViewController {
             SettingItem(title: "退出账号", type: .logout, rightType: .none)
         ]
     ]
+
+    // MARK: - View Life Cycle
 
     init() {
         super.init(style: .grouped)
@@ -62,6 +66,7 @@ class SettingViewController: UITableViewController {
 
 }
 
+// MARK: - UITableViewDelegate
 extension SettingViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return AccountModel.isLogin ? sections.count : sections.count - 1

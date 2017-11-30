@@ -5,7 +5,6 @@ import Kingfisher
 
 class MoreViewController: BaseViewController, AccountService, MemberService {
 
-
     enum MoreItemType {
         case user
         case createTopic, nodeCollect, myFavorites, follow, myTopic, myReply
@@ -16,7 +15,9 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         var title: String
         var type: MoreItemType
     }
-    
+
+    // MARK: - UI
+
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .grouped)
         view.delegate = self
@@ -37,6 +38,8 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         return view
     }()
 
+    // MARK: - Propertys
+
     private var sections: [[MoreItem]] = [
         [MoreItem(icon: #imageLiteral(resourceName: "avatar"), title: "请先登录", type: .user)],
         [
@@ -53,11 +56,16 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         ]
     ]
 
+
+    // MARK: - View Life Cycle
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         tableView.reloadData()
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
 //        if #available(iOS 11.0, *) {
@@ -95,7 +103,12 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
             }.disposed(by: rx.disposeBag)
 
     }
+}
 
+// MARK: - Actions
+extension MoreViewController {
+
+    /// 更新用户资料
     private func updateUserInfo() {
 
         guard let username = AccountModel.current?.username else {
@@ -106,7 +119,7 @@ class MoreViewController: BaseViewController, AccountService, MemberService {
         memberProfile(memberName: username, success: { [weak self] member in
             AccountModel(username: member.username, url: member.url, avatar: member.avatar).save()
             self?.tableView.reloadData()
-//            self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
+            //            self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
             HUD.dismiss()
         }) { error in
             HUD.dismiss()

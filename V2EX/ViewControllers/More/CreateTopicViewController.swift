@@ -13,6 +13,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
         static let bodyMaxCharacter = 20000
     }
 
+    // MARK: - UI
+
     private lazy var titleLabel: UILabel = {
         let view = UIInsetLabel()
         view.text = "主题标题"
@@ -106,6 +108,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
         return view
     }()
 
+    // MARK: - Propertys
+
     public var node: NodeModel? {
         didSet {
             guard let `node` = node else { return }
@@ -114,6 +118,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
     }
 
     private var selectNodeBtnBottomConstranit: Constraint?
+
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,6 +166,8 @@ class CreateTopicViewController: BaseViewController, TopicService {
 
         log.verbose("DEINIT: \(className)")
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
         view.addSubviews(
@@ -285,7 +293,12 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 theme == .day ? self?.markdownParser.setColorWithBrightTheme() : self?.markdownParser.setColorWithDarkTheme()
             }.disposed(by: rx.disposeBag)
     }
-    
+}
+
+// MARK: - Actions
+extension CreateTopicViewController {
+
+    /// 发布主题
     func postTopicHandle() {
 
         guard bodyTextView.text.count <= Limit.bodyMaxCharacter else {
@@ -319,6 +332,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
         }
     }
 
+    /// 工具栏点击
     private func toolbarClickHandle(_ type: MarkdownItemType) {
 
         if let mark = type.mark {
@@ -364,6 +378,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
         }
     }
 
+    /// 选择节点
     private func selectNodeHandle() {
 
         let allNodeVC = AllNodesViewController()
@@ -378,6 +393,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
         }
     }
 
+    /// 遵守社区指导原则 （审核使用）
     private func EULAHandle() {
 
         if Preference.shared.agreementOfConsent { return }

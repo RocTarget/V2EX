@@ -3,6 +3,8 @@ import SnapKit
 
 class MemberPageViewController: BaseViewController, MemberService, AccountService {
 
+    // MARK: - UI
+
     private lazy var headerView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleToFill
@@ -91,6 +93,8 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
         return view
     }()
 
+    // MARK: - Propertys
+
     private weak var topicViewController: MyTopicsViewController?
     private weak var replyViewController: MyReplyViewController?
 
@@ -113,10 +117,12 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
         }
     }
 
-
     private var topics: [TopicModel] = []
     private var replys: [MessageModel] = []
-    
+
+
+    // MARK: - View Life Cycle
+
     init(memberName: String) {
         self.memberName = memberName
         
@@ -192,33 +198,14 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return statusBarShouldLight ? .lightContent : .default
     }
+
+
+    // MARK: - Setup
     
     override func setupSubviews() {
         view.addSubviews(headerView, segmentView, scrollView)
         headerView.addSubviews(blurView, avatarView, usernameLabel, joinTimeLabel, followBtn, blockBtn)
     }
-    
-    func loadData() {
-//        startLoading()
-        memberHome(memberName: memberName, success: { [weak self] member, topics, replys in
-            self?.topics = topics
-            self?.replys = replys
-            self?.member = member
-//            self?.endLoading()
-        }) { error in
-//            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-//            self?.errorMessage = error
-            log.info(error)
-        }
-    }
-    
-//    override func hasContent() -> Bool {
-//        return member != nil
-//    }
-//
-//    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-//        loadData()
-//    }
 
     override func setupConstraints() {
         
@@ -296,6 +283,20 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
                 self?.followUserHandle()
             }.disposed(by: rx.disposeBag)
     }
+}
+
+// MARK: - Actions
+extension MemberPageViewController {
+
+    func loadData() {
+        memberHome(memberName: memberName, success: { [weak self] member, topics, replys in
+            self?.topics = topics
+            self?.replys = replys
+            self?.member = member
+        }) { error in
+            log.info(error)
+        }
+    }
 
     private func blockUserHandle() {
         guard let member = member, let href = member.blockOrUnblockHref else { return }
@@ -318,7 +319,7 @@ class MemberPageViewController: BaseViewController, MemberService, AccountServic
     }
 }
 
-
+// MARK: - UIScrollViewDelegate
 extension MemberPageViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

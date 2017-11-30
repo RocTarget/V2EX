@@ -12,6 +12,8 @@ class AboutViewController: UITableViewController {
         var type: AbountItemType
     }
 
+    // MARK: - UI
+
     private lazy var headerContainerView: UIView = {
         let view = UIView()
         return view
@@ -29,6 +31,8 @@ class AboutViewController: UITableViewController {
         return view
     }()
 
+    // MARK: - Propertys
+
     private var sections: [[AbountItem]] = [
         [
             AbountItem(title: "给我评分", type: .grade),
@@ -41,6 +45,8 @@ class AboutViewController: UITableViewController {
             AbountItem(title: "关于 V2EX", type: .about)
         ]
     ]
+
+    // MARK: - View Life Cycle
 
     init() {
         super.init(style: .grouped)
@@ -64,6 +70,8 @@ class AboutViewController: UITableViewController {
         setupConstraints()
     }
 
+    // MARK: - Setup
+
     private func setupConstraints() {
         logoView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -77,6 +85,7 @@ class AboutViewController: UITableViewController {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension AboutViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count

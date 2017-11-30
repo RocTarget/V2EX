@@ -2,6 +2,8 @@ import UIKit
 
 class MyReplyViewController: DataViewController, MemberService {
 
+    // MARK: - UI
+
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -15,6 +17,8 @@ class MyReplyViewController: DataViewController, MemberService {
         return view
     }()
 
+    // MARK: - Propertys
+
     public var scrollViewDidScroll: ((UIScrollView) -> Void)?
     
     public var username: String
@@ -27,15 +31,7 @@ class MyReplyViewController: DataViewController, MemberService {
         }
     }
 
-    override func setupSubviews() {
-        setupRefresh()
-    }
-
-    private func setupRefresh() {
-        tableView.addFooterRefresh { [weak self] in
-            self?.fetchMoreReplys()
-        }
-    }
+    // MARK: - View Life Cycle
 
     init(username: String) {
         self.username = username
@@ -48,13 +44,25 @@ class MyReplyViewController: DataViewController, MemberService {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.tableView.separatorColor = theme.borderColor
         }.disposed(by: rx.disposeBag)
     }
-    
+
+    // MARK: - Setup
+
+    override func setupSubviews() {
+        setupRefresh()
+    }
+
+    private func setupRefresh() {
+        tableView.addFooterRefresh { [weak self] in
+            self?.fetchMoreReplys()
+        }
+    }
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -78,7 +86,12 @@ class MyReplyViewController: DataViewController, MemberService {
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
         fetchReplys()
     }
+}
 
+// MARK: - Actions
+extension MyReplyViewController {
+
+    /// 获取回复
     private func fetchReplys() {
         page = 1
         startLoading()
@@ -92,6 +105,7 @@ class MyReplyViewController: DataViewController, MemberService {
         }
     }
 
+    /// 获取更多回复
     private func fetchMoreReplys() {
         if self.page >= maxPage {
             tableView.endRefresh(showNoMore: true)

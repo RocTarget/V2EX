@@ -5,6 +5,8 @@ import MobileCoreServices
 
 class ReplyMessageViewController: BaseViewController, TopicService {
 
+    // MARK: - UI
+
     private lazy var contentView: UIView = {
         let view = UIView()
 //        view.setCornerRadius = 15
@@ -64,6 +66,8 @@ class ReplyMessageViewController: BaseViewController, TopicService {
         return view
     }()
 
+    // MARK: - Propertys
+
     public var message: MessageModel? {
         didSet {
             guard let username = message?.member?.username else { return }
@@ -73,6 +77,8 @@ class ReplyMessageViewController: BaseViewController, TopicService {
             textView.becomeFirstResponder()
         }
     }
+
+    // MARK: - Setup
 
     override func setupRx() {
         closeBtn.rx
@@ -148,6 +154,10 @@ class ReplyMessageViewController: BaseViewController, TopicService {
             $0.left.bottom.right.equalToSuperview()
         }
     }
+}
+
+// MARK: - Actions
+extension ReplyMessageViewController {
 
     // 上传配图请求
     private func uploadPictureHandle(_ fileURL: String) {
@@ -204,6 +214,8 @@ class ReplyMessageViewController: BaseViewController, TopicService {
     }
 }
 
+
+// MARK: - UIImagePickerControllerDelegate & UINavigationControllerDelegate
 extension ReplyMessageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         dismiss(animated: true, completion: nil)
@@ -223,6 +235,7 @@ extension ReplyMessageViewController: UIImagePickerControllerDelegate, UINavigat
     }
 }
 
+// MARK: - UITextViewDelegate
 extension ReplyMessageViewController: UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {

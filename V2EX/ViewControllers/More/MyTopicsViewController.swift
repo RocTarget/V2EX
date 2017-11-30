@@ -2,13 +2,22 @@ import UIKit
 
 class MyTopicsViewController: BaseTopicsViewController, MemberService {
 
+    // MARK: - Propertys
+
     var username: String
     
     public var scrollViewDidScroll: ((UIScrollView) -> Void)?
 
+
+    // MARK: - View Life Cycle
+
     init(username: String) {
         self.username = username
         super.init(href: "")
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -20,15 +29,15 @@ class MyTopicsViewController: BaseTopicsViewController, MemberService {
         })
     }
 
+    // MARK: - Setup
+
     override func setupRefresh() {
         tableView.addFooterRefresh { [weak self] in
             self?.fetchMoreTopic()
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: State Handle
 
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
         fetchTopic()
@@ -37,11 +46,16 @@ class MyTopicsViewController: BaseTopicsViewController, MemberService {
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
         fetchTopic()
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollViewDidScroll?(scrollView)
+    }
 
+    /// 获取主题
     override func fetchTopic() {
         page = 1
         startLoading()
-        
+
         memberTopics(
             username: username,
             page: page,
@@ -56,8 +70,12 @@ class MyTopicsViewController: BaseTopicsViewController, MemberService {
             self?.errorMessage = error
         }
     }
+}
 
+// MARK: - Actions
+extension MyTopicsViewController {
 
+    /// 获取更多主题
     private func fetchMoreTopic() {
         if self.page >= maxPage {
             tableView.endRefresh(showNoMore: true)
@@ -70,17 +88,13 @@ class MyTopicsViewController: BaseTopicsViewController, MemberService {
             page: page,
             success: { [weak self] topics, maxPage in
 
-            guard let `self` = self else { return }
-            self.topics.append(contentsOf: topics)
-            self.tableView.reloadData()
-            self.tableView.endRefresh(showNoMore: maxPage < self.page)
+                guard let `self` = self else { return }
+                self.topics.append(contentsOf: topics)
+                self.tableView.reloadData()
+                self.tableView.endRefresh(showNoMore: maxPage < self.page)
         }) { [weak self] error in
             self?.tableView.endFooterRefresh()
             self?.page -= 1
         }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        scrollViewDidScroll?(scrollView)
     }
 }

@@ -2,6 +2,7 @@ import UIKit
 
 class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
 
+    // MARK: - Setup
 
     override func setupRefresh() {
         tableView.addHeaderRefresh { [weak self] in
@@ -12,36 +13,50 @@ class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
         }
     }
 
+    // MARK: State Handle
+
     override func loadData() {
         fetchFavoriteTopic()
     }
-    
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchFavoriteTopic()
+    }
+
+    override  func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchFavoriteTopic()
+    }
+}
+
+// MARK: - Actions
+extension TopicFavoriteViewController {
+
     private func fetchFavoriteTopic() {
         page = 1
         startLoading()
-        
+
         myFavorite(page: page, success: { [weak self] topics, maxPage in
             self?.maxPage = maxPage
             self?.topics = topics
             self?.endLoading()
             self?.tableView.endHeaderRefresh()
-        }, failure: { [weak self] error in
-            self?.tableView.endHeaderRefresh()
-            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            self?.errorMessage = error
+            }, failure: { [weak self] error in
+                self?.tableView.endHeaderRefresh()
+                self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+                self?.errorMessage = error
         })
     }
-    
+
     func fetchMoreFavoriteTopic() {
         if page >= maxPage {
             tableView.endRefresh(showNoMore: true)
             return
         }
-        
+
         page += 1
-        
+
         startLoading()
-        
+
         myFavorite(page: page, success: { [weak self] topics, maxPage in
             guard let `self` = self else { return }
             self.topics.append(contentsOf: topics)
@@ -52,13 +67,5 @@ class TopicFavoriteViewController: BaseTopicsViewController, AccountService {
             self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self?.page -= 1
         }
-    }
-
-    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-        fetchFavoriteTopic()
-    }
-
-    override  func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
-        fetchFavoriteTopic()
     }
 }

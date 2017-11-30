@@ -2,6 +2,8 @@ import UIKit
 
 class LibrarysViewController: BaseViewController {
 
+    // MARK: - UI
+
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -12,6 +14,8 @@ class LibrarysViewController: BaseViewController {
         return view
     }()
 
+    // MARK: - Propertys
+    
     private let dataSource: [(title: String, intro: String, link: String)] = [
         ("Alamofire", "Elegant HTTP Networking in Swift", "https://github.com/Alamofire/Alamofire"),
         ("Kingfisher", "A lightweight, pure-Swift library for downloading and caching images from the web.", "https://github.com/onevcat/Kingfisher"),
@@ -33,6 +37,8 @@ class LibrarysViewController: BaseViewController {
         ("Crashlytics", "Best and lightest-weight crash reporting for mobile, desktop and tvOS.", "http://try.crashlytics.com/"),
     ]
 
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -44,6 +50,8 @@ class LibrarysViewController: BaseViewController {
         }.disposed(by: rx.disposeBag)
     }
 
+    // MARK: - Setup
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -51,6 +59,7 @@ class LibrarysViewController: BaseViewController {
     }
 }
 
+// MARK: - UITableViewDelegate & UITableViewDataSource
 extension LibrarysViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count

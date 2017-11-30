@@ -1,7 +1,9 @@
 import UIKit
 
 class NodeSearchResultViewController: DataViewController {
-    
+
+    // MARK: - UI
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.dataSource = self
@@ -15,7 +17,9 @@ class NodeSearchResultViewController: DataViewController {
         self.view.addSubview(tableView)
         return tableView
     }()
-    
+
+    // MARK: - Propertys
+
     public var originData: [NodeModel]?
 
     public var didSelectedNodeHandle:((NodeModel) -> Void)?
@@ -29,7 +33,9 @@ class NodeSearchResultViewController: DataViewController {
         }
     }
 
-    
+
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,7 +48,9 @@ class NodeSearchResultViewController: DataViewController {
             self?.tableView.separatorColor = theme.borderColor
         }.disposed(by: rx.disposeBag)
     }
-    
+
+    // MARK: - Setup
+
     override func setupSubviews() {
         status = .empty
         startLoading()
@@ -55,20 +63,20 @@ class NodeSearchResultViewController: DataViewController {
     }
 
     // MARK: State Handle
+
     override func hasContent() -> Bool {
         return searchResults.count.boolValue
     }
 
     override func loadData() {
-
     }
 
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-
     }
 }
 
 
+// MARK: - UITableViewDelegate & UITableViewDataSource
 extension NodeSearchResultViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -104,6 +112,7 @@ extension NodeSearchResultViewController: UITableViewDelegate, UITableViewDataSo
     }
 }
 
+// MARK: - UISearchResultsUpdating
 extension NodeSearchResultViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let query = searchController.searchBar.text?.trimmed,

@@ -85,6 +85,22 @@ class TopicDetailViewController: DataViewController, TopicService {
     private var inputViewHeightConstraint: Constraint?
 
 
+
+    // MARK: - View Life Cycle
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        setTabBarHiddn(false)
+        //        navigationController?.navigationBar.isTranslucent = false
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        setTabBarHiddn(false)
+    }
+
     init(topicID: String) {
         self.topicID = topicID
 
@@ -117,18 +133,7 @@ class TopicDetailViewController: DataViewController, TopicService {
     //        navigationController?.navigationBar.isTranslucent = true
     //    }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        setTabBarHiddn(false)
-        //        navigationController?.navigationBar.isTranslucent = false
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        setTabBarHiddn(false)
-    }
+    // MARK: - Setup
 
     override func setupSubviews() {
 
@@ -254,25 +259,7 @@ class TopicDetailViewController: DataViewController, TopicService {
                 self.setTabBarHiddn(false)
                 self.tableView.scrollToTop()
         }.disposed(by: rx.disposeBag)
-    }
 
-    // MARK: States Handle
-
-    override func hasContent() -> Bool {
-        return topic != nil
-    }
-
-    override func loadData() {
-        fetchTopicDetail()
-
-        keyboardControl()
-    }
-
-    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
-        fetchTopicDetail()
-    }
-
-    private func keyboardControl() {
 
         Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
                       NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
@@ -292,6 +279,20 @@ class TopicDetailViewController: DataViewController, TopicService {
                 }
                 //                self?.keyboardControl(notification)
             }.disposed(by: rx.disposeBag)
+    }
+
+    // MARK: States Handle
+
+    override func hasContent() -> Bool {
+        return topic != nil
+    }
+
+    override func loadData() {
+        fetchTopicDetail()
+    }
+
+    override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
+        fetchTopicDetail()
     }
 }
 

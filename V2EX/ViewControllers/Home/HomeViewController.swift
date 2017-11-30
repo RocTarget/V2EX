@@ -5,6 +5,8 @@ import RxCocoa
 
 class HomeViewController: BaseViewController, AccountService, TopicService {
 
+    // MARK: - UI
+
     private var segmentView: SegmentView?
 
     private lazy var scrollView: UIScrollView = {
@@ -19,29 +21,20 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         return scrollView
     }()
 
-    //    private lazy var searchTextField: UITextField = {
-    //        let view = UITextField()
-    //        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
-    //        view.placeholder = "搜索主题"
-    //        view.backgroundColor = UIColor.groupTableViewBackground
-    //        view.layer.cornerRadius = 10
-    //        view.layer.masksToBounds = true
-    //        view.font = UIFont.systemFont(ofSize: 15)
-    //        view.leftView = UIImageView(image: #imageLiteral(resourceName: "search"))
-    //        view.leftViewMode = .always
-    //        view.delegate = self
-    //        return view
-    //    }()
-
     private var nodes: [NodeModel] = []
 
     // MARK: - View Life Cycle...
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        listenNotification()
         setupSegmentView()
         fetchData()
+
+        // 请求评分
+        GCD.delay(1) {
+            RequestReview().showReview()
+        }
     }
 
 
@@ -54,9 +47,10 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
         //        setTabBarHiddn(false)
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
         super.setupSubviews()
@@ -113,41 +107,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
             }.disposed(by: rx.disposeBag)
     }
 
-    private func fetchData() {
-        dailyRewardMission()
-
-        scrollView.contentSize = CGSize(width: nodes.count.f * scrollView.width, height: scrollView.contentSize.height)
-        for node in nodes {
-            let topicVC = BaseTopicsViewController()
-            topicVC.href = node.href
-            addChildViewController(topicVC)
-        }
-
-        scrollViewDidEndScrollingAnimation(scrollView)
-    }
-
-    private func dailyRewardMission() {
-        guard AccountModel.isLogin else { return }
-
-        dailyReward(success: { days in
-            GCD.delay(0.3, block: {
-                HUD.showText(days)
-            })
-        }) { error in
-            HUD.showTest(error)
-            log.error(error)
-        }
-    }
-
-    private func loginHandle() {
-        //        guard AccountModel.isLogin, let account = AccountModel.current else { return }
-
-
-        //        Keychain().set(<#T##value: Data##Data#>, forKey: <#T##String#>)
-    }
-
-    private func listenNotification() {
-
+    override func setupRx() {
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.TwoStepVerificationName)
             .subscribeNext { [weak self] _ in
@@ -200,8 +160,45 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
 }
 
+// MARK: - Actions
+extension HomeViewController {
 
+    /// 获取所有节点
+    private func fetchData() {
+        dailyRewardMission()
 
+        scrollView.contentSize = CGSize(width: nodes.count.f * scrollView.width, height: scrollView.contentSize.height)
+        for node in nodes {
+            let topicVC = BaseTopicsViewController()
+            topicVC.href = node.href
+            addChildViewController(topicVC)
+        }
+
+        scrollViewDidEndScrollingAnimation(scrollView)
+    }
+
+    /// 每日奖励
+    private func dailyRewardMission() {
+        guard AccountModel.isLogin else { return }
+
+        dailyReward(success: { days in
+            GCD.delay(0.3, block: {
+                HUD.showText(days)
+            })
+        }) { error in
+            HUD.showTest(error)
+            log.error(error)
+        }
+    }
+
+    private func loginHandle() {
+        //        guard AccountModel.isLogin, let account = AccountModel.current else { return }
+
+        //        Keychain().set(<#T##value: Data##Data#>, forKey: <#T##String#>)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
 extension HomeViewController: UIScrollViewDelegate {
 
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {

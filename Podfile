@@ -44,7 +44,7 @@ target 'V2EX' do
     pod 'Crashlytics'
 
     # Debug only
-    pod 'Reveal-SDK', '~> 4', :configurations => ['Debug']
+    pod 'Reveal-SDK', '~> 8', :configurations => ['Debug']
 
     target 'V2EXTests' do
         inherit! :search_paths

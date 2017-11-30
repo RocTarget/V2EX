@@ -2,6 +2,8 @@ import UIKit
 
 class NodeCollectViewController: DataViewController, NodeService {
 
+    // MARK: - UI
+
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: self.view.width / 3, height: 150)
@@ -17,13 +19,19 @@ class NodeCollectViewController: DataViewController, NodeService {
         return view
     }()
 
+    // MARK: - Propertys
+
     private var nodes: [NodeModel] = []
+
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         fetchNodes()
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
         collectionView.snp.makeConstraints {
@@ -48,7 +56,12 @@ class NodeCollectViewController: DataViewController, NodeService {
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
         fetchNodes()
     }
+}
 
+// MARK: - Actions
+extension NodeCollectViewController {
+
+    /// 获取全部节点
     func fetchNodes() {
         startLoading()
 
@@ -63,6 +76,7 @@ class NodeCollectViewController: DataViewController, NodeService {
     }
 }
 
+// MARK: - UICollectionViewDelegate & UICollectionViewDataSource
 extension NodeCollectViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

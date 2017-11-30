@@ -2,6 +2,8 @@ import UIKit
 
 class MessageViewController: DataViewController, AccountService {
 
+    // MARK: - UI
+
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -24,9 +26,14 @@ class MessageViewController: DataViewController, AccountService {
 
     private weak var replyMessageViewController: ReplyMessageViewController?
 
+    // MARK: - Propertys
+
     private var messages: [MessageModel] = []
 
     private var page = 1, maxPage = 1
+
+
+    // MARK: - View Life Cycle
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -57,6 +64,8 @@ class MessageViewController: DataViewController, AccountService {
 
         setupRefreshView()
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
@@ -99,6 +108,54 @@ class MessageViewController: DataViewController, AccountService {
         fetchNotifications()
     }
 
+    override func errorView(_ errorView: ErrorView, didTapActionButton _: UIButton) {
+        if status == .noAuth {
+            presentLoginVC()
+            return
+        }
+        fetchNotifications()
+    }
+
+    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
+        fetchNotifications()
+    }
+
+    override func hasContent() -> Bool {
+        return messages.count.boolValue
+    }
+
+}
+
+// MARK: - Actions
+extension MessageViewController {
+
+    /// 新消息动画
+    ///
+    /// - Parameter badgeValue: badge
+    private func notificationAnimation(_ badgeValue: String?) {
+        guard let count = badgeValue?.int,
+            count.boolValue,
+            tableView.numberOfRows(inSection: 0) >= count else {
+                return
+        }
+        tabBarItem.badgeValue = nil
+        //        HUD.showText("\(count) 条新消息")
+        activityIndicator.stopAnimating()
+        var indexPaths: [IndexPath] = []
+        for i in 0..<count {
+            indexPaths.append(IndexPath(row: i, section: 0))
+        }
+
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear,  animations: {
+            indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3) }
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
+                indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor }
+            })
+        })
+    }
+
+    /// 获取通知
     func fetchNotifications() {
         guard AccountModel.isLogin else {
             endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
@@ -133,30 +190,8 @@ class MessageViewController: DataViewController, AccountService {
             }
         }
     }
-    
-    private func notificationAnimation(_ badgeValue: String?) {
-        guard let count = badgeValue?.int,
-            count.boolValue,
-            tableView.numberOfRows(inSection: 0) >= count else {
-            return
-        }
-        tabBarItem.badgeValue = nil
-//        HUD.showText("\(count) 条新消息")
-        activityIndicator.stopAnimating()
-        var indexPaths: [IndexPath] = []
-        for i in 0..<count {
-            indexPaths.append(IndexPath(row: i, section: 0))
-        }
-        
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear,  animations: {
-            indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3) }
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
-                indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor }
-            })
-        })
-    }
 
+    /// 获取更多通知
     private func fetchMoreNotifications() {
         if self.page >= maxPage {
             tableView.endRefresh(showNoMore: true)
@@ -178,22 +213,9 @@ class MessageViewController: DataViewController, AccountService {
         }
     }
 
-    override func errorView(_ errorView: ErrorView, didTapActionButton _: UIButton) {
-        if status == .noAuth {
-            presentLoginVC()
-            return
-        }
-        fetchNotifications()
-    }
-
-    override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
-        fetchNotifications()
-    }
-
-    override func hasContent() -> Bool {
-        return messages.count.boolValue
-    }
-
+    /// 删除消息
+    ///
+    /// - Parameter message: 模型
     private func deleteMessages(_ message: MessageModel) {
         guard let id = message.id,
             let once = message.once else {
@@ -207,6 +229,9 @@ class MessageViewController: DataViewController, AccountService {
         }
     }
 
+    /// 回复消息
+    ///
+    /// - Parameter message: 消息内容
     private func replyMessage(_ message: MessageModel) {
         if replyMessageViewController == nil {
             let replyMessageVC = ReplyMessageViewController()
@@ -220,7 +245,7 @@ class MessageViewController: DataViewController, AccountService {
     }
 }
 
-
+// MARK: - UITableViewDelegate & UITableViewDataSource
 extension MessageViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count

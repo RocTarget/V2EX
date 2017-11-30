@@ -7,6 +7,7 @@ let Network = Networking.shared
 typealias Success = ((Data) -> Void)
 typealias Failure = ((String) -> Void)
 
+/// 网络状态
 enum NetworkStatus {
     case unknown
     case notReachable
@@ -14,6 +15,7 @@ enum NetworkStatus {
     case reachableViaWWAN
 }
 
+/// 处理所有网络请求
 final class Networking {
 
     public static let shared = Networking()
@@ -49,6 +51,7 @@ final class Networking {
         }
     }
 
+    /// 发起请求
     func request(
         file: StaticString = #file,
         function: StaticString = #function,
@@ -65,7 +68,7 @@ final class Networking {
         guard let url = target.url else { return }
 
         switch target.task {
-        case .request:
+        case .request: // 普通请求操作
 
             Alamofire.request(url,
                               method: target.route.method,
@@ -77,12 +80,11 @@ final class Networking {
                 })
             break
 
-        case .upload(.file(let fileUrl, let name)):
+        case .upload(.file(let fileUrl, let name)): // 上传请求
             
             Alamofire.upload(multipartFormData: { multipartFormData in
-
+                // 拼接表单数据
                 multipartFormData.append(fileUrl, withName: name)
-
                 if let params = target.parameters as? [String: String] {
                     for (key, value) in params {
                         multipartFormData.append(value.data(using: .utf8)!, withName: key)
@@ -109,8 +111,10 @@ final class Networking {
     }
 }
 
+// MARK: - Handle
 extension Networking {
 
+    // 请求响应统一处理
     fileprivate func responseHandle(file: StaticString = #file,
                                     function: StaticString = #function,
                                     line: UInt = #line,
@@ -144,7 +148,9 @@ extension Networking {
                 }
             }
 
+            // 主要处理如果网页跳转到登录页面，代表该页面查看需要登录
             switch target {
+            // 忽略这些请求
             case .signin(_), .once, .captcha(_):
                 break
             default:

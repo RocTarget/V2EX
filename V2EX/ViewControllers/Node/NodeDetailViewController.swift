@@ -2,9 +2,13 @@ import UIKit
 
 class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountService {
 
+    // MARK: - UI
+
     private lazy var favoriteTopicItem: UIBarButtonItem = {
         return UIBarButtonItem(image: #imageLiteral(resourceName: "favoriteNav"), style: .plain)
     }()
+
+    // MARK: - Propertys
 
     public var node: NodeModel {
         didSet {
@@ -12,6 +16,8 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
             favoriteTopicItem.image = (node.isFavorite ?? false) ? #imageLiteral(resourceName: "unfavoriteNav") : #imageLiteral(resourceName: "favoriteNav")
         }
     }
+
+    // MARK: - View Life Cycle
 
     init(node: NodeModel) {
         self.node = node
@@ -40,6 +46,8 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
         navigationItem.rightBarButtonItems = [newTopicItem, favoriteTopicItem]
     }
 
+    // MARK: - Setup
+
     override func setupRx() {
         favoriteTopicItem.rx
             .tap
@@ -52,6 +60,8 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
                 self?.tableView.separatorColor = theme.borderColor
             }.disposed(by: rx.disposeBag)
     }
+
+    // MARK: State Handle
 
     override func loadData() {
         fetchNodeDetail()
@@ -66,8 +76,10 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
     }
 }
 
+// MARK: - Actions
 extension NodeDetailViewController {
 
+    /// 获取节点详情
     func fetchNodeDetail() {
         page = 1
         startLoading()
@@ -90,6 +102,7 @@ extension NodeDetailViewController {
         }
     }
 
+    /// 获取更多主题
     func fetchMoreTopic() {
         page += 1
 
@@ -110,6 +123,7 @@ extension NodeDetailViewController {
         }
     }
 
+    /// 收藏主题
     private func favoriteHandle() {
         guard let href = node.favoriteOrUnfavoriteHref else {
             HUD.showText("收藏失败，请重试")

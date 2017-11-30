@@ -139,6 +139,8 @@
 		BFEC91CC1F94782A0050B7F5 /* UIKit+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */; };
 		BFEC91CF1F948D8E0050B7F5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */; };
 		BFEC91D11F9490570050B7F5 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEC91D01F9490570050B7F5 /* ForgotPasswordViewController.swift */; };
+		BFF0A8791FCFFF810055B108 /* RequestReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF0A8781FCFFF810055B108 /* RequestReview.swift */; };
+		BFF178971FCD07F0004A5F43 /* UIAlertController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF178961FCD07F0004A5F43 /* UIAlertController+Extension.swift */; };
 		BFFAFDE91F9F4428000EB91C /* MemberListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFAFDE81F9F4428000EB91C /* MemberListViewController.swift */; };
 		C00FF4E9D54113900F400975 /* Pods_V2EX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDEF560D2C703ABBF56BE30E /* Pods_V2EX.framework */; };
 /* End PBXBuildFile section */
@@ -306,6 +308,8 @@
 		BFEC91CB1F94782A0050B7F5 /* UIKit+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Extension.swift"; sourceTree = "<group>"; };
 		BFEC91CE1F948D8E0050B7F5 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		BFEC91D01F9490570050B7F5 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
+		BFF0A8781FCFFF810055B108 /* RequestReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestReview.swift; sourceTree = "<group>"; };
+		BFF178961FCD07F0004A5F43 /* UIAlertController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Extension.swift"; sourceTree = "<group>"; };
 		BFFAFDE81F9F4428000EB91C /* MemberListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListViewController.swift; sourceTree = "<group>"; };
 		E337C44E6CA49FA430E4D9C1 /* Pods-V2EX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2EX.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2EX/Pods-V2EX.release.xcconfig"; sourceTree = "<group>"; };
 		EDEF560D2C703ABBF56BE30E /* Pods_V2EX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_V2EX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -470,6 +474,7 @@
 				BFC89B481FA0283800759577 /* TextParser.swift */,
 				BF3AB6B31FA1A61200ACA17A /* ImageAttachment.swift */,
 				BF9554DA1FBD73EE0054FC50 /* Preference.swift */,
+				BFF0A8781FCFFF810055B108 /* RequestReview.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -542,6 +547,7 @@
 				77507E681F9B168800D62286 /* String+PinYin.swift */,
 				779064471F9B72C1001A5ABA /* UIViewChain.swift */,
 				BF9554D61FBD653E0054FC50 /* ReuseCell.swift */,
+				BFF178961FCD07F0004A5F43 /* UIAlertController+Extension.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -831,7 +837,6 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
 			);
 			mainGroup = BF65BDAB1F8E12C80010B4C9;
@@ -943,7 +948,7 @@
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/PasswordExtension/PasswordExtension.framework",
 				"${BUILT_PRODUCTS_DIR}/PullToRefreshKit/PullToRefreshKit.framework",
-				"${PODS_ROOT}/Reveal-SDK/RevealServer-4/iOS/RevealServer.framework",
+				"${PODS_ROOT}/Reveal-SDK/RevealServer-8/iOS/RevealServer.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
@@ -1081,6 +1086,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				778AC6B51F9AF07F0072C6E9 /* HighlightableContainer.swift in Sources */,
+				BFF0A8791FCFFF810055B108 /* RequestReview.swift in Sources */,
 				779064481F9B72C1001A5ABA /* UIViewChain.swift in Sources */,
 				BFC89B491FA0283800759577 /* TextParser.swift in Sources */,
 				773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */,
@@ -1105,6 +1111,7 @@
 				BF1A1EBC1FB58B3900DDBF67 /* GoogleChromeActivity.swift in Sources */,
 				7756CCCC1F92475F00EF47B8 /* NodeDetailViewController.swift in Sources */,
 				77B75DAE1F94FB8C00B7312B /* NodeCollectViewController.swift in Sources */,
+				BFF178971FCD07F0004A5F43 /* UIAlertController+Extension.swift in Sources */,
 				BF5A6B8B1F99E9DB00CF6BA1 /* ReplyCell.swift in Sources */,
 				BF9EC8201F95C39A00E7AA02 /* MemberPageViewController.swift in Sources */,
 				BF45E00A1F9F08A90001BEB2 /* DataViewController.swift in Sources */,

@@ -4,6 +4,8 @@ import RxCocoa
 
 class TopicSearchResultViewController: DataViewController, TopicService {
 
+    // MARK: - UI
+
     private lazy var searchTextField: UITextField = {
         let view = UITextField()
         view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
@@ -48,7 +50,9 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         self.view.addSubview(tableView)
         return tableView
     }()
-    
+
+    // MARK: - Propertys
+
     private var searchResults: [SearchResultModel] = [] {
         didSet {
             tableView.reloadData()
@@ -63,6 +67,9 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     private var query: String?
 
     private var sortType: SearchSortType = .sumup
+
+
+    // MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,6 +92,8 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
     }
+
+    // MARK: - Setup
 
     override func setupSubviews() {
 
@@ -139,28 +148,10 @@ class TopicSearchResultViewController: DataViewController, TopicService {
                 self?.tableView.separatorColor = theme.borderColor
                 self?.containerView.backgroundColor = theme.whiteColor
                 self?.searchTextField.keyboardAppearance = theme == .day ? .default : .dark
-                self?.searchTextField.backgroundColor = theme == .day ? theme.bgColor : UIColor.hex(0x101014)
-//                self?.textView.layer.borderColor = (theme == .day ? theme.borderColor : UIColor.hex(0x19171A)).cgColor
+                self?.searchTextField.backgroundColor = theme.bgColor
                 self?.searchTextField.textColor = theme.titleColor
                 self?.containerView.borderBottom = Border(color: theme.borderColor)
             }.disposed(by: rx.disposeBag)
-    }
-
-    private func fecthResult() {
-        guard let `query` = query else { return }
-
-        search(query: query, offset: offset, size: size, sortType: sortType, success: { [weak self] results in
-            guard let `self` = self else { return }
-            self.searchResults.append(contentsOf: results)
-            self.endLoading()
-            self.tableView.endFooterRefresh()
-
-            self.offset += self.size
-        }) { [weak self] error in
-            self?.endLoading()
-            self?.tableView.endFooterRefresh()
-            HUD.showText(error)
-        }
     }
 
     // MARK: State Handle
@@ -180,7 +171,32 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
 
     }
+}
 
+// MARK: - Actions
+extension TopicSearchResultViewController {
+
+    /// 获取搜索结果
+    private func fecthResult() {
+        guard let `query` = query else { return }
+
+        search(query: query, offset: offset, size: size, sortType: sortType, success: { [weak self] results in
+            guard let `self` = self else { return }
+            self.searchResults.append(contentsOf: results)
+            self.endLoading()
+            self.tableView.endFooterRefresh()
+
+            self.offset += self.size
+        }) { [weak self] error in
+            self?.endLoading()
+            self?.tableView.endFooterRefresh()
+            HUD.showText(error)
+        }
+    }
+
+    /// 搜索
+    ///
+    /// - Parameter query: 关键字
     public func search(query: String?) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
 
@@ -201,6 +217,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     }
 }
 
+// MARK: - UITableViewDelegate & UITableViewDataSource
 extension TopicSearchResultViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -222,7 +239,8 @@ extension TopicSearchResultViewController: UITableViewDelegate, UITableViewDataS
     }
 }
 
-extension TopicSearchResultViewController : UISearchBarDelegate {
+// MARK: - UISearchBarDelegate
+extension TopicSearchResultViewController: UISearchBarDelegate {
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()

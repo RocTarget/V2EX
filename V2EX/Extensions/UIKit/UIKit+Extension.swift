@@ -144,6 +144,10 @@ public extension UIApplication {
 
 extension UIDevice {
 
+    public var isPad: Bool {
+        return UIDevice.current.userInterfaceIdiom == .pad
+    }
+
     /// MARK: - 获取设备型号
     public static var phoneModel: String {
         var systemInfo = utsname()

@@ -120,7 +120,7 @@ extension HTMLParseService {
             in: text,
             options: .reportProgress,
             range: NSRange(location: 0, length: text.count)) else {
-            return text
+                return text
         }
 
         var content = text
@@ -192,14 +192,29 @@ extension HTMLParseService {
 
         for ele in node {
             let tagName = ele.tagName
+            if tagName == "text", let content = ele.content, content.isNotEmpty {
 
-            if tagName == "text", let content = ele.content {
                 let textAttrString = NSMutableAttributedString(
                     string: content,
                     attributes: [
-                        NSAttributedStringKey.foregroundColor: ThemeStyle.style.value.titleColor,
-                        NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .body)]
+                        .foregroundColor: ThemeStyle.style.value.titleColor,
+                        .font: UIFont.preferredFont(forTextStyle: .body)]
                 )
+
+                // 文本中有链接
+                TextParser.extractLink(content).forEach({ link in
+
+                    textAttrString.yy_setTextHighlight(content.NSString.range(of: link),
+                                                       color: ThemeStyle.style.value.linkColor, // Theme.Color.linkColor,
+                        backgroundColor: .clear,
+                        userInfo: ["url": link],
+                        tapAction: { _, attrString, range, _ in
+                            guard let highlight = attrString.yy_attribute(YYTextHighlightAttributeName, at: UInt(range.location)),
+                                let url = (highlight as AnyObject).userInfo["url"] as? String else { return }
+                            clickCommentLinkHandle(urlString: url)
+                            //                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
+                    }, longPressAction: nil)
+                })
                 attributedString.append(textAttrString)
                 attributedString.yy_lineSpacing = 5
             } else if tagName == "img", let imageSrc = ele["src"] {
@@ -214,30 +229,31 @@ extension HTMLParseService {
                     continue
                 }
 
+                /// 子节点 递归
                 let subnodes = ele.xpath("./node()")
                 if subnodes.first?.tagName != "text" && subnodes.count > 0 {
                     wrapperAttributedString(attributedString, node: subnodes)
                 }
 
+                /// 链接
                 if content.count.boolValue {
-                    let linkAttrString = NSMutableAttributedString(string: content,
-                                                                   attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .body)])
-                    linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),
-                                                       color: ThemeStyle.style.value.linkColor, // Theme.Color.linkColor,
-                                                       backgroundColor: .clear,
-                                                       userInfo: ["url": urlString],
-                                                       tapAction: { _, attrString, range, _ in
-                        guard let highlight = attrString.yy_attribute(YYTextHighlightAttributeName, at: UInt(range.location)),
-                            let url = (highlight as AnyObject).userInfo["url"] as? String else { return }
-                                                    clickCommentLinkHandle(urlString: url)
-//                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
-
-                    }, longPressAction: nil)
-
+                    //                    let linkAttrString = NSMutableAttributedString(string: content,
+                    //                                                                   attributes: [.font: UIFont.preferredFont(forTextStyle: .body)])
+                    //                    linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),
+                    //                                                       color: ThemeStyle.style.value.linkColor, // Theme.Color.linkColor,
+                    //                                                       backgroundColor: .clear,
+                    //                                                       userInfo: ["url": urlString],
+                    //                                                       tapAction: { _, attrString, range, _ in
+                    //                        guard let highlight = attrString.yy_attribute(YYTextHighlightAttributeName, at: UInt(range.location)),
+                    //                            let url = (highlight as AnyObject).userInfo["url"] as? String else { return }
+                    //                                                    clickCommentLinkHandle(urlString: url)
+                    ////                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
+                    //                    }, longPressAction: nil)
+                    let linkAttrString = wrapperURLAttachment(content, urlString: urlString)
                     attributedString.append(linkAttrString)
                 }
-            } else if let content = ele.content {
-                let contentAttrString = NSAttributedString(string: content, attributes: [NSAttributedStringKey.foregroundColor: ThemeStyle.style.value.titleColor])
+            } else if let content = ele.content, content.isNotEmpty {
+                let contentAttrString = NSAttributedString(string: content, attributes: [.foregroundColor: ThemeStyle.style.value.titleColor])
                 attributedString.append(contentAttrString)
             }
         }
@@ -249,27 +265,44 @@ extension HTMLParseService {
         return imageAttrString
     }
 
-//    func parseComment(html: HTMLDocument) -> [CommentModel] {
-//        let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
-//        let comments = commentPath.flatMap({ ele -> CommentModel? in
-//            guard let replyID = ele["id"]?.deleteOccurrences(target: "r_"),
-//                let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
-//                let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
-//                let userHref = userPath["href"],
-//                let username = userPath.content,
-//                let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
-//                var content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.toHTML,
-//                let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
-//                    return nil
-//            }
-//            let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
-//            content = self.replacingIframe(text: content)
-//            let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
-//            let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
-//            return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, isThank: isThank, floor: floor, thankCount: thankString)
-//        })
-//        return comments
-//    }
+    func wrapperURLAttachment(_ content: String, urlString: String) -> NSMutableAttributedString {
+        log.info(content, urlString)
+        let linkAttrString = NSMutableAttributedString(string: content,
+                                                       attributes: [.font: UIFont.preferredFont(forTextStyle: .body)])
+        linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),
+                                           color: ThemeStyle.style.value.linkColor, // Theme.Color.linkColor,
+            backgroundColor: .clear,
+            userInfo: ["url": urlString],
+            tapAction: { _, attrString, range, _ in
+                guard let highlight = attrString.yy_attribute(YYTextHighlightAttributeName, at: UInt(range.location)),
+                    let url = (highlight as AnyObject).userInfo["url"] as? String else { return }
+                clickCommentLinkHandle(urlString: url)
+                //                        NotificationCenter.default.post(name: Notification.Name.V2.HighlightTextClickName, object: url)
+        }, longPressAction: nil)
+        return linkAttrString
+    }
+
+    //    func parseComment(html: HTMLDocument) -> [CommentModel] {
+    //        let commentPath = html.xpath("//*[@id='Wrapper']//div[@class='box'][2]/div[contains(@id, 'r_')]")
+    //        let comments = commentPath.flatMap({ ele -> CommentModel? in
+    //            guard let replyID = ele["id"]?.deleteOccurrences(target: "r_"),
+    //                let userAvatar = ele.xpath("./table/tr/td/img").first?["src"],
+    //                let userPath = ele.xpath("./table/tr/td[3]/strong/a").first,
+    //                let userHref = userPath["href"],
+    //                let username = userPath.content,
+    //                let publicTime = ele.xpath("./table/tr/td[3]/span").first?.content,
+    //                var content = ele.xpath("./table/tr/td[3]/div[@class='reply_content']").first?.toHTML,
+    //                let floor = ele.xpath("./table/tr/td/div/span[@class='no']").first?.content else {
+    //                    return nil
+    //            }
+    //            let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
+    //            content = self.replacingIframe(text: content)
+    //            let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
+    //            let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
+    //            return CommentModel(id: replyID, member: member, content: content, publicTime: publicTime, isThank: isThank, floor: floor, thankCount: thankString)
+    //        })
+    //        return comments
+    //    }
 
     func parseMemberReplys(html: HTMLDocument) -> [MessageModel] {
         let titlePath = html.xpath("//*[@id='Wrapper']//div[@class='dock_area']")

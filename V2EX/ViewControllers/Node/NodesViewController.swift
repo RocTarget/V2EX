@@ -3,7 +3,9 @@ import RxSwift
 import RxCocoa
 
 class NodesViewController: DataViewController, NodeService {
-    
+
+    // MARK: - UI
+
     private lazy var segmentedControl: UISegmentedControl = {
         let view = UISegmentedControl(items: ["节点导航", "全部节点"])
         view.tintColor = Theme.Color.globalColor
@@ -27,6 +29,8 @@ class NodesViewController: DataViewController, NodeService {
         return view
     }()
 
+    // MARK: - Propertys
+
     private weak var allNodeViewController: AllNodesViewController?
 
     private var nodeCategorys: [NodeCategoryModel] = [] {
@@ -35,11 +39,15 @@ class NodesViewController: DataViewController, NodeService {
         }
     }
 
+    // MARK: - View Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         definesPresentationContext = true
     }
+
+    // MARK: - Setup
 
     override func setupRx() {
         ThemeStyle.style.asObservable()
@@ -82,12 +90,17 @@ class NodesViewController: DataViewController, NodeService {
     override func errorView(_ errorView: ErrorView, didTapActionButton sender: UIButton) {
         fetchNodeNav()
     }
+}
 
-    func fetchNodeNav() {
+// MARK: - Actions
+extension NodesViewController {
+
+    /// 获取导航节点
+    private func fetchNodeNav() {
         if nodeCategorys.count.boolValue { return }
-        
+
         startLoading()
-        
+
         nodeNavigation(success: { [weak self] cates in
             self?.nodeCategorys = cates
             self?.endLoading()
@@ -97,6 +110,7 @@ class NodesViewController: DataViewController, NodeService {
         }
     }
 
+    /// 点击了 SegmentControl
     @objc private func segmentControlDidChangeHandle() {
         if let allNodeVC = childViewControllers.first,
             !allNodeVC.isViewLoaded {

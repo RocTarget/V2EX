@@ -90,8 +90,7 @@ class TopicDetailHeaderView: UIView {
     private lazy var webView: WKWebView = {
         let view = WKWebView()
         view.scrollView.isScrollEnabled = false
-        //        view.scrollView.delaysContentTouches = false
-        //        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isOpaque = false
         view.navigationDelegate = self
         return view
     }()

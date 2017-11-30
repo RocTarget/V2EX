@@ -2,9 +2,14 @@ import Foundation
 import UIKit
 
 class ViewDialogViewController: UITableViewController {
-    
+
+    // MARK: - Propertys
+
     public var comments: [CommentModel]
-    
+
+
+    // MARK: - View Life Cycle
+
     init(comments: [CommentModel]) {
         self.comments = comments
         super.init(style: .plain)
@@ -51,6 +56,7 @@ class ViewDialogViewController: UITableViewController {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension ViewDialogViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

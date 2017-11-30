@@ -1,13 +1,3 @@
-//
-//  FPSLabel.swift
-//  SAC
-//
-//  Created by SAGESSE on 2/1/16.
-//  Copyright © 2016-2017 Sagesse. All rights reserved.
-//
-//  Reference: ibireme/YYKit/YYFPSLabel
-//
-
 import UIKit
 
 ///

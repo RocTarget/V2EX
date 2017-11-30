@@ -67,6 +67,8 @@ class TopicSearchResultCell: BaseTableViewCell {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.contentLabel.textColor = theme == .day ? UIColor.hex(0x333333) : theme.titleColor
+                self?.titleLabel.textColor = theme.titleColor
+                self?.desLabel.textColor = theme.dateColor
         }.disposed(by: rx.disposeBag)
     }
     

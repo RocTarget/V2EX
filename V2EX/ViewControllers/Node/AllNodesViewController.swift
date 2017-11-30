@@ -2,6 +2,8 @@ import UIKit
 
 class AllNodesViewController: DataViewController, NodeService {
 
+    // MARK: - UI
+
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -52,6 +54,7 @@ class AllNodesViewController: DataViewController, NodeService {
         return searchController
     }()
 
+    // MARK: - Propertys
 
     private var groups: [NodeCategoryModel] = [] {
         didSet {
@@ -66,6 +69,9 @@ class AllNodesViewController: DataViewController, NodeService {
     }
 
     public var didSelectedNodeHandle:((NodeModel) -> Void)?
+
+
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,7 +113,9 @@ class AllNodesViewController: DataViewController, NodeService {
             }
         }
     }
-    
+
+    // MARK: - Setup
+
     override func setupConstraints() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -136,23 +144,7 @@ class AllNodesViewController: DataViewController, NodeService {
         }.disposed(by: rx.disposeBag)
     }
 
-    private func fetchAllNode() {
-        startLoading()
-
-        nodes(success: { [weak self] groups in
-            self?.groups = groups
-            self?.endLoading()
-            self?.searchController.searchBar.isUserInteractionEnabled = true
-        }) { [weak self] error in
-            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
-            self?.errorMessage = error
-        }
-    }
-    
-    // 当 HeaderView = Search 会多出一个UIView, 在夜间模式下颜色无法适配, 故修改
-    private func fixColor() {
-        tableView.subviews.filter { $0.className == UIView.description() }.first?.backgroundColor = ThemeStyle.style.value.bgColor
-    }
+    // MARK: State Handle
 
     override func hasContent() -> Bool {
         return groups.count.boolValue
@@ -168,6 +160,29 @@ class AllNodesViewController: DataViewController, NodeService {
 
     override func emptyView(_ emptyView: EmptyView, didTapActionButton sender: UIButton) {
         fetchAllNode()
+    }
+}
+
+// MARK: - Actions
+extension AllNodesViewController {
+
+    /// 获取全部节点
+    private func fetchAllNode() {
+        startLoading()
+
+        nodes(success: { [weak self] groups in
+            self?.groups = groups
+            self?.endLoading()
+            self?.searchController.searchBar.isUserInteractionEnabled = true
+        }) { [weak self] error in
+            self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
+            self?.errorMessage = error
+        }
+    }
+
+    // 当 HeaderView = Search 会多出一个UIView, 在夜间模式下颜色无法适配, 故修改
+    private func fixColor() {
+        tableView.subviews.filter { $0.className == UIView.description() }.first?.backgroundColor = ThemeStyle.style.value.bgColor
     }
 }
 

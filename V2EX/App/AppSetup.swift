@@ -9,10 +9,11 @@ struct AppSetup {
     static func prepare() {
         setupKeyboardManager()
         HUD.configureAppearance()
-        setupFPS()
+//        setupFPS()
         setupCrashlytics()
         setupTheme()
         setupLog()
+        setupReview()
     }
 }
 
@@ -62,5 +63,9 @@ extension AppSetup {
         #else
             Logger.logLevel = .warning
         #endif
+    }
+
+    private static func setupReview() {
+        RequestReview().incrementAppRuns()
     }
 }

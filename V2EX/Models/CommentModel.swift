@@ -23,11 +23,11 @@ extension CommentModel {
     /// - Returns: 包含当前所选回复中所有@用户的对话回复列表
     static func atUsernameComments(comments: [CommentModel], currentComment:CommentModel) -> [CommentModel] {
         guard var atUsers = CommentModel.atUsernames(currentComment) else { return [] }
+        let ats = atUsers
         atUsers.insert(currentComment.member.atUsernameWithoutSpace)
         
         let coms = comments.filter { comment -> Bool in
             guard let commentUsers = CommentModel.atUsernames(comment) else { return false }
-            
             // 当前回复没有@用户.
             // 判断 1: 找出当前所选回复所有@的用户的回复
             //     2: 加入当前所选的回复
@@ -38,7 +38,26 @@ extension CommentModel {
             if commentUsers.count > 0 && intersetions.count <= 0 { return false }
             return atUsers.contains(comment.member.atUsernameWithoutSpace)
         }
-        
+
+        // 如果当前 at 的用户为1个，并且 coms 对话列表只有一个
+        // 代表没有找有相互对话的回复
+        // 此时查询被@用户的所有回复，不需要相互@
+        //
+        // 例如:
+        // #3 imydou: @Level5 把公交卡放入投币箱
+        // #10 bk201: @imydou 你惹这种人一般会很麻烦，除非你很闲
+        //
+        // 此时点击10楼查看对话，两人并没有互相@，所以对话列表只有当前用户自己的回复
+        // 这种情况就查询被@用户（@imydou）的所有回复
+        // 目前只处理@单个用户。
+        // ps: coms 个数如果只有一个， 代表只有当前所有回复
+        if ats.count == 1 && coms.count == 1 {
+            // 从当前所选楼层进行分割，之后的不查找
+            let forepart = comments.split(whereSeparator: { $0.floor == currentComment.floor } ).first
+            let result = forepart?.filter { ats.first == $0.member.atUsernameWithoutSpace }
+            return (result ?? []) + coms
+        }
+        log.info(coms)
         return coms
     }
     
