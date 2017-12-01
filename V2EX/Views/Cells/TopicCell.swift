@@ -37,14 +37,14 @@ class TopicCell: BaseTableViewCell {
     
     private lazy var lastReplyLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 12)
+        view.font = UIFont.systemFont(ofSize: 11)
         view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
     
     private lazy var replayCountLabel: UIButton = {
         let view = UIButton()
-        view.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 11)
         view.setImage(#imageLiteral(resourceName: "message"), for: .normal)
         view.setTitleColor(UIColor.hex(0xBCB8BD), for: .normal)
         view.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
@@ -99,17 +99,17 @@ class TopicCell: BaseTableViewCell {
         
         avatarView.snp.makeConstraints {
             $0.left.top.equalToSuperview().inset(15)
-            $0.size.equalTo(40)
+            $0.size.equalTo(35)
         }
         
         usernameLabel.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
-            $0.top.equalTo(avatarView).offset(2)
+            $0.top.equalTo(avatarView).offset(1)
         }
         
         lastReplyLabel.snp.makeConstraints {
             $0.left.equalTo(usernameLabel)
-            $0.bottom.equalTo(avatarView).inset(2)
+            $0.bottom.equalTo(avatarView).inset(1)
         }
         
         titleLabel.snp.makeConstraints {

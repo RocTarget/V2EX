@@ -17,6 +17,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         view.leftView = UIImageView(image: #imageLiteral(resourceName: "searchSmall"))
         view.leftViewMode = .always
         view.clearButtonMode = .whileEditing
+        view.returnKeyType = .search
         return view
     }()
 
@@ -79,7 +80,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
             self?.dismiss()
         })
         status = .noSearchResult
-
+        
         definesPresentationContext = true
         searchTextField.becomeFirstResponder()
 
@@ -104,6 +105,11 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     
     override func setupConstraints() {
 
+        tableView.snp.makeConstraints {
+            $0.left.bottom.right.equalToSuperview()
+            $0.top.equalTo(containerView.snp.bottom)
+        }
+
         containerView.snp.makeConstraints {
             $0.left.top.right.equalToSuperview()
             $0.height.equalTo(40)
@@ -113,11 +119,6 @@ class TopicSearchResultViewController: DataViewController, TopicService {
             $0.left.right.equalToSuperview().inset(20)
             $0.centerY.equalToSuperview()
             $0.height.equalTo(30)
-        }
-
-        tableView.snp.makeConstraints {
-            $0.left.bottom.right.equalToSuperview()
-            $0.top.equalTo(containerView.snp.bottom)
         }
     }
 
@@ -179,6 +180,7 @@ extension TopicSearchResultViewController {
     /// 获取搜索结果
     private func fecthResult() {
         guard let `query` = query else { return }
+        startLoading()
 
         search(query: query, offset: offset, size: size, sortType: sortType, success: { [weak self] results in
             guard let `self` = self else { return }
@@ -200,18 +202,12 @@ extension TopicSearchResultViewController {
     public func search(query: String?) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
 
+        offset = 0
         searchResults.removeAll()
         isSearched = true
-        startLoading()
 
-        let previousType = self.sortType
         self.query = query
         self.sortType = segmentView.selectedSegmentIndex == 0 ? .sumup : .created
-
-        if previousType != sortType {
-            offset = 0
-            searchResults.removeAll()
-        }
 
         fecthResult()
     }

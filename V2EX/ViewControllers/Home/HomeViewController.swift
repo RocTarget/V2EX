@@ -30,8 +30,11 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
         setupSegmentView()
         fetchData()
-    }
 
+        GCD.delay(3) {
+            RequestReview().showReview()
+        }
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -44,7 +47,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         super.viewWillDisappear(animated)
         //        setTabBarHiddn(false)
     }
-
+    
     // MARK: - Setup
 
     override func setupSubviews() {
@@ -81,6 +84,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
             $0.left.top.right.equalToSuperview()
             $0.height.equalTo(40)
         }
+
         scrollView.width = view.width
         scrollView.snp.makeConstraints {
             $0.top.equalTo(segmentV.snp.bottom)

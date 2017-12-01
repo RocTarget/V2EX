@@ -53,13 +53,13 @@ class TopicDetailHeaderView: UIView {
     
     private lazy var usernameLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 16)
+        view.font = UIFont.systemFont(ofSize: 15)
         return view
     }()
     
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 12)
+        view.font = UIFont.systemFont(ofSize: 11)
         view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
@@ -187,18 +187,18 @@ class TopicDetailHeaderView: UIView {
     func setupConstraints() {
         avatarView.snp.makeConstraints {
             $0.left.top.equalToSuperview().inset(15)
-            $0.size.equalTo(48)
+            $0.size.equalTo(35)
         }
         
         usernameLabel.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
-            $0.top.equalTo(avatarView).offset(3)
+            $0.top.equalTo(avatarView).offset(1)
         }
         
         timeLabel.snp.makeConstraints {
             $0.left.equalTo(usernameLabel)
             $0.right.equalTo(nodeLabel).priority(.high)
-            $0.bottom.equalTo(avatarView).inset(3)
+            $0.bottom.equalTo(avatarView).inset(1)
         }
         
         nodeLabel.snp.makeConstraints {

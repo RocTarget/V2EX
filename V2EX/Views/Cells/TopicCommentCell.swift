@@ -13,20 +13,20 @@ class TopicCommentCell: BaseTableViewCell {
 
     private lazy var usernameLaebl: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 16)
+        view.font = UIFont.systemFont(ofSize: 15)
         return view
     }()
 
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 12)
+        view.font = UIFont.systemFont(ofSize: 11)
         view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
 
     private lazy var floorLabel: UILabel = {
         let view = UILabel()
-        view.font = UIFont.systemFont(ofSize: 12)
+        view.font = UIFont.systemFont(ofSize: 11)
         view.textColor = UIColor.hex(0xCCCCCC)
         return view
     }()
@@ -150,12 +150,12 @@ class TopicCommentCell: BaseTableViewCell {
     override func setupConstraints() {
         avatarView.snp.makeConstraints {
             $0.left.top.equalToSuperview().inset(15)
-            $0.size.equalTo(40)
+            $0.size.equalTo(32)
         }
 
         usernameLaebl.snp.makeConstraints {
             $0.left.equalTo(avatarView.snp.right).offset(10)
-            $0.top.equalTo(avatarView).offset(1)
+            $0.top.equalTo(avatarView)
         }
 
         hostLabel.snp.makeConstraints {
@@ -165,7 +165,7 @@ class TopicCommentCell: BaseTableViewCell {
 
         floorLabel.snp.makeConstraints {
             $0.left.equalTo(usernameLaebl)
-            $0.bottom.equalTo(avatarView).inset(1)
+            $0.bottom.equalTo(avatarView)
         }
 
         timeLabel.snp.makeConstraints {

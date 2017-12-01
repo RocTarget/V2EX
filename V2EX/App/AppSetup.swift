@@ -13,7 +13,6 @@ struct AppSetup {
         setupCrashlytics()
         setupTheme()
         setupLog()
-        setupReview()
     }
 }
 
@@ -63,9 +62,5 @@ extension AppSetup {
         #else
             Logger.logLevel = .warning
         #endif
-    }
-
-    private static func setupReview() {
-        RequestReview().incrementAppRuns()
     }
 }

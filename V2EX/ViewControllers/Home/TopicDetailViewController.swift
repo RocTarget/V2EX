@@ -48,6 +48,11 @@ class TopicDetailViewController: DataViewController, TopicService {
         view.setImage(#imageLiteral(resourceName: "backTop"), for: .normal)
         view.setImage(#imageLiteral(resourceName: "backTop"), for: .selected)
         view.sizeToFit()
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.2
+        view.layer.shadowRadius = 4
+        // 阴影向下偏移 6
+        view.layer.shadowOffset = CGSize(width: 0, height: 6)
         view.isHidden = true
         self.view.addSubview(view)
         return view
@@ -350,9 +355,19 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         menuVC.setMenuVisible(true, animated: true)
 
     }
+}
+
+// MARK: - UIScrollViewDelegate
+extension TopicDetailViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         backTopBtn.isHidden = scrollView.contentOffset.y < 2000
+
+        let contentOffsetBottom = scrollView.contentOffset.y + scrollView.bounds.height
+        if contentOffsetBottom >= scrollView.contentSize.height {
+            self.setTabBarHiddn(false, duration: 0.5)
+            return
+        }
 
         if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
 
@@ -374,11 +389,11 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         return true
     }
 
-    private func setTabBarHiddn(_ hidden: Bool) {
+    private func setTabBarHiddn(_ hidden: Bool, duration: TimeInterval = 0.1) {
         guard tableView.contentSize.height > view.height else { return }
         guard let navHeight = navigationController?.navigationBar.height else { return }
 
-        UIView.animate(withDuration: 0.1, animations: {
+        UIView.animate(withDuration: duration, animations: {
             if hidden {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()
@@ -762,11 +777,6 @@ extension TopicDetailViewController {
                         })
                     } else {
                         self.tableView.scrollToBottomAnimated()
-                    }
-
-                    // 请求评分
-                    GCD.delay(2) {
-                        RequestReview().showReview()
                     }
                 })
         }) { [weak self] error in
