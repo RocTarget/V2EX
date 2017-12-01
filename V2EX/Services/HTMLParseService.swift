@@ -266,7 +266,6 @@ extension HTMLParseService {
     }
 
     func wrapperURLAttachment(_ content: String, urlString: String) -> NSMutableAttributedString {
-        log.info(content, urlString)
         let linkAttrString = NSMutableAttributedString(string: content,
                                                        attributes: [.font: UIFont.preferredFont(forTextStyle: .body)])
         linkAttrString.yy_setTextHighlight(NSRange(location: 0, length: content.count),

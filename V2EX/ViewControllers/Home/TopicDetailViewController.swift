@@ -348,8 +348,11 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         let viewDialogItem = UIMenuItem(title: "查看对话", action: #selector(viewDialogAction))
         menuVC.setTargetRect(targetRectangle, in: cell)
         menuVC.menuItems = [replyItem, copyItem, atUserItem, viewDialogItem]
-        // 已经感谢 或 主题主是当前登录用户， 则不显示， 否则插入
-        if !comment.isThank, topic?.member?.username != AccountModel.current?.username {
+        // 已经感谢 或 当前点击的回复是题主本人， 则不显示， 否则插入
+        // 当前主题不等于所选用户 || 当前登录用户不等于题主用户
+        if !comment.isThank,
+            topic?.member?.username != comment.member.username ||
+                AccountModel.current?.username != topic?.member?.username {
             menuVC.menuItems?.insert(thankItem, at: 1)
         }
         menuVC.setMenuVisible(true, animated: true)
@@ -362,12 +365,6 @@ extension TopicDetailViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         backTopBtn.isHidden = scrollView.contentOffset.y < 2000
-
-        let contentOffsetBottom = scrollView.contentOffset.y + scrollView.bounds.height
-        if contentOffsetBottom >= scrollView.contentSize.height {
-            self.setTabBarHiddn(false, duration: 0.5)
-            return
-        }
 
         if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
 
@@ -387,6 +384,14 @@ extension TopicDetailViewController {
     func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
         setTabBarHiddn(false)
         return true
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let contentOffsetBottom = scrollView.contentOffset.y + scrollView.bounds.height
+        if contentOffsetBottom >= scrollView.contentSize.height {
+            self.setTabBarHiddn(false, duration: 0.5)
+            return
+        }
     }
 
     private func setTabBarHiddn(_ hidden: Bool, duration: TimeInterval = 0.1) {
@@ -751,34 +756,34 @@ extension TopicDetailViewController {
             once: once,
             topicID: topicID,
             content: commentText, success: { [weak self] in
-                guard let `self` = self else { return }
+//                guard let `self` = self else { return }
                 HUD.showText("回复成功")
                 HUD.dismiss()
 
                 // TODO: 如果当前不是第一页，无法滚到回复位置, 并且会奔溃， 暂时处理只在第一页才滚动
-                guard self.page == 1 else { return }
-                self.fetchTopicDetail(complete: { [weak self] in
-                    guard let `self` = self else { return }
-
-                    if self.dataSources.count > 0 {
-                        GCD.delay(0.1, block: {
-                            let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
-                            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                            self.setTabBarHiddn(true)
-                        
-                            // 提醒动画, 如果滚动距离较远可能没有动画, 延迟也没有用, 暂时不知原因
-                            UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveLinear,  animations: {
-                                self.tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3)
-                            }, completion: { _ in
-                                UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
-                                    self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
-                                })
-                            })
-                        })
-                    } else {
-                        self.tableView.scrollToBottomAnimated()
-                    }
-                })
+//                guard self.page == 1 else { return }
+//                self.fetchTopicDetail(complete: { [weak self] in
+//                    guard let `self` = self else { return }
+//
+//                    if self.dataSources.count > 0 {
+//                        GCD.delay(0.1, block: {
+//                            let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
+//                            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+//                            self.setTabBarHiddn(true)
+//
+//                            // 提醒动画, 如果滚动距离较远可能没有动画, 延迟也没有用, 暂时不知原因
+//                            UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveLinear,  animations: {
+//                                self.tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3)
+//                            }, completion: { _ in
+//                                UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
+//                                    self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
+//                                })
+//                            })
+//                        })
+//                    } else {
+//                        self.tableView.scrollToBottomAnimated()
+//                    }
+//                })
         }) { [weak self] error in
             guard let `self` = self else { return }
             HUD.dismiss()

@@ -20,7 +20,7 @@ class MessageCell: BaseTableViewCell {
     private lazy var timeLabel: UILabel = {
         let view = UILabel()
         view.textColor = UIColor.hex(0xCCCCCC)
-        view.font = UIFont.systemFont(ofSize: 12)
+        view.font = UIFont.systemFont(ofSize: 11)
         return view
     }()
 

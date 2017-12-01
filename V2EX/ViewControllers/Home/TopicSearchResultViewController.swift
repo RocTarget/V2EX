@@ -8,7 +8,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
 
     private lazy var searchTextField: UITextField = {
         let view = UITextField()
-        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
+//        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
         view.placeholder = "搜索主题"
 //        view.backgroundColor = UIColor.groupTableViewBackground
         view.layer.cornerRadius = 17.5
@@ -91,6 +91,7 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         super.viewWillAppear(animated)
 
         navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.isTranslucent = false
     }
 
@@ -105,6 +106,10 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     
     override func setupConstraints() {
 
+        searchTextField.snp.makeConstraints {
+            $0.left.right.centerY.equalToSuperview()
+            $0.height.equalTo(35)
+        }
         tableView.snp.makeConstraints {
             $0.left.bottom.right.equalToSuperview()
             $0.top.equalTo(containerView.snp.bottom)

@@ -146,7 +146,7 @@ extension MessageViewController {
             indexPaths.append(IndexPath(row: i, section: 0))
         }
 
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear,  animations: {
+        UIView.animate(withDuration: 0.5, delay: 0.2, options: .curveLinear,  animations: {
             indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3) }
         }, completion: { _ in
             UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
@@ -185,6 +185,7 @@ extension MessageViewController {
             self.errorMessage = error
             self.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
             self.tableView.endHeaderRefresh()
+            self.activityIndicator.stopAnimating()
             if !self.messages.count.boolValue {
                 self.status = .empty
             }

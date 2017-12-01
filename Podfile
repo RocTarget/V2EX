@@ -36,7 +36,6 @@ target 'V2EX' do
 
     # Misc
     pod 'IQKeyboardManagerSwift'
-#    pod 'RxKeyboard'
     pod 'PasswordExtension'
 
     # Bug

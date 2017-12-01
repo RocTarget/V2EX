@@ -7,7 +7,11 @@ class ViewController: UIViewController {
 
         UIApplication.shared.applicationSupportsShakeToEdit = true
     }
-
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
     override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
         guard motion == .motionShake, Preference.shared.shakeFeedback else { return }
 
