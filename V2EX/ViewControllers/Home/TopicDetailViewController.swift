@@ -92,6 +92,18 @@ class TopicDetailViewController: DataViewController, TopicService {
 
 
     // MARK: - View Life Cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+        userActivity?.webpageURL = API.topicDetail(topicID: topicID, page: page).url
+        userActivity?.becomeCurrent()
+    }
+    
+    deinit {
+        userActivity?.invalidate()
+    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

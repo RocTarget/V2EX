@@ -382,6 +382,7 @@ private extension SweetWebViewController {
 // MARK: - WKNavigationDelegate
 extension SweetWebViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        becomeCurrent(webView)
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
         updateBarButtonItems()
@@ -403,6 +404,10 @@ extension SweetWebViewController: WKNavigationDelegate {
             delegate?.sweetWebViewController?(self, didFinish: url)
         }
     }
+    
+    public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        becomeCurrent(webView)
+    }
 
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         handleError(error)
@@ -413,6 +418,8 @@ extension SweetWebViewController: WKNavigationDelegate {
     }
 
     private func handleError(_ error: Error) {
+        invalidate(webView)
+        
         log.error(error)
         updateBarButtonItems()
         if let url = webView.url {
@@ -476,3 +483,20 @@ extension SweetWebViewController: WKNavigationDelegate {
     }
 }
 
+
+private extension SweetWebViewController {
+    
+    func becomeCurrent(_ webView: WKWebView) {
+        if webView.userActivity == nil && webView.url?.scheme != nil {
+            webView.userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+            webView.userActivity?.webpageURL = webView.url
+        }
+        webView.userActivity?.becomeCurrent()
+    }
+    
+    func invalidate(_ webView: WKWebView) {
+        webView.userActivity?.invalidate()
+        webView.userActivity = nil
+    }
+    
+}

@@ -79,7 +79,7 @@ func openWebView(url: URL?) {
 
     if Preference.shared.useSafariBrowser {
 
-        let safariVC = SFSafariViewController(url: url, entersReaderIfAvailable: true) //SFSafariViewController(url: url)
+        let safariVC = SFHandoffSafariViewController(url: url, entersReaderIfAvailable: true)
         if #available(iOS 10.0, *) {
             safariVC.preferredControlTintColor = Theme.Color.globalColor
         } else {

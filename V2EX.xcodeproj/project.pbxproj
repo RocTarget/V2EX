@@ -22,6 +22,7 @@
 		7756CCD01F924F7A00EF47B8 /* HTMLParseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7756CCCF1F924F7A00EF47B8 /* HTMLParseService.swift */; };
 		776EFDD41F9BB9E70087AECC /* ShareSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 776EFDD21F9BB9E70087AECC /* ShareSheetView.swift */; };
 		776EFDD51F9BB9E70087AECC /* ShareItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 776EFDD31F9BB9E70087AECC /* ShareItemView.swift */; };
+		777772641FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777772621FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift */; };
 		778AC6A01F9A29730072C6E9 /* SearchResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778AC69F1F9A29730072C6E9 /* SearchResultModel.swift */; };
 		778AC6A61F9A2C810072C6E9 /* TopicSearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778AC6A51F9A2C810072C6E9 /* TopicSearchResultViewController.swift */; };
 		778AC6A81F9A2D540072C6E9 /* TopicSearchResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778AC6A71F9A2D540072C6E9 /* TopicSearchResultCell.swift */; };
@@ -180,6 +181,7 @@
 		7756CCCF1F924F7A00EF47B8 /* HTMLParseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLParseService.swift; sourceTree = "<group>"; };
 		776EFDD21F9BB9E70087AECC /* ShareSheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareSheetView.swift; sourceTree = "<group>"; };
 		776EFDD31F9BB9E70087AECC /* ShareItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareItemView.swift; sourceTree = "<group>"; };
+		777772621FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHandoffSafariViewController.swift; sourceTree = "<group>"; };
 		778AC69F1F9A29730072C6E9 /* SearchResultModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultModel.swift; sourceTree = "<group>"; };
 		778AC6A51F9A2C810072C6E9 /* TopicSearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSearchResultViewController.swift; sourceTree = "<group>"; };
 		778AC6A71F9A2D540072C6E9 /* TopicSearchResultCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSearchResultCell.swift; sourceTree = "<group>"; };
@@ -526,6 +528,7 @@
 				BF02A2D41F8F433C00BEF85E /* NavigationViewController.swift */,
 				BF9EC81D1F95BFC800E7AA02 /* SweetWebViewController.swift */,
 				BF5A6B841F99D05800CF6BA1 /* BaseTopicsViewController.swift */,
+				777772621FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -819,6 +822,11 @@
 					BF65BDB31F8E12C80010B4C9 = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 0;
+							};
+						};
 					};
 					BF65BDC71F8E12C80010B4C9 = {
 						CreatedOnToolsVersion = 9.0;
@@ -1087,6 +1095,7 @@
 			files = (
 				778AC6B51F9AF07F0072C6E9 /* HighlightableContainer.swift in Sources */,
 				BFF0A8791FCFFF810055B108 /* RequestReview.swift in Sources */,
+				777772641FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift in Sources */,
 				779064481F9B72C1001A5ABA /* UIViewChain.swift in Sources */,
 				BFC89B491FA0283800759577 /* TextParser.swift in Sources */,
 				773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */,
