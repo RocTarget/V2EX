@@ -4,6 +4,10 @@ import RxCocoa
 
 class FenCiViewController: UICollectionViewController {
     
+    private struct Metric {
+        static let toolBarHeight: CGFloat = 55
+    }
+    
     // MARK: - UI
     
     private lazy var toolBarView: UIView = {
@@ -12,7 +16,6 @@ class FenCiViewController: UICollectionViewController {
         self.view.addSubview(view)
         view.backgroundColor = ThemeStyle.style.value.whiteColor
         view.isUserInteractionEnabled = false
-        view.alpha = 0.5
         return view
     }()
     
@@ -21,6 +24,8 @@ class FenCiViewController: UICollectionViewController {
         view.setTitle("复制", for: .normal)
         view.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title3)
         view.setTitleColor(Theme.Color.globalColor, for: .normal)
+        view.backgroundColor = ThemeStyle.style.value.whiteColor
+        view.alpha = 0.5
         return view
     }()
     
@@ -29,6 +34,8 @@ class FenCiViewController: UICollectionViewController {
         view.setTitle("搜索", for: .normal)
         view.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title3)
         view.setTitleColor(Theme.Color.globalColor, for: .normal)
+        view.backgroundColor = ThemeStyle.style.value.whiteColor
+        view.alpha = 0.5
         return view
     }()
     
@@ -44,13 +51,21 @@ class FenCiViewController: UICollectionViewController {
         }
     }
     
+    private var toolBarHeight: CGFloat {
+        if #available(iOS 11, *) {
+            return AppWindow.shared.window.safeAreaInsets.bottom + Metric.toolBarHeight
+        } else {
+            return Metric.toolBarHeight
+        }
+    }
+    
     // MARK: - View Life Cycle
     
     init(text: String) {
         words = text.bang
         let layout = LeftAlignedCollectionViewFlowLayout()
-        layout.cellSpacing = 5
         layout.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 0)
+        layout.cellSpacing = 5
         layout.minimumLineSpacing = 5
         super.init(collectionViewLayout: layout)
     }
@@ -85,23 +100,27 @@ class FenCiViewController: UICollectionViewController {
         collectionView?.layer.borderColor = ThemeStyle.style.value.borderColor.cgColor
         collectionView?.layer.borderWidth = 1
         
-        collectionView?.height -= 55
+        collectionView?.height -= toolBarHeight
     }
     
     private func setupConstraints() {
         toolBarView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
-            $0.height.equalTo(55)
+            $0.height.equalTo(toolBarHeight)
         }
         
         searchBtn.snp.makeConstraints {
-            $0.left.top.bottom.equalToSuperview()
+            $0.left.top.equalToSuperview()
             $0.width.equalToSuperview().multipliedBy(0.5)
+            let constraint = $0.bottom.equalToSuperview().constraint
+            if #available(iOS 11, *) {
+                constraint.update(inset: AppWindow.shared.window.safeAreaInsets.bottom)
+            }
         }
         
         copyBtn.snp.makeConstraints {
-            $0.top.right.bottom.equalToSuperview()
-            $0.width.equalTo(searchBtn)
+            $0.top.right.equalToSuperview()
+            $0.bottom.width.equalTo(searchBtn)
         }
     }
     
@@ -124,11 +143,14 @@ class FenCiViewController: UICollectionViewController {
         
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
-                self?.collectionView?.layer.borderColor = theme == .day ? theme.borderColor.cgColor : UIColor.black.withAlphaComponent(0.5).cgColor
+                self?.searchBtn.setTitleColor(theme == .day ? theme.globalColor : theme.dateColor, for: .normal)
+                self?.copyBtn.setTitleColor(self?.searchBtn.titleColor(for: .normal), for: .normal)
+                self?.collectionView?.layer.borderColor = theme == .day ? theme.borderColor.cgColor : UIColor.black.withAlphaComponent(0.3).cgColor
         }.disposed(by: rx.disposeBag)
     }
 }
 
+// MARK: - UICollectionViewDelegate && UICollectionViewDataSource
 extension FenCiViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return words.count
@@ -142,13 +164,15 @@ extension FenCiViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         toolBarView.isUserInteractionEnabled = true
-        toolBarView.alpha = 1
+        copyBtn.alpha = 1
+        searchBtn.alpha = 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if (collectionView.indexPathsForSelectedItems?.count ?? 0) == 0 {
             toolBarView.isUserInteractionEnabled = false
-            toolBarView.alpha = 0.5
+            copyBtn.alpha = 0.5
+            searchBtn.alpha = 0.5
         }
     }
 }

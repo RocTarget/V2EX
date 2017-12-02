@@ -27,7 +27,7 @@ class FenCiCell: UICollectionViewCell {
         
         backgroundColor = .clear
         
-        layer.borderColor = ThemeStyle.style.value.globalColor.cgColor
+//        layer.borderColor = ThemeStyle.style.value.globalColor.cgColor
         layer.borderWidth = 1
         layer.cornerRadius = 4
         layer.masksToBounds = true
@@ -38,11 +38,11 @@ class FenCiCell: UICollectionViewCell {
             $0.edges.equalToSuperview()
         }
         
-//        ThemeStyle.style.asObservable()
-//            .subscribeNext { [weak self] theme in
-//                self?.backgroundColor = theme == .day ? theme.bgColor : theme.cellBackgroundColor
-//                self?.textLabel.textColor = theme.somberColor
-//            }.disposed(by: rx.disposeBag)
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.textLabel.textColor = theme == .day ? theme.globalColor : theme.dateColor
+                self?.layer.borderColor = self?.textLabel.textColor.cgColor
+            }.disposed(by: rx.disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {
