@@ -11,7 +11,7 @@ public class Border {
     let size: CGFloat
     let color: UIColor
     let offset: UIEdgeInsets
-    public init(size: CGFloat = 0.5, color: UIColor = UIColor.hex(0xE5E5E5), offset: UIEdgeInsets = .zero) {
+    public init(size: CGFloat = 0.5, color: UIColor = #colorLiteral(red: 0.8980392157, green: 0.8980392157, blue: 0.8980392157, alpha: 1), offset: UIEdgeInsets = .zero) {
         self.size = size
         self.color = color
         self.offset = offset

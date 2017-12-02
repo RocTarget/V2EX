@@ -153,6 +153,9 @@ class TopicDetailViewController: DataViewController, TopicService {
     // MARK: - Setup
 
     override func setupSubviews() {
+        if traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: tableView)
+        }
 
         tableView.tableHeaderView = headerView
 
@@ -244,7 +247,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             inputViewHeight = KcommentInputViewHeight + view.safeAreaInsets.bottom
         }
 
-        tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, tableView.contentInset.left, inputViewHeight, tableView.contentInset.right)
+        tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, tableView.contentInset.left, KcommentInputViewHeight, tableView.contentInset.right)
 
         commentInputView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
@@ -276,8 +279,7 @@ class TopicDetailViewController: DataViewController, TopicService {
                 self.setTabBarHiddn(false)
                 self.tableView.scrollToTop()
         }.disposed(by: rx.disposeBag)
-
-
+        
         Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
                       NotificationCenter.default.rx.notification(.UIKeyboardWillHide),
                       NotificationCenter.default.rx.notification(.UIKeyboardDidShow),
@@ -380,6 +382,10 @@ extension TopicDetailViewController {
 
         if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
 
+        if scrollView.isReachedBottom() {
+            return
+        }
+        
         //获取到拖拽的速度 >0 向下拖动 <0 向上拖动
         let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView).y
         if (velocity < -5) {
@@ -399,10 +405,8 @@ extension TopicDetailViewController {
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let contentOffsetBottom = scrollView.contentOffset.y + scrollView.bounds.height
-        if contentOffsetBottom >= scrollView.contentSize.height {
+        if scrollView.isReachedBottom() {
             self.setTabBarHiddn(false, duration: 0.5)
-            return
         }
     }
 
@@ -415,7 +419,7 @@ extension TopicDetailViewController {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()
                 self.navigationController?.navigationBar.y -= navHeight
-                setStatusBarBackground(ThemeStyle.style.value == .day ? .white : .black, borderColor: ThemeStyle.style.value.borderColor)
+                setStatusBarBackground(ThemeStyle.style.value.whiteColor, borderColor: ThemeStyle.style.value.borderColor)
                 self.tableView.height = Constants.Metric.screenHeight
             } else { //显示
                 self.inputViewBottomConstranit?.update(inset: 0)
@@ -427,6 +431,7 @@ extension TopicDetailViewController {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate && UINavigationControllerDelegate
 extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         dismiss(animated: true, completion: nil)
@@ -441,6 +446,12 @@ extension TopicDetailViewController: UIImagePickerControllerDelegate, UINavigati
             log.error(err)
         }
         uploadPictureHandle(path)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true) {
+            self.commentInputView.textView.becomeFirstResponder()
+        }
     }
 }
 
@@ -516,7 +527,7 @@ extension TopicDetailViewController {
     }
 
     // 点击导航栏右侧的 更多
-    func shareSheetDidSelectedHandle(_ type: ShareItemType) {
+    private func shareSheetDidSelectedHandle(_ type: ShareItemType) {
 
         // 需要授权的操作
         if type.needAuth, !AccountModel.isLogin{
@@ -536,8 +547,7 @@ extension TopicDetailViewController {
         case .report:
             reportHandle()
         case .copyLink:
-            UIPasteboard.general.string = API.topicDetail(topicID: topicID, page: page).defaultURLString
-            HUD.showText("链接已复制")
+            copyLink()
         case .safari:
             openSafariHandle()
         case .share:
@@ -767,7 +777,7 @@ extension TopicDetailViewController {
         comment(
             once: once,
             topicID: topicID,
-            content: commentText, success: { [weak self] in
+            content: commentText, success: { //[weak self] in
 //                guard let `self` = self else { return }
                 HUD.showText("回复成功")
                 HUD.dismiss()
@@ -775,26 +785,25 @@ extension TopicDetailViewController {
                 // TODO: 如果当前不是第一页，无法滚到回复位置, 并且会奔溃， 暂时处理只在第一页才滚动
 //                guard self.page == 1 else { return }
 //                self.fetchTopicDetail(complete: { [weak self] in
-//                    guard let `self` = self else { return }
-//
-//                    if self.dataSources.count > 0 {
-//                        GCD.delay(0.1, block: {
-//                            let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
-//                            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-//                            self.setTabBarHiddn(true)
-//
-//                            // 提醒动画, 如果滚动距离较远可能没有动画, 延迟也没有用, 暂时不知原因
-//                            UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveLinear,  animations: {
-//                                self.tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3)
-//                            }, completion: { _ in
-//                                UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
-//                                    self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
-//                                })
-//                            })
-//                        })
+//                    guard let `self` = self,
+//                        self.tableView.isOverflowVertical else { return }
+//                    let insetEdge: UIEdgeInsets
+//                    if #available(iOS 11.0, *) {
+//                        insetEdge = self.tableView.adjustedContentInset
 //                    } else {
-//                        self.tableView.scrollToBottomAnimated()
+//                        insetEdge = self.tableView.contentInset
 //                    }
+//                    let targetY = self.tableView.contentSize.height + insetEdge.bottom
+//                    let targetOffset = CGPoint(x: 0, y: targetY)
+//                    self.tableView.setContentOffset(targetOffset, animated: true)
+//                    // 提醒动画, 如果滚动距离较远可能没有动画, 延迟也没有用, 暂时不知原因
+//                    UIView.animate(withDuration: 0.5, delay: 0.7, options: .curveLinear,  animations: {
+//                        self.tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3)
+//                    }, completion: { _ in
+//                        UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
+//                            self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
+//                        })
+//                    })
 //                })
         }) { [weak self] error in
             guard let `self` = self else { return }
@@ -928,6 +937,11 @@ extension TopicDetailViewController {
 
 // MARK: - Action Handle
 extension TopicDetailViewController {
+    
+    private func copyLink() {
+        UIPasteboard.general.string = API.topicDetail(topicID: topicID, page: page).defaultURLString
+        HUD.showText("链接已复制")
+    }
 
     /// 打开系统分享
     func systemShare() {
@@ -941,17 +955,11 @@ extension TopicDetailViewController {
         controller.excludedActivityTypes = [.postToFlickr, .postToVimeo, .message, .print, .copyToPasteboard, .assignToContact, .saveToCameraRoll]
         controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
 
-        present(controller, animated: true, completion: nil)
+        currentViewController().present(controller, animated: true, completion: nil)
     }
 
     /// 是否只看楼主
     func showOnlyFloorHandle() {
-//        if isShowOnlyFloor {
-//            dataSources = comments
-//        } else {
-//            let result = comments.filter { $0.member.username == topic?.member?.username }
-//            dataSources = result
-//        }
         isShowOnlyFloor = !isShowOnlyFloor
         tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
@@ -964,6 +972,68 @@ extension TopicDetailViewController {
                 return
         }
         UIApplication.shared.openURL(url)
+    }
+}
+
+
+// MARK: - Peek && Pop
+extension TopicDetailViewController: UIViewControllerPreviewingDelegate {
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        show(viewControllerToCommit, sender: self)
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        guard let indexPath = tableView.indexPathForRow(at: location),
+            let cell = tableView.cellForRow(at: indexPath) as? TopicCommentCell else { return nil }
+        let selectComment = dataSources[indexPath.row]
+        
+        // 和长按头像手势冲突
+        //        let loc = tableView.convert(location, to: cell)
+        //        cell.avatarView.layer.contains(loc)
+        // x + 50 容错点, y + 15 容错点
+        //        if loc.x < cell.avatarView.right + 50 && loc.y < (cell.avatarView.bottom + 15) {
+        //            let memberPageVC = MemberPageViewController(memberName: selectComment.member.username)
+        //            previewingContext.sourceRect = cell.frame
+        //            return memberPageVC
+        //        }
+        
+        let dialogs = CommentModel.atUsernameComments(comments: comments, currentComment: selectComment)
+        
+        guard dialogs.count.boolValue else { return nil }
+        
+        let viewDialogVC = ViewDialogViewController(comments: dialogs)
+        let nav = NavigationViewController(rootViewController: viewDialogVC)
+        viewDialogVC.title = "有关 \(selectComment.member.username) 的对话"
+        previewingContext.sourceRect = cell.frame
+        
+        let contentSize = viewDialogVC.tableView.contentSize
+        viewDialogVC.preferredContentSize = contentSize
+        return nav
+    }
+    
+    override var previewActionItems: [UIPreviewActionItem] {
+        
+        // Bug - 如果数据没有加载完成, 此时用户上拉, 无法获取到 是否收藏
+        let favoriteTitle = (topic?.isFavorite ?? false) ? "取消收藏" : "收藏"
+        let favoriteAction = UIPreviewAction(
+            title: favoriteTitle,
+            style: .default) { [weak self] action, vc in
+                self?.favoriteHandle()
+        }
+        
+        let copyAction = UIPreviewAction(
+            title: "复制链接",
+            style: .default) { [weak self] action, vc in
+                self?.copyLink()
+        }
+        
+        let shareAction = UIPreviewAction(
+            title: "分享",
+            style: .default) { [weak self] action, vc in
+                self?.systemShare()
+        }
+        return [favoriteAction, copyAction, shareAction]
     }
 }
 

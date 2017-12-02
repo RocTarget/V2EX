@@ -2,22 +2,37 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+class SearchTitleView: UIView {
+    override var intrinsicContentSize: CGSize {
+        return UILayoutFittingExpandedSize
+    }
+}
+
 class TopicSearchResultViewController: DataViewController, TopicService {
 
     // MARK: - UI
+    
+    private lazy var searchViewContainerView: SearchTitleView = {
+        let view = SearchTitleView()
+        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 50, height: 33)
+        view.addSubview(searchTextField)
+        return view
+    }()
 
     private lazy var searchTextField: UITextField = {
         let view = UITextField()
-//        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 30, height: 35)
+        view.frame = CGRect(x: 0, y: 0, width: Constants.Metric.screenWidth - 50, height: 33)
         view.placeholder = "搜索主题"
-//        view.backgroundColor = UIColor.groupTableViewBackground
         view.layer.cornerRadius = 17.5
         view.layer.masksToBounds = true
         view.font = UIFont.systemFont(ofSize: 15)
         view.leftView = UIImageView(image: #imageLiteral(resourceName: "searchSmall"))
         view.leftViewMode = .always
-        view.clearButtonMode = .whileEditing
+        view.clearButtonMode = .always
         view.returnKeyType = .search
+        view.enablesReturnKeyAutomatically = true
+        view.delegate = self
+        view.autoresizingMask = [.flexibleWidth]
         return view
     }()
 
@@ -51,9 +66,11 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         self.view.addSubview(tableView)
         return tableView
     }()
-
+    
+    private weak var searchHistoryVC: TopicSearchHistoryViewController?
+    
     // MARK: - Propertys
-
+    
     private var searchResults: [SearchResultModel] = [] {
         didSet {
             tableView.reloadData()
@@ -75,7 +92,11 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.titleView = searchTextField
+        if #available(iOS 11, *) {
+            navigationItem.titleView = searchViewContainerView
+        } else {
+            navigationItem.titleView = searchTextField
+        }
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, action: { [weak self] in
             self?.dismiss()
         })
@@ -83,8 +104,6 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         
         definesPresentationContext = true
         searchTextField.becomeFirstResponder()
-
-//        searchBar.becomeFirstResponder()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -102,14 +121,36 @@ class TopicSearchResultViewController: DataViewController, TopicService {
         tableView.addFooterRefresh { [weak self] in
             self?.fecthResult()
         }
+        
+        let searchHistoryVC = TopicSearchHistoryViewController()
+        addChildViewController(searchHistoryVC)
+        view.addSubview(searchHistoryVC.view)
+        searchHistoryVC.view.snp.makeConstraints {
+            $0.edges.equalTo(tableView)
+        }
+        self.searchHistoryVC = searchHistoryVC
+        
+        searchHistoryVC.didSelectItemHandle = { [weak self] query in
+            self?.searchTextField.text = query
+            self?.search(query: query)
+        }
     }
     
     override func setupConstraints() {
-
-        searchTextField.snp.makeConstraints {
-            $0.left.right.centerY.equalToSuperview()
-            $0.height.equalTo(35)
+        
+        if #available(iOS 11, *) {
+            searchViewContainerView.snp.makeConstraints {
+                $0.left.right.centerY.equalToSuperview()
+                $0.height.equalTo(33)
+            }
+            
+            searchTextField.snp.makeConstraints {
+                $0.top.bottom.equalToSuperview()
+                $0.left.equalToSuperview().offset(5)
+                $0.right.equalToSuperview().inset(8)
+            }
         }
+        
         tableView.snp.makeConstraints {
             $0.left.bottom.right.equalToSuperview()
             $0.top.equalTo(containerView.snp.bottom)
@@ -128,19 +169,35 @@ class TopicSearchResultViewController: DataViewController, TopicService {
     }
 
     override func setupRx() {
-
-        searchTextField.rx.text.orEmpty
-            .debounce(0.5, scheduler: MainScheduler.instance)
-            .distinctUntilChanged()
-            .subscribeNext { [weak self] query in
+        // 因显示搜索历史, 不再实时搜索
+        //        searchTextField.rx.text.orEmpty
+        //            .debounce(0.5, scheduler: MainScheduler.instance)
+        //            .distinctUntilChanged()
+        //            .subscribeNext { [weak self] query in
+        //                guard let `self` = self else { return }
+        //                self.search(query: query)
+        //        }.disposed(by: rx.disposeBag)
+        
+        searchTextField.rx
+            .text
+            .map { $0?.isEmpty ?? true }
+            .subscribeNext({ [weak self] isEmpty in
                 guard let `self` = self else { return }
-                self.search(query: query)
-        }.disposed(by: rx.disposeBag)
+                self.tableView.isHidden = isEmpty
+                // 内容为空 并且 搜索结果为空 才显示搜索历史视图
+//                if isEmpty && self.searchResults.count.boolValue == false {
+                // 只要搜索框没有内容 并且 有搜索历史记录 才显示搜索历史视图
+                if isEmpty && (self.searchHistoryVC?.querys.count.boolValue ?? false) {
+                    self.searchHistoryVC?.view.isHidden = false
+                }
+            })
+            //            .bind(to: tableView.rx.isHidden )
+            .disposed(by: rx.disposeBag)
 
         segmentView.rx
             .selectedSegmentIndex
             .distinctUntilChanged()
-            .filter { _ in (self.searchTextField.text ?? "").trimmed.isNotEmpty }
+            .filter { [weak self] _ in (self?.searchTextField.text ?? "").trimmed.isNotEmpty }
             .subscribeNext { [weak self] index in
                 guard let `self` = self else { return }
                 guard let query = self.searchTextField.text else { return }
@@ -148,14 +205,14 @@ class TopicSearchResultViewController: DataViewController, TopicService {
                 self.searchTextField.resignFirstResponder()
                 self.search(query: query)
             }.disposed(by: rx.disposeBag)
-
+//
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.tableView.separatorColor = theme.borderColor
                 self?.containerView.backgroundColor = theme.whiteColor
                 self?.searchTextField.keyboardAppearance = theme == .day ? .default : .dark
                 self?.searchTextField.backgroundColor = theme.bgColor
-                self?.searchTextField.textColor = theme.titleColor
+//                self?.searchTextField.textColor = theme.titleColor
                 self?.containerView.borderBottom = Border(color: theme.borderColor)
             }.disposed(by: rx.disposeBag)
     }
@@ -206,6 +263,8 @@ extension TopicSearchResultViewController {
     /// - Parameter query: 关键字
     public func search(query: String?) {
         guard let `query` = query?.trimmed, query.isNotEmpty else { return }
+        searchHistoryVC?.view.isHidden = true
+        tableView.isHidden = false
 
         offset = 0
         searchResults.removeAll()
@@ -240,15 +299,13 @@ extension TopicSearchResultViewController: UITableViewDelegate, UITableViewDataS
     }
 }
 
-// MARK: - UISearchBarDelegate
-extension TopicSearchResultViewController: UISearchBarDelegate {
-
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-        dismiss()
-    }
-
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
+extension TopicSearchResultViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let query = textField.text else { return true }
+        
+        search(query: query.trimmed)
+        searchHistoryVC?.appendLocal(query)
+        searchHistoryVC?.view.isHidden = true
+        return true
     }
 }

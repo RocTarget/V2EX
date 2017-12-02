@@ -57,7 +57,6 @@ extension CommentModel {
             let result = forepart?.filter { ats.first == $0.member.atUsernameWithoutSpace }
             return (result ?? []) + coms
         }
-        log.info(coms)
         return coms
     }
     

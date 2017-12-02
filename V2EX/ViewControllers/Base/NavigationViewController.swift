@@ -54,8 +54,9 @@ extension NavigationViewController {
         return true
     }
     
-    override var prefersStatusBarHidden : Bool {
-        return UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation) && UI_USER_INTERFACE_IDIOM() == .phone
+    override var prefersStatusBarHidden: Bool {
+        return false
+//        return UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation) && UI_USER_INTERFACE_IDIOM() == .phone
     }
     
     override var preferredStatusBarUpdateAnimation : UIStatusBarAnimation {
@@ -91,5 +92,16 @@ extension NavigationViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+}
+
+extension UINavigationController {
+    
+    open override var previewActionItems : [UIPreviewActionItem] {
+        if let items = topViewController?.previewActionItems {
+            return items
+        } else {
+            return super.previewActionItems
+        }
     }
 }

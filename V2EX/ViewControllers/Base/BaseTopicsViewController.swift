@@ -38,7 +38,9 @@ class BaseTopicsViewController: DataViewController, TopicService {
     }
 
     override func setupSubviews() {
-        registerForPreviewing(with: self, sourceView: tableView)
+        if traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: tableView)
+        }
 
         setupRefresh()
     }

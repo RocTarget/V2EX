@@ -30,25 +30,37 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupRightBarButtonItems()
+    }
 
+    // MARK: - Setup
+    
+    override func setupRefresh() {
+    
+        tableView.addHeaderRefresh { [weak self] in
+            self?.fetchNodeDetail()
+        }
+        
         tableView.addFooterRefresh { [weak self] in
             self?.fetchMoreTopic()
         }
-
+    }
+    
+    private func setupRightBarButtonItems() {
         guard AccountModel.isLogin else { return }
-
+        
         let newTopicItem = UIBarButtonItem(image: #imageLiteral(resourceName: "edit"), style: .plain, action: { [weak self] in
             let createTopicVC = CreateTopicViewController()
             createTopicVC.node = self?.node
             self?.navigationController?.pushViewController(createTopicVC, animated: true)
         })
-
+        
         navigationItem.rightBarButtonItems = [newTopicItem, favoriteTopicItem]
     }
 
-    // MARK: - Setup
-
     override func setupRx() {
+        
         favoriteTopicItem.rx
             .tap
             .subscribeNext { [weak self] in
@@ -60,7 +72,7 @@ class NodeDetailViewController: BaseTopicsViewController, NodeService, AccountSe
                 self?.tableView.separatorColor = theme.borderColor
             }.disposed(by: rx.disposeBag)
     }
-
+    
     // MARK: State Handle
 
     override func loadData() {
@@ -89,6 +101,7 @@ extension NodeDetailViewController {
             node: node,
             success: { [weak self] node, topics, maxPage in
                 guard let `self` = self else { return }
+                
                 self.maxPage = maxPage
                 self.node = node
                 self.topics = topics

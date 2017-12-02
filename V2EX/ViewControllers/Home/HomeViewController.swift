@@ -21,7 +21,12 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         return scrollView
     }()
 
+    // MARK: - Propertys
+    
     private var nodes: [NodeModel] = []
+    
+    /// 上次剪切板内容
+    private var lastCopyLink: String?
 
     // MARK: - View Life Cycle...
 
@@ -140,10 +145,13 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
                     let content = UIPasteboard.general.string,
                     let url = try? content.asURL(),
                     let host = url.host,
-                    host.lowercased().contains("v2ex.com")
+                    host.lowercased().contains("v2ex.com"),
+                    self?.lastCopyLink != content
                     else { return }
-
-                let alertVC = UIAlertController(title: "提示", message: "检测到剪切板 V2EX 链接，是否打开？\n\(content)", preferredStyle: .alert)
+                
+                self?.lastCopyLink = UIPasteboard.general.string
+                
+                let alertVC = UIAlertController(title: "提示", message: "检测到剪切板中 V2EX 链接，是否打开？\n\(content)", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
                 alertVC.addAction(UIAlertAction(title: "打开", style: .default, handler: { alert in
                     clickCommentLinkHandle(urlString: content)

@@ -21,7 +21,7 @@ class Preference {
             UserDefaults.save(at: newValue, forKey: Constants.Keys.fullScreenBack)
         }
         get {
-            return (UserDefaults.get(forKey: Constants.Keys.fullScreenBack) as? Bool) ?? true
+            return (UserDefaults.get(forKey: Constants.Keys.fullScreenBack) as? Bool) ?? false
         }
     }
 

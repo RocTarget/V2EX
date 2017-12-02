@@ -61,6 +61,9 @@ struct Constants {
 
         // 识别剪切板链接
         static let recognizeClipboardLink = "recognizeClipboardLink"
+        
+        // 主题搜索历史
+        static let topicSearchHistory = "topicSearchHistory"
     }
 
     struct Metric {

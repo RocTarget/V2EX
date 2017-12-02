@@ -11,6 +11,7 @@
 		77269F601FAA0AF000DE6617 /* day.css in Resources */ = {isa = PBXBuildFile; fileRef = 77269F5F1FAA0AF000DE6617 /* day.css */; };
 		77269F641FAA0B5C00DE6617 /* night.css in Resources */ = {isa = PBXBuildFile; fileRef = 77269F631FAA0B5C00DE6617 /* night.css */; };
 		772A577B1F9786EB003FBE1A /* CreateTopicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 772A577A1F9786EB003FBE1A /* CreateTopicViewController.swift */; };
+		7737D7F81FD2B3AF00CBB5B8 /* TopicSearchHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7737D7F71FD2B3AF00CBB5B8 /* TopicSearchHistoryViewController.swift */; };
 		773CD8F81F9B141200D5578F /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773CD8F71F9B141200D5578F /* UIScrollView+Extension.swift */; };
 		77507E691F9B168800D62286 /* String+PinYin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77507E681F9B168800D62286 /* String+PinYin.swift */; };
 		77507E6B1F9B176700D62286 /* NodeSearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77507E6A1F9B176700D62286 /* NodeSearchResultViewController.swift */; };
@@ -170,6 +171,7 @@
 		77269F5F1FAA0AF000DE6617 /* day.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = day.css; sourceTree = "<group>"; };
 		77269F631FAA0B5C00DE6617 /* night.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = night.css; sourceTree = "<group>"; };
 		772A577A1F9786EB003FBE1A /* CreateTopicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTopicViewController.swift; sourceTree = "<group>"; };
+		7737D7F71FD2B3AF00CBB5B8 /* TopicSearchHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSearchHistoryViewController.swift; sourceTree = "<group>"; };
 		773CD8F71F9B141200D5578F /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		77507E681F9B168800D62286 /* String+PinYin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+PinYin.swift"; sourceTree = "<group>"; };
 		77507E6A1F9B176700D62286 /* NodeSearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeSearchResultViewController.swift; sourceTree = "<group>"; };
@@ -694,6 +696,7 @@
 				BFFAFDE81F9F4428000EB91C /* MemberListViewController.swift */,
 				BF9EC81F1F95C39A00E7AA02 /* MemberPageViewController.swift */,
 				778AC6A51F9A2C810072C6E9 /* TopicSearchResultViewController.swift */,
+				7737D7F71FD2B3AF00CBB5B8 /* TopicSearchHistoryViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1147,6 +1150,7 @@
 				778AC6A61F9A2C810072C6E9 /* TopicSearchResultViewController.swift in Sources */,
 				BFCB67601F8F52B800D05A90 /* GCD.swift in Sources */,
 				7756CCCE1F9248CF00EF47B8 /* NodeService.swift in Sources */,
+				7737D7F81FD2B3AF00CBB5B8 /* TopicSearchHistoryViewController.swift in Sources */,
 				BFCB675E1F8F521D00D05A90 /* Constants.swift in Sources */,
 				BFCB67511F8F4B2300D05A90 /* UIView+Extension.swift in Sources */,
 				BF5A6B6D1F99889400CF6BA1 /* MessageModel.swift in Sources */,
