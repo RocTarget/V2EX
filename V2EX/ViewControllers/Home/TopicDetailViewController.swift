@@ -358,10 +358,15 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         let replyItem = UIMenuItem(title: "回复", action: #selector(replyCommentAction))
         let atUserItem = UIMenuItem(title: "@TA", action: #selector(atMemberAction))
         let copyItem = UIMenuItem(title: "复制", action: #selector(copyCommentAction))
+        let fenCiItem = UIMenuItem(title: "分词", action: #selector(fenCiAction))
         let thankItem = UIMenuItem(title: "感谢", action: #selector(thankCommentAction))
         let viewDialogItem = UIMenuItem(title: "查看对话", action: #selector(viewDialogAction))
         menuVC.setTargetRect(targetRectangle, in: cell)
         menuVC.menuItems = [replyItem, copyItem, atUserItem, viewDialogItem]
+        
+        if comment.content.trimmed.isNotEmpty {
+            menuVC.menuItems?.insert(fenCiItem, at: 2)
+        }
         // 已经感谢 或 当前点击的回复是题主本人， 则不显示， 否则插入
         // 当前主题不等于所选用户 || 当前登录用户不等于题主用户
         if !comment.isThank,
@@ -369,6 +374,7 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
                 AccountModel.current?.username != topic?.member?.username {
             menuVC.menuItems?.insert(thankItem, at: 1)
         }
+        
         menuVC.setMenuVisible(true, animated: true)
 
     }
@@ -671,6 +677,12 @@ extension TopicDetailViewController {
         present(alertVC, animated: true, completion: nil)
     }
 
+    @objc private func fenCiAction() {
+        guard let text = selectComment?.content else { return }
+        let vc = FenCiViewController(text: text)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     @objc private func viewDialogAction() {
         guard let `selectComment` = selectComment else { return }
         let dialogs = CommentModel.atUsernameComments(comments: comments, currentComment: selectComment)

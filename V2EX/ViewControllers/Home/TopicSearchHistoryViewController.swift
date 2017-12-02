@@ -12,7 +12,7 @@ class TopicSearchHistoryViewController: UITableViewController {
         view.adjustsImageWhenHighlighted = false
         view.setTitle("清除历史记录", for: .normal)
         view.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        view.borderTop = Border()
+        view.borderTop = Border(size: 0.5, color: ThemeStyle.style.value.borderColor)
         return view
     }()
     
@@ -46,8 +46,9 @@ class TopicSearchHistoryViewController: UITableViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.rowHeight = 60
         tableView.register(cellWithClass: BaseTableViewCell.self)
-        tableView.separatorColor = Theme.Color.borderColor
+        tableView.separatorColor = ThemeStyle.style.value.cellBackgroundColor
         tableView.separatorInset = .zero
+        tableView.backgroundColor = ThemeStyle.style.value.whiteColor
         readLocalSearchHistory()
     }
     
@@ -58,6 +59,12 @@ class TopicSearchHistoryViewController: UITableViewController {
             .subscribeNext { [weak self] in
                 self?.deleteLocalSearchHistory()
             }.disposed(by: rx.disposeBag)
+        
+        ThemeStyle.style.asObservable()
+            .subscribeNext { [weak self] theme in
+                self?.historyTableFooterView.borderTop = Border(size: 0.5, color: theme == .day ? theme.borderColor : theme.cellBackgroundColor)
+                self?.tableView.separatorColor = theme == .day ? theme.borderColor : theme.cellBackgroundColor
+        }.disposed(by: rx.disposeBag)
     }
 }
 

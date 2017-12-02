@@ -99,7 +99,8 @@ func openWebView(url: URL?) {
 }
 
 func openWebView(url: String) {
-    guard let `url` = URL(string: url) else { return }
+    guard let urlString = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+        let `url` = URL(string: urlString) else { return }
     openWebView(url: url)
 }
 
