@@ -28,16 +28,20 @@ struct RequestReview {
         log.info("请求显示评分")
         // 运行次数 大于 10， 并且 运行次数 % 20 == 0
         // 第一次请求时机是第十次运行
-        // 之后每运行 100 次请求一次
+        // 之后每运行 130 次请求一次
         // 但不一定触发
-        if (runs == Keys.minimumRunCount || runs % 100 == 0) {
+        if (runs == Keys.minimumRunCount || runs % 130 == 0) {
             if #available(iOS 10.3, *) {
                 //                 #if !DEBUG
                 //                #endif
                     log.info("已请求评分")
                     SKStoreReviewController.requestReview()
             } else {
-                let alertVC = UIAlertController(title: "喜欢 \(UIApplication.appDisplayName())？", message: "你喜欢使用 \(UIApplication.appDisplayName()) 吗? \n 给我评分？", preferredStyle: .alert)
+                let alertVC = UIAlertController(
+                    title: "喜欢 \(UIApplication.appDisplayName())？",
+                    message: "你喜欢使用 \(UIApplication.appDisplayName()) 吗?",
+                    preferredStyle: .alert
+                )
                 alertVC.addAction(UIAlertAction(title: "评分", style: .default, handler: { _ in
                     UIApplication.appReviewPage(with: Constants.Config.AppID)
                 }))

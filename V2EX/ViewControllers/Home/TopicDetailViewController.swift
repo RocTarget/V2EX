@@ -138,7 +138,8 @@ class TopicDetailViewController: DataViewController, TopicService {
                                #selector(replyCommentAction),
                                #selector(thankCommentAction),
                                #selector(viewDialogAction),
-                               #selector(atMemberAction)].contains(action) {
+                               #selector(atMemberAction),
+                               #selector(fenCiAction)].contains(action) {
             return false
         }
         return super.canPerformAction(action, withSender: sender)
@@ -360,7 +361,7 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         let copyItem = UIMenuItem(title: "复制", action: #selector(copyCommentAction))
         let fenCiItem = UIMenuItem(title: "分词", action: #selector(fenCiAction))
         let thankItem = UIMenuItem(title: "感谢", action: #selector(thankCommentAction))
-        let viewDialogItem = UIMenuItem(title: "查看对话", action: #selector(viewDialogAction))
+        let viewDialogItem = UIMenuItem(title: "对话", action: #selector(viewDialogAction))
         menuVC.setTargetRect(targetRectangle, in: cell)
         menuVC.menuItems = [replyItem, copyItem, atUserItem, viewDialogItem]
         
@@ -992,7 +993,9 @@ extension TopicDetailViewController {
 extension TopicDetailViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        show(viewControllerToCommit, sender: self)
+        let vc = viewControllerToCommit
+        let nav = NavigationViewController(rootViewController: vc)
+        show(nav, sender: self)
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -1015,13 +1018,17 @@ extension TopicDetailViewController: UIViewControllerPreviewingDelegate {
         guard dialogs.count.boolValue else { return nil }
         
         let viewDialogVC = ViewDialogViewController(comments: dialogs)
-        let nav = NavigationViewController(rootViewController: viewDialogVC)
+//        let nav = NavigationViewController(rootViewController: viewDialogVC)
         viewDialogVC.title = "有关 \(selectComment.member.username) 的对话"
         previewingContext.sourceRect = cell.frame
         
-        let contentSize = viewDialogVC.tableView.contentSize
+        var contentSize = viewDialogVC.tableView.contentSize
+        let maxHeight = view.height * 0.8.f
+        if contentSize.height > maxHeight {
+            contentSize.height = maxHeight
+        }
         viewDialogVC.preferredContentSize = contentSize
-        return nav
+        return viewDialogVC
     }
     
     override var previewActionItems: [UIPreviewActionItem] {

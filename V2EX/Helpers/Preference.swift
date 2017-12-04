@@ -51,7 +51,7 @@ class Preference {
             UserDefaults.save(at: newValue, forKey: Constants.Keys.webViewFontScale)
         }
         get {
-            return (UserDefaults.get(forKey: Constants.Keys.webViewFontScale) as? Float) ?? 1.0
+            return (UserDefaults.get(forKey: Constants.Keys.webViewFontScale) as? Float) ?? 1.2
         }
     }
 

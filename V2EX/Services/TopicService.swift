@@ -315,8 +315,9 @@ extension TopicService {
             
             let contentHTML = html.xpath("//*[@id='Wrapper']//div[@class='topic_content']").first?.toHTML ?? ""
             let subtleHTML = html.xpath("//*[@id='Wrapper']//div[@class='subtle']").flatMap { $0.toHTML }.joined(separator: "")
-            let content = self.replacingIframe(text: contentHTML + subtleHTML)
-            
+//            let content = self.replacingIframe(text: contentHTML + subtleHTML)
+            let content = contentHTML + subtleHTML
+
             let comments = self.parseComment(html: html)
 
             guard let userPath = html.xpath("//*[@id='Wrapper']/div[@class='content']//div[@class='header']/div/a").first,

@@ -44,7 +44,7 @@ class TopicSearchHistoryViewController: UITableViewController {
         
         tableView.tableFooterView = historyTableFooterView
         tableView.keyboardDismissMode = .onDrag
-        tableView.rowHeight = 60
+        tableView.rowHeight = 50
         tableView.register(cellWithClass: BaseTableViewCell.self)
         tableView.separatorColor = ThemeStyle.style.value.cellBackgroundColor
         tableView.separatorInset = .zero
@@ -97,17 +97,16 @@ extension TopicSearchHistoryViewController {
         didSelectItemHandle?(query)
         saveToLocalSearchHistory(query: query)
     }
-    
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-        return .delete
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        guard editingStyle == .delete else { return }
-        
-        historys.remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .bottom)
-        saveToLocalSearchHistory()
+
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let deleteAction = UITableViewRowAction(
+            style: .destructive,
+            title: "删除") { [weak self] _, indexPath in
+                self?.historys.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .bottom)
+                self?.saveToLocalSearchHistory()
+        }
+        return [deleteAction]
     }
 }
 
