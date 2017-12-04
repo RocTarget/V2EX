@@ -352,10 +352,10 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 
         // 如果当前控制器不是第一响应者不显示 MenuView
         guard isFirstResponder else { return }
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         let comment = dataSources[indexPath.row]
         let menuVC = UIMenuController.shared
-        let cell = tableView.cellForRow(at: indexPath)!
         var targetRectangle = cell.frame
         targetRectangle.origin.y = targetRectangle.height * 0.4
         targetRectangle.size.height = 1
