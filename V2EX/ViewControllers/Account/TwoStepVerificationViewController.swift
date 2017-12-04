@@ -143,7 +143,7 @@ class TwoStepVerificationViewController: BaseViewController, AccountService {
                 self.captchaTextField.text = pasteString
                 self.captchaTextField.rx.value.onNext(pasteString)
 
-                HUD.showText("检测到剪贴板验证码，正在登录...",
+                HUD.showInfo("检测到剪贴板验证码，正在登录...",
                              duration: 0.5) { [weak self] in
                     self?.nextHandle()
                 }
@@ -161,13 +161,13 @@ extension TwoStepVerificationViewController {
             captcha.isNotEmpty,
             captcha.count == 6,
             let _ = Int(captcha) else {
-                HUD.showText("请正确验证码", duration: 1.5)
+                HUD.showError("请正确验证码", duration: 1.5)
                 return
         }
 
         HUD.show()
         guard let once = AccountModel.getOnce() else {
-            HUD.showText("无法获取 once，请尝试重新登录")
+            HUD.showError("无法获取 once，请尝试重新登录")
             return
         }
         twoStepVerification(code: captcha, once: once, success: { [weak self] in
@@ -176,7 +176,7 @@ extension TwoStepVerificationViewController {
             HUD.dismiss()
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
             self.captchaTextField.becomeFirstResponder()
         }
     }

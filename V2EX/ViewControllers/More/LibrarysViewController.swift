@@ -27,7 +27,7 @@ class LibrarysViewController: BaseViewController {
         ("SnapKit", "Harness the power of auto layout with a simplified, chainable, and compile time safe syntax.", "https://github.com/SnapKit/SnapKit"),
         ("UIView+Positioning", "UIView+Positioning provides shorthand methods and helpers to define the frame", "https://github.com/freak4pc/UIView-Positioning"),
         ("PKHUD", " A Swift 3 based reimplementation of the Apple HUD (Volume, Ringer, Rotation,…) for iOS8 and up", "https://github.com/pkluz/PKHUD"),
-        ("Toaster", "Toast for Swift", "http://github.com/devxoul/Toaster"),
+        ("SwiftMessages", "A very flexible message bar for iOS written in Swift.", "https://github.com/SwiftKickMobile/SwiftMessages"),
         ("StatefulViewController", "Placeholder views based on content, loading, error or empty states", "https://github.com/aschuch/StatefulViewController"),
         ("YYText", "Powerful text framework for iOS to display and edit rich text.", "https://github.com/ibireme/YYText"),
         ("SKPhotoBrowser", "Simple PhotoBrowser/Viewer inspired by facebook, twitter photo browsers written by swift.", "https://github.com/suzuki-0000/SKPhotoBrowser"),

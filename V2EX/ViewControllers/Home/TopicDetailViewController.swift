@@ -18,7 +18,11 @@ class TopicDetailViewController: DataViewController, TopicService {
         view.backgroundColor = .clear
         view.keyboardDismissMode = .onDrag
         view.register(cellWithClass: TopicCommentCell.self)
-        view.contentInset = UIEdgeInsetsMake(navigationController?.navigationBar.height ?? 64, view.contentInset.left, view.contentInset.bottom, view.contentInset.right)
+        var inset = view.contentInset
+        inset.top = navigationController?.navigationBar.height ?? 64
+        view.contentInset = inset
+        inset.bottom = 0
+        view.scrollIndicatorInsets = inset
         self.view.addSubview(view)
         return view
     }()
@@ -538,7 +542,7 @@ extension TopicDetailViewController {
 
         // 需要授权的操作
         if type.needAuth, !AccountModel.isLogin{
-            HUD.showText("请先登录")
+            HUD.showWarning("请先登录")
             return
         }
 
@@ -625,18 +629,18 @@ extension TopicDetailViewController {
     @objc private func thankCommentAction() {
         guard let replyID = selectComment?.id,
             let token = topic?.token else {
-                HUD.showText("操作失败")
+                HUD.showError("操作失败")
                 return
         }
         thankReply(replyID: replyID, token: token, success: { [weak self] in
             guard let `self` = self,
                 let selectIndexPath = self.tableView.indexPathForSelectedRow else { return }
-            HUD.showText("已成功发送感谢")
+            HUD.showSuccess("已成功发送感谢")
             self.dataSources[selectIndexPath.row].isThank = true
             // TODO: Bug 感谢之后刷新视图不正确
             self.tableView.reloadRows(at: [selectIndexPath], with: .none)
         }) { error in
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -689,7 +693,7 @@ extension TopicDetailViewController {
         let dialogs = CommentModel.atUsernameComments(comments: comments, currentComment: selectComment)
 
         guard dialogs.count.boolValue else {
-            HUD.showText("没有找到与该用户有关的对话")
+            HUD.showInfo("没有找到与该用户有关的对话")
             return
         }
 
@@ -758,26 +762,26 @@ extension TopicDetailViewController {
     private func replyComment() {
 
         guard let `topic` = self.topic else {
-            HUD.showText("回复失败")
+            HUD.showError("回复失败")
             return
         }
 
         guard AccountModel.isLogin else {
-            HUD.showText("请先登录", completionBlock: {
+            HUD.showError("请先登录", completionBlock: {
                 presentLoginVC()
             })
             return
         }
 
         guard commentInputView.textView.text.trimmed.isNotEmpty else {
-            HUD.showText("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
+            HUD.showInfo("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
                 self?.commentInputView.textView.becomeFirstResponder()
             })
             return
         }
 
         guard let once = topic.once else {
-            HUD.showText("无法获取 once，请尝试重新登录", completionBlock: {
+            HUD.showError("无法获取 once，请尝试重新登录", completionBlock: {
                 presentLoginVC()
             })
             return
@@ -792,7 +796,7 @@ extension TopicDetailViewController {
             topicID: topicID,
             content: commentText, success: { //[weak self] in
 //                guard let `self` = self else { return }
-                HUD.showText("回复成功")
+                HUD.showSuccess("回复成功")
                 HUD.dismiss()
 
                 // TODO: 如果当前不是第一页，无法滚到回复位置, 并且会奔溃， 暂时处理只在第一页才滚动
@@ -821,7 +825,7 @@ extension TopicDetailViewController {
         }) { [weak self] error in
             guard let `self` = self else { return }
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
             self.commentInputView.textView.text = self.commentText
             self.commentInputView.textView.becomeFirstResponder()
         }
@@ -838,7 +842,7 @@ extension TopicDetailViewController {
             HUD.dismiss()
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -847,27 +851,27 @@ extension TopicDetailViewController {
 
         guard let `topic` = topic,
             let token = topic.token else {
-                HUD.showText("操作失败")
+                HUD.showError("操作失败")
                 return
         }
 
         // 已收藏, 取消收藏
         if topic.isFavorite {
             unfavoriteTopic(topicID: topicID, token: token, success: { [weak self] in
-                HUD.showText("取消收藏成功")
+                HUD.showSuccess("取消收藏成功")
                 self?.topic?.isFavorite = false
                 }, failure: { error in
-                    HUD.showText(error)
+                    HUD.showError(error)
             })
             return
         }
 
         // 没有收藏
         favoriteTopic(topicID: topicID, token: token, success: { [weak self] in
-            HUD.showText("收藏成功")
+            HUD.showSuccess("收藏成功")
             self?.topic?.isFavorite = true
         }) { error in
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -875,26 +879,26 @@ extension TopicDetailViewController {
     private func thankTopicHandle() {
 
         guard let `topic` = topic else {
-            HUD.showText("操作失败")
+            HUD.showError("操作失败")
             return
         }
 
         // 已感谢
         guard !topic.isThank else {
-            HUD.showText("主题已感谢，无法重复提交")
+            HUD.showInfo("主题已感谢，无法重复提交")
             return
         }
 
         guard let token = topic.token else {
-            HUD.showText("操作失败")
+            HUD.showError("操作失败")
             return
         }
 
         thankTopic(topicID: topicID, token: token, success: { [weak self] in
-            HUD.showText("感谢已发送")
+            HUD.showSuccess("感谢已发送")
             self?.topic?.isThank = true
         }) { error in
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -902,18 +906,18 @@ extension TopicDetailViewController {
     private func ignoreTopicHandle() {
         guard let `topic` = topic,
             let once = topic.once else {
-                HUD.showText("操作失败")
+                HUD.showError("操作失败")
                 return
         }
 
         ignoreTopic(topicID: topicID, once: once, success: { [weak self] in
             // 需要 pop 掉该控制器? YES
             // 需要刷新主题列表？ NO
-            HUD.showText("已成功忽略该主题", completionBlock: { [weak self] in
+            HUD.showSuccess("已成功忽略该主题", completionBlock: { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             })
         }) { error in
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -938,7 +942,7 @@ extension TopicDetailViewController {
                 once: self.topic?.once ?? "",
                 topicID: self.topicID,
                 content: "@Livid " + text, success: {
-                    HUD.showText("举报成功")
+                    HUD.showSuccess("举报成功")
                     HUD.dismiss()
             }) { error in
                 log.error(error)
@@ -953,7 +957,7 @@ extension TopicDetailViewController {
     
     private func copyLink() {
         UIPasteboard.general.string = API.topicDetail(topicID: topicID, page: page).defaultURLString
-        HUD.showText("链接已复制")
+        HUD.showSuccess("链接已复制")
     }
 
     /// 打开系统分享
@@ -981,7 +985,7 @@ extension TopicDetailViewController {
     func openSafariHandle() {
         guard let url = API.topicDetail(topicID: topicID, page: page).url,
             UIApplication.shared.canOpenURL(url) else {
-                HUD.showText("无法打开网页")
+                HUD.showError("无法打开网页")
                 return
         }
         UIApplication.shared.openURL(url)

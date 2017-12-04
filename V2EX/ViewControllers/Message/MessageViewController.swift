@@ -220,13 +220,13 @@ extension MessageViewController {
     private func deleteMessages(_ message: MessageModel) {
         guard let id = message.id,
             let once = message.once else {
-                HUD.showText("操作失败，无法获取消息 ID 或 once")
+                HUD.showError("操作失败，无法获取消息 ID 或 once")
                 return
         }
         deleteNotification(notifacationID: id, once: once, success: {
 
         }) { error in
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 

@@ -2,12 +2,16 @@ import UIKit
 import RxSwift
 import RxCocoa
 import PasswordExtension
+import WebKit
+import Kanna
 
-class LoginViewController: BaseViewController, AccountService {
+class LoginViewController: BaseViewController, AccountService, TopicService {
+    
+    // MARK: - UI
     
     private lazy var logoView: UIImageView = {
         let view = UIImageView(image: #imageLiteral(resourceName: "site_logo"))
-//        view.contentMode = .center
+        //        view.contentMode = .center
         view.contentMode = .scaleAspectFit
         return view
     }()
@@ -81,38 +85,42 @@ class LoginViewController: BaseViewController, AccountService {
         let view = UIButton()
         view.setTitle("登录", for: .normal)
         view.backgroundColor = Theme.Color.globalColor
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         //        view.setCornerRadius = 5
         return view
     }()
-
+    
     private lazy var forgetBtn: UIButton = {
         let view = UIButton()
         view.setTitle("忘记密码?", for: .normal)
         view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         return view
     }()
-
+    
     private lazy var registerBtn: UIButton = {
         let view = UIButton()
-        view.setTitle("还没有账号? 点击立即注册", for: .normal)
+        view.setTitle("创建一个新账号", for: .normal)
         view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         return view
     }()
-
+    
     private lazy var googleLoginBtn: UIButton = {
         let view = UIButton()
-        view.setTitle("使用 Google 账号登录", for: .normal)
-        view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        view.setImage(#imageLiteral(resourceName: "googleLogin"), for: .normal)
+        view.setImage(#imageLiteral(resourceName: "googleLogin"), for: .selected)
+        view.backgroundColor = Theme.Color.globalColor.withAlphaComponent(0.8)
+        view.setTitle("    Sign in with Google", for: .normal)
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         view.isHidden = true
         return view
     }()
-
+    
     private lazy var blurView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .light)
         let blurView = UIVisualEffectView(effect: blurEffect)
         return blurView
     }()
-
+    
     private lazy var onePasswordBtn: UIButton = {
         let view = UIButton()
         view.setImage(#imageLiteral(resourceName: "onepassword-button-light"), for: .normal)
@@ -121,54 +129,70 @@ class LoginViewController: BaseViewController, AccountService {
         view.width = 50
         return view
     }()
-
+    
+    // MARK: - Propertys
+    
     private var loginForm: LoginForm?
+    
+    // MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         fetchCode()
-
+        
         if #available(iOS 11.0, *) {
             accountTextField.textContentType = .username
             passwordTextField.textContentType = .password
         }
-
+        
         guard PasswordExtension.shared.isAvailable() else { return }
-
+        
         accountTextField.rightView = onePasswordBtn
         accountTextField.rightViewMode = .always
-
+        
         onePasswordBtn.rx
             .tap
             .subscribeNext { [weak self] in
                 self?.findOnePassword()
-        }.disposed(by: rx.disposeBag)
+            }.disposed(by: rx.disposeBag)
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        navigationController?.navigationBar.shadowImage = UIImage()
+        
+        //        navigationController?.navigationBar.isTranslucent = true
+        //        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        //        navigationController?.navigationBar.shadowImage = UIImage()
+        navBarBgAlpha = 0
     }
-
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        // TODO: 清除 UserAgent , 会导致打开网页是pc版
+        //        let dictionaty = ["UserAgent" : "Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Version/10.0 Mobile/14D27 Safari/602.1"]
+        //        UserDefaults.standard.register(defaults: dictionaty)
+    }
+    
+    
+    // MARK: - Setup
+    
     override func setupTheme() {
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.view.backgroundColor = theme == .day ? UIColor(patternImage: #imageLiteral(resourceName: "bj")) : theme.bgColor
-        }.disposed(by: rx.disposeBag)
+            }.disposed(by: rx.disposeBag)
     }
-
+    
     override func setupSubviews() {
-
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "close"), style: .plain) { [weak self] in
             self?.dismiss()
         }
-
+        
         view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "bj"))
-
+        
         view.addSubviews(
             blurView,
             logoView,
@@ -184,14 +208,14 @@ class LoginViewController: BaseViewController, AccountService {
     }
     
     override func setupConstraints() {
-
+        
         blurView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         logoView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(view.height * 0.2)
+            $0.top.equalToSuperview().offset(view.height * 0.18)
         }
         
         introLabel.snp.makeConstraints {
@@ -202,43 +226,44 @@ class LoginViewController: BaseViewController, AccountService {
         accountTextField.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(20)
             $0.height.equalTo(50)
-            $0.top.equalToSuperview().offset(view.height * 0.4)
+            $0.top.equalToSuperview().offset(view.height * 0.38)
             //            $0.top.equalTo(introLabel.snp.bottom).offset(120)
         }
         
         passwordTextField.snp.makeConstraints {
             $0.left.right.height.equalTo(accountTextField)
-            $0.top.equalTo(accountTextField.snp.bottom).offset(20)
+            $0.top.equalTo(accountTextField.snp.bottom).offset(1)
         }
         
         captchaTextField.snp.makeConstraints {
             $0.left.right.height.equalTo(accountTextField)
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(20)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(1)
         }
         
         loginBtn.snp.makeConstraints {
             $0.left.right.height.equalTo(accountTextField)
-            $0.top.equalTo(captchaTextField.snp.bottom).offset(30)
+            $0.top.equalTo(captchaTextField.snp.bottom).offset(20)
         }
-
+        
         forgetBtn.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(loginBtn.snp.bottom).offset(15)
+            $0.top.equalTo(loginBtn.snp.bottom).offset(8)
+            $0.left.equalTo(loginBtn)
         }
-
+        
         registerBtn.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(forgetBtn.snp.bottom).offset(10)
+            $0.top.equalTo(forgetBtn)
+            $0.right.equalTo(loginBtn)
         }
-
+        
         googleLoginBtn.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(registerBtn.snp.bottom).offset(10)
+            $0.left.right.height.equalTo(loginBtn)
+            $0.top.equalTo(loginBtn.snp.bottom).offset(10)
+            //            $0.bottom.equalToSuperview().inset(50)
         }
     }
     
     override func setupRx() {
-
+        
         // 获得焦点
         Observable.just(UserDefaults.get(forKey: Constants.Keys.loginAccount))
             .map { $0 as? String}
@@ -249,13 +274,13 @@ class LoginViewController: BaseViewController, AccountService {
             })
             .bind(to: accountTextField.rx.text)
             .disposed(by: rx.disposeBag)
-
+        
         // 上次登录成功的账号名
         if let loginName = UserDefaults.get(forKey: Constants.Keys.loginAccount) as? String {
             accountTextField.text = loginName
             accountTextField.rx.value.onNext(loginName)
         }
-
+        
         // 验证输入状态
         let accountTextFieldUsable = accountTextField.rx
             .text
@@ -286,7 +311,7 @@ class LoginViewController: BaseViewController, AccountService {
             .share(replay: 1)
             .bind(to: loginBtn.rx.isEnableAlpha)
             .disposed(by: rx.disposeBag)
-
+        
         // 点击处理
         loginBtn.rx
             .tap
@@ -299,72 +324,75 @@ class LoginViewController: BaseViewController, AccountService {
             .subscribeNext { [weak self] in
                 self?.fetchCode()
             }.disposed(by: rx.disposeBag)
-
+        
         forgetBtn.rx
             .tap
             .subscribeNext { [weak self] in
                 self?.navigationController?.pushViewController(ForgotPasswordViewController(), animated: true)
             }.disposed(by: rx.disposeBag)
-
+        
         registerBtn.rx
             .tap
             .subscribeNext { [weak self] in
-                // 暂时用网页代替
-                let webView = SweetWebViewController(url: "https://www.v2ex.com/signup")
+                // Optimize: - 获取网页内容, 判断如果登录成功dismiss, 并记录用户信息
+                self?.navBarBgAlpha = 1
+                let webView = SweetWebViewController()
+                webView.url = API.signup(dict: [:]).url
                 self?.navigationController?.pushViewController(webView, animated: true)
-//                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
+                //                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
+                
             }.disposed(by: rx.disposeBag)
-
+        
         googleLoginBtn.rx
             .tap
             .subscribeNext { [weak self] in
-                // 暂时用网页代替
                 self?.googleLoginHandle()
             }.disposed(by: rx.disposeBag)
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+}
 
+// MARK: - Action
+extension LoginViewController {
+    
+    /// 获取第三方密码工具的账号信息
     private func findOnePassword() {
         PasswordExtension.shared.findLoginDetails(
             for: Constants.Config.baseURL.lastPathComponent,
             viewController: self,
-            sender: nil) { [weak self] detail, error in
-                if let detail = detail {
-
-                    self?.accountTextField.text = detail.username
-                    self?.passwordTextField.text = detail.password
-
-                    // Rx 主动发送事件
-                    self?.accountTextField.becomeFirstResponder()
-                    self?.passwordTextField.becomeFirstResponder()
-
-                    // 如果填写了验证码 直接登录
-                    if (self?.captchaTextField.text ?? "").count >= 4 {
-                        self?.loginHandle()
-                    } else {
-                        self?.captchaTextField.becomeFirstResponder()
-                    }
-                    return
-                }
-                if let error = error {
-                    HUD.showError(error.localizedDescription)
+            sender: onePasswordBtn) { [weak self] detail, error in
+                guard let detail = detail else { return }
+                
+                self?.accountTextField.text = detail.username
+                self?.passwordTextField.text = detail.password
+                
+                // Rx 主动发送事件
+                self?.accountTextField.becomeFirstResponder()
+                self?.passwordTextField.becomeFirstResponder()
+                
+                // 如果填写了验证码 直接登录
+                if (self?.captchaTextField.text ?? "").count >= 4 {
+                    self?.loginHandle()
                 } else {
-                    HUD.showError("密码获取失败")
+                    self?.captchaTextField.becomeFirstResponder()
                 }
+                return
         }
     }
-
+    
+    /// Google 登录
     private func googleLoginHandle() {
-        googleSignin(success: {
-        }) { error in
-            HUD.showText(error)
-            log.info(error)
-        }
-    }
 
+    }
+    
+    /// 获取验证码
     @objc func fetchCode() {
         captchaBtn.isLoading = true
         captchaBtn.setImage(UIImage(), for: .normal)
-
+        
         captcha(type: .signin,
                 success: { [weak self] loginForm in
                     self?.captchaBtn.setImage(UIImage(data: loginForm.captchaImageData), for: .normal)
@@ -372,29 +400,30 @@ class LoginViewController: BaseViewController, AccountService {
                     self?.captchaBtn.isLoading = false
         }) { [weak self] error in
             self?.captchaBtn.isLoading = false
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
     
+    /// 登录处理
     func loginHandle() {
         view.endEditing(true)
         
         guard var form = loginForm else {
-            HUD.showText("登录失败, 无法获取表单数据, 请尝试重启 App", delay: 1.5)
+            HUD.showError("登录失败, 无法获取表单数据, 请尝试重启 App", duration: 1.5)
             return
         }
         
         guard let username = accountTextField.text?.trimmed, username.isNotEmpty else {
-            HUD.showText("请正确输入用户名或邮箱", delay: 1.5)
+            HUD.showError("请正确输入用户名或邮箱", duration: 1.5)
             return
         }
         
         guard let password = passwordTextField.text?.trimmed, password.isNotEmpty else {
-            HUD.showText("请输入用户名或邮箱密码", delay: 1.5)
+            HUD.showError("请输入用户名或邮箱密码", duration: 1.5)
             return
         }
         guard let captcha = captchaTextField.text?.trimmed, captcha.isNotEmpty else {
-            HUD.showText("请输入验证码", delay: 1.5)
+            HUD.showError("请输入验证码", duration: 1.5)
             return
         }
         
@@ -405,12 +434,11 @@ class LoginViewController: BaseViewController, AccountService {
         form.captcha = captcha
         signin(loginForm: form, success: { [weak self] in
             HUD.dismiss()
-            AccountModel(username: username, url: API.memberHome(username: username).path, avatar: "").save()
             NotificationCenter.default.post(.init(name: Notification.Name.V2.LoginSuccessName))
             self?.dismiss()
         }) { [weak self] error, form, is2Fa in
             HUD.dismiss()
-
+            
             // 两步验证
             if is2Fa {
                 AccountModel(username: username, url: API.memberHome(username: username).path, avatar: "").save()
@@ -418,8 +446,8 @@ class LoginViewController: BaseViewController, AccountService {
                 self?.navigationController?.pushViewController(twoSetpV, animated: true)
                 return
             }
-
-            HUD.showText(error)
+            
+            HUD.showError(error)
             self?.captchaTextField.becomeFirstResponder()
             self?.captchaTextField.text = ""
             if let `form` = form {
@@ -428,18 +456,13 @@ class LoginViewController: BaseViewController, AccountService {
             }
         }
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
-    }
 }
 
-
+// MARK: - UITextFieldDelegate
 extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         textField.resignFirstResponder()
-
+        
         switch textField {
         case accountTextField:
             passwordTextField.becomeFirstResponder()
@@ -449,7 +472,8 @@ extension LoginViewController: UITextFieldDelegate {
             loginHandle()
             return true
         }
-
         return false
     }
 }
+
+

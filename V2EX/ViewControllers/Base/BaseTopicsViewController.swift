@@ -170,7 +170,7 @@ extension BaseTopicsViewController: UITableViewDelegate, UITableViewDataSource {
         
         let topic = topics[indexPath.row]
         guard let topicId = topic.topicID else {
-            HUD.showText("操作失败，无法解析主题 ID")
+            HUD.showError("操作失败，无法解析主题 ID")
             return
         }
         let topicDetailVC = TopicDetailViewController(topicID: topicId)

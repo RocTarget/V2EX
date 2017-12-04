@@ -220,22 +220,22 @@ extension ForgotPasswordViewController {
         view.endEditing(true)
 
         guard var form = forgotForm else {
-            HUD.showText("无法获取表单数据, 请尝试重启 App", duration: 1.5)
+            HUD.showError("无法获取表单数据, 请尝试重启 App", duration: 1.5)
             return
         }
 
         guard let username = accountTextField.text?.trimmed, username.isNotEmpty else {
-            HUD.showText("请正确输入用户名", duration: 1.5)
+            HUD.showError("请正确输入用户名", duration: 1.5)
             return
         }
 
         guard let email = emailTextField.text?.trimmed, email.isNotEmpty, email.isEmail() else {
-            HUD.showText("请正确输入电子邮箱", duration: 1.5)
+            HUD.showError("请正确输入电子邮箱", duration: 1.5)
             return
         }
 
         guard let captcha = captchaTextField.text?.trimmed, captcha.isNotEmpty else {
-            HUD.showText("请输入验证码", duration: 1.5)
+            HUD.showError("请输入验证码", duration: 1.5)
             return
         }
 
@@ -247,12 +247,12 @@ extension ForgotPasswordViewController {
 
         forgot(forgotForm: form, success: { [weak self] info in
             HUD.dismiss()
-            HUD.showText(info, completionBlock: { [weak self] in
+            HUD.showSuccess(info, completionBlock: { [weak self] in
                 self?.dismiss()
             })
         }) { [weak self] error, form in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
 
             if let `form` = form {
                 self?.captchaBtn.setImage(UIImage(data: form.captchaImageData), for: .normal)
@@ -273,7 +273,7 @@ extension ForgotPasswordViewController {
                     self?.captchaBtn.isLoading = false
         }) { [weak self] error in
             self?.captchaBtn.isLoading = false
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 }

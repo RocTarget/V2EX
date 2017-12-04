@@ -1,9 +1,9 @@
 import Foundation
 import PKHUD
-import Toaster
 import RxSwift
 import RxCocoa
 import NSObject_Rx
+import SwiftMessages
 
 private class CustomHUD: PKHUDRotatingImageView {
 
@@ -25,69 +25,101 @@ private class CustomHUD: PKHUDRotatingImageView {
 }
 
 final class HUD {
+    
+    private enum MessageType {
+        case success, info, warning, error
+    }
+    
+    private static var isShown:Bool = false
 
     class func configureAppearance() {
-        // Optimize: 页面模式变 白低黑字
-        let appearance = ToastView.appearance()
-        appearance.font = .boldSystemFont(ofSize: 16)
-        appearance.textInsets = UIEdgeInsets(top: 15, left: 20, bottom: 15, right: 20)
-        let marginTop:CGFloat = 70
-        ToastView.appearance().bottomOffsetPortrait = marginTop //max(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - marginTop
-        ToastView.appearance().bottomOffsetLandscape = marginTop //min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - marginTop
+        
+        SwiftMessages.defaultConfig.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
+        SwiftMessages.defaultConfig.eventListeners.append({ event in
+            switch event {
+            case .willShow: isShown = true
+            case .didHide: isShown = false
+            default: break
+            }
+        })
     }
 
     class func show() {
         PKHUD.sharedHUD.dimsBackground = true
         PKHUD.sharedHUD.effect = UIBlurEffect(style: .extraLight)
         PKHUD.sharedHUD.contentView = CustomHUD(image: #imageLiteral(resourceName: "hud_progress"))
-
         PKHUD.sharedHUD.show(onView: UIApplication.shared.keyWindow)
-        //        PKHUD.sharedHUD.show(onView: UIApplication.shared.windows.last)
-        //        PKHUD.sharedHUD.show(onView: UIApplication.shared.windows[UIApplication.shared.windows.count - 1])
     }
 
     class func dismiss() {
-        //        PKHUD.sharedHUD.hide(false)
         PKHUD.sharedHUD.hide()
     }
 
-    class func showSuccess(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(text, duration: duration, completionBlock: completionBlock)
+    class func showSuccess(_ text: String, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+        showText(text, messageType: .success, duration: duration, completionBlock: completionBlock)
     }
 
-    class func showError(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(text, duration: duration, completionBlock: completionBlock)
+    class func showInfo(_ text: String, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+        showText(text, messageType: .info, duration: duration, completionBlock: completionBlock)
+    }
+    
+    class func showError(_ text: String, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+        showText(text, messageType: .error, duration: duration, completionBlock: completionBlock)
     }
 
-    class func showError(_ error: Error, duration: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(error.localizedDescription, duration: duration, completionBlock: completionBlock)
+    class func showError(_ error: Error, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+        showText(error.localizedDescription, messageType: .error, duration: duration, completionBlock: completionBlock)
     }
 
-    class func showWarning(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(text, duration: duration, completionBlock: completionBlock)
+    class func showWarning(_ text: String, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+        showText(text, messageType: .warning, duration: duration, completionBlock: completionBlock)
     }
 
-    /// 测试使用
-    class func showTest(_ text: String) {
-        #if DEBUG
-            Toast(text: "[Debug]: \(text)", delay: 0, duration: 3).show()
-        #endif
-    }
-
-    /// 测试使用
-    class func showTest(_ error: Error) {
-        showTest(error.localizedDescription)
-    }
-
-    class func showText(_ text: String, duration: TimeInterval = 3, completionBlock: Action? = nil) {
-        Toast(text: text, delay: 0, duration: duration).show()
+    private class func showText(_ text: String, messageType: MessageType, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+        let messageView = MessageView.viewFromNib(layout: .cardView)
+        switch messageType {
+        case .success:
+            messageView.configureTheme(.success)
+        case .info:
+            messageView.configureTheme(.info)
+        case .warning:
+            messageView.configureTheme(.warning)
+        case .error:
+            messageView.configureTheme(.error)
+        }
+        messageView.button?.isHidden = true
+        messageView.titleLabel?.isHidden = true
+        messageView.configureContent(body: text)
+        messageView.configureDropShadow()
+        SwiftMessages.defaultConfig.duration = .seconds(seconds: duration)
+        
+        let delay: TimeInterval = 0.5
+        let duration = isShown ? duration + delay : duration
+        
+        if isShown {
+            SwiftMessages.hideAll()
+            GCD.delay(0.5, block: {
+                SwiftMessages.show(view: messageView)
+            })
+        } else {
+            SwiftMessages.show(view: messageView)
+        }
         GCD.delay(duration) {
             completionBlock?()
         }
     }
 
-    class func showText(_ error: Error, duration: TimeInterval = 3, completionBlock: Action? = nil) {
-        showText(error.localizedDescription, duration: duration, completionBlock: completionBlock)
+    // MARK: - Debug
+    /// 测试使用
+    class func showTest(_ text: String) {
+        #if DEBUG
+            showText("[Debug]: \(text)", messageType: .info)
+        #endif
+    }
+    
+    /// 测试使用
+    class func showTest(_ error: Error) {
+        showTest(error.localizedDescription)
     }
 }
 

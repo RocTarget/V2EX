@@ -123,6 +123,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         NotificationCenter.default.rx
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
+                HUD.showSuccess("登录成功")
                 self?.dailyRewardMission()
                 self?.loginHandle()
             }.disposed(by: rx.disposeBag)
@@ -190,7 +191,7 @@ extension HomeViewController {
 
         dailyReward(success: { days in
             GCD.delay(0.3, block: {
-                HUD.showText(days)
+                HUD.showSuccess(days)
             })
         }) { error in
             HUD.showTest(error)

@@ -251,7 +251,7 @@ extension MoreViewController {
             self?.updateUserInfo()
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 }

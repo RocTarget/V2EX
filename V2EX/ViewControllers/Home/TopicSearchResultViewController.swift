@@ -256,7 +256,7 @@ extension TopicSearchResultViewController {
         }) { [weak self] error in
             self?.endLoading()
             self?.tableView.endFooterRefresh()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 

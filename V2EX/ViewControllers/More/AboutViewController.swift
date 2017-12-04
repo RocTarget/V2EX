@@ -126,7 +126,7 @@ extension AboutViewController {
             HUD.show()
             FileManager.clearCache(complete: { size in
                 HUD.dismiss()
-                HUD.showText("缓存清理成功", duration: 2)
+                HUD.showSuccess("缓存清理成功", duration: 2)
             })
         case .about:
             openWebView(url: API.about.url)
@@ -198,9 +198,9 @@ extension AboutViewController: MFMailComposeViewControllerDelegate {
 
         switch result {
         case .sent:
-            HUD.showText("感谢您的反馈，我会尽量给您答复。")
+            HUD.showSuccess("感谢您的反馈，我会尽量给您答复。")
         case .failed:
-            HUD.showText("邮件发送失败: \(error?.localizedDescription ?? "Unkown")")
+            HUD.showError("邮件发送失败: \(error?.localizedDescription ?? "Unkown")")
         default:
             break
         }

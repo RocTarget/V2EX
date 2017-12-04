@@ -248,7 +248,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
             .tap
             .subscribeNext { [weak self] in
                 guard let markdownString = self?.bodyTextView.text else {
-                    HUD.showText("预览失败，无法读取到正文内容")
+                    HUD.showError("预览失败，无法读取到正文内容")
                     return
                 }
                 let previewVC = MarkdownPreviewViewController(markdownString: markdownString)
@@ -302,11 +302,11 @@ extension CreateTopicViewController {
     func postTopicHandle() {
 
         guard bodyTextView.text.count <= Limit.bodyMaxCharacter else {
-            HUD.showText("正文内容不能超过 \(Limit.bodyMaxCharacter) 个字符")
+            HUD.showError("正文内容不能超过 \(Limit.bodyMaxCharacter) 个字符")
             return
         }
         guard let title = titleFieldView.text else {
-            HUD.showText("标题不能为空")
+            HUD.showError("标题不能为空")
             return
         }
 
@@ -318,7 +318,7 @@ extension CreateTopicViewController {
         HUD.show()
         createTopic(nodename: selectedNodename, title: title, body: bodyTextView.text, success: { [weak self] in
             HUD.dismiss()
-            HUD.showText("发布成功")
+            HUD.showSuccess("发布成功")
             self?.titleFieldView.text = nil
             self?.bodyTextView.text = nil
             self?.node = nil
@@ -328,7 +328,7 @@ extension CreateTopicViewController {
             self?.navigationController?.popViewController(animated: true)
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -374,7 +374,7 @@ extension CreateTopicViewController {
             HUD.dismiss()
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 

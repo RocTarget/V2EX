@@ -139,17 +139,17 @@ extension NodeDetailViewController {
     /// 收藏主题
     private func favoriteHandle() {
         guard let href = node.favoriteOrUnfavoriteHref else {
-            HUD.showText("收藏失败，请重试")
+            HUD.showError("收藏失败，请重试")
             return
         }
 
         favorite(href: href, success: { [weak self] in
             guard let `self` = self else { return }
             self.node.isFavorite = !self.node.isFavorite!
-            HUD.showText("已成功\(self.node.isFavorite! ? "收藏" : "取消收藏") \(self.node.title)")
+            HUD.showSuccess("已成功\(self.node.isFavorite! ? "收藏" : "取消收藏") \(self.node.title)")
             self.favoriteTopicItem.image = self.node.isFavorite! ? #imageLiteral(resourceName: "unfavoriteNav") : #imageLiteral(resourceName: "favoriteNav")
         }) { error in
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 }

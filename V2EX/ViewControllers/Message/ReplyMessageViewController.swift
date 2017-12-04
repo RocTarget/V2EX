@@ -169,7 +169,7 @@ extension ReplyMessageViewController {
             HUD.dismiss()
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 
@@ -179,21 +179,21 @@ extension ReplyMessageViewController {
         guard let `message` = message, let atUsername = message.member?.atUsername else { return }
 
         guard textView.text.trimmed.isNotEmpty else {
-            HUD.showText("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
+            HUD.showInfo("回复失败，您还没有输入任何内容", completionBlock: { [weak self] in
                 self?.textView.becomeFirstResponder()
             })
             return
         }
 
         guard let once = message.once else {
-            HUD.showText("无法获取 once，请尝试重新登录", completionBlock: {
+            HUD.showError("无法获取 once，请尝试重新登录", completionBlock: {
                 presentLoginVC()
             })
             return
         }
 
         guard let topicID = message.topic.topicID else {
-            HUD.showText("无法获取主题 ID")
+            HUD.showError("无法获取主题 ID")
             return
         }
 
@@ -202,14 +202,14 @@ extension ReplyMessageViewController {
             once: once,
             topicID: topicID,
             content: atUsername + textView.text, success: { [weak self] in
-                HUD.showText("回复成功")
+                HUD.showSuccess("回复成功")
                 HUD.dismiss()
                 self?.view.endEditing(true)
                 self?.view.fadeOut()
                 self?.textView.text = nil
         }) { error in
             HUD.dismiss()
-            HUD.showText(error)
+            HUD.showError(error)
         }
     }
 }
