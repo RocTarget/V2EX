@@ -121,6 +121,12 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
             }.disposed(by: rx.disposeBag)
 
         NotificationCenter.default.rx
+            .notification(Notification.Name.V2.DailyRewardMissionName)
+            .subscribeNext { [weak self] _ in
+                self?.dailyRewardMission()
+            }.disposed(by: rx.disposeBag)
+        
+        NotificationCenter.default.rx
             .notification(Notification.Name.V2.LoginSuccessName)
             .subscribeNext { [weak self] _ in
                 HUD.showSuccess("登录成功")
@@ -173,7 +179,6 @@ extension HomeViewController {
 
     /// 获取所有节点
     private func fetchData() {
-        dailyRewardMission()
 
         scrollView.contentSize = CGSize(width: nodes.count.f * scrollView.width, height: scrollView.contentSize.height)
         for node in nodes {
@@ -190,9 +195,7 @@ extension HomeViewController {
         guard AccountModel.isLogin else { return }
 
         dailyReward(success: { days in
-            GCD.delay(0.3, block: {
-                HUD.showSuccess(days)
-            })
+            HUD.showSuccess(days)
         }) { error in
             HUD.showTest(error)
             log.error(error)

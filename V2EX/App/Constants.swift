@@ -94,7 +94,11 @@ extension Notification.Name {
         /// 两步验证通知
         static let TwoStepVerificationName = Notification.Name("TwoStepVerificationName")
 
+        /// 选择了 Home TabbarItem
         static let DidSelectedHomeTabbarItemName = Notification.Name("DidSelectedHomeTabbarItemName")
+        
+        /// 领取每日奖励通知
+        static let DailyRewardMissionName = Notification.Name("DailyRewardMissionName")
     }
 }
 

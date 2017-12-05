@@ -320,15 +320,7 @@ extension AccountService {
 
         // 第一次请求获取 token
         Network.htmlRequest(target: .loginReward(once: ""), success: { html in
-
-            //            let messagePath = html.xpath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='message']").first
-
-            // 已经领取, 显示已连续登录多少天
-            if (html.content ?? "").contains("奖励已领取"),
-                let _ = html.xpath("//*[@id='Wrapper']/div/div/div[last()]").first?.content {
-//                success?("每日登录奖励已领取\n\(days)")
-                return
-            }
+            if (html.content ?? "").contains("奖励已领取") { return }
 
             if let comps = html.xpath("//*[@id='Wrapper']/div/div/div/input").first?["onclick"]?.components(separatedBy: "\'"),
                 comps.count >= 2 {

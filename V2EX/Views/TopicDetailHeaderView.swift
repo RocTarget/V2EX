@@ -263,6 +263,8 @@ extension TopicDetailHeaderView: WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        // 定位到因 YYText 的 bug, 链接长按事件, 会导致白屏, 禁止链接 Touch Callout 事件
+        webView.evaluateJavaScript("document.documentElement.style.webkitTouchCallout='none';")
         webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
             guard let htmlHeight = result as? CGFloat else { return }
             self?.htmlHeight = htmlHeight
