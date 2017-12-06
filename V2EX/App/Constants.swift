@@ -64,6 +64,9 @@ struct Constants {
         
         // 主题搜索历史
         static let topicSearchHistory = "topicSearchHistory"
+        
+        // V2EX 验证码的字符个数
+        static let captchaCharactersNum = 8
     }
 
     struct Metric {
@@ -73,6 +76,11 @@ struct Constants {
         
         static let screenWidth: CGFloat = UIScreen.main.bounds.width
         static let screenHeight: CGFloat = UIScreen.main.bounds.height
+    }
+    
+    struct BaiduOCR {
+        static let appKey = "TIOmh950EUreugo3yfiFgUAD"
+        static let secretKey = "bxGa5PRFj536csUnO9FhACxUorRgqxcA"
     }
 }
 

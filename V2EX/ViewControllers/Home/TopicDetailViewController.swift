@@ -383,6 +383,10 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         menuVC.setMenuVisible(true, animated: true)
 
     }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
 }
 
 // MARK: - UIScrollViewDelegate
@@ -794,14 +798,18 @@ extension TopicDetailViewController {
         comment(
             once: once,
             topicID: topicID,
-            content: commentText, success: { //[weak self] in
-//                guard let `self` = self else { return }
+            content: commentText, success: { [weak self] in
+                guard let `self` = self else { return }
                 HUD.showSuccess("回复成功")
                 HUD.dismiss()
 
-                // TODO: 如果当前不是第一页，无法滚到回复位置, 并且会奔溃， 暂时处理只在第一页才滚动
-//                guard self.page == 1 else { return }
-//                self.fetchTopicDetail(complete: { [weak self] in
+                guard self.page == 1 else { return }
+                self.fetchTopicDetail(complete: { [weak self] in
+                    UIView.performWithoutAnimation {
+                        self?.tableView.reloadData {}
+                        self?.tableView.beginUpdates()
+                        self?.tableView.endUpdates()
+                    }
 //                    guard let `self` = self,
 //                        self.tableView.isOverflowVertical else { return }
 //                    let insetEdge: UIEdgeInsets
@@ -821,7 +829,7 @@ extension TopicDetailViewController {
 //                            self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
 //                        })
 //                    })
-//                })
+                })
         }) { [weak self] error in
             guard let `self` = self else { return }
             HUD.dismiss()

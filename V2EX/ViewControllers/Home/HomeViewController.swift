@@ -149,7 +149,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
             .notification(.UIApplicationWillEnterForeground)
             .subscribeNext { [weak self] _ in
                 guard Preference.shared.recognizeClipboardLink,
-                    let content = UIPasteboard.general.string,
+                    let content = UIPasteboard.general.string?.trimmed,
                     let url = try? content.asURL(),
                     let host = url.host,
                     host.lowercased().contains("v2ex.com"),

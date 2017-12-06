@@ -111,6 +111,15 @@ enum API {
 
     // 源码地址
     case codeRepo
+    
+    // MARK: - 百度 OCR
+    
+    // 获取 Access Token
+    case baiduAccessToken(clientId: String, clientSecret: String)
+    
+    // OCR 识别
+    case baiduOCRRecognize(accessToken: String, picBase64: String)
+    
 }
 
 extension API: TargetType {
@@ -124,6 +133,8 @@ extension API: TargetType {
             return "https://www.sov2ex.com/api/search"
         case .uploadPicture:
             return "https://sm.ms/api"
+        case .baiduAccessToken, .baiduOCRRecognize:
+            return "https://aip.baidubce.com"
         default:
             return Constants.Config.baseURL
         }
@@ -208,6 +219,10 @@ extension API: TargetType {
             return .post("/preview/markdown?md=\(md)&once=\(once)&syntax=1")
         case .uploadPicture:
             return .post("/upload")
+        case .baiduAccessToken:
+            return .post("/oauth/2.0/token")
+        case .baiduOCRRecognize:
+            return .post("/rest/2.0/ocr/v1/general")
         default:
             return .get("")
         }
@@ -233,6 +248,16 @@ extension API: TargetType {
             param["sort"] = sortType
         case .updateAvatar(_, let once):
             param["once"] = once
+        case let .baiduAccessToken(clientId, clientSecret):
+            param["grant_type"] = "client_credentials"
+            param["client_id"] = clientId
+            param["client_secret"] = clientSecret
+        case let .baiduOCRRecognize(accessToken, picBase64):
+            param["access_token"] = accessToken
+            param["image"] = picBase64
+            param["language_type"] = "ENG"
+            param["probability"] = "true"
+//            param["url"] = ""
         default:
             return nil
         }

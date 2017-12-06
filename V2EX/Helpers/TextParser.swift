@@ -42,6 +42,11 @@ struct TextParser {
         let regex: String = "(((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+([-A-Z0-9a-z_\\$\\.\\+!\\*\\(\\)/,:;@&=\\?~#%]*)*)|@(\\S+)"
         return try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
     }
+    
+    static var captcha: NSRegularExpression? {
+        let regex = "[a-zA-Z0-9]*"
+        return try? NSRegularExpression(pattern: regex, options: [.caseInsensitive])
+    }
 }
 
 extension TextParser {
