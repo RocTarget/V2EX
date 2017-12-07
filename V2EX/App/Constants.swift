@@ -66,6 +66,8 @@ struct Constants {
         static let topicSearchHistory = "topicSearchHistory"
 
         static let baiduOauthToken = FileManager.document.appendingPathComponent("BaiduOauthToken")
+        
+        static let baiduAppearence = FileManager.document.appendingPathComponent("BaiduAppearence")
     }
 
     struct Metric {

@@ -1,5 +1,37 @@
 import Foundation
 
+public struct BaiduAppearence: Codable {
+//    var appId: String
+    var appkey: String
+    var secretKey: String
+    
+    func save() {
+        do {
+            let enc = try JSONEncoder().encode(self)
+            let error = FileManager.save(enc, savePath: Constants.Keys.baiduAppearence)
+            if let `error` = error {
+                HUD.showTest(error)
+                log.error(error)
+            }
+        } catch {
+            HUD.showTest(error)
+            log.error(error)
+        }
+    }
+    
+    static func get() -> BaiduAppearence? {
+        guard FileManager.default.fileExists(atPath: Constants.Keys.baiduAppearence) else { return nil }
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: Constants.Keys.baiduAppearence))
+            return try JSONDecoder().decode(BaiduAppearence.self, from: data)
+        } catch {
+            HUD.showTest(error)
+            log.error(error)
+            return nil
+        }
+    }
+}
+
 public struct BaiduOauthToken: Codable {
     
     private enum CodingKeys: String, CodingKey {
@@ -16,6 +48,7 @@ public struct BaiduOauthToken: Codable {
     public var expiresIn: Int?
     public var accessToken: String?
     public var expiryTimestamp: Int?
+    public var isUser: Bool? = false
 
     public var isValid: Bool {
         guard let expiryTimestamp = expiryTimestamp,
@@ -75,6 +108,10 @@ public struct BaiduOauthToken: Codable {
             log.error(error)
             return nil
         }
+    }
+    
+    static func remove() {
+        FileManager.delete(at: Constants.Keys.baiduOauthToken)
     }
 }
 

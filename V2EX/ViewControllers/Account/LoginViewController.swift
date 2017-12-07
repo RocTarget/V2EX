@@ -5,7 +5,7 @@ import PasswordExtension
 import WebKit
 import Kanna
 
-class LoginViewController: BaseViewController, AccountService, TopicService {
+class LoginViewController: BaseViewController, AccountService, TopicService, OCRService {
     
     // MARK: - UI
     
@@ -62,8 +62,6 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         view.font = UIFont.systemFont(ofSize: 16)
         view.addLeftTextPadding(10)
         view.clearButtonMode = .whileEditing
-        view.rightView = self.captchaBtn
-        view.rightViewMode = .always
         view.keyboardType = .asciiCapable
         view.delegate = self
         view.returnKeyType = .go
@@ -73,7 +71,6 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
     
     private lazy var captchaBtn: LoadingButton = {
         let view = LoadingButton()
-        view.size = CGSize(width: 150, height: 50)
         view.setTitle("重新加载验证码", for: .normal)
         view.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         view.setTitleColor(Theme.Color.globalColor, for: .normal)
@@ -130,6 +127,13 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         return view
     }()
     
+    private lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        activityIndicator.activityIndicatorViewStyle = .white
+        activityIndicator.color = .gray
+        return activityIndicator
+    }()
+    
     // MARK: - Propertys
     
     private var loginForm: LoginForm?
@@ -144,6 +148,15 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         if #available(iOS 11.0, *) {
             accountTextField.textContentType = .username
             passwordTextField.textContentType = .password
+        }
+        
+        let isFirstOpen = UserDefaults.get(forKey: self.className) as? Bool ?? false
+        if !isFirstOpen {
+            UserDefaults.save(at: true, forKey: self.className)
+            HUD.showInfo("""
+                        验证码自动识别中，如识别失败或结果不准确，可通过摇一摇（或点击验证码图片）重新识别。如多次不准确，建议您手动输入。
+                        目前使用 百度文字识别 API，每天500次免费额度。所有 V2er 用户共享额度，额度使用完后，将不能识别，建议您在设置中添加自己的 AppKey
+                        """, duration: 10)
         }
         
         guard PasswordExtension.shared.isAvailable() else { return }
@@ -200,11 +213,14 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
             accountTextField,
             passwordTextField,
             captchaTextField,
+            captchaBtn,
             loginBtn,
             registerBtn,
             forgetBtn,
             googleLoginBtn
         )
+        
+        captchaTextField.addSubview(activityIndicatorView)
     }
     
     override func setupConstraints() {
@@ -215,7 +231,7 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         
         logoView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(view.height * 0.18)
+            $0.top.equalToSuperview().offset(view.height * 0.16)
         }
         
         introLabel.snp.makeConstraints {
@@ -226,7 +242,7 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         accountTextField.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(20)
             $0.height.equalTo(50)
-            $0.top.equalToSuperview().offset(view.height * 0.38)
+            $0.top.equalToSuperview().offset(view.height * 0.36)
             //            $0.top.equalTo(introLabel.snp.bottom).offset(120)
         }
         
@@ -236,8 +252,20 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         }
         
         captchaTextField.snp.makeConstraints {
-            $0.left.right.height.equalTo(accountTextField)
+            $0.left.height.equalTo(accountTextField)
+            $0.right.equalTo(captchaBtn.snp.left)
             $0.top.equalTo(passwordTextField.snp.bottom).offset(1)
+        }
+        
+        activityIndicatorView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().inset(5)
+        }
+        
+        captchaBtn.snp.makeConstraints {
+            $0.top.bottom.equalTo(captchaTextField)
+            $0.right.equalTo(accountTextField)
+            $0.width.equalTo(180)
         }
         
         loginBtn.snp.makeConstraints {
@@ -246,7 +274,7 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         }
         
         forgetBtn.snp.makeConstraints {
-            $0.top.equalTo(loginBtn.snp.bottom).offset(8)
+            $0.top.equalTo(googleLoginBtn.snp.bottom).offset(8)
             $0.left.equalTo(loginBtn)
         }
         
@@ -258,7 +286,6 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
         googleLoginBtn.snp.makeConstraints {
             $0.left.right.height.equalTo(loginBtn)
             $0.top.equalTo(loginBtn.snp.bottom).offset(10)
-            //            $0.bottom.equalToSuperview().inset(50)
         }
     }
     
@@ -342,12 +369,7 @@ class LoginViewController: BaseViewController, AccountService, TopicService {
                 //                self?.navigationController?.pushViewController(RegisterViewController(), animated: true)
                 
             }.disposed(by: rx.disposeBag)
-        
-        googleLoginBtn.rx
-            .tap
-            .subscribeNext { [weak self] in
-                self?.googleLoginHandle()
-            }.disposed(by: rx.disposeBag)
+
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -383,11 +405,6 @@ extension LoginViewController {
         }
     }
     
-    /// Google 登录
-    private func googleLoginHandle() {
-
-    }
-    
     /// 获取验证码
     @objc func fetchCode() {
         captchaBtn.isLoading = true
@@ -398,14 +415,91 @@ extension LoginViewController {
                     self?.captchaBtn.setImage(UIImage(data: loginForm.captchaImageData), for: .normal)
                     self?.loginForm = loginForm
                     self?.captchaBtn.isLoading = false
+                    
+                    GCD.runOnBackgroundThread {
+                        self?.ocrRecognize()
+                    }
         }) { [weak self] error in
             self?.captchaBtn.isLoading = false
             HUD.showError(error)
         }
     }
     
+    /// OCR 识别
+    private func ocrRecognize(isShake: Bool = false) {
+        
+        guard let once = loginForm?.once,
+            let url = API.captchaImageData(once: once).url
+            else { return }
+        
+        GCD.runOnMainThread {
+            self.captchaTextField.text = nil
+            self.activityIndicatorView.startAnimating()
+        }
+        
+        let returnHandle: Action = {
+            GCD.runOnMainThread {
+                self.activityIndicatorView.stopAnimating()
+                return
+            }
+        }
+        
+        // 获取多张图片
+        var imgs: [UIImage] = []
+        for index in 0...12 {
+            guard let data = try? Data(contentsOf: url),
+                let img = UIImage(data: data) else { continue }
+            
+            if index == 0 && isShake {
+                GCD.runOnMainThread {
+                    self.captchaBtn.setImage(UIImage(data: data), for: .normal)
+                }
+            }
+            imgs.append(img)
+        }
+    
+        // 加入当前显示的图片
+        GCD.runOnMainThread {
+            if let currentCaptchaImg = self.captchaBtn.currentImage {
+                imgs.append(currentCaptchaImg)
+            }
+        }
+        
+        let imgW = 200
+        let imgH = 50
+        
+        // 将多张图片绘制成一张图片
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: imgW, height: imgH * imgs.count), false, UIScreen.main.scale);
+        for (index, img) in imgs.enumerated() {
+            let y = index * imgH
+            img.draw(in: CGRect(x: 0, y: y, width: imgW, height: imgH))
+        }
+        let bigImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        guard let captchaImg = bigImage,
+            let captchaImgData = UIImagePNGRepresentation(captchaImg) else { returnHandle(); return  }
+        
+        //        UIImageWriteToSavedPhotosAlbum(captchaImg, nil, nil, nil)
+        
+        // 将绘制成的图片调用接口进行识别
+        recognize(imgBase64: captchaImgData.base64EncodedString(), success: { [weak self] captcha in
+            GCD.runOnMainThread {
+                self?.captchaTextField.text = captcha
+                self?.captchaTextField.sendActions(for: .valueChanged)
+                self?.activityIndicatorView.stopAnimating()
+            }
+        }) { [weak self] error in
+            GCD.runOnMainThread {
+                HUD.showError(error)
+                log.error(error)
+                self?.activityIndicatorView.stopAnimating()
+            }
+        }
+    }
+    
     /// 登录处理
-    func loginHandle() {
+    private func loginHandle() {
         view.endEditing(true)
         
         guard var form = loginForm else {
@@ -476,4 +570,12 @@ extension LoginViewController: UITextFieldDelegate {
     }
 }
 
+
+extension LoginViewController {
+    override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
+        guard motion == .motionShake else { return }
+        
+        ocrRecognize(isShake: true)
+    }
+}
 

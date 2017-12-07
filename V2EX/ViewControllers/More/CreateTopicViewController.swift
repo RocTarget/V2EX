@@ -193,18 +193,18 @@ class CreateTopicViewController: BaseViewController, TopicService {
         
         titleFieldView.snp.makeConstraints {
             $0.left.right.equalTo(titleLabel)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(1)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(0.5)
             $0.height.equalTo(50)
         }
         
         bodyLabel.snp.makeConstraints {
             $0.left.right.height.equalTo(titleLabel)
-            $0.top.equalTo(titleFieldView.snp.bottom).offset(1)
+            $0.top.equalTo(titleFieldView.snp.bottom).offset(0.5)
         }
         
         bodyTextView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
-            $0.top.equalTo(bodyLabel.snp.bottom).offset(1)
+            $0.top.equalTo(bodyLabel.snp.bottom).offset(0.5)
         }
 
         selectNodeBtn.snp.makeConstraints {
@@ -291,6 +291,7 @@ class CreateTopicViewController: BaseViewController, TopicService {
                 self?.selectNodeBtn.setTitleColor(theme.titleColor, for: .normal)
                 self?.selectNodeBtn.backgroundColor = theme.whiteColor
                 theme == .day ? self?.markdownParser.setColorWithBrightTheme() : self?.markdownParser.setColorWithDarkTheme()
+                self?.view.backgroundColor = theme == .day ? theme.borderColor : UIColor.black.withAlphaComponent(0.5)
             }.disposed(by: rx.disposeBag)
     }
 }

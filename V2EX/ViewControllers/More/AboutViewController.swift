@@ -26,7 +26,7 @@ class AboutViewController: UITableViewController {
     private lazy var versionLabel: UILabel = {
         let view = UILabel()
         view.text = "\(UIApplication.appDisplayName()) v\(UIApplication.appVersion()) (\(UIApplication.appBuild()))"
-        view.textColor = ThemeStyle.style.value.dateColor
+        view.textColor = UIColor.hex(0x666666)
         view.font = UIFont.systemFont(ofSize: 15)
         return view
     }()
