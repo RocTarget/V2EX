@@ -22,7 +22,7 @@
 		7756CCCE1F9248CF00EF47B8 /* NodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7756CCCD1F9248CF00EF47B8 /* NodeService.swift */; };
 		7756CCD01F924F7A00EF47B8 /* HTMLParseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7756CCCF1F924F7A00EF47B8 /* HTMLParseService.swift */; };
 		775E5DBD1FD82A0600D5BB44 /* BaiduOCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775E5DBC1FD82A0600D5BB44 /* BaiduOCR.swift */; };
-		775E5DBF1FD8347800D5BB44 /* OCRSerrvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775E5DBE1FD8347800D5BB44 /* OCRSerrvice.swift */; };
+		775E5DBF1FD8347800D5BB44 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775E5DBE1FD8347800D5BB44 /* OCRService.swift */; };
 		776EFDD41F9BB9E70087AECC /* ShareSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 776EFDD21F9BB9E70087AECC /* ShareSheetView.swift */; };
 		776EFDD51F9BB9E70087AECC /* ShareItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 776EFDD31F9BB9E70087AECC /* ShareItemView.swift */; };
 		777772641FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777772621FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift */; };
@@ -187,7 +187,7 @@
 		7756CCCD1F9248CF00EF47B8 /* NodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeService.swift; sourceTree = "<group>"; };
 		7756CCCF1F924F7A00EF47B8 /* HTMLParseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLParseService.swift; sourceTree = "<group>"; };
 		775E5DBC1FD82A0600D5BB44 /* BaiduOCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaiduOCR.swift; sourceTree = "<group>"; };
-		775E5DBE1FD8347800D5BB44 /* OCRSerrvice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRSerrvice.swift; sourceTree = "<group>"; };
+		775E5DBE1FD8347800D5BB44 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		776EFDD21F9BB9E70087AECC /* ShareSheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareSheetView.swift; sourceTree = "<group>"; };
 		776EFDD31F9BB9E70087AECC /* ShareItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareItemView.swift; sourceTree = "<group>"; };
 		777772621FD1A4FC00C8EB8B /* SFHandoffSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHandoffSafariViewController.swift; sourceTree = "<group>"; };
@@ -511,7 +511,7 @@
 				7756CCCD1F9248CF00EF47B8 /* NodeService.swift */,
 				77ABB3801FA36D8300F376DA /* MemberService.swift */,
 				77C8DF6F1F9305F8009DE52C /* AccountService.swift */,
-				775E5DBE1FD8347800D5BB44 /* OCRSerrvice.swift */,
+				775E5DBE1FD8347800D5BB44 /* OCRService.swift */,
 				7756CCCF1F924F7A00EF47B8 /* HTMLParseService.swift */,
 			);
 			path = Services;
@@ -1236,7 +1236,7 @@
 				779B17041F8FA8C100E912E7 /* BaseTableViewCell.swift in Sources */,
 				BF5A6B891F99DBB600CF6BA1 /* MyReplyViewController.swift in Sources */,
 				BF1A1EBA1FB58B3900DDBF67 /* SafariActivity.swift in Sources */,
-				775E5DBF1FD8347800D5BB44 /* OCRSerrvice.swift in Sources */,
+				775E5DBF1FD8347800D5BB44 /* OCRService.swift in Sources */,
 				BF3AB6B41FA1A61200ACA17A /* ImageAttachment.swift in Sources */,
 				BF9EC81E1F95BFC800E7AA02 /* SweetWebViewController.swift in Sources */,
 				BFCB729D1FAB163900F1BDCA /* LibrarysViewController.swift in Sources */,

@@ -58,6 +58,19 @@ extension String {
         return self.replacingOccurrences(of: target, with: "")
     }
 
+    /// 截取字符串
+    ///
+    /// - Parameter r: [0..>n]
+    subscript (r: Range<Int>) -> String {
+        let startIndex = self.index(self.startIndex, offsetBy: r.lowerBound)
+        let endIndex = self.index(self.startIndex, offsetBy: r.upperBound)
+        return String(self[startIndex..<endIndex])
+    }
+
+    subscript (i: Int) -> Character {
+        return Array(self)[i]
+    }
+
     /// 剪切空格和换行字符
     public mutating func trim() {
         self = trimmed
@@ -181,5 +194,13 @@ extension String {
         let index = self.index(self.startIndex, offsetBy: 1)
         let regextest = NSPredicate(format: "SELF MATCHES %@", "^[A-Za-z]+$")
         return regextest.evaluate(with: self[..<index])
+    }
+
+    /// 是否是V2EX的验证码
+    /// 数字、英语结合，8个字符
+    func isV2EXCaptcha() -> Bool {
+        let regex = "[a-zA-Z0-9]{8}"
+        let testPredicate = NSPredicate(format:"SELF MATCHES %@", regex)
+        return testPredicate.evaluate(with: self)
     }
 }

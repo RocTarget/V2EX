@@ -29,7 +29,12 @@ class TabBarViewController: UITabBarController {
                         let nav = viewController as? NavigationViewController,
                         let topVC = nav.topViewController,
                         topVC.isKind(of: MessageViewController.self) {
+                        // 如果当前的 badge == 解析到的未读通知， 代表可能已经提示过一次了， 此时不再提示。
+                        if viewController.tabBarItem.badgeValue != count.description {
+                            HUD.showInfo("您有 \(count) 条未读提醒")
+                        }
                         viewController.tabBarItem.badgeValue = count.description
+                        return
                     }
                 })
             }.disposed(by: rx.disposeBag)

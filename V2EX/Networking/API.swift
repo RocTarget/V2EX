@@ -118,7 +118,7 @@ enum API {
     case baiduAccessToken(clientId: String, clientSecret: String)
     
     // OCR 识别
-    case baiduOCRRecognize(accessToken: String, picBase64: String)
+    case baiduOCRRecognize(accessToken: String, imgBase64: String)
     
 }
 
@@ -252,9 +252,9 @@ extension API: TargetType {
             param["grant_type"] = "client_credentials"
             param["client_id"] = clientId
             param["client_secret"] = clientSecret
-        case let .baiduOCRRecognize(accessToken, picBase64):
+        case let .baiduOCRRecognize(accessToken, imgBase64):
             param["access_token"] = accessToken
-            param["image"] = picBase64
+            param["image"] = imgBase64
             param["language_type"] = "ENG"
             param["probability"] = "true"
 //            param["url"] = ""

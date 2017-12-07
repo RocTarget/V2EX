@@ -37,8 +37,8 @@ extension HTMLParseService {
         
         if let unreadNoticeString = html.xpath("//*[@id='Wrapper']/div[@class='content']/div[@class='box']/div[1]//td[1]/input").first?["value"],
             let unreadNoticeCount = unreadNoticeString.deleteOccurrences(target: "条未读提醒").trimmed.int {
+            // 发送未读消息通知
             NotificationCenter.default.post(name: Notification.Name.V2.UnreadNoticeName, object: unreadNoticeCount)
-            // 发送通知
         }
         let rootPathOp: XPathObject?
         switch type {

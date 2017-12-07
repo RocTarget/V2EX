@@ -97,9 +97,11 @@ final class HUD {
         let duration = isShown ? duration + delay : duration
         
         if isShown {
-            SwiftMessages.hideAll()
             GCD.delay(0.5, block: {
-                SwiftMessages.show(view: messageView)
+                SwiftMessages.hideAll()
+                GCD.delay(0.5, block: {
+                    SwiftMessages.show(view: messageView)
+                })
             })
         } else {
             SwiftMessages.show(view: messageView)

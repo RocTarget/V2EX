@@ -1,4 +1,5 @@
 import UIKit
+import SwiftMessages
 
 class MessageViewController: DataViewController, AccountService {
 
@@ -146,10 +147,10 @@ extension MessageViewController {
             indexPaths.append(IndexPath(row: i, section: 0))
         }
 
-        UIView.animate(withDuration: 0.5, delay: 0.2, options: .curveLinear,  animations: {
+        UIView.animate(withDuration: 0.5, delay: 0.3, options: .curveLinear,  animations: {
             indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3) }
         }, completion: { _ in
-            UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
+            UIView.animate(withDuration: 0.3, delay: 0.5, options: .curveLinear,  animations: {
                 indexPaths.forEach { self.tableView.cellForRow(at: $0)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor }
             })
         })
