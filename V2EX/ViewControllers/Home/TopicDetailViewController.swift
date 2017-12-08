@@ -444,15 +444,16 @@ extension TopicDetailViewController {
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if scrollView.isReachedBottom() {
+            setTabBarHiddn(false, duration: 0.3)
             isShowToolBarVariable.value = false
         }
     }
 
-    private func setTabBarHiddn(_ hidden: Bool) {
+    private func setTabBarHiddn(_ hidden: Bool, duration: TimeInterval = 0.1) {
         guard tableView.contentSize.height > view.height else { return }
         guard let navHeight = navigationController?.navigationBar.height else { return }
 
-        UIView.animate(withDuration: 0.3, animations: {
+        UIView.animate(withDuration: duration, animations: {
             if hidden {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()

@@ -264,7 +264,7 @@ class TopicDetailHeaderView: UIView {
                     }
                     let themeCssString = try String(contentsOfFile: themeFilePath)
                     cssString += themeCssString
-                    let head = "<head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><style>\(cssString)</style></head>"
+                    let head = "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"><style>\(cssString)</style></head>"
                     let body = "<body><div id=\"Wrapper\">\(topic.content)</div></body>"
                     let html = "<html>\(head)\(body)</html>"
                     webView.loadHTMLString(html, baseURL: URL(string: "https://"))

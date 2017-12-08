@@ -302,7 +302,7 @@ extension MemberPageViewController {
         guard let member = member, let href = member.blockOrUnblockHref else { return }
         block(href: href, success: { [weak self] in
             self?.member?.isBlock = !member.isBlock
-            HUD.showSuccess("已成功\(member.isBlock ? "屏蔽" : "取消屏蔽") \(member.username)")
+            HUD.showSuccess("已成功\(!member.isBlock ? "屏蔽" : "取消屏蔽")用户 \(member.username)")
         }) { error in
             HUD.showError(error)
         }
@@ -312,7 +312,7 @@ extension MemberPageViewController {
         guard let member = member, let href = member.followOrUnfollowHref else { return }
         follow(href: href, success: { [weak self] in
             self?.member?.isFollow = !member.isFollow
-            HUD.showSuccess("已成功\(member.isFollow ? "关注" : "取消关注")用户 \(member.username)")
+            HUD.showSuccess("已成功\(!member.isFollow ? "关注" : "取消关注")用户 \(member.username)")
         }) { error in
             HUD.showError(error)
         }
