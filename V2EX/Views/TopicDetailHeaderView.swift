@@ -44,6 +44,11 @@ class TopicDetailHeaderView: UIView {
         }
     }
 
+    struct Metric {
+        static let replyLabelHeight: CGFloat = 45
+        static let margin: CGFloat = 15
+    }
+
     private lazy var avatarView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
@@ -95,6 +100,17 @@ class TopicDetailHeaderView: UIView {
         return view
     }()
 
+    private lazy var replyLabel: UIInsetLabel = {
+        let view = UIInsetLabel()
+        view.text = "全部回复"
+        view.contentInsetsLeft = Metric.margin
+        view.contentInsetsTop = Metric.margin
+        view.font = UIFont.systemFont(ofSize: 13)
+        view.backgroundColor = ThemeStyle.style.value.bgColor
+        view.textColor = #colorLiteral(red: 0.5333333333, green: 0.5333333333, blue: 0.5333333333, alpha: 1)
+        return view
+    }()
+
     private var htmlHeight: CGFloat = 0 {
         didSet {
             updateWebViewHeight()
@@ -121,7 +137,8 @@ class TopicDetailHeaderView: UIView {
             timeLabel,
             nodeLabel,
             titleLabel,
-            webView
+            webView,
+            replyLabel
         )
         
         setupConstraints()
@@ -145,7 +162,7 @@ class TopicDetailHeaderView: UIView {
 
     private func updateWebViewHeight() {
         webViewConstraint?.update(offset: htmlHeight)
-        height = titleLabel.bottom + htmlHeight + 15
+        height = titleLabel.bottom + htmlHeight + Metric.margin + Metric.replyLabelHeight
         webLoadComplete?()
     }
 
@@ -172,7 +189,7 @@ class TopicDetailHeaderView: UIView {
 
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
-                self?.backgroundColor = theme.whiteColor
+                self?.backgroundColor = theme.cellBackgroundColor
                 self?.titleLabel.textColor = theme.titleColor
                 self?.usernameLabel.textColor = theme.titleColor
                 self?.nodeLabel.backgroundColor = theme == .day ? UIColor.hex(0xf5f5f5) : theme.bgColor
@@ -186,7 +203,7 @@ class TopicDetailHeaderView: UIView {
     
     func setupConstraints() {
         avatarView.snp.makeConstraints {
-            $0.left.top.equalToSuperview().inset(15)
+            $0.left.top.equalToSuperview().inset(Metric.margin)
             $0.size.equalTo(35)
         }
         
@@ -202,19 +219,25 @@ class TopicDetailHeaderView: UIView {
         }
         
         nodeLabel.snp.makeConstraints {
-            $0.top.right.equalToSuperview().inset(15)
+            $0.top.right.equalToSuperview().inset(Metric.margin)
         }
         
         titleLabel.snp.makeConstraints {
             $0.right.equalTo(timeLabel)
             $0.left.equalTo(avatarView)
-            $0.top.equalTo(avatarView.snp.bottom).offset(15)
+            $0.top.equalTo(avatarView.snp.bottom).offset(Metric.margin)
         }
 
         webView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(15)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(Metric.margin)
             $0.left.right.equalToSuperview()
             webViewConstraint = $0.height.equalTo(0).constraint
+        }
+
+        replyLabel.snp.makeConstraints {
+            $0.top.equalTo(webView.snp.bottom)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(Metric.replyLabelHeight)
         }
     }
 
@@ -255,6 +278,12 @@ class TopicDetailHeaderView: UIView {
             guard let node = topic.node else { return }
             nodeLabel.text = node.title
             nodeLabel.isHidden = node.title.isEmpty
+        }
+    }
+
+    var replyTitle: String = "全部回复" {
+        didSet {
+            replyLabel.text = replyTitle
         }
     }
 }

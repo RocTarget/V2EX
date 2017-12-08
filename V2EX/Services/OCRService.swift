@@ -121,11 +121,10 @@ extension OCRService {
                 log.info("filtered recognize values", chars)
 
                 func mostCharIn(_ text: String) -> String {
-                    var dict: [String: Int] = [:]
-                    var range = NSRange(location: 0, length: 1)
+                    var dict: [Character: Int] = [:]
                     for i in 0..<text.count {
-                        range.location = i
-                        let charStr = text.NSString.substring(with: range)
+                        let charStr = text[i]
+
                         var preCount = 0
                         if let value = dict[charStr] {
                             preCount = value
@@ -136,14 +135,14 @@ extension OCRService {
                         return lhs.value > rhs.value
                     })
                     log.info(sortDict)
-                    return sortDict.first?.key ?? String(text[0])
+                    return String(sortDict.first?.key ?? text[0])
                 }
 
                 var list: [String] = []
                 for offset in 0..<8 {
-                    let one = chars.flatMap { $0[offset]}
-                    let subStr = mostCharIn(String(one))
-                    list.append(subStr)
+                    let col = chars.flatMap { $0[offset] }
+                    let char = mostCharIn(String(col))
+                    list.append(char)
                 }
                 let finalCaptcha = list.joined()
                 log.info(finalCaptcha)

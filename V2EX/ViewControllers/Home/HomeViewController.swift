@@ -36,7 +36,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         setupSegmentView()
         fetchData()
 
-        GCD.delay(3) {
+        GCD.delay(2) {
             RequestReview().showReview()
         }
     }
@@ -46,6 +46,8 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
 
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        rotationAdaptation()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -68,7 +70,7 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
         }
     }
 
-    func setupSegmentView() {
+    private func setupSegmentView() {
         nodes = homeNodes()
 
         let segmentV = SegmentView(frame: CGRect(x: 0, y: 0, width: view.width, height: 40),
@@ -170,6 +172,14 @@ class HomeViewController: BaseViewController, AccountService, TopicService {
                     self?.currentViewController().present(alertVC, animated: true, completion: nil)
                 })
             }.disposed(by: rx.disposeBag)
+
+
+        // 适配屏幕旋转
+        NotificationCenter.default.rx
+            .notification(.UIDeviceOrientationDidChange)
+            .subscribe(onNext: { [weak self] noti in
+                self?.rotationAdaptation()
+            }).disposed(by: rx.disposeBag)
     }
 
 }
@@ -206,6 +216,20 @@ extension HomeViewController {
         //        guard AccountModel.isLogin, let account = AccountModel.current else { return }
 
         //        Keychain().set(<#T##value: Data##Data#>, forKey: <#T##String#>)
+    }
+
+    private func rotationAdaptation() {
+        guard childViewControllers.count.boolValue else { return }
+
+        for (index, showVC) in childViewControllers.enumerated() {
+            guard showVC.isViewLoaded else { continue }
+            showVC.view.x = index.f * scrollView.width
+        }
+
+        guard let selectIndex = segmentView?.selectIndex else { return }
+        var offset = scrollView.contentOffset
+        offset.x = scrollView.width * selectIndex.f
+        scrollView.setContentOffset(offset, animated: false)
     }
 }
 

@@ -129,9 +129,7 @@ extension SettingViewController {
             navigationController?.pushViewController(vc, animated: true)
         case .logout:
             AccountModel.delete()
-            HTTPCookieStorage.shared.cookies?.forEach({ cookie in
-                HTTPCookieStorage.shared.deleteCookie(cookie)
-            })
+            HTTPCookieStorage.shared.cookies?.forEach { HTTPCookieStorage.shared.deleteCookie($0) }
             presentLoginVC()
             tableView.reloadData()
         case .floor:

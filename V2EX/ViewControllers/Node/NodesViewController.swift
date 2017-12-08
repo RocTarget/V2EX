@@ -39,6 +39,12 @@ class NodesViewController: DataViewController, NodeService {
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.navigationBar.isTranslucent = true
+    }
+
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {

@@ -14,7 +14,7 @@ class OCRConfigViewController: BaseViewController {
     
     private lazy var apiKeyTextField: UITextField = {
         let view = UITextField()
-        view.placeholder = "请输入百度 API Key"
+        view.placeholder = "请输入 API Key"
         view.backgroundColor = ThemeStyle.style.value.whiteColor
         view.addLeftTextPadding(10)
         view.font = UIFont.systemFont(ofSize: 15)
@@ -23,7 +23,7 @@ class OCRConfigViewController: BaseViewController {
     
     private lazy var secretKeyField: UITextField = {
         let view = UITextField()
-        view.placeholder = "请输入百度 Secret Key"
+        view.placeholder = "请输入 Secret Key"
         view.backgroundColor = ThemeStyle.style.value.whiteColor
         view.addLeftTextPadding(10)
         view.font = UIFont.systemFont(ofSize: 15)
@@ -37,13 +37,13 @@ class OCRConfigViewController: BaseViewController {
         view.font = UIFont.systemFont(ofSize: 13)
         let text = "点击申请 \(Misc.baiduLink)"
         view.text = """
-        验证码识别使用 <百度文字识别服务>，每天 500 条免费额度.
-        目前已内置一个 AppID，所有 V2er 共享额度，正常使用额度差不过够用.
-        但是建议您填写成自己的 API Key，造福其他人. \(text)
-        
+        验证码识别使用 <百度文字识别> 服务每天 500 条免费额度.
+        目前已内置一个 API Key，所有 V2er 共享额度，正常使用额度够用.
+        但建议您填写成自己的 API Key，该配置仅您自己可用。
+        \(text)
         """
         view.makeSubstringColor(text, color: ThemeStyle.style.value.linkColor)
-        view.setLineHeight(10)
+        view.setLineHeight(8)
         view.isUserInteractionEnabled = true
         return view
     }()
@@ -69,7 +69,7 @@ class OCRConfigViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "百度文字识别服务配置"
+        title = "百度文字识别配置"
 
         navigationItem.rightBarButtonItem = saveItem
         
@@ -104,7 +104,7 @@ class OCRConfigViewController: BaseViewController {
         thankLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             if #available(iOS 11, *) {
-                $0.bottom.equalTo(view.safeAreaInsets.bottom)
+                $0.bottom.equalToSuperview().inset(view.safeAreaInsets.bottom)
             } else {
                 $0.bottom.equalToSuperview().inset(10)
             }

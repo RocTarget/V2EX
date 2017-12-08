@@ -156,7 +156,7 @@ extension Networking {
             default:
                 // 重定向到 signin ， 代表需要登录
                 if (dataResponse.response?.url?.absoluteString ?? "").contains(API.signin(dict: [:]).defaultURLString) {
-                    failure?("你要查看的页面需要先登录")
+                    failure?("您要查看的页面需要先登录")
                     return
                 }
             }

@@ -50,7 +50,7 @@ func setStatusBarBackground(_ color: UIColor, borderColor: UIColor = .clear) {
     guard let statusBarWindow = UIApplication.shared.value(forKey: "statusBarWindow") as? UIView,
         let statusBar = statusBarWindow.value(forKey: "statusBar") as? UIView,
         statusBar.responds(to:#selector(setter: UIView.backgroundColor)) else { return }
-
+    
     statusBar.backgroundColor = color
     statusBar.layer.borderColor = borderColor.cgColor
     statusBar.layer.borderWidth = 0.5
@@ -78,7 +78,6 @@ func openWebView(url: URL?) {
     }
 
     if Preference.shared.useSafariBrowser {
-
         let safariVC = SFHandoffSafariViewController(url: url, entersReaderIfAvailable: true)
         if #available(iOS 10.0, *) {
             safariVC.preferredControlTintColor = Theme.Color.globalColor
@@ -93,7 +92,7 @@ func openWebView(url: URL?) {
         webView.url = url
         nav.pushViewController(webView, animated: true)
     } else {
-        let safariVC = SFSafariViewController(url: url)
+        let safariVC = SFHandoffSafariViewController(url: url)
         currentVC?.present(safariVC, animated: true, completion: nil)
     }
 }

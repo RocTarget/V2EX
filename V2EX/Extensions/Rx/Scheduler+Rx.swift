@@ -1,33 +1,25 @@
-//
-//  Scheduler+Rx.swift
-//  RxConveninceTool
-//
-//  Created by Rocky on 2017/5/20.
-//  Copyright © 2017年 Rocky. All rights reserved.
-//
-
 import Foundation
 import RxSwift
 import RxCocoa
 
 public enum RAScheduler{
 
-    case Main
-    case Serial(DispatchQoS)
-    case Concurrent(DispatchQoS)
-    case Operation(OperationQueue)
+    case main
+    case serial(DispatchQoS)
+    case concurrent(DispatchQoS)
+    case operation(OperationQueue)
     
     
     public func scheduler() -> ImmediateSchedulerType{
     
         switch self {
-        case .Main:
+        case .main:
             return MainScheduler.instance
-        case .Serial(let QOS):
+        case .serial(let QOS):
             return SerialDispatchQueueScheduler(qos: QOS)
-        case .Concurrent(let QOS):
+        case .concurrent(let QOS):
             return ConcurrentDispatchQueueScheduler(qos: QOS)
-        case .Operation(let queue):
+        case .operation(let queue):
             return OperationQueueScheduler(operationQueue: queue)
         }
     }

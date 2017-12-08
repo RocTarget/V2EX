@@ -8,6 +8,7 @@ import MobileCoreServices
 
 class TopicDetailViewController: DataViewController, TopicService {
 
+    /// MARK: - UI
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.delegate = self
@@ -43,6 +44,7 @@ class TopicDetailViewController: DataViewController, TopicService {
 
     private lazy var commentInputView: CommentInputView = {
         let view = CommentInputView(frame: .zero)
+        view.isHidden = true
         self.view.addSubview(view)
         return view
     }()
@@ -51,22 +53,25 @@ class TopicDetailViewController: DataViewController, TopicService {
         let view = UIButton()
         view.setImage(#imageLiteral(resourceName: "backTop"), for: .normal)
         view.setImage(#imageLiteral(resourceName: "backTop"), for: .selected)
+        view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
         view.sizeToFit()
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.2
         view.layer.shadowRadius = 4
-        // 阴影向下偏移 6
-        view.layer.shadowOffset = CGSize(width: 0, height: 6)
-        view.isHidden = true
         self.view.addSubview(view)
+        view.isHidden = true
         return view
     }()
+
+
+    // MARK: Propertys
 
     private var topic: TopicModel? {
         didSet {
             guard let topic = topic else { return }
             title = topic.title
             headerView.topic = topic
+            headerView.replyTitle = comments.count.boolValue ? "全部回复" : ""
         }
     }
 
@@ -93,7 +98,8 @@ class TopicDetailViewController: DataViewController, TopicService {
     private var inputViewBottomConstranit: Constraint?
     private var inputViewHeightConstraint: Constraint?
 
-
+    private let isSelectedVariable = Variable(false)
+    private let isShowToolBarVariable = Variable(false)
 
     // MARK: - View Life Cycle
     
@@ -106,20 +112,21 @@ class TopicDetailViewController: DataViewController, TopicService {
     }
     
     deinit {
+        setStatusBarBackground(.clear)
         userActivity?.invalidate()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        setTabBarHiddn(false)
+        isShowToolBarVariable.value = false
         //        navigationController?.navigationBar.isTranslucent = false
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        setTabBarHiddn(false)
+        isShowToolBarVariable.value = false
     }
 
     init(topicID: String) {
@@ -148,12 +155,6 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
         return super.canPerformAction(action, withSender: sender)
     }
-
-    //    override func viewWillAppear(_ animated: Bool) {
-    //        super.viewWillAppear(animated)
-    //
-    //        navigationController?.navigationBar.isTranslucent = true
-    //    }
 
     // MARK: - Setup
 
@@ -200,15 +201,6 @@ class TopicDetailViewController: DataViewController, TopicService {
             action: { [weak self] in
                 self?.moreHandle()
         })
-
-        //        NotificationCenter.default.rx
-        //            .notification(Notification.Name.V2.HighlightTextClickName)
-        //            .subscribeNext { [weak self] noti in
-        //                guard let urlString = noti.object as? String,
-        //                    let url = URL(string: urlString) else { return }
-        //                self?.interactHook(url)
-        //            }.disposed(by: rx.disposeBag)
-
         title = "加载中..."
     }
 
@@ -244,7 +236,7 @@ class TopicDetailViewController: DataViewController, TopicService {
         tableView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
             //            $0.top.equalToSuperview().offset(0.5)
-            $0.top.equalToSuperview().offset(-(tableView.contentInset.top - 0.5))
+            $0.top.equalToSuperview().offset(-(tableView.contentInset.top - 0.8))
         }
 
         var inputViewHeight = KcommentInputViewHeight
@@ -261,8 +253,8 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
 
         backTopBtn.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(20)
-            $0.bottom.equalTo(commentInputView.snp.top).offset(-20)
+            $0.right.equalToSuperview().inset(12)
+            $0.bottom.equalTo(commentInputView.snp.top).offset(-12)
         }
     }
 
@@ -281,8 +273,12 @@ class TopicDetailViewController: DataViewController, TopicService {
         backTopBtn.rx.tap
             .subscribeNext { [weak self] in
                 guard let `self` = self else { return }
-                self.setTabBarHiddn(false)
-                self.tableView.scrollToTop()
+                self.isShowToolBarVariable.value = false
+                if self.backTopBtn.isSelected {
+                    self.tableView.scrollToTop()
+                } else {
+                    self.tableView.scrollToBottom()
+                }
         }.disposed(by: rx.disposeBag)
         
         Observable.of(NotificationCenter.default.rx.notification(.UIKeyboardWillShow),
@@ -303,12 +299,39 @@ class TopicDetailViewController: DataViewController, TopicService {
                 }
                 //                self?.keyboardControl(notification)
             }.disposed(by: rx.disposeBag)
+
+        isSelectedVariable.asObservable()
+            .distinctUntilChanged()
+            .subscribeNext { [weak self] isSelected in
+                guard let `self` = self else { return }
+                UIView.animate(withDuration: 0.2) {
+                    if isSelected {
+                        self.backTopBtn.transform = CGAffineTransform.identity
+                    } else {
+                        self.backTopBtn.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                    }
+                    self.backTopBtn.isSelected = isSelected
+                }
+        }.disposed(by: rx.disposeBag)
+
+        isShowToolBarVariable.asObservable()
+            .distinctUntilChanged()
+            .subscribeNext { [weak self] isShow in
+                guard let `self` = self else { return }
+                self.setTabBarHiddn(isShow)
+            }.disposed(by: rx.disposeBag)
     }
 
     // MARK: States Handle
 
     override func hasContent() -> Bool {
-        return topic != nil
+        let hasContent = topic != nil
+
+        if hasContent && commentInputView.isHidden {
+            self.commentInputView.isHidden = false
+            self.backTopBtn.isHidden = false
+        }
+        return hasContent
     }
 
     override func loadData() {
@@ -381,7 +404,6 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         }
         
         menuVC.setMenuVisible(true, animated: true)
-
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -393,48 +415,51 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 extension TopicDetailViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        backTopBtn.isHidden = scrollView.contentOffset.y < 2000
+        isSelectedVariable.value = scrollView.contentOffset.y > 2000
 
-        if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64) { return }
+        if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64),
+            scrollView.isReachedBottom() { return }
 
-        if scrollView.isReachedBottom() {
-            return
-        }
-        
         //获取到拖拽的速度 >0 向下拖动 <0 向上拖动
         let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView).y
         if (velocity < -5) {
             //向上拖动，隐藏导航栏
-            setTabBarHiddn(true)
+            if !isShowToolBarVariable.value {
+                isShowToolBarVariable.value = true
+            }
         }else if (velocity > 5) {
             //向下拖动，显示导航栏
-            setTabBarHiddn(false)
+            if isShowToolBarVariable.value {
+                isShowToolBarVariable.value = false
+            }
         }else if (velocity == 0) {
             //停止拖拽
         }
     }
 
     func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
-        setTabBarHiddn(false)
+        isShowToolBarVariable.value = false
         return true
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if scrollView.isReachedBottom() {
-            self.setTabBarHiddn(false, duration: 0.5)
+            isShowToolBarVariable.value = false
         }
     }
 
-    private func setTabBarHiddn(_ hidden: Bool, duration: TimeInterval = 0.1) {
+    private func setTabBarHiddn(_ hidden: Bool) {
         guard tableView.contentSize.height > view.height else { return }
         guard let navHeight = navigationController?.navigationBar.height else { return }
 
-        UIView.animate(withDuration: duration, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             if hidden {
                 self.inputViewBottomConstranit?.update(inset: -self.commentInputView.height)
                 self.view.layoutIfNeeded()
                 self.navigationController?.navigationBar.y -= navHeight
-                setStatusBarBackground(ThemeStyle.style.value.whiteColor, borderColor: ThemeStyle.style.value.borderColor)
+                GCD.delay(0.1, block: {
+                    setStatusBarBackground(ThemeStyle.style.value.whiteColor, borderColor: ThemeStyle.style.value.borderColor)
+                })
                 self.tableView.height = Constants.Metric.screenHeight
             } else { //显示
                 self.inputViewBottomConstranit?.update(inset: 0)
@@ -487,8 +512,8 @@ extension TopicDetailViewController {
         case .memberAvatarLongPress(let member):
             atMember(member.atUsername)
         case .imageURL(let src):
-            showImageBrowser(imageType: .imageURL(src))
             setStatusBarBackground(.clear)
+            showImageBrowser(imageType: .imageURL(src))
         case .image(let image):
             setStatusBarBackground(.clear)
             showImageBrowser(imageType: .image(image))
@@ -503,6 +528,7 @@ extension TopicDetailViewController {
 
     /// 点击更多处理
     private func moreHandle() {
+        setStatusBarBackground(.clear)
         view.endEditing(true)
 
         /// 切换 是否显示楼主
@@ -546,7 +572,7 @@ extension TopicDetailViewController {
 
         // 需要授权的操作
         if type.needAuth, !AccountModel.isLogin{
-            HUD.showWarning("请先登录")
+            HUD.showError("请先登录")
             return
         }
 
@@ -623,9 +649,6 @@ extension TopicDetailViewController {
     }
 
     @objc private func replyCommentAction() {
-        //        guard let atUsername = selectComment?.member.atUsername else { return }
-        //        commentInputView.textView.text = atUsername
-        //        commentInputView.textView.becomeFirstResponder()
         commentInputView.textView.text = ""
         atMember(selectComment?.member.atUsername)
     }
@@ -712,7 +735,6 @@ extension TopicDetailViewController {
     }
 }
 
-
 // MARK: - Request
 extension TopicDetailViewController {
 
@@ -721,17 +743,15 @@ extension TopicDetailViewController {
         page = 1
 
         startLoading()
-
         topicDetail(topicID: topicID, success: { [weak self] topic, comments, maxPage in
             guard let `self` = self else { return }
-            self.topic = topic
             self.dataSources = comments
             self.comments = comments
+            self.topic = topic
             self.tableView.endHeaderRefresh()
             self.maxPage = maxPage
 
             complete?()
-            //            self.endLoading()
             }, failure: { [weak self] error in
                 self?.errorMessage = error
                 self?.endLoading(error: NSError(domain: "V2EX", code: -1, userInfo: nil))
@@ -805,30 +825,12 @@ extension TopicDetailViewController {
 
                 guard self.page == 1 else { return }
                 self.fetchTopicDetail(complete: { [weak self] in
+                    // reloadData 闪烁， 此代码没用
                     UIView.performWithoutAnimation {
                         self?.tableView.reloadData {}
                         self?.tableView.beginUpdates()
                         self?.tableView.endUpdates()
                     }
-//                    guard let `self` = self,
-//                        self.tableView.isOverflowVertical else { return }
-//                    let insetEdge: UIEdgeInsets
-//                    if #available(iOS 11.0, *) {
-//                        insetEdge = self.tableView.adjustedContentInset
-//                    } else {
-//                        insetEdge = self.tableView.contentInset
-//                    }
-//                    let targetY = self.tableView.contentSize.height + insetEdge.bottom
-//                    let targetOffset = CGPoint(x: 0, y: targetY)
-//                    self.tableView.setContentOffset(targetOffset, animated: true)
-//                    // 提醒动画, 如果滚动距离较远可能没有动画, 延迟也没有用, 暂时不知原因
-//                    UIView.animate(withDuration: 0.5, delay: 0.7, options: .curveLinear,  animations: {
-//                        self.tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.hex(0xB3DBE8).withAlphaComponent(0.3)
-//                    }, completion: { _ in
-//                        UIView.animate(withDuration: 0.3, delay: 0.2, options: .curveLinear,  animations: {
-//                            self.tableView.cellForRow(at: indexPath)?.backgroundColor = ThemeStyle.style.value.cellBackgroundColor
-//                        })
-//                    })
                 })
         }) { [weak self] error in
             guard let `self` = self else { return }
@@ -1030,7 +1032,6 @@ extension TopicDetailViewController: UIViewControllerPreviewingDelegate {
         guard dialogs.count.boolValue else { return nil }
         
         let viewDialogVC = ViewDialogViewController(comments: dialogs)
-//        let nav = NavigationViewController(rootViewController: viewDialogVC)
         viewDialogVC.title = "有关 \(selectComment.member.username) 的对话"
         previewingContext.sourceRect = cell.frame
         
@@ -1067,4 +1068,3 @@ extension TopicDetailViewController: UIViewControllerPreviewingDelegate {
         return [favoriteAction, copyAction, shareAction]
     }
 }
-

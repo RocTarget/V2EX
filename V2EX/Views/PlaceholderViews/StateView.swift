@@ -107,7 +107,11 @@ class StateView: BasePlaceholderView {
 
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-100)
+            if UIDevice.current.orientation.isLandscape && !UIDevice.current.isPad {
+                $0.top.equalToSuperview().offset(10)
+            } else {
+                $0.centerY.equalToSuperview().offset(-100)
+            }
             $0.size.equalTo(100)
         }
 
@@ -124,7 +128,11 @@ class StateView: BasePlaceholderView {
 
         actionButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().multipliedBy(0.75)
+            if UIDevice.current.orientation.isLandscape && !UIDevice.current.isPad {
+                $0.top.equalTo(messageLabel.snp.bottom).offset(10)
+            } else {
+                $0.bottom.equalToSuperview().multipliedBy(0.75)
+            }
             $0.width.equalTo(120)
             $0.height.equalTo(40)
         }
