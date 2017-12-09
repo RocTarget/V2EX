@@ -53,7 +53,6 @@ class TopicDetailViewController: DataViewController, TopicService {
         let view = UIButton()
         view.setImage(#imageLiteral(resourceName: "backTop"), for: .normal)
         view.setImage(#imageLiteral(resourceName: "backTop"), for: .selected)
-        view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
         view.sizeToFit()
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.2
@@ -240,11 +239,12 @@ class TopicDetailViewController: DataViewController, TopicService {
         }
 
         var inputViewHeight = KcommentInputViewHeight
+
         if #available(iOS 11.0, *) {
             inputViewHeight = KcommentInputViewHeight + view.safeAreaInsets.bottom
         }
 
-        tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, tableView.contentInset.left, KcommentInputViewHeight, tableView.contentInset.right)
+        tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top, left: tableView.contentInset.left, bottom: KcommentInputViewHeight, right: tableView.contentInset.right)
 
         commentInputView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
@@ -275,9 +275,14 @@ class TopicDetailViewController: DataViewController, TopicService {
                 guard let `self` = self else { return }
                 self.isShowToolBarVariable.value = false
                 if self.backTopBtn.isSelected {
-                    self.tableView.scrollToTop()
+                    self.tableView.setContentOffset(CGPoint(x: 0, y: -self.tableView.contentInset.top), animated: true)
                 } else {
-                    self.tableView.scrollToBottom()
+                    if self.dataSources.count.boolValue {
+                        let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
+                        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    } else {
+                        self.tableView.scrollToBottom()
+                    }
                 }
         }.disposed(by: rx.disposeBag)
         
@@ -297,7 +302,6 @@ class TopicDetailViewController: DataViewController, TopicService {
                 UIView.animate(withDuration: duration ?? 0.25) {
                     self.view.layoutIfNeeded()
                 }
-                //                self?.keyboardControl(notification)
             }.disposed(by: rx.disposeBag)
 
         isSelectedVariable.asObservable()
@@ -305,11 +309,7 @@ class TopicDetailViewController: DataViewController, TopicService {
             .subscribeNext { [weak self] isSelected in
                 guard let `self` = self else { return }
                 UIView.animate(withDuration: 0.2) {
-                    if isSelected {
-                        self.backTopBtn.transform = CGAffineTransform.identity
-                    } else {
-                        self.backTopBtn.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                    }
+                    self.backTopBtn.transform = isSelected ? CGAffineTransform(rotationAngle: .pi) : .identity
                     self.backTopBtn.isSelected = isSelected
                 }
         }.disposed(by: rx.disposeBag)
@@ -327,9 +327,9 @@ class TopicDetailViewController: DataViewController, TopicService {
     override func hasContent() -> Bool {
         let hasContent = topic != nil
 
-        if hasContent && commentInputView.isHidden {
-            self.commentInputView.isHidden = false
-            self.backTopBtn.isHidden = false
+        if hasContent {
+            commentInputView.isHidden = false
+            backTopBtn.isHidden = tableView.contentSize.height < (tableView.height + 150)
         }
         return hasContent
     }
@@ -415,10 +415,14 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
 extension TopicDetailViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        isSelectedVariable.value = scrollView.contentOffset.y > 2000
 
-        if scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64),
-            scrollView.isReachedBottom() { return }
+        let isReachedBottom = scrollView.isReachedBottom()
+        if backTopBtn.isHidden.not {
+            isSelectedVariable.value = isReachedBottom ? true : scrollView.contentOffset.y > 2000
+        }
+
+        let contentHeightLessThanViewHeight = scrollView.contentOffset.y < (navigationController?.navigationBar.height ?? 64)
+        if contentHeightLessThanViewHeight || isReachedBottom || scrollView.contentOffset.y < 0 { return }
 
         //获取到拖拽的速度 >0 向下拖动 <0 向上拖动
         let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView).y
@@ -435,6 +439,12 @@ extension TopicDetailViewController {
         }else if (velocity == 0) {
             //停止拖拽
         }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        // ContentSize 大于 当前视图高度才显示， 滚动到底部/顶部按钮
+        // 150 的偏差
+        backTopBtn.isHidden = tableView.contentSize.height < (tableView.height + 150)
     }
 
     func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
@@ -504,6 +514,8 @@ extension TopicDetailViewController {
     ///
     /// - Parameter type: 触发的类型
     private func tapHandle(_ type: TapType) {
+        setStatusBarBackground(.clear)
+
         switch type {
         case .webpage(let url):
             openWebView(url: url)

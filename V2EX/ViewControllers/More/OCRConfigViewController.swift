@@ -35,12 +35,14 @@ class OCRConfigViewController: BaseViewController {
         view.numberOfLines = 0
         view.textColor = UIColor.hex(0x666666)//ThemeStyle.style.value.dateColor
         view.font = UIFont.systemFont(ofSize: 13)
-        let text = "点击申请 \(Misc.baiduLink)"
+        let text = "申请链接 \(Misc.baiduLink)"
         view.text = """
         验证码识别使用 <百度文字识别> 服务每天 500 条免费额度.
         目前已内置一个 API Key，所有 V2er 共享额度，正常使用额度够用.
         但建议您填写成自己的 API Key，该配置仅您自己可用。
         \(text)
+
+        提示: 长按可复制链接
         """
         view.makeSubstringColor(text, color: ThemeStyle.style.value.linkColor)
         view.setLineHeight(8)
@@ -103,10 +105,10 @@ class OCRConfigViewController: BaseViewController {
         
         thankLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            if #available(iOS 11, *) {
-                $0.bottom.equalToSuperview().inset(view.safeAreaInsets.bottom)
+            if #available(iOS 11.0, *) {
+                $0.bottom.equalTo(view.safeAreaInsets)
             } else {
-                $0.bottom.equalToSuperview().inset(10)
+                $0.bottom.equalTo(bottomLayoutGuide.snp.top)
             }
         }
     }
@@ -114,13 +116,26 @@ class OCRConfigViewController: BaseViewController {
     override func setupRx() {
         let stateTapGesture = UITapGestureRecognizer()
         stateLabel.addGestureRecognizer(stateTapGesture)
+
+        let stateLongPressGesture = UILongPressGestureRecognizer()
+        stateLongPressGesture.minimumPressDuration = 0.25
+        stateLabel.addGestureRecognizer(stateLongPressGesture)
         
         stateTapGesture.rx
             .event
             .subscribeNext { _ in
                 openWebView(url: Misc.baiduLink)
             }.disposed(by: rx.disposeBag)
-        
+
+        stateLongPressGesture.rx
+            .event
+            .subscribeNext { gesture in
+                guard gesture.state == .began else { return }
+
+                UIPasteboard.general.string = Misc.baiduLink
+                HUD.showSuccess("链接已复制")
+            }.disposed(by: rx.disposeBag)
+
         let thankTapGesture = UITapGestureRecognizer()
         thankLabel.addGestureRecognizer(thankTapGesture)
         

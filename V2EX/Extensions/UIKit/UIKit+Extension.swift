@@ -44,7 +44,7 @@ extension Int {
 }
 
 extension Bool {
-    public var reverse: Bool {
+    public var not: Bool {
         return !self
     }
 
@@ -146,6 +146,10 @@ extension UIDevice {
 
     public var isPad: Bool {
         return UIDevice.current.userInterfaceIdiom == .pad
+    }
+
+    public var isiPhoneX: Bool {
+        return UIDevice.phoneModel == "iPhone X"
     }
 
     /// MARK: - 获取设备型号

@@ -78,7 +78,7 @@ extension TopicSearchHistoryViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension TopicSearchHistoryViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableView.tableFooterView?.isHidden = historys.count.boolValue.reverse
+        tableView.tableFooterView?.isHidden = historys.count.boolValue.not
         return historys.count
     }
     
