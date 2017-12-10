@@ -75,7 +75,7 @@ final class HUD {
         showText(text, messageType: .warning, duration: duration, completionBlock: completionBlock)
     }
 
-    private class func showText(_ text: String, messageType: MessageType, duration: TimeInterval = 2.5, completionBlock: Action? = nil) {
+    private class func showText(_ text: String, messageType: MessageType, duration: TimeInterval = 2, completionBlock: Action? = nil) {
         let messageView = MessageView.viewFromNib(layout: .cardView)
         switch messageType {
         case .success:

@@ -9,7 +9,7 @@ struct CommentModel {
     var publicTime: String
     var isThank: Bool = false
     var floor: String
-    var thankCount: String?
+    var thankCount: Int?
     var textLayout: YYTextLayout?
 }
 
@@ -23,11 +23,12 @@ extension CommentModel {
     /// - Returns: 包含当前所选回复中所有@用户的对话回复列表
     static func atUsernameComments(comments: [CommentModel], currentComment:CommentModel) -> [CommentModel] {
         guard var atUsers = CommentModel.atUsernames(currentComment) else { return [] }
-        let ats = atUsers
+//        let ats = atUsers
         atUsers.insert(currentComment.member.atUsernameWithoutSpace)
         
         let coms = comments.filter { comment -> Bool in
-            guard let commentUsers = CommentModel.atUsernames(comment) else { return false }
+            guard var commentUsers = CommentModel.atUsernames(comment) else { return false }
+            commentUsers.insert(comment.member.atUsernameWithoutSpace)
             // 当前回复没有@用户.
             // 判断 1: 找出当前所选回复所有@的用户的回复
             //     2: 加入当前所选的回复
@@ -51,12 +52,12 @@ extension CommentModel {
         // 这种情况就查询被@用户（@imydou）的所有回复
         // 目前只处理@单个用户。
         // ps: coms 个数如果只有一个， 代表只有当前所有回复
-        if ats.count == 1 && coms.count == 1 {
-            // 从当前所选楼层进行分割，之后的不查找
-            let forepart = comments.split(whereSeparator: { $0.floor == currentComment.floor } ).first
-            let result = forepart?.filter { ats.first == $0.member.atUsernameWithoutSpace }
-            return (result ?? []) + coms
-        }
+//        if ats.count == 1 && coms.count == 1 {
+//            // 从当前所选楼层进行分割，之后的不查找
+//            let forepart = comments.split(whereSeparator: { $0.floor == currentComment.floor } ).first
+//            let result = forepart?.filter { ats.first == $0.member.atUsernameWithoutSpace }
+//            return (result ?? []) + coms
+//        }
         return coms
     }
     

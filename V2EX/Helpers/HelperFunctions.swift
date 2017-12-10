@@ -51,6 +51,8 @@ func setStatusBarBackground(_ color: UIColor, borderColor: UIColor = .clear) {
         let statusBar = statusBarWindow.value(forKey: "statusBar") as? UIView,
         statusBar.responds(to:#selector(setter: UIView.backgroundColor)) else { return }
     
+    if statusBar.backgroundColor == color { return }
+    
     statusBar.backgroundColor = color
     statusBar.layer.borderColor = borderColor.cgColor
     statusBar.layer.borderWidth = 0.5

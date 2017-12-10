@@ -5,6 +5,7 @@ import SnapKit
 enum TapType {
     case member(MemberModel)
     case memberAvatarLongPress(MemberModel)
+    case reply(MemberModel)
     case node(NodeModel)
     case imageURL(String)
     case image(UIImage)

@@ -173,6 +173,7 @@ extension HTMLParseService {
             let textContainer = YYTextContainer(size: CGSize(width: Constants.Metric.screenWidth - 30, height: CGFloat.max))
             let textLayout = YYTextLayout(container: textContainer, text: attributedString)
             let thankString = ele.xpath("./table/tr/td[3]/span[2]").first?.content
+            let thankCount = thankString?.components(separatedBy: CharacterSet.init(charactersIn: "0123456789").inverted).joined().int
             let member = MemberModel(username: username, url: userHref, avatar: userAvatar)
             let isThank = ele.xpath(".//div[@id='thank_area_\(replyID)' and contains(@class, 'thanked')]").count.boolValue
 
@@ -182,7 +183,7 @@ extension HTMLParseService {
                                 publicTime: publicTime,
                                 isThank: isThank,
                                 floor: floor,
-                                thankCount: thankString,
+                                thankCount: thankCount,
                                 textLayout: textLayout)
         })
         return comments

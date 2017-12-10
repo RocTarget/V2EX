@@ -42,7 +42,6 @@ class TopicCommentCell: BaseTableViewCell {
     
     private lazy var thankLabel: UILabel = {
         let view = UILabel()
-        view.text = "♥"
         view.font = UIFont.systemFont(ofSize: 13)
         view.textColor = UIColor.hex(0xcccccc)
         return view
@@ -61,13 +60,36 @@ class TopicCommentCell: BaseTableViewCell {
         view.backgroundColor = Theme.Color.borderColor
         return view
     }()
+    
+    
+    private lazy var replyContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = ThemeStyle.style.value.bgColor
+        return view
+    }()
+    
+    private lazy var replyImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = #imageLiteral(resourceName: "reply")
+        view.contentMode = .center
+        view.alpha = 0
+        view.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+        view.backgroundColor = ThemeStyle.style.value.bgColor
+        return view
+    }()
 
     private var thankLabelLeftConstraint: Constraint?
     
     public var tapHandle: ((_ type: TapType) -> Void)?
 
     public var hostUsername: String?
+    
+    private var replyPanOffset: CGFloat = 0
+    
+    private var initCenterX: CGFloat = 0
 
+    private let activationOffset: CGFloat = 70
+    
     public var comment: CommentModel? {
         didSet {
             guard let `comment` = comment else { return }
@@ -79,14 +101,18 @@ class TopicCommentCell: BaseTableViewCell {
 
             contentLabel.textLayout = comment.textLayout
 
-            // TODO: Bug - 楼主显示\隐藏 状态不正确
             hostLabel.isHidden = (hostUsername ?? "")  != comment.member.username
-
-            var thankText = comment.thankCount
-            if comment.isThank {
-                thankText?.append("  已感谢")
+            
+            if let thankCount = comment.thankCount {
+                var thankText: String = "♥ \(thankCount)"
+                
+                if comment.isThank {
+                    thankText.append("  已感谢")
+                }
+                thankLabel.text = thankText
+            } else {
+                thankLabel.text = nil
             }
-            thankLabel.text = thankText
             
             thankLabelLeftConstraint?.update(offset: hostLabel.isHidden ? -25 : 10)
 
@@ -110,6 +136,10 @@ class TopicCommentCell: BaseTableViewCell {
 
         let textViewLongPressGesture = UILongPressGestureRecognizer()
         contentLabel.addGestureRecognizer(textViewLongPressGesture)
+        
+        let replyPanGesture = UIPanGestureRecognizer(target: self, action: #selector(replyPanGestureRecognizerHandle))
+        replyPanGesture.delegate = self
+        contentView.addGestureRecognizer(replyPanGesture)
 
         avatarTapGesture.rx
             .event
@@ -127,6 +157,7 @@ class TopicCommentCell: BaseTableViewCell {
                 self?.tapHandle?(.memberAvatarLongPress(member))
         }.disposed(by: rx.disposeBag)
         
+        
         contentView.addSubviews(
             avatarView,
             usernameLaebl,
@@ -135,9 +166,11 @@ class TopicCommentCell: BaseTableViewCell {
             hostLabel,
             thankLabel,
             contentLabel,
-            lineView
+            lineView,
+            replyContainerView
         )
-
+        replyContainerView.addSubview(replyImageView)
+        
         ThemeStyle.style.asObservable()
             .subscribeNext { [weak self] theme in
                 self?.contentLabel.textColor = theme.titleColor
@@ -146,7 +179,7 @@ class TopicCommentCell: BaseTableViewCell {
                 self?.timeLabel.textColor = theme.dateColor
             }.disposed(by: rx.disposeBag)
     }
-
+    
     override func setupConstraints() {
         avatarView.snp.makeConstraints {
             $0.left.top.equalToSuperview().inset(15)
@@ -187,6 +220,75 @@ class TopicCommentCell: BaseTableViewCell {
             $0.left.right.top.equalToSuperview()
             $0.height.equalTo(0.5)
         }
+        
+        replyContainerView.snp.makeConstraints {
+            $0.right.equalToSuperview().inset(-activationOffset)
+            $0.width.equalTo(activationOffset)
+            $0.height.equalToSuperview()
+        }
+        
+        replyImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+    }
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let panGesture = gestureRecognizer as? UIPanGestureRecognizer {
+            let vel = panGesture.velocity(in: contentView)
+            return fabs(vel.x) > fabs(vel.y) && vel.x < 0
+        }
+        return true
+    }
+    
+    @objc private func replyPanGestureRecognizerHandle(gesture: UIPanGestureRecognizer) {
+        guard let gestureView = gesture.view else { return }
+        
+        let directionP = gesture.velocity(in: gesture.view)
+        var translationX = gesture.translation(in: gesture.view).x
+        
+        switch gesture.state {
+        case .changed:
+
+            if fabs(directionP.y) < fabs(directionP.x) {
+                if -translationX > activationOffset {
+                    translationX = -activationOffset
+                } else if translationX > 0 {
+                    translationX = 0
+                    resetState()
+                }
+                gestureView.centerX = center.x + translationX
+            }
+            if -translationX >= activationOffset * 0.9 {
+                replyImageView.fadeIn(0.1)
+                UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.2, options: .curveLinear, animations: {
+                    if #available(iOS 10.0, *) {
+                        if self.replyImageView.transform != .identity {
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.prepare()
+                            generator.impactOccurred()
+                        }
+                    }
+                    self.replyImageView.transform = .identity
+                    
+                }, completion: nil)
+            }
+        case .ended, .cancelled:
+            UIView.animate(withDuration: 0.2, animations: {
+                gestureView.centerX = self.center.x
+            }, completion: { _ in
+                self.resetState()
+                guard -translationX >= self.activationOffset else { return }
+                guard let member = self.comment?.member else { return }
+                self.tapHandle?(.reply(member))
+            })
+        default:
+            break
+        }
+    }
+    
+    private func resetState() {
+        replyImageView.fadeOut()
+        replyImageView.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
     }
 }
 
@@ -196,3 +298,4 @@ extension TopicCommentCell: ImageAttachmentDelegate {
         tapHandle?(.image(image))
     }
 }
+

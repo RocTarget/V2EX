@@ -272,8 +272,7 @@ extension API: TargetType {
     // Returns HTTP header values.
     var httpHeaderFields: [String: String]? {
         var headers: [String: String] = [:]
-        headers["User-Agent"] = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Version/10.0 Mobile/14D27 Safari/602.1"
-        //        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36"
+        headers["User-Agent"] = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.3 Mobile/14E277 Safari/603.1.30"
         switch self {
         case .signin, .forgot, .createTopic, .updateAvatar:
             headers["Referer"] = defaultURLString

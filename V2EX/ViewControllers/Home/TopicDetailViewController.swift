@@ -70,7 +70,6 @@ class TopicDetailViewController: DataViewController, TopicService {
             guard let topic = topic else { return }
             title = topic.title
             headerView.topic = topic
-            headerView.replyTitle = comments.count.boolValue ? "全部回复" : ""
         }
     }
 
@@ -84,7 +83,15 @@ class TopicDetailViewController: DataViewController, TopicService {
     public var topicID: String
 
     // 加工数据
-    private var dataSources: [CommentModel] = []
+    private var dataSources: [CommentModel] = [] {
+        didSet {
+            var title = dataSources.count.boolValue ? "全部回复" : ""
+            if isShowOnlyFloor {
+                title = dataSources.count.boolValue ? "楼主回复" : "楼主暂无回复"
+            }
+            headerView.replyTitle = title
+        }
+    }
 
     // 原始数据
     private var comments: [CommentModel] = []
@@ -119,12 +126,13 @@ class TopicDetailViewController: DataViewController, TopicService {
         super.viewWillDisappear(animated)
 
         isShowToolBarVariable.value = false
-        //        navigationController?.navigationBar.isTranslucent = false
+        setStatusBarBackground(.clear)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
+        setStatusBarBackground(.clear)
         isShowToolBarVariable.value = false
     }
 
@@ -277,12 +285,13 @@ class TopicDetailViewController: DataViewController, TopicService {
                 if self.backTopBtn.isSelected {
                     self.tableView.setContentOffset(CGPoint(x: 0, y: -self.tableView.contentInset.top), animated: true)
                 } else {
-                    if self.dataSources.count.boolValue {
-                        let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
-                        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                    } else {
+                    // 会导致UI卡顿, 原因未知
+//                    if self.dataSources.count.boolValue {
+//                        let indexPath = IndexPath(row: self.dataSources.count - 1, section: 0)
+//                        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+//                    } else {
                         self.tableView.scrollToBottom()
-                    }
+//                    }
                 }
         }.disposed(by: rx.disposeBag)
         
@@ -347,19 +356,14 @@ class TopicDetailViewController: DataViewController, TopicService {
 extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isShowOnlyFloor {
-            dataSources = comments.filter { $0.member.username == topic?.member?.username }
-        } else {
-            dataSources = comments
-        }
         return dataSources.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: TopicCommentCell.self)!
         let comment = dataSources[indexPath.row]
-        cell.comment = comment
         cell.hostUsername = topic?.member?.username ?? ""
+        cell.comment = comment
         cell.tapHandle = { [weak self] type in
             self?.tapHandle(type)
         }
@@ -395,15 +399,26 @@ extension TopicDetailViewController: UITableViewDelegate, UITableViewDataSource 
         if comment.content.trimmed.isNotEmpty {
             menuVC.menuItems?.insert(fenCiItem, at: 2)
         }
-        // 已经感谢 或 当前点击的回复是题主本人， 则不显示， 否则插入
-        // 当前主题不等于所选用户 || 当前登录用户不等于题主用户
-        if !comment.isThank,
-            topic?.member?.username != comment.member.username ||
-                AccountModel.current?.username != topic?.member?.username {
+        
+        // 不显示感谢的情况
+        // 1. 已经感谢
+        // 2. 当前题主是登录用户本人 && 点击的回复是题主本人
+        // 3. 当前点击的回复是登录用户本人
+        if comment.isThank ||
+            (topic?.member?.username == comment.member.username &&
+            AccountModel.current?.username == topic?.member?.username) ||
+            AccountModel.current?.username == comment.member.username {
+        } else {
             menuVC.menuItems?.insert(thankItem, at: 1)
         }
         
         menuVC.setMenuVisible(true, animated: true)
+        
+        if #available(iOS 10.0, *) {
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.prepare()
+            generator.impactOccurred()
+        }
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -523,6 +538,9 @@ extension TopicDetailViewController {
             let memberPageVC = MemberPageViewController(memberName: member.username)
             self.navigationController?.pushViewController(memberPageVC, animated: true)
         case .memberAvatarLongPress(let member):
+            atMember(member.atUsername)
+        case .reply(let member):
+            commentInputView.textView.text = ""
             atMember(member.atUsername)
         case .imageURL(let src):
             setStatusBarBackground(.clear)
@@ -677,7 +695,13 @@ extension TopicDetailViewController {
                 let selectIndexPath = self.tableView.indexPathForSelectedRow else { return }
             HUD.showSuccess("已成功发送感谢")
             self.dataSources[selectIndexPath.row].isThank = true
-            // TODO: Bug 感谢之后刷新视图不正确
+            if let thankCount = self.dataSources[selectIndexPath.row].thankCount {
+                self.dataSources[selectIndexPath.row].thankCount = thankCount + 1
+            } else {
+                self.dataSources[selectIndexPath.row].thankCount = 1
+            }
+//            self.tableView.reloadData {}
+            log.info([selectIndexPath])
             self.tableView.reloadRows(at: [selectIndexPath], with: .none)
         }) { error in
             HUD.showError(error)
@@ -693,12 +717,16 @@ extension TopicDetailViewController {
         // 则直接复制到剪切板
         if result.count == 0 || result.count == 1 && result[0] == content {
             UIPasteboard.general.string = content
+            HUD.showSuccess("已复制到剪切板")
             return
         }
 
         let alertVC = UIAlertController(title: "提取文本", message: nil, preferredStyle: .actionSheet)
 
-        let action: ((UIAlertAction) -> Void) = { UIPasteboard.general.string = $0.title }
+        let action: ((UIAlertAction) -> Void) = {
+            UIPasteboard.general.string = $0.title;
+            HUD.showSuccess("已复制到剪切板")
+        }
 
         alertVC.addAction(
             UIAlertAction(
@@ -786,8 +814,8 @@ extension TopicDetailViewController {
             guard let `self` = self else { return }
             self.dataSources.append(contentsOf: comments)
             self.comments.append(contentsOf: comments)
-            self.tableView.reloadData()
             self.tableView.endFooterRefresh(showNoMore: self.page >= self.maxPage)
+            self.refreshDataSource()
             }, failure: { [weak self] error in
                 self?.tableView.endFooterRefresh()
                 self?.page -= 1
@@ -991,8 +1019,7 @@ extension TopicDetailViewController {
         let controller = UIActivityViewController(
             activityItems: [url],
             applicationActivities: BrowserActivity.compatibleActivities)
-
-        controller.excludedActivityTypes = [.postToFlickr, .postToVimeo, .message, .print, .copyToPasteboard, .assignToContact, .saveToCameraRoll]
+        
         controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
 
         currentViewController().present(controller, animated: true, completion: nil)
@@ -1001,7 +1028,21 @@ extension TopicDetailViewController {
     /// 是否只看楼主
     func showOnlyFloorHandle() {
         isShowOnlyFloor = !isShowOnlyFloor
-        tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+
+        refreshDataSource()
+//        tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+    }
+    
+    func refreshDataSource() {
+        if isShowOnlyFloor {
+            dataSources = comments.filter { $0.member.username == topic?.member?.username }
+            if dataSources.count.boolValue.not {
+                tableView.setContentOffset(CGPoint(x: 0, y: -tableView.contentInset.top), animated: true)
+            }
+        } else {
+            dataSources = comments
+        }
+        tableView.reloadData()
     }
 
     /// 从系统 Safari 浏览器中打开

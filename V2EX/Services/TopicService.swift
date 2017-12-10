@@ -429,7 +429,7 @@ extension TopicService {
         
         Network.htmlRequest(target: .createTopic(nodename: nodename, dict: [:]), success: { html in
             guard let once = self.parseOnce(html: html) else {
-                failure("无法授权失败")
+                failure("操作失败，无法获取 once")
                 return
             }
             let params = [
